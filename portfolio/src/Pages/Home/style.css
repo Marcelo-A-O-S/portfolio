@@ -1,0 +1,67 @@
+.titulo-apresentacao{
+    position: relative;
+    color:blueviolet;
+    font-size: 20px;
+    font-weight: 700;
+}
+.posicionamento-home{
+    display:flex;
+    width: 100%;
+    height: 750px;
+    position: relative;
+    
+    flex-direction: column-reverse;
+    justify-content: space-evenly;
+    align-items: center;
+    justify-self: center;
+    gap:60px;
+    
+}
+.text-apresentacao{
+    color:white;
+    font-weight: 400;
+    font-size: 20px;
+}
+.image-home{
+    width: 100%;
+    height: 270px;
+    display:flex;
+    position: relative;
+    border-radius: 30%;
+    border-image: round;
+    animation-duration: 2s;
+    animation-name: moviment-image;
+}
+.image-apresentacao:hover{
+    position:relative;
+    animation-duration: 2s;
+    animation:forwards;
+    animation-name: interacao-image;
+}
+.esclamacao{
+    position: relative;
+    top:-3px;
+    animation-name: animation-esclamacao;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+}
+@keyframes animation-esclamacao {
+    0%{opacity: 0;}
+    25%{opacity: 0.3;}
+    50%{opacity: 0.6;}
+    75%{opacity: 0.8;}
+    100%{opacity: 1;}
+}
+@keyframes moviment-image {
+    from{left:50px;}
+    to{left:0px;}
+}
+@keyframes interacao-image {
+    from{top:0px;}
+    to{top:-50px;}
+}
+@media (min-width:755px) {
+    .posicionamento-home{
+        flex-direction: row-reverse;
+    }
+}
