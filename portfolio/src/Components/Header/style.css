@@ -54,14 +54,14 @@ header{
   position: relative;
   animation-name: example;
   animation-duration: 2s;
+  z-index: 1;
 }
 .Menu-dropdown> .menu-item{
   text-align: center;
   width: 100%;
   height: 30px;
   list-style-type: none;
- 
-  
+  z-index: 1;
   
 }
 .Menu-dropdown > .menu-item > .link{
