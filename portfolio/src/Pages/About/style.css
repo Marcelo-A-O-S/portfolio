@@ -64,7 +64,7 @@
 
     width: 100%;
     min-height: 100vh;
-    display: none;
+    display: flex;
     gap: 25px;
     flex-direction: column;
     justify-content:center;
@@ -185,7 +185,7 @@
 .Formacao{
     width: 100%;
     min-height: 100vh;
-    display: none;
+    display: flex;
     
     flex-direction: column;
     justify-content:space-evenly;
