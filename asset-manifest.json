@@ -1,16 +1,24 @@
 {
   "files": {
-    "main.css": "/portfolio/static/css/main.318444a3.css",
-    "main.js": "/portfolio/static/js/main.adb14a2f.js",
+    "main.css": "/portfolio/static/css/main.79512fd2.css",
+    "main.js": "/portfolio/static/js/main.75007faa.js",
     "static/js/787.1ed0c42c.chunk.js": "/portfolio/static/js/787.1ed0c42c.chunk.js",
     "static/media/image.png": "/portfolio/static/media/image.1ef6392808b1b391d987.png",
+    "static/media/sqlserver.svg": "/portfolio/static/media/sqlserver.bcfaadcc9e627ce9b88c62795e761b5b.svg",
+    "static/media/netcore.svg": "/portfolio/static/media/netcore.8e267329c55f1861f6ffbbd541783300.svg",
+    "static/media/csharp.svg": "/portfolio/static/media/csharp.f4f98d9099c68b65271876fea3fb092e.svg",
+    "static/media/ReactJS.svg": "/portfolio/static/media/ReactJS.cfaf0c3a23d8e285493f234562c86168.svg",
+    "static/media/typescript.svg": "/portfolio/static/media/typescript.a1de1060286af9ff3dddbf99061fe62e.svg",
+    "static/media/Aspnetcore.svg": "/portfolio/static/media/Aspnetcore.6835a04f45b59456c50a4c262158cf3d.svg",
     "index.html": "/portfolio/index.html",
-    "main.318444a3.css.map": "/portfolio/static/css/main.318444a3.css.map",
-    "main.adb14a2f.js.map": "/portfolio/static/js/main.adb14a2f.js.map",
+    "static/media/arrow-back-ios.svg": "/portfolio/static/media/arrow-back-ios.db64d1c2347ea59c3208472345c6ec98.svg",
+    "static/media/arrow-forward-ios.svg": "/portfolio/static/media/arrow-forward-ios.f48cc66c8079b23151536e3f96513993.svg",
+    "main.79512fd2.css.map": "/portfolio/static/css/main.79512fd2.css.map",
+    "main.75007faa.js.map": "/portfolio/static/js/main.75007faa.js.map",
     "787.1ed0c42c.chunk.js.map": "/portfolio/static/js/787.1ed0c42c.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.318444a3.css",
-    "static/js/main.adb14a2f.js"
+    "static/css/main.79512fd2.css",
+    "static/js/main.75007faa.js"
   ]
 }
