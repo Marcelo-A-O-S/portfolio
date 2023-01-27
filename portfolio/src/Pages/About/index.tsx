@@ -131,17 +131,7 @@ export default function Sobre(){
                             <img src={ArrowBack} alt="" onClick={()=>AnteriorFormacao()} />
                         </div>
                         <div className="formulario-formacao">
-                            {/* <div className="formacao-academica">
-                                <div className="formacao-info">
-                                    <h1 className="nome-instituicao">Senai/SC</h1>
-                                    <p className="nome-curso">Curso</p>
-                                    <p className="data-inicio">Data inicio:</p>
-                                    <p className="data-termino">Data termino:</p>
-                                </div>
-                                <div>
-                                    <img src={image} alt=""/>
-                                </div>
-                            </div> */}
+
                             {renderizarFormacoes()}
                         </div>
                         <div className="formacao-orientacao">
