@@ -11,6 +11,8 @@ import AspNet from "../../img/Aspnetcore.svg"
 import Csharp from "../../img/csharp.svg"
 import Reactjs from "../../img/ReactJS.svg"
 import Sqlserver from "../../img/sqlserver.svg"
+import Excelencia from "../../img/excelencia.png"
+import Senai from "../../img/senai.png"
 
 export default function Sobre(){
     const skills : Array<Skills> = [
@@ -23,8 +25,8 @@ export default function Sobre(){
     ];
     
     const formacoes : Array<Formacao> = [
-        new Formacao("Senai/SC - Servico Nacional de Aprendizagem Industrial","Técnico em Desenvolvimento de Sistemas","","08/2022","08/2024"),
-        new Formacao("Colégio Excelência Bocaiuva","Técnico em Mêcanica","","10/2021","10/2023")
+        new Formacao("Senai/SC - Servico Nacional de Aprendizagem Industrial","Técnico em Desenvolvimento de Sistemas",Senai,"08/2022","08/2024"),
+        new Formacao("Colégio Excelência Bocaiuva","Técnico em Mêcanica",Excelencia,"10/2021","10/2023")
     ];
     const [countSkills, setCountSkills] = useState(3);
     const [countFormacao, setCountFormacao] = useState(0);
@@ -41,7 +43,7 @@ export default function Sobre(){
                                                 <p className="data-termino">Data termino: {formacoes[index].data_termino}</p>
                                             </div>
                                             <div>
-                                                <img src={image} alt=""/>
+                                                <img src={formacoes[index].img_instituicao} alt=""/>
                                             </div>
                                         </div>
             )  
@@ -60,7 +62,7 @@ export default function Sobre(){
         }
     }
     function renderizarCards() {
-        var count = 0;
+        
         var cards = [];
          for (let index = countSkills - 3; index <= countSkills; index++) {
              if(index >= 0 || index >= skills.length){

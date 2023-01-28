@@ -42,8 +42,8 @@ export default function Header(){
                 <ul id="Menuitens"className={value?'Menu':"Menu-dropdown"}>
                     <li className='menu-item'><Link onClick={() => redimensionamento()} className="link" to='/portfolio/'>Home</Link></li>
                     <li className='menu-item'><Link onClick={() => redimensionamento()} className="link" to='/portfolio/About'>Sobre</Link></li>
-                    <li className='menu-item'><Link onClick={() => redimensionamento()} className="link" to='#'>Projetos</Link></li>
-                    <li className='menu-item'><Link onClick={() => redimensionamento()} className="link" to='#'>Contato</Link></li>
+                    <li className='menu-item'><Link onClick={() => redimensionamento()} className="link" to='/portfolio/Projects'>Projetos</Link></li>
+                    <li className='menu-item'><Link onClick={() => redimensionamento()} className="link" to='/portfolio/Contact'>Contato</Link></li>
                 </ul>
                 
                 

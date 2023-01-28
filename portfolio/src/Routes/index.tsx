@@ -2,7 +2,8 @@ import { BrowserRouter, Route, Router, Routes} from "react-router-dom"
 import Header from "../Components/Header"
 import Home from "../Pages/Home"
 import Sobre from "../Pages/About"
-
+import Projetos from "../Pages/Projects"
+import Contato from "../Pages/Contact"
 export default function Rotas(){
     return(
     <BrowserRouter>
@@ -10,9 +11,9 @@ export default function Rotas(){
     <Routes >
     <Route index path="/portfolio/" element={<Home/>}/>
     <Route path="/portfolio/About" element={<Sobre/>}/>
-    <Route path="#Projetos" element={""}/>
-    <Route path="#Contato" element={""}/>
-    <Route path="/portfolio/*" element={""}/>
+    <Route path="/portfolio/Projects" element={<Projetos/>}/>
+    <Route path="/portfolio/Contact" element={<Contato/>}/>
+    <Route path="/portfolio/*" element={<Home/>}/>
     </Routes>
     </BrowserRouter>
     )

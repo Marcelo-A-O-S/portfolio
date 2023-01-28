@@ -1,0 +1,109 @@
+.Projetos{
+    display:flex;
+    width: 100%;
+    min-height: 100vh;
+    
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap:20px;
+    
+}
+.Titulo-projetos{
+    color:blueviolet;
+    animation-name: text;
+    animation-duration: 2s;
+}
+.alinhamento-projetos{
+    width: 90%;
+    
+    display: flex;
+    flex-direction: column;
+    gap:20px;
+    align-items: center;
+}
+.card-projeto{
+    width: 100%;
+    height: 100%;
+    display:flex;
+    flex-direction: column;
+    border: 1px solid blueviolet;
+    border-radius: 10px;
+    justify-content: space-around;
+    gap:5px; 
+    align-items: center;
+    
+}
+.titulo-card{
+    display:flex;
+    color:blueviolet;
+}
+.posicao-titulo-card{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+.image-card{
+    display:flex;
+    width:90%;
+    
+   
+    height: 140px;
+    border-radius: 10px;
+}
+.position-image-card{
+    display:flex;
+    width: 90%;
+    height: 150px;
+    align-items: center;
+    justify-content: center;
+}
+.posicao-descricao-card{
+    display:flex;
+    width:100%;
+    flex-wrap: wrap;
+}
+.descricao-card{
+    color:white;
+    text-indent: 20px;
+}
+.button-card{
+    height: 20px;
+    width: 150px;
+    color:white;
+    background-color: blueviolet;
+    border-radius: 5px;
+    margin: 10px;
+    justify-content: flex-end;
+    align-items: flex-end;
+    
+}
+.posicao-button{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+@media (min-width:550px) {
+    .alinhamento-projetos{
+        display: grid;
+        grid-template-columns: auto auto;
+        gap:20px;
+    }
+ 
+}
+@media (min-width:850px) {
+    .alinhamento-projetos{
+        display: grid;
+        grid-template-columns: auto auto auto;
+        
+    }
+
+}@media (min-width:1010px) {
+    .alinhamento-projetos{
+        display: grid;
+        grid-template-columns: auto auto auto auto;
+        
+    }
+
+}

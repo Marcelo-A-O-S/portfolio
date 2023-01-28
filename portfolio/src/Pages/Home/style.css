@@ -19,6 +19,7 @@
     justify-self: center;
     gap:60px;
    
+   
     
 }
 .text-apresentacao{
@@ -37,6 +38,7 @@
     border-image: round;
     animation-duration: 2s;
     animation-name: moviment-image;
+    
 }
 .image-apresentacao:hover{
     position:relative;
