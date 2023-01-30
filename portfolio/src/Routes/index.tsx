@@ -14,6 +14,7 @@ export default function Rotas(){
     <Route path="/portfolio/Projects" element={<Projetos/>}/>
     <Route path="/portfolio/Contact" element={<Contato/>}/>
     <Route path="/portfolio/*" element={<Home/>}/>
+    <Route path="/*" element={<Home/>}/>
     </Routes>
     </BrowserRouter>
     )
