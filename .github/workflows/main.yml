@@ -5,9 +5,9 @@ on:
 jobs:
   DEV:
     runs-on: ubuntu-latest
-    environment: .env
+    environment: DEV
     steps:
       - uses: actions/checkout@v2
       - name: Run teste
         run:
-          echo "Em execução ${{ env.REACT_APP_KEY }}"
+          echo "Em execução ${{ DEV.REACT_APP_KEY }}"
