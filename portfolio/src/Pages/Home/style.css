@@ -9,6 +9,7 @@
 }
 .posicionamento-home{
     display:flex;
+    max-width: 100%;
     width: 100vw;
     height: 100vh;
     position: relative;

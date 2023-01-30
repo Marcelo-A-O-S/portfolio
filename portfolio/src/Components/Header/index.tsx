@@ -12,9 +12,7 @@ export default function Header(){
             setValue(!value);
         }
         
-        // if(window.innerWidth <= 572){
-        //     setValue(!value);
-        // }
+        
     }
     useEffect(()=>{
         
@@ -31,7 +29,7 @@ export default function Header(){
         <header>
             <nav id="navigation" className={value? 'navbar-layout':'navbar'}>
                 <div className='Logo'>
-                    <a className="Logo-link" href='#'>Marcelo Augusto.Dev</a>
+                    <Link className="Logo-link"to='/portfolio/'>Marcelo Augusto.Dev</Link>
                  </div>
                 
                 <div id="hamburguer"  className='Hamburguer'  onClick={() => setValue(!value)}>

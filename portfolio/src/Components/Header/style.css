@@ -3,29 +3,23 @@
   margin:0px;
 }
 header{
-  
-  
   opacity: 95%;
+  max-width: 100%;
   width: 100vw;
-  height: 100%;
+  min-height: 100%;
   position: relative;
   z-index: 1;
-  
-  
 }
 nav{
   background-color: black;
-  
 }
-i#navigation{
-  
-}
+
 .navbar{
   display: block;
   justify-content: space-between;
   align-items: center;
   position: fixed;
-  width: 100%;
+  width: 100vw;
 
 }
 .navbar > .Logo{
@@ -104,16 +98,21 @@ i#navigation{
 }
 .Menu > .menu-item > .link:hover{
   background-color: rgb(24, 24, 24);
+  
+  border-radius: 2px;
   color: blueviolet;
 }
 .navbar-layout{
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position:relative;
+  height: 55px;
   
 }
 .navbar-layout > .Logo{
-  padding: 20px;
+  padding-left: 25px;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 20px;
   font-weight: 600;
@@ -124,12 +123,14 @@ i#navigation{
 }
 @media (min-width: 572px) {
   .Menu{
+    width:auto;
     display:flex;
     position: relative;
     animation-name: example;
     animation-fill-mode: forwards;
     animation-direction: normal;
     animation-duration: 4s;
+    margin:0;
 
   }
   .Hamburguer{
@@ -138,5 +139,5 @@ i#navigation{
 }
 @keyframes example{
   from { right:40px; top:0px;}
-  to { right:0px; top:0px;}
+  to { right:2px; top:0px;}
 }

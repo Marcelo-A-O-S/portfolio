@@ -3,10 +3,13 @@ import image from "../../img/anime.jpg"
 import React, {useEffect , useState} from "react"
 import Projeto from "../../Models/Projetos"
 
+const teste = require("../../Models/Formacao/index")
+
 export default function Projetos(){
     const [projeto, setProjetos] = useState<Projeto[]>([])
     var projetoNome = "";
     useEffect(()=>{
+        console.log(teste)
         fetch("./Dados/Projetos/index.json",{
             headers:{
                 Accept: "application/json"

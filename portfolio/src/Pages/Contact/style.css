@@ -1,0 +1,55 @@
+.Contato{
+    display:flex;
+    max-width: 100%;
+    width: 100vw;
+    height: 100vh;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.Formulario-contato{
+    display:flex;
+    flex-direction: column;
+    width: 90%;
+    height: 50%;
+    justify-content: space-evenly;
+    border:1px solid blueviolet;
+    border-radius: 10px;
+    align-items: center;
+    padding: 10px;
+}
+.titulo-contato{
+    color:blueviolet;
+}
+.input{
+    height: 25px;
+    border: 1px solid blueviolet;
+    border-radius: 5px;
+}
+.label-contato{
+    color:white;
+}
+.btn-contato{
+    width: 100px;
+    height: 25px;
+    background-color: blueviolet;
+    color: white;
+    font-size: medium;
+    border-radius: 5px;
+}
+.text-contato{
+    height: 100px;
+    border-radius: 5px;
+    
+}
+.area-info{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+@media (min-width:665px) {
+    .Formulario-contato{
+        max-width: 655px;
+    }
+    
+}

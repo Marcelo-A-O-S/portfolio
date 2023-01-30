@@ -66,7 +66,7 @@ export default function Sobre(){
         var cards = [];
          for (let index = countSkills - 3; index <= countSkills; index++) {
              if(index >= 0 || index >= skills.length){
-                console.log(index)
+                
                 if(skills[index] !== undefined){
                     
                     cards.push(<div className="card-skill">
@@ -99,7 +99,7 @@ export default function Sobre(){
     }
     return(
         <div>
-            <section className="Sobre">
+            <section className="Sobre" >
                 <div>
                     <img src={image} alt="" className="image-sobre"/>
                 </div>
@@ -108,7 +108,7 @@ export default function Sobre(){
                     <p className="text-sobre"> Meu nome é Marcelo, sou estudante de programacão e apaixonado pela mesma, estudo diariamente assuntos relacionados a mesma, se tornou um dos meus hobbys, também gosto de animes e séries mas dedico a maior parte do meu tempo a programacão, tenho um vicio em criar aplicacões!</p>
                 </div>
             </section>
-            <section id="SKills" className="Skills" onScroll={(event)=>console.log(event)}>
+            <section id="SKills" className="Skills" data-animation="animation-skills" >
                 <div className="titulo-skills">
                     <h1 className="titulo-sobre">Skills<span className="esclamacao">|</span></h1>
                 </div>
@@ -124,7 +124,7 @@ export default function Sobre(){
                     </div>
                 </div>
             </section>
-            <section className="Formacao">
+            <section className="Formacao" data-animation="animation-formacao">
                 <div className="titulo-formacao">
                     <h1 className="titulo-sobre">Formacão<span className="esclamacao">|</span></h1>
                 </div>
