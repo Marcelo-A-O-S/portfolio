@@ -5,9 +5,8 @@ on:
 jobs:
   DEV:
     runs-on: ubuntu-latest
-    environment: DEV
+    environment: github-pages
     steps:
       - uses: actions/checkout@v2
       - name: Run teste
-        run:
-          echo "Em execução DEV"
+        run: env
