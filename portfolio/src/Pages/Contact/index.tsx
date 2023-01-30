@@ -8,9 +8,9 @@ export default function Contato(){
     const [nome, setNome] = useState("")
     const [email, setEmail] = useState("")
     const [message, setMessage] = useState("")
-    var publicKey = process.env.REACT_APP_KEY!.toString();
-    var serviceId = process.env.REACT_APP_SERVICEID!.toString();
-    var templateId = process.env.REACT_APP_TEMPLATEID!.toString();
+    var publicKey = process.env.REACT_APP_KEY!;
+    var serviceId = process.env.REACT_APP_SERVICEID!;
+    var templateId = process.env.REACT_APP_TEMPLATEID!;
     const enviarMensagem = (event:any) =>{
         event.preventDefault();
         alert(" Olá, muito obrigado pelo envio, assim que possivel, retornarei o contato \n Tenha um ótimo dia!")
