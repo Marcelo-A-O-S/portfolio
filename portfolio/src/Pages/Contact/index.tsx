@@ -21,9 +21,7 @@ export default function Contato(){
 
         }
         try {
-            console.log(publicKey)
-            console.log(serviceId)
-            console.log(templateId)
+            
             SendEmail.send(serviceId,templateId,templateParams,publicKey).then((res)=> console.log(`Status de envio: ${res.status}`))
         } catch ( error) {
             console.log(error)

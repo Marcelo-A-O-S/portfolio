@@ -2,26 +2,15 @@ import "./style.css"
 import image from "../../img/anime.jpg"
 import React, {useEffect , useState} from "react"
 import Projeto from "../../Models/Projetos"
+import Data from "../../Data/Projetos/index.json"
 
-const teste = require("../../Models/Formacao/index")
 
 export default function Projetos(){
     const [projeto, setProjetos] = useState<Projeto[]>([])
     var projetoNome = "";
     useEffect(()=>{
-        console.log(teste)
-        fetch("./Dados/Projetos/index.json",{
-            headers:{
-                Accept: "application/json"
-            }
-         }).then((res)=>res.json()).then((body)=>{
-            setProjetos(body.Projetos)
-            
-         }
-        )
-        
-      renderizarProjetos()
-       
+        setProjetos(Data.Projetos)
+        renderizarProjetos()
     },[])
     function AcessarDetalhe(linkprojeto:string){
         window.open(linkprojeto,"_blank");
