@@ -3,6 +3,7 @@ import image from "../../img/anime.jpg"
 import React, {useEffect , useState} from "react"
 import Projeto from "../../Models/Projetos"
 import Data from "../../Data/Projetos/index.json"
+import Loading from "../../img/loading.png"
 
 
 export default function Projetos(){
@@ -20,7 +21,7 @@ export default function Projetos(){
         return projeto.map((projeto)=>{
             return <div className="card-projeto">
             <div className="position-image-card">
-                <img src={projeto.imagemprojeto} alt="" className="image-card"/>
+                <img src={projeto.imagemprojeto === ""? projeto.imagemprojeto = Loading : projeto.imagemprojeto} alt="" className="image-card"/>
             </div>
             <div className="posicao-titulo-card">
                 <h1 className="titulo-card">{projeto.nomeprojeto}</h1>

@@ -105,7 +105,7 @@ export default function Sobre(){
                 </div>
                 <div className="apresentacao-sobre">
                     <h1 className="titulo-sobre"><span className="sobre1">Sobre</span> <span className="sobre2">mim</span><span className="esclamacao">|</span></h1>
-                    <p className="text-sobre"> Meu nome é Marcelo, sou estudante de programacão e apaixonado pela mesma, estudo diariamente assuntos relacionados a mesma, se tornou um dos meus hobbys, também gosto de animes e séries mas dedico a maior parte do meu tempo a programacão, tenho um vicio em criar aplicacões!</p>
+                    <p className="text-sobre"> Meu nome é Marcelo Augusto, sou estudante de programacão, estudo diariamente assuntos relacionados a área, e se tornou um dos meus hobbys, também gosto de animes e séries mas dedico a maior parte do meu tempo a programacão, tenho um vicio em criar aplicacões!</p>
                 </div>
             </section>
             <section id="SKills" className="Skills" data-animation="animation-skills" >
