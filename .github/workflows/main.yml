@@ -9,5 +9,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run teste
-        run:
-          echo "Em execução ${{ vars.REACT_APP_KEY }}"
+        run: env
