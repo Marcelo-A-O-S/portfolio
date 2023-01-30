@@ -13,14 +13,24 @@ export default function Contato(){
     var templateId = process.env.REACT_APP_TEMPLATEID!;
     const enviarMensagem = (event:any) =>{
         event.preventDefault();
-        alert(" Olá, muito obrigado pelo envio, assim que possivel, retornarei o contato \n Tenha um ótimo dia!")
+        
         const templateParams = {
             from_name:nome,
             email:email,
             message:message
 
         }
-        SendEmail.send(serviceId,templateId,templateParams,publicKey).then((res)=> console.log(`Status de envio: ${res.status}`))
+        try {
+            console.log(publicKey)
+            console.log(serviceId)
+            console.log(templateId)
+            SendEmail.send(serviceId,templateId,templateParams,publicKey).then((res)=> console.log(`Status de envio: ${res.status}`))
+        } catch ( error) {
+            console.log(error)
+        }
+       
+
+        alert(" Olá, muito obrigado pelo envio, assim que possivel, retornarei o contato \n Tenha um ótimo dia!")
         setNome("");
         setEmail("");
         setMessage("");
