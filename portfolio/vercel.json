@@ -1,3 +1,3 @@
 {
-    "rewrites":[{"source":"/portfolio/(.*)", "destination":"/portfolio/"}]
+    "rewrites":[{"source":"/(.*)", "destination":"/"}]
 }
