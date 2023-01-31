@@ -18,7 +18,6 @@ export default function Contato(){
             from_name:nome,
             email:email,
             message:message
-
         }
         try {
             
@@ -37,8 +36,10 @@ export default function Contato(){
         <section className="Contato">
             <div>
                 <h1 className="titulo-contato">Contato</h1>
+                
             </div>
             <form onSubmit={enviarMensagem} className="Formulario-contato">
+                <p className="label-contato">Caso queira entrar em contato comigo para tratar de negócios:</p>
                 <div className="area-info">
                     <label className="label-contato">Digite o seu nome abaixo:</label>
                     <input className="input" type={"text"} value={nome} onChange={(event)=> setNome(event.target.value)} placeholder="Digite o nome aqui" required/>
