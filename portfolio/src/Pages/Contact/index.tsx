@@ -48,10 +48,7 @@ export default function Contato(){
                     <label className="label-contato">Digite o seu email abaixo:</label>
                     <input className="input" type={"email"} value={email} onChange={(event)=>setEmail(event.target.value)} placeholder="Digite o seu email aqui" required/>
                 </div>  
-                {/* <div className="area-info">
-                    <label className="label-contato">Digite o assunto abaixo:</label>
-                    <input className="input" type={"text"} placeholder="Digite o assunto da mensagem" required />
-                </div> */}
+                
                 <div className="area-info">
                     <label className="label-contato">Digite o assunto abaixo:</label>
                     <textarea className="text-contato" placeholder="Digite aqui a mensagem a ser enviada" value={message} onChange={(event)=>setMessage(event.target.value)} required></textarea>
