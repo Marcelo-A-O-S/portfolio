@@ -35,7 +35,7 @@ export default function Contato(){
     return(
         <section className="Contato">
             <div>
-                <h1 className="titulo-contato">Contato</h1>
+                <h1 className="titulo-contato">Formulário de Contato</h1>
                 
             </div>
             <form onSubmit={enviarMensagem} className="Formulario-contato">
