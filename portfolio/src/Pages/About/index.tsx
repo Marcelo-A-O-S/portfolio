@@ -105,7 +105,7 @@ export default function Sobre(){
                 </div>
                 <div className="apresentacao-sobre">
                     <h1 className="titulo-sobre"><span className="sobre1">Sobre</span> <span className="sobre2">mim</span><span className="esclamacao">|</span></h1>
-                    <p className="text-sobre"> Meu nome é Marcelo Augusto, moro em uma cidade do interior chamada Olhos D`Água, sou estudante de programacão e comecei meus estudos na área faz uns 6 meses por conta própria, estudando diariamente assuntos relacionados a área para aprimorar e adquirir mais conhecimento se tornando um dos meus hobbys, também gosto de animes e séries mas dedico a maior parte do meu tempo a programacão, tenho um vicio em criar aplicacões, estudar programação pra mim é o maior investimento profissional e pessoal!</p>
+                    <p className="text-sobre"> Meu nome é Marcelo Augusto, moro em uma cidade do interior chamada Olhos D`Água, sou estudante de programacão e comecei meus estudos na área faz uns 6 meses por conta própria, estudando diariamente assuntos relacionados a área para aprimorar e adquirir mais conhecimento se tornando um dos meus hobbys, também gosto de animes e séries mas dedico a maior parte do meu tempo a programacão, seja programando ou participando de comunidades de programação, aprendendo ou ajudando com o meu conhecimento, tenho um vicio em criar aplicacões, estudar programação pra mim é o maior investimento profissional e pessoal!</p>
                 </div>
             </section>
             <section id="SKills" className="Skills" data-animation="animation-skills" >
