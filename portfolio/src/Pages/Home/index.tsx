@@ -15,9 +15,9 @@ export default function Home(){
             <h1 className="titulo-apresentacao">Olá, meu nome é Marcelo Augusto <span className="esclamacao">|</span></h1>
             <h2 className="text-apresentacao">Desenvolvedor Full-Stack</h2>
             <div className="social-media">
-                <Link className="link-social" to="https://www.linkedin.com/in/marcelo-augusto-dev/"><img className="social-image-linkedin" src={Linkedin}  alt=""/></Link>
-                <Link className="link-social" to="https://github.com/Marcelo-A-O-S"><img className="social-image-github" src={Github} alt=""/></Link>
-                <Link className="link-social" to="https://www.instagram.com/marcelo.augusto1234/"><img className="social-image" src={Instagram} alt=""/></Link>                
+                <a target="_blank" className="link-social" href="https://www.linkedin.com/in/marcelo-augusto-dev/"><img className="social-image-linkedin" src={Linkedin}  alt=""/></a>
+                <a target="_blank" className="link-social" href="https://github.com/Marcelo-A-O-S"><img className="social-image-github" src={Github} alt=""/></a>
+                <a target="_blank" className="link-social" href="https://www.instagram.com/marcelo.augusto1234/"><img className="social-image" src={Instagram} alt=""/></a>                
             </div>
            </div>
         </section>
