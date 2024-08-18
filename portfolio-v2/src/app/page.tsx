@@ -1,8 +1,5 @@
 import Image from "next/image";
 import ImgPerfil from "../assets/imagemperfil.jpg"
-import Github from "../assets/github.svg"
-import Linkedin from "../assets/Linkedin.svg"
-import Instagram from "../assets/instagram.svg"
 export default function Home() {
   return (
     <main className="container mx-auto flex min-h-screen flex-col items-center justify-between ">
@@ -59,7 +56,7 @@ export default function Home() {
           <p>Olá, meu nome é Marcelo Augusto e sou desenvolvedor nas horas vagas!</p>
         </div>
         <div className="flex">
-          <Image className="rounded-3xl" src={ImgPerfil} alt="" />
+          <Image className="rounded-3xl" src={ImgPerfil} alt="Marcelo Augusto" />
         </div>
       </section>
     </main>
