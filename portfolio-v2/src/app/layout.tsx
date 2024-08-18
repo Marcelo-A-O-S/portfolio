@@ -17,10 +17,11 @@ export default function RootLayout({
   return (
     <html lang="pt-br">
       <body className={" " + inter.className}>
-        <Analytics/>
+       
         <Container>
           {children}
         </Container>
+        <Analytics/>
         </body>
     </html>
   );
