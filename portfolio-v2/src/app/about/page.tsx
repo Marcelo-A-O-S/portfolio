@@ -1,5 +1,10 @@
 import Image from "next/image"
 import ImgAbout from "../../assets/anime.jpg"
+import { Metadata } from "next";
+export const metadata: Metadata = {
+    title: "About",
+    description: "Algumas informações sobre mim!",
+  };
 export default function PageAbout() {
     return (
         <>
