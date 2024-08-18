@@ -17,7 +17,7 @@ export default function Navbar() {
         <nav className="container mx-auto px-6 py-3">
           <div className="flex items-center justify-between">
             <div className="text-white font-bold text-xl">
-              <a href="#">Marcelo Augusto.Dev</a>
+              <a href="/">Marcelo Augusto.Dev</a>
             </div>
             <div className="hidden md:block">
               <ul className="flex items-center space-x-8">

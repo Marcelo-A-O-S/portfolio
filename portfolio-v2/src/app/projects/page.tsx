@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react"
 import dataProjects from "../../data/projects/data.json"
 import Project from "@/models/Project"
-import Image from "next/image"
 import ImgLoadingImage from "../../assets/loading.png"
 export default function ProjectsPage() {
     const [projects, setProjects] = useState<Project[]>()

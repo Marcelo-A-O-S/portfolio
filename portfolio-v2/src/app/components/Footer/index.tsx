@@ -55,6 +55,9 @@ export default function Footer() {
                             <h2 className="mb-3 text-sm font-medium tracking-widest text-white uppercase title-font">Links</h2>
                             <nav className="mb-10 list-none">
                                 <li className="mt-3">
+                                    <Link href="/" className="text-gray-500 cursor-pointer hover:text-gray-900">Home</Link>
+                                </li>
+                                <li className="mt-3">
                                     <Link href="/about" className="text-gray-500 cursor-pointer hover:text-gray-900">About</Link>
                                 </li>
                                 <li className="mt-3">

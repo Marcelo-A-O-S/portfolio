@@ -14,7 +14,7 @@ export default function PageAbout() {
                                             Sobre mim
                                         </p>
                                         <p className="w-full max-w-xl mt-4 text-base tracking-tight text-white">
-                                            Olá, sou Marcelo Augusto, de Olhos D'Água. Sou um estudante autodidata de programação, dedicando a maior parte do meu tempo ao desenvolvimento de aplicações e à participação em comunidades de tecnologia, onde compartilho e adquiro conhecimento. Programar se tornou mais do que um hobby para mim sendo o meu maior investimento, tanto profissional quanto pessoal. Além de programar, sou fã de animes e séries.
+                                        Olá, sou Marcelo Augusto, de Olhos D'Água. Sou programador autodidata e dedico a maior parte do meu tempo ao desenvolvimento de aplicações e ao engajamento em comunidades de tecnologia, onde compartilho e adquiro conhecimento. Programar é mais do que um hobby para mim; é o meu maior investimento, tanto profissional quanto pessoal. Além da programação, sou apaixonado por animes e séries, que também estimulam minha criatividade.
                                         </p>
                                     </div>
                                 </div>
