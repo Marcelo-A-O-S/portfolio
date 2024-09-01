@@ -16,9 +16,9 @@ export default function ListProjects() {
                         <div className="max-w-sm bg-black border-solid border-2 border-purple-600  px-6 pt-6 pb-2 rounded-xl shadow-lg transform hover:scale-105 transition duration-500">
                             <div className="relative">
                                 {project.imagemprojeto ?
-                                    <img className="w-full rounded-xl" src={project.imagemprojeto} alt="Colors" />
+                                    <img className="w-full rounded-xl" src={project.imagemprojeto} alt="" />
                                     :
-                                    <img className="w-full rounded-xl" src={ImgLoadingImage.src} alt="Colors" />
+                                    <img className="w-full rounded-xl" src={ImgLoadingImage.src} alt="" />
                                 }
 
                             </div>
