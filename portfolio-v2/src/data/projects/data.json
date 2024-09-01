@@ -16,7 +16,7 @@
         {
             "imagemprojeto":"https://github.com/Marcelo-A-O-S/SA3-IOT/assets/77033790/4dfcc545-61d4-486f-ac93-c3a2a7a16b07",
             "nomeprojeto":"SA3-IOT",
-            "descricaoprojeto":" Trabalho final de IOT do curso de Desenvolvimento de Sistemas do Senai.",
+            "descricaoprojeto":" Trabalho final de IOT do curso de Desenvolvimento de Sistemas do Senai na construção de uma comunicação MQTT utilizando uma placa ESP32, gerenciando informações de temperatura e humidade de um DHT22.",
             "linkprojeto":"https://github.com/Marcelo-A-O-S/SA3-IOT"   
         },
         {
