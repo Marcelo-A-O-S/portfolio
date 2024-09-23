@@ -1,7 +1,6 @@
 import Link from "next/link";
-
-export default function Footer() {
-    return (
+export default function Footer(){
+    return(
         <>
             <footer className="w-full text-gray-700 bg-black body-font">
                 <div
@@ -64,7 +63,7 @@ export default function Footer() {
                                     <Link href="/projects" className="text-gray-500 cursor-pointer hover:text-gray-900">Projects</Link>
                                 </li>
                                 <li className="mt-3">
-                                    <Link href="/contact" className="text-gray-500 cursor-pointer hover:text-gray-900">Contact Me</Link>
+                                    <Link href="/contact" className="text-gray-500 cursor-pointer hover:text-gray-900">Login</Link>
                                 </li>
                             </nav>
                         </div>
@@ -76,5 +75,6 @@ export default function Footer() {
                     </div>
                 </div>
             </footer>
-        </>)
+        </>
+    )
 }

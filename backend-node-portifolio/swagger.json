@@ -1,0 +1,17 @@
+{
+    "openapi": "3.1.0",
+    "info":{
+        "title": "Documentation Api Portfólio",
+        "description": "Documentação relacionada a minha api para meu portfólio..",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Marcelo Augusto de Oliveira Soares",
+            "email": "marceloaugustooliveirasoares@gmail.com"
+            },
+        "license": {
+        "name": "Apache 2.0",
+        "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.1"
+    }
+  }
