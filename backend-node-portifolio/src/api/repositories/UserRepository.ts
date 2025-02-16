@@ -1,8 +1,21 @@
+import { ERoles } from "@prisma/client";
 import { prisma } from "../data/PrismaClient";
 import { User } from "../domain/models/User";
 import { IUserRepository } from "./interfaces/IUserRepository";
 
 export class UserRepository implements IUserRepository{
+    async FindByRoles(role: ERoles): Promise<User[]> {
+        const users: User[] = [];
+        const usersDB = await prisma.user.findMany({
+            where:{
+                Role: role
+            }
+        })
+        if(usersDB){
+            return Object.assign(users, usersDB);
+        }
+        return users;
+    }
     async FindByGuid(guid: string): Promise<User> {
         const user = new User()
         const userDB = await prisma.user.findFirst({
@@ -10,10 +23,8 @@ export class UserRepository implements IUserRepository{
                 Guid: guid
             }
         })
-        if(userDB){
-            user.Id = userDB.Id;
-            user.Guid = userDB.Guid;
-            user.Name = userDB.Name;
+        if (userDB) {
+            return Object.assign(new User(), userDB);
         }
         return user;
     }

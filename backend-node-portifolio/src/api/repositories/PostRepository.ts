@@ -15,7 +15,6 @@ export class PostRepository implements IPostRepository{
                 data:{
                     DateCreate: Entity.DateCreate,
                     Guid: Entity.Guid,
-                    
                 }
             })
         }

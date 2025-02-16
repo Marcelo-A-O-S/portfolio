@@ -15,6 +15,7 @@ model User {
   Id       Int                  @id @default(autoincrement())
   Guid     String               @unique
   Name     String
+  Role     ERoles               @default(USER)
   Accounts SocialMediaAccount[]
   Like     Like[]
 }
@@ -139,4 +140,8 @@ model Post {
   Links            Link[]
   Likes            Like[]
   Comments         Comment[]
+}
+enum ERoles {
+  ADMIN
+  USER
 }

@@ -13,7 +13,6 @@ export class AuthController implements IAuthController{
             const userServices = new UserServices()
             const user = new User()
             const userDTO = resultSchema.data
-        
             console.log(userDTO)
             user.generateGuid()
             user.Id = userDTO.Id

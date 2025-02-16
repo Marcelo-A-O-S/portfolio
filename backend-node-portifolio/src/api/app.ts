@@ -5,6 +5,7 @@ import { Config } from "..";
 import { AuthRoute } from "./routes/AuthRoute";
 import swaggerUi from "swagger-ui-express"
 import swaggerJsdoc,{Options} from "swagger-jsdoc"
+import { AdminRoute } from "./routes/AdminRoute";
 const options: Options = {
     definition: {
       openapi: '3.0.0',
@@ -23,7 +24,8 @@ const options: Options = {
       },
     },
     apis: [
-        './src/api/routes/AuthRoute.ts'
+        './src/api/routes/AuthRoute.ts',
+        './src/api/routes/AdminRoute.ts'
     ], 
   };
 const openapiSpecification = swaggerJsdoc(options);
@@ -55,5 +57,6 @@ export class App{
     }
     private routes(){
         this.server.use('/auth', AuthRoute());
+        this.server.use('/admin', AdminRoute())
     }
 }

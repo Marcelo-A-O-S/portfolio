@@ -1,11 +1,15 @@
+import { ERoles } from "@prisma/client";
 import { User } from "../domain/models/User";
 import { UserRepository } from "../repositories/UserRepository";
-import { IServices } from "./interfaces/IServices";
+import { IUserServices } from "./interfaces/IUserServices";
 
-export class UserServices implements IServices<User> {
+export class UserServices implements IUserServices{
     userRepository: UserRepository;
     constructor() {
         this.userRepository = new UserRepository()
+    }
+    async FindByRole(role: ERoles): Promise<User[]> {
+        return await this.userRepository.FindByRoles(role);
     }
     async Delete(entity: User): Promise<string> {
         return await this.userRepository.Delete(entity);

@@ -10,35 +10,35 @@ export default function Header() {
         setOpenMenu(!openMenu)
     }
     return (
-        <>
+        <div>
             <nav className="container mx-auto flex items-center justify-between p-5">
-                <div className="text-white font-bold text-xl">
+                <div className="text-white text-xl">
                     <h1>Marcelo Augusto</h1>
                 </div>
                 <div>
                     <div className="md:hidden">
                         <button className="outline-none mobile-menu-button" onClick={updateMenu} >
                             <svg className="w-6 h-6 text-white" x-show="!showMenu" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                                <path d="M4 6h16M4 12h16M4 18h16"></path>
+                                <path d="M4 6h16M4 12h16M4 18h16"/>
                             </svg>
                         </button>
                     </div>
                     {userSession ? (
-                        <>
+                        <div>
                             <div className=" hidden  md:flex ">
                                 <ul className="flex justify-items-center justify-center gap-2">
                                     <li><Link href="/" className="text-white cursor-pointer">Home</Link></li>
                                     <li><Link href="/about" className="text-white cursor-pointer">About</Link></li>
-                                    <li><Link href="/projects" className="text-white cursor-pointer">Projects</Link></li>
+                                    <li><Link href="/works" className="text-white cursor-pointer">Projects</Link></li>
                                     <li>
                                         <div className="flex">
                                             {userSession.user?.image && userSession.user?.name  ? (
-                                                <>
+                                                <div>
                                                 <p>{userSession.user?.name}</p>
                                                 <Image className="rounded-xl" src={userSession.user?.image} alt={userSession.user?.name} width={100} height={100}/>
-                                                </>
+                                                </div>
                                             ):(
-                                                <></>
+                                                <div></div>
                                             )}
                                             
                                         </div>
@@ -49,17 +49,17 @@ export default function Header() {
                                 <ul className={`${openMenu ? "" : "hidden"} flex w-full h-full flex-col text-5xl justify-items-center justify-center gap-2 md:hidden `}>
                                     <li><Link href="/" className="text-white cursor-pointer">Home</Link></li>
                                     <li><Link href="/about" className="text-white cursor-pointer">About</Link></li>
-                                    <li><Link href="/projects" className="text-white cursor-pointer">Projects</Link></li>
+                                    <li><Link href="/works" className="text-white cursor-pointer">Works</Link></li>
                                     <li><Link href="/login" className="text-white cursor-pointer">Login</Link></li>
                                 </ul>
                             </div>
-                        </>) : (
-                        <>
+                        </div>) : (
+                        <div>
                             <div className=" hidden  md:flex ">
-                                <ul className="flex justify-items-center justify-center gap-2">
+                                <ul className="flex justify-items-center justify-center gap-10">
                                     <li><Link href="/" className="text-white cursor-pointer">Home</Link></li>
                                     <li><Link href="/about" className="text-white cursor-pointer">About</Link></li>
-                                    <li><Link href="/projects" className="text-white cursor-pointer">Projects</Link></li>
+                                    <li><Link href="/works" className="text-white cursor-pointer">Works</Link></li>
                                     <li><Link href="/login" className="text-white cursor-pointer">Login</Link></li>
                                 </ul>
                             </div>
@@ -67,14 +67,14 @@ export default function Header() {
                                 <ul className={`${openMenu ? "" : "hidden"} flex w-full h-full flex-col text-5xl justify-items-center justify-center gap-2 md:hidden `}>
                                     <li><Link href="/" className="text-white cursor-pointer">Home</Link></li>
                                     <li><Link href="/about" className="text-white cursor-pointer">About</Link></li>
-                                    <li><Link href="/projects" className="text-white cursor-pointer">Projects</Link></li>
+                                    <li><Link href="/works" className="text-white cursor-pointer">Works</Link></li>
                                     <li><Link href="/login" className="text-white cursor-pointer">Login</Link></li>
                                 </ul>
                             </div>
-                        </>)
+                        </div>)
                     }
 
                 </div>
             </nav>
-        </>)
+        </div>)
 }

@@ -60,7 +60,7 @@ export default function Footer(){
                                     <Link href="/about" className="text-gray-500 cursor-pointer hover:text-gray-900">About</Link>
                                 </li>
                                 <li className="mt-3">
-                                    <Link href="/projects" className="text-gray-500 cursor-pointer hover:text-gray-900">Projects</Link>
+                                    <Link href="/works" className="text-gray-500 cursor-pointer hover:text-gray-900">Works</Link>
                                 </li>
                                 <li className="mt-3">
                                     <Link href="/contact" className="text-gray-500 cursor-pointer hover:text-gray-900">Login</Link>
