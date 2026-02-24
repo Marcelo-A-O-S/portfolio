@@ -1,0 +1,11 @@
+using AuthService.Application.DTOs.Response;
+using AuthService.Domain.Entities;
+namespace AuthService.Application.Interfaces
+{
+    public interface IJwtBearerServices
+    {
+        Task<string> GenerateAccessToken(User user);
+        Task<(RefreshToken entity, string plainToken)> GenerateRefreshToken(Guid userId, string deviceId, string deviceName);
+        Task<AuthResponse> RefreshAsync(Guid userId, string refreshToken, string deviceId);
+    }
+}

@@ -1,59 +1,36 @@
-# compiled output
-/dist
-/node_modules
-/build
+Tools
 
-# Logs
-logs
-*.log
-npm-debug.log*
-pnpm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-.xata
+AuthService/src/AuthService.API/bin
+AuthService/src/AuthService.API/appsettings.Development.json
+AuthService/src/AuthService.API/appsettings.json
+AuthService/src/AuthService.Application/bin
+AuthService/src/AuthService.Domain/bin
+AuthService/src/AuthService.Infrastructure/bin
 
-# OS
-.DS_Store
+CertificateService/src/CertificateService.API/bin
+CertificateService/src/CertificateService.API/appsettings.Development.json
+CertificateService/src/CertificateService.API/appsettings.json
+CertificateService/src/CertificateService.Application/bin
+CertificateService/src/CertificateService.Domain/bin
+CertificateService/src/CertificateService.Infrastructure/bin
 
-# Tests
-/coverage
-/.nyc_output
+CommentService/src/CommentService.API/bin
+CommentService/src/CommentService.API/appsettings.Development.json
+CommentService/src/CommentService.API/appsettings.json
+CommentService/src/CommentService.Application/bin
+CommentService/src/CommentService.Domain/bin
+CommentService/src/CommentService.Infrastructure/bin
 
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
+Gateway/src/Gateway.API/bin
+Gateway/src/Gateway.API/appsettings.Development.json
+Gateway/src/Gateway.API/appsettings.json
+Gateway/src/Gateway.Application/bin
+Gateway/src/Gateway.Domain/bin
+Gateway/src/Gateway.Infrastructure/bin
 
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-
-# dotenv environment variable files
-.env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
-
-# temp directory
-.temp
-.tmp
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Diagnostic reports (https://nodejs.org/api/report.html)
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-
-/generated/prisma
+PostService/src/PostService.API/bin
+PostService/src/PostService.API/appsettings.Development.json
+PostService/src/PostService.API/appsettings.json
+PostService/src/PostService.Application/bin
+PostService/src/PostService.Domain/bin
+PostService/src/PostService.Infrastructure/bin

@@ -1,0 +1,12 @@
+D:\Projetos\portfolio\backend\AuthService\src\AuthService.Domain\bin\Debug\net8.0\AuthService.Domain.deps.json
+D:\Projetos\portfolio\backend\AuthService\src\AuthService.Domain\bin\Debug\net8.0\AuthService.Domain.dll
+D:\Projetos\portfolio\backend\AuthService\src\AuthService.Domain\bin\Debug\net8.0\AuthService.Domain.pdb
+D:\Projetos\portfolio\backend\AuthService\src\AuthService.Domain\obj\Debug\net8.0\AuthService.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projetos\portfolio\backend\AuthService\src\AuthService.Domain\obj\Debug\net8.0\AuthService.Domain.AssemblyInfoInputs.cache
+D:\Projetos\portfolio\backend\AuthService\src\AuthService.Domain\obj\Debug\net8.0\AuthService.Domain.AssemblyInfo.cs
+D:\Projetos\portfolio\backend\AuthService\src\AuthService.Domain\obj\Debug\net8.0\AuthService.Domain.csproj.CoreCompileInputs.cache
+D:\Projetos\portfolio\backend\AuthService\src\AuthService.Domain\obj\Debug\net8.0\AuthService.Domain.sourcelink.json
+D:\Projetos\portfolio\backend\AuthService\src\AuthService.Domain\obj\Debug\net8.0\AuthService.Domain.dll
+D:\Projetos\portfolio\backend\AuthService\src\AuthService.Domain\obj\Debug\net8.0\refint\AuthService.Domain.dll
+D:\Projetos\portfolio\backend\AuthService\src\AuthService.Domain\obj\Debug\net8.0\AuthService.Domain.pdb
+D:\Projetos\portfolio\backend\AuthService\src\AuthService.Domain\obj\Debug\net8.0\ref\AuthService.Domain.dll
