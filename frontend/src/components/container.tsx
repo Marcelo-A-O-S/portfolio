@@ -3,7 +3,7 @@ import { ReactNode } from "react"
 import { ThemeProvider } from "@/providers/theme-provider"
 import Navbar from "./navbar"
 import { SessionProvider } from "next-auth/react"
-
+import { Toaster } from "./ui/sonner"
 type ContainerProps = {
     children: ReactNode
 }
@@ -19,6 +19,7 @@ export default function Container({ children }: ContainerProps) {
                 enableSystem
                 disableTransitionOnChange>
                     <Navbar />
+                    <Toaster/>
                     {children}
             </ThemeProvider>
         </SessionProvider>

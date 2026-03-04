@@ -25,6 +25,7 @@ app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "Gateway API");
     options.SwaggerEndpoint("http://localhost:5001/swagger/v1/swagger.json","Auth API");
+    options.SwaggerEndpoint("http://localhost:5002/swagger/v1/swagger.json","Post API");
 });
 
 app.UseHttpsRedirection();

@@ -12,6 +12,7 @@ namespace AuthService.Application.Extension
         {
             services.AddScoped<IUserServices, UserServices>();
             services.AddScoped<ISocialAccountServices, SocialAccountServices>();
+            services.AddScoped<IRefreshTokenServices,RefreshTokenServices>();
             services.AddScoped<IJwtBearerServices, JwtBearerServices>();
             return services;
         }

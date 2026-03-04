@@ -2,7 +2,7 @@ import { logout } from "@/services/server/auth-services";
 import { getToken } from "next-auth/jwt";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-const authSecret = process.env.AUTH_SECRET!;
+const authSecret = process.env.NEXTAUTH_SECRET!;
 export async function POST(request: NextRequest) {
     const token = await getToken({
         req: request,

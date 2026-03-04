@@ -5,12 +5,13 @@ namespace AuthService.Domain.Entities
 {
     public class User
     {
-        public Guid Id { get; set; }
-        public string Email { get; set; }
-        public string Name { get; set; }
-        public Role Role { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public ICollection<SocialAccount> SocialAccounts { get; set; }
+        public Guid Id { get; private set; }
+        public string Email { get; private set; }
+        public string Name { get; private set; }
+        public Role Role { get; private set; }
+        public DateTime CreatedAt { get; private set; }
+        public ICollection<SocialAccount> SocialAccounts { get; private set; }
+        public UserStatus Status { get; private set; }
         public User(string email, string name)
         {
             this.Id = Guid.NewGuid();
@@ -18,6 +19,22 @@ namespace AuthService.Domain.Entities
             this.Name = name;
             this.Role = Role.Client;
             this.CreatedAt = DateTime.UtcNow;
+            this.Status = UserStatus.ACTIVE;
+        }
+        public void Update(string email, string name, Role role, DateTime dateTime)
+        {
+            this.Email = email;
+            this.Name = name;
+            this.Role = role;
+            this.CreatedAt = dateTime;
+        }
+        public void UpdateRole(Role role)
+        {
+            this.Role = role;
+        }
+        public void Ban()
+        {
+            this.Status = UserStatus.BANNED;
         }
     }
 }

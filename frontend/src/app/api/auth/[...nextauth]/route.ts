@@ -14,6 +14,7 @@ const googleSecret = process.env.GOOGLE_SECRET!;
 const linkedlnId = process.env.LINKEDLN_ID!;
 const linkedlnSecret = process.env.LINKEDLN_SECRET!;
 export const authOptions: AuthOptions = {
+    secret: process.env.NEXTAUTH_SECRET!,
     providers: [
         Github({
             clientId: githubId,
@@ -86,6 +87,8 @@ export const authOptions: AuthOptions = {
                 token.username = user.username;
                 token.userId = data.userId;
                 token.accessToken = data.accessToken;
+                token.expireIn = data.expireIn;
+                token.role = data.role;
                 cookieStore.set("DeviceId", deviceId, {
                     httpOnly: true,
                     sameSite: "lax",
@@ -104,6 +107,7 @@ export const authOptions: AuthOptions = {
             return token;
         },
         async session({ session, token, user }) {
+            session.user.username = token.username;
             return session;
         },
 

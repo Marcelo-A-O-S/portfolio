@@ -16,3 +16,5 @@ D:\Projetos\portfolio\backend\AuthService\src\AuthService.Infrastructure\obj\Deb
 D:\Projetos\portfolio\backend\AuthService\src\AuthService.Infrastructure\obj\Debug\net8.0\AuthService.Infrastructure.pdb
 D:\Projetos\portfolio\backend\AuthService\src\AuthService.Infrastructure\obj\Debug\net8.0\AuthService.Infrastructure.genruntimeconfig.cache
 D:\Projetos\portfolio\backend\AuthService\src\AuthService.Infrastructure\obj\Debug\net8.0\ref\AuthService.Infrastructure.dll
+D:\Projetos\portfolio\backend\AuthService\src\AuthService.Infrastructure\bin\Debug\net8.0\AuthService.Application.dll
+D:\Projetos\portfolio\backend\AuthService\src\AuthService.Infrastructure\bin\Debug\net8.0\AuthService.Application.pdb

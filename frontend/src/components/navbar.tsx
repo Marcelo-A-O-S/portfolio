@@ -3,12 +3,13 @@ import Link from "next/link"
 import { MouseEvent, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import ItemLink, { LinkProps } from "./item-link";
-import { ArrowUpRight, Github, Instagram, Linkedin, Volume2, VolumeX } from "lucide-react";
+import { ArrowUpRight, Github, Instagram, Linkedin, Volume2, VolumeX, Menu, X } from "lucide-react";
 import gsap from "gsap";
 import { useMusic } from "@/contexts/MusicContext";
 import { useSound } from "@/hooks/useSound";
 import LoginForm from "./login-form";
 import { FaXTwitter } from "react-icons/fa6";
+import { ToggleTheme } from "./toggle-theme";
 const links: LinkProps[] = [{
     imgString: "/assets/image_1.jpg",
     linkName: "Home",
@@ -103,6 +104,9 @@ export default function Navbar() {
                         }}>
                             {enableSounds? <Volume2/> :<VolumeX/>}
                         </div>
+                        <div className="flex">
+                            <ToggleTheme/>
+                        </div>
                         <div className="flex items-center justify-center cursor-pointer">
                             <LoginForm/>
                         </div>
@@ -116,7 +120,7 @@ export default function Navbar() {
                             }
                         }}>
                             <p className="text-lg font-semibold">
-                                {isOpen? "Close": "Menu"}
+                                {isOpen? <X/> : <Menu/>}
                             </p>
                             
                         </div>

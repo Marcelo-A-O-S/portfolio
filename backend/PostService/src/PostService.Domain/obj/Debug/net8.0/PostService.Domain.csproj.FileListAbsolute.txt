@@ -1,0 +1,12 @@
+D:\Projetos\portfolio\backend\PostService\src\PostService.Domain\bin\Debug\net8.0\PostService.Domain.deps.json
+D:\Projetos\portfolio\backend\PostService\src\PostService.Domain\bin\Debug\net8.0\PostService.Domain.dll
+D:\Projetos\portfolio\backend\PostService\src\PostService.Domain\bin\Debug\net8.0\PostService.Domain.pdb
+D:\Projetos\portfolio\backend\PostService\src\PostService.Domain\obj\Debug\net8.0\PostService.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projetos\portfolio\backend\PostService\src\PostService.Domain\obj\Debug\net8.0\PostService.Domain.AssemblyInfoInputs.cache
+D:\Projetos\portfolio\backend\PostService\src\PostService.Domain\obj\Debug\net8.0\PostService.Domain.AssemblyInfo.cs
+D:\Projetos\portfolio\backend\PostService\src\PostService.Domain\obj\Debug\net8.0\PostService.Domain.csproj.CoreCompileInputs.cache
+D:\Projetos\portfolio\backend\PostService\src\PostService.Domain\obj\Debug\net8.0\PostService.Domain.sourcelink.json
+D:\Projetos\portfolio\backend\PostService\src\PostService.Domain\obj\Debug\net8.0\PostService.Domain.dll
+D:\Projetos\portfolio\backend\PostService\src\PostService.Domain\obj\Debug\net8.0\refint\PostService.Domain.dll
+D:\Projetos\portfolio\backend\PostService\src\PostService.Domain\obj\Debug\net8.0\PostService.Domain.pdb
+D:\Projetos\portfolio\backend\PostService\src\PostService.Domain\obj\Debug\net8.0\ref\PostService.Domain.dll

@@ -12,5 +12,11 @@ namespace AuthService.Infrastructure.Context
         public DbSet<User> Users { get; set;}
         public DbSet<SocialAccount> SocialAccounts {get; set;}
         public DbSet<RefreshToken> RefreshTokens {get; set;}
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>().Property(p=> p.Role).HasConversion<string>();
+            modelBuilder.Entity<User>().Property(p=> p.Status).HasConversion<string>();
+        }
     }
 }

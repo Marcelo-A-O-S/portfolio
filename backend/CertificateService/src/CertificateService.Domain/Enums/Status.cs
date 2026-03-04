@@ -1,0 +1,8 @@
+namespace CertificateService.Domain.Enums
+{
+    public enum Status
+    {
+        DRAFT,
+        PUBLISH
+    }
+}

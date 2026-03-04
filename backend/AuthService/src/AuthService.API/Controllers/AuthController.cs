@@ -1,4 +1,5 @@
 using AuthService.Application.DTOs.Request;
+using AuthService.Application.DTOs.Response;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,7 @@ namespace AuthService.API.Controllers
         private readonly ISocialAccountServices socialAccountServices;
         private readonly IRefreshTokenServices refreshTokenServices;
         public AuthController(
-            IUserServices _userServices, 
+            IUserServices _userServices,
             IJwtBearerServices _jwtBearerServices,
             ISocialAccountServices _socialAccountServices,
             IRefreshTokenServices _refreshTokenServices)
@@ -30,29 +31,32 @@ namespace AuthService.API.Controllers
             if (ModelState.IsValid)
             {
                 var user = await this.userServices.FindBy(x => x.Email == loginRequest.Email);
-                if(user == null)
+                if (user == null)
                 {
                     user = new User(loginRequest.Email, loginRequest.Name);
                     await this.userServices.Save(user);
                 }
                 var socialAccount = await this.socialAccountServices.GetByProviderId(loginRequest.ProviderId);
-                if(socialAccount == null)
+                if (socialAccount == null)
                 {
                     socialAccount = new SocialAccount(
-                        user.Id,loginRequest.Username, 
+                        user.Id, loginRequest.Username,
                         loginRequest.ProfileUrl,
                         loginRequest.ProviderId,
-                        loginRequest.Provider 
+                        loginRequest.Provider
                         );
                     await this.socialAccountServices.Save(socialAccount);
                 }
-                var token = await this.jwtBearerServices.GenerateAccessToken(user);
+                var accessData = await this.jwtBearerServices.GenerateAccessToken(user);
                 var data = await this.jwtBearerServices.GenerateRefreshToken(user.Id, loginRequest.DeviceId, loginRequest.DeviceName);
                 await this.refreshTokenServices.Save(data.entity);
-                return Ok(new {
-                    userId = user.Id,
-                    accessToken = token,
-                    refreshToken = data.plainToken 
+                return Ok(new AuthResponse
+                {
+                    UserId = user.Id,
+                    AccessToken = accessData.token,
+                    RefreshToken = data.plainToken,
+                    ExpireIn = accessData.expireIn,
+                    Role = user.Role.ToString()
                 });
             }
             var erros = ModelState.Values.Select(x => x.Errors);
@@ -63,7 +67,7 @@ namespace AuthService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var authResponse = await this.jwtBearerServices.RefreshAsync(refreshRequest.UserId, refreshRequest.RefreshToken,refreshRequest.DeviceId);
+                var authResponse = await this.jwtBearerServices.RefreshAsync(refreshRequest.UserId, refreshRequest.RefreshToken, refreshRequest.DeviceId);
                 return Ok(authResponse);
             }
             var erros = ModelState.Values.Select(x => x.Errors);
@@ -79,7 +83,7 @@ namespace AuthService.API.Controllers
                 return Ok();
             }
             var erros = ModelState.Values.Select(x => x.Errors);
-            return BadRequest(erros); 
+            return BadRequest(erros);
         }
     }
 }

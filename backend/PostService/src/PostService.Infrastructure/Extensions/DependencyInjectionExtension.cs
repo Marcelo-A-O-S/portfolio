@@ -11,17 +11,21 @@ namespace PostService.Infrastructure.Extensions
             this IServiceCollection services
         )
         {
-            services.AddScoped<IGenerics<Post>, Generics<Post>>();
             services.AddScoped<IGenerics<Category>,Generics<Category>>();
-            services.AddScoped<IGenerics<PostCategory>, Generics<PostCategory>>();
             services.AddScoped<IGenerics<Like>, Generics<Like>>();
             services.AddScoped<IGenerics<Section>, Generics<Section>>();
+            services.AddScoped<IGenerics<Tool>, Generics<Tool>>();
+            services.AddScoped<IGenerics<Post>, Generics<Post>>();
+            services.AddScoped<IGenerics<PostTool>, Generics<PostTool>>();
+            services.AddScoped<IGenerics<PostCategory>, Generics<PostCategory>>();
 
-            services.AddScoped<IPostRepository, PostRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
-            services.AddScoped<IPostCategoryRepository, PostCategoryRepository>();
             services.AddScoped<ILikeRepository, LikeRepository>();
+            services.AddScoped<IPostCategoryRepository, PostCategoryRepository>();
+            services.AddScoped<IPostRepository, PostRepository>();
+            services.AddScoped<IPostToolsRepository, PostToolsRepository>();
             services.AddScoped<ISectionRepository, SectionRepository>();
+            services.AddScoped<IToolsRepository, ToolsRepository>();
             return services;
         }
     }

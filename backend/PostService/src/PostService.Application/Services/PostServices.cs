@@ -12,39 +12,39 @@ namespace PostService.Application.Services
         {
             this.postRepository = _postRepository;
         }
-        public Task Delete(Post entity)
+        public async Task Delete(Post entity)
         {
-            throw new NotImplementedException();
+            await this.postRepository.Delete(entity);
         }
 
-        public Task<Post> FindBy(Expression<Func<Post, bool>> predicate)
+        public async Task<Post> FindBy(Expression<Func<Post, bool>> predicate)
         {
-            throw new NotImplementedException();
+            return await this.postRepository.FindBy(predicate);
         }
 
-        public Task<Post> GetById(Guid Id)
+        public async Task<Post> GetById(Guid Id)
         {
-            throw new NotImplementedException();
+            return await this.postRepository.GetById(Id);
         }
 
-        public Task<List<Post>> List()
+        public async Task<List<Post>> List()
         {
-            throw new NotImplementedException();
+            return await this.postRepository.List();
         }
 
-        public Task<List<Post>> List(int page)
+        public async Task<List<Post>> List(int page)
         {
-            throw new NotImplementedException();
+            return await this.postRepository.List(page);
         }
 
-        public Task Save(Post entity)
+        public async Task Save(Post entity)
         {
-            throw new NotImplementedException();
+            await this.postRepository.Save(entity);
         }
 
-        public Task Update(Post entity)
+        public async Task Update(Post entity)
         {
-            throw new NotImplementedException();
+            await this.postRepository.Update(entity);
         }
     }
 }

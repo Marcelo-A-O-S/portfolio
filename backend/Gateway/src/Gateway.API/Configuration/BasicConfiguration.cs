@@ -15,6 +15,42 @@ namespace Gateway.API.Configuration
                     {
                         Path = "/api/auth/{**catch-all}"
                     }
+                },
+                new RouteConfig
+                {
+                    RouteId = "userRoute",
+                    ClusterId = "authCluster",
+                    Match = new RouteMatch
+                    {
+                        Path = "/api/user/{**catch-all}"
+                    }
+                },
+                new RouteConfig
+                {
+                    RouteId = "postRoute",
+                    ClusterId = "postCluster",
+                    Match = new RouteMatch
+                    {
+                        Path = "/api/post/{**catch-all}"
+                    }
+                },
+                new RouteConfig
+                {
+                    RouteId = "toolRoute",
+                    ClusterId = "postCluster",
+                    Match = new RouteMatch
+                    {
+                        Path = "/api/tool/{**catch-all}"
+                    }
+                },
+                new RouteConfig
+                {
+                    RouteId = "Category",
+                    ClusterId = "postCluster",
+                    Match = new RouteMatch
+                    {
+                        Path = "/api/category/{**catch-all}"
+                    }
                 }
             };
         }
@@ -29,6 +65,16 @@ namespace Gateway.API.Configuration
                     {
                         {
                             "authservice", new DestinationConfig { Address = "http://authservice:5001/" }
+                        }
+                    }
+                },
+                new ClusterConfig
+                {
+                    ClusterId = "postCluster",
+                    Destinations = new Dictionary<string, DestinationConfig>
+                    {
+                        {
+                            "postservice", new DestinationConfig { Address = "http://postservice:5002/"}
                         }
                     }
                 }
