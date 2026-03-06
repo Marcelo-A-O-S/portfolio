@@ -12,7 +12,7 @@ using Oracle.EntityFrameworkCore.Metadata;
 namespace AuthService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20260225210357_CreateTables")]
+    [Migration("20260306031740_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -112,6 +112,10 @@ namespace AuthService.Infrastructure.Migrations
                         .HasColumnType("NVARCHAR2(2000)");
 
                     b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR2(2000)");
+
+                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)");
 

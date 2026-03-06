@@ -581,11 +581,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Application\\AuthService.Application.csproj",
+      "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Application\\AuthService.Application.csproj",
       "projectName": "AuthService.Application",
-      "projectPath": "D:\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Application\\AuthService.Application.csproj",
+      "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Application\\AuthService.Application.csproj",
       "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-      "outputPath": "D:\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Application\\obj\\",
+      "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Application\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -600,8 +600,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Domain\\AuthService.Domain.csproj": {
-              "projectPath": "D:\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Domain\\AuthService.Domain.csproj"
+            "C:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Domain\\AuthService.Domain.csproj": {
+              "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Domain\\AuthService.Domain.csproj"
             }
           }
         }

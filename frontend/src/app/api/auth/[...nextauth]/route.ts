@@ -7,6 +7,7 @@ import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import LinkedIn from "next-auth/providers/linkedin";
 import { cookies } from "next/headers";
+const hostNext = process.env.NEXT_BACKEND_API!;
 const githubId = process.env.GITHUB_ID!;
 const githubSecret = process.env.GITHUB_SECRET!;
 const googleId = process.env.GOOGLE_ID!;
@@ -83,11 +84,12 @@ export const authOptions: AuthOptions = {
                     deviceName
                 }
                 const data = await loginOAuth(loginRequest);
+                const expireDate = Date.now() + data.expireIn * 1000;
                 token.provider = account.provider;
                 token.username = user.username;
                 token.userId = data.userId;
                 token.accessToken = data.accessToken;
-                token.expireIn = data.expireIn;
+                token.expireIn = expireDate;
                 token.role = data.role;
                 cookieStore.set("DeviceId", deviceId, {
                     httpOnly: true,
@@ -104,6 +106,7 @@ export const authOptions: AuthOptions = {
                     maxAge: 60 * 60 * 24 * 7
                 });
             }
+            
             return token;
         },
         async session({ session, token, user }) {

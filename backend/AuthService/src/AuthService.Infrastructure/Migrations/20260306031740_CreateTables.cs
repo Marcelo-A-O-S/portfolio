@@ -19,7 +19,8 @@ namespace AuthService.Infrastructure.Migrations
                     Email = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
                     Name = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
                     Role = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
+                    Status = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false)
                 },
                 constraints: table =>
                 {

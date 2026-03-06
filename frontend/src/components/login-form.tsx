@@ -81,6 +81,9 @@ export default function LoginForm() {
                                 <DropdownMenuItem>
                                     <Link className="text-sm w-full" href={"/admin/categories"}>Categorias</Link>
                                 </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                    <Link className="text-sm w-full" href={"/admin/users"}>Usuários</Link>
+                                </DropdownMenuItem>
                             </DropdownMenuGroup>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>

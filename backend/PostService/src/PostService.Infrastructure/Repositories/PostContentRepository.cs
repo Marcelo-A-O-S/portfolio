@@ -3,9 +3,9 @@ using PostService.Domain.Interfaces;
 using PostService.Infrastructure.Context;
 namespace PostService.Infrastructure.Repositories
 {
-    public class PostToolsRepository : Generics<PostTool>, IPostToolsRepository
+    public class PostContentRepository : Generics<PostContent>, IPostContentRepository
     {
-        public PostToolsRepository(DBContext _context) : base(_context)
+        public PostContentRepository(DBContext _context) : base(_context)
         {
         }
     }

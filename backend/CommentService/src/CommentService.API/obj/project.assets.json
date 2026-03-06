@@ -487,11 +487,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\CommentService.API.csproj",
+      "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\CommentService.API.csproj",
       "projectName": "CommentService.API",
-      "projectPath": "D:\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\CommentService.API.csproj",
+      "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\CommentService.API.csproj",
       "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-      "outputPath": "D:\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\obj\\",
+      "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"

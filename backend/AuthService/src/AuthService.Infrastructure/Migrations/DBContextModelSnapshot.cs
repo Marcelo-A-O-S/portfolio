@@ -112,6 +112,10 @@ namespace AuthService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR2(2000)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Users");

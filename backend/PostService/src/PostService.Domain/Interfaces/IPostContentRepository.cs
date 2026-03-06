@@ -2,7 +2,7 @@ using PostService.Domain.Entities;
 
 namespace PostService.Domain.Interfaces
 {
-    public interface IPostCategoryRepository : IGenerics<PostCategory>
+    public interface IPostContentRepository : IGenerics<PostContent>
     {
         
     }

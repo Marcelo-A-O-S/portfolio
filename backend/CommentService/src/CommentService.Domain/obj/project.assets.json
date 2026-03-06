@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj",
+      "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj",
       "projectName": "CommentService.Domain",
-      "projectPath": "D:\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj",
+      "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj",
       "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-      "outputPath": "D:\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\obj\\",
+      "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"

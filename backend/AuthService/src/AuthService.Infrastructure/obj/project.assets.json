@@ -3342,11 +3342,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj",
+      "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj",
       "projectName": "AuthService.Infrastructure",
-      "projectPath": "D:\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj",
+      "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj",
       "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-      "outputPath": "D:\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Infrastructure\\obj\\",
+      "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Infrastructure\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -3361,11 +3361,11 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Application\\AuthService.Application.csproj": {
-              "projectPath": "D:\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Application\\AuthService.Application.csproj"
+            "C:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Application\\AuthService.Application.csproj": {
+              "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Application\\AuthService.Application.csproj"
             },
-            "D:\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Domain\\AuthService.Domain.csproj": {
-              "projectPath": "D:\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Domain\\AuthService.Domain.csproj"
+            "C:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Domain\\AuthService.Domain.csproj": {
+              "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Domain\\AuthService.Domain.csproj"
             }
           }
         }

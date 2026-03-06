@@ -907,11 +907,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Projetos\\portfolio\\backend\\Gateway\\src\\Gateway.API\\Gateway.API.csproj",
+      "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\Gateway\\src\\Gateway.API\\Gateway.API.csproj",
       "projectName": "Gateway.API",
-      "projectPath": "D:\\Projetos\\portfolio\\backend\\Gateway\\src\\Gateway.API\\Gateway.API.csproj",
+      "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\Gateway\\src\\Gateway.API\\Gateway.API.csproj",
       "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-      "outputPath": "D:\\Projetos\\portfolio\\backend\\Gateway\\src\\Gateway.API\\obj\\",
+      "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\Gateway\\src\\Gateway.API\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"

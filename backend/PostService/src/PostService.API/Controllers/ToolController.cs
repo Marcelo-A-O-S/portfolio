@@ -11,9 +11,11 @@ namespace PostService.API.Controllers
     public class ToolController : ControllerBase
     {
         private readonly IToolsServices toolsServices;
-        public ToolController(IToolsServices _toolsServices)
+        private readonly IToolContentServices toolContentServices;
+        public ToolController(IToolsServices _toolsServices, IToolContentServices _toolContentServices)
         {
             this.toolsServices = _toolsServices;
+            this.toolContentServices = _toolContentServices;
         }
         [HttpGet]
         [Authorize( Roles = "Administrador")]
@@ -45,13 +47,15 @@ namespace PostService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var tool = await this.toolsServices.FindBy(x=> x.Slug == toolRequest.Slug);
-                if (tool != null)
+                var toolContent = await this.toolContentServices.FindBy(x=> x.Slug == toolRequest.Slug && x.Language == toolRequest.Language);
+                if (toolContent != null)
                 {
-                    return BadRequest(new { message = "Identificador de URL inválido, corrija para prosseguir!" });
+                    return BadRequest(new { message = "Erro ao criar ferramenta!" });
                 }
-                tool = new Tool(toolRequest.Name, toolRequest.Description, toolRequest.Content, toolRequest.Slug);
+                var tool = new Tool();
                 await this.toolsServices.Save(tool);
+                toolContent = new ToolContent(tool.Id,toolRequest.Language,toolRequest.Name, toolRequest.Description, toolRequest.Content, toolRequest.Slug);
+                await this.toolContentServices.Save(toolContent);
                 return Ok(new { message = "Ferramenta salva com sucesso." });
             }
             var errors = ModelState.Values.Select(x => x.Errors);
@@ -68,8 +72,13 @@ namespace PostService.API.Controllers
                 {
                     return NotFound("Ferramenta não encontrada.");
                 }
-                tool.Update(toolRequest.Name, toolRequest.Description, toolRequest.Content, toolRequest.Slug);
-                await this.toolsServices.Update(tool);
+                var toolContent = await this.toolContentServices.FindBy(tl => tl.Id == toolRequest.Id && tl.ToolId == Id && tl.Language == toolRequest.Language && tl.Slug == toolRequest.Slug);
+                if(toolContent == null)
+                {
+                    return NotFound("Ferramenta não encontrada.");
+                }
+                toolContent.Update(toolRequest.Language, toolRequest.Name, toolRequest.Description, toolRequest.Content, toolRequest.Slug);
+                await this.toolContentServices.Update(toolContent);
                 return Ok(new { message = "Ferramenta atualizada com sucesso." });
             }
             var errors = ModelState.Values.Select(x => x.Errors);
@@ -81,7 +90,7 @@ namespace PostService.API.Controllers
         {
             var tool = await this.toolsServices.GetById(Id);
             if(tool == null)
-                return NotFound(new { message = "Pedido não encontrado" });
+                return NotFound(new { message = "Ferramenta não encontrada." });
             await this.toolsServices.Delete(tool);
             return Ok(new { message = "Ferramenta deletada com sucesso." });
         }

@@ -15,6 +15,7 @@ const pathPublics = [
 ]
 const roleProtectedRoutes: Record<string, string[]> = {
     "/api/admin/post":["Administrador","Client"],
+    "/admin/users": ["Administrador","Client"],
     "/admin/tools/create": ["Administrador","Client"],
     "/admin/tools": ["Administrador","Client"],
     "/admin/categories/create": ["Administrador","Client"],
@@ -38,7 +39,6 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(url);
     }
     for (const routePrefix in roleProtectedRoutes) {
-        console.log(routePrefix);
         if (pathname.startsWith(routePrefix)) {
             const allowedRoles = roleProtectedRoutes[routePrefix];
             if (!allowedRoles.includes(token.role)) {

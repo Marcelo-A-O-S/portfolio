@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Infrastructure\\PostService.Infrastructure.csproj": {}
+    "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Infrastructure\\PostService.Infrastructure.csproj": {}
   },
   "projects": {
-    "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\PostService.Domain.csproj": {
+    "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\PostService.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\PostService.Domain.csproj",
+        "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\PostService.Domain.csproj",
         "projectName": "PostService.Domain",
-        "projectPath": "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\PostService.Domain.csproj",
+        "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\PostService.Domain.csproj",
         "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-        "outputPath": "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\obj\\",
+        "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -62,14 +62,14 @@
         }
       }
     },
-    "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Infrastructure\\PostService.Infrastructure.csproj": {
+    "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Infrastructure\\PostService.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Infrastructure\\PostService.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Infrastructure\\PostService.Infrastructure.csproj",
         "projectName": "PostService.Infrastructure",
-        "projectPath": "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Infrastructure\\PostService.Infrastructure.csproj",
+        "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Infrastructure\\PostService.Infrastructure.csproj",
         "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-        "outputPath": "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Infrastructure\\obj\\",
+        "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -84,8 +84,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\PostService.Domain.csproj": {
-                "projectPath": "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\PostService.Domain.csproj"
+              "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\PostService.Domain.csproj": {
+                "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\PostService.Domain.csproj"
               }
             }
           }

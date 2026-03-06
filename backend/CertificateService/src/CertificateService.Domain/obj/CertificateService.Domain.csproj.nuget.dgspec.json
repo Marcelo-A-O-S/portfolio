@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Projetos\\portfolio\\backend\\CertificateService\\src\\CertificateService.Domain\\CertificateService.Domain.csproj": {}
+    "C:\\Backup\\Projetos\\portfolio\\backend\\CertificateService\\src\\CertificateService.Domain\\CertificateService.Domain.csproj": {}
   },
   "projects": {
-    "D:\\Projetos\\portfolio\\backend\\CertificateService\\src\\CertificateService.Domain\\CertificateService.Domain.csproj": {
+    "C:\\Backup\\Projetos\\portfolio\\backend\\CertificateService\\src\\CertificateService.Domain\\CertificateService.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Projetos\\portfolio\\backend\\CertificateService\\src\\CertificateService.Domain\\CertificateService.Domain.csproj",
+        "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\CertificateService\\src\\CertificateService.Domain\\CertificateService.Domain.csproj",
         "projectName": "CertificateService.Domain",
-        "projectPath": "D:\\Projetos\\portfolio\\backend\\CertificateService\\src\\CertificateService.Domain\\CertificateService.Domain.csproj",
+        "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CertificateService\\src\\CertificateService.Domain\\CertificateService.Domain.csproj",
         "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-        "outputPath": "D:\\Projetos\\portfolio\\backend\\CertificateService\\src\\CertificateService.Domain\\obj\\",
+        "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CertificateService\\src\\CertificateService.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"

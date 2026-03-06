@@ -9,11 +9,15 @@ namespace PostService.Infrastructure.Context
 
         }
         public DbSet<Tool> Tools { get; set; }
+        public DbSet<ToolContent> ToolContents { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<CategoryContent> CategoriesContents { get; set; }
         public DbSet<Like> Likes { get; set; }
         public DbSet<Post> Posts { get; set; }
-        public DbSet<Section> Sections { get; set; }
-        public DbSet<PostCategory> PostCategories { get; set; } 
-        public DbSet<PostTool> PostTools { get; set; }
+        public DbSet<PostContent> PostContents { get; set;}
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Post>().Property(p=> p.Status).HasConversion<string>();
+        }
     }
 }

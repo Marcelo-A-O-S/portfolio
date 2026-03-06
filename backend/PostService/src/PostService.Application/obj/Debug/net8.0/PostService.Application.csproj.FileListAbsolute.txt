@@ -14,3 +14,12 @@ D:\Projetos\portfolio\backend\PostService\src\PostService.Application\obj\Debug\
 D:\Projetos\portfolio\backend\PostService\src\PostService.Application\obj\Debug\net8.0\refint\PostService.Application.dll
 D:\Projetos\portfolio\backend\PostService\src\PostService.Application\obj\Debug\net8.0\PostService.Application.pdb
 D:\Projetos\portfolio\backend\PostService\src\PostService.Application\obj\Debug\net8.0\ref\PostService.Application.dll
+C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.Application\obj\Debug\net8.0\PostService.Application.csproj.AssemblyReference.cache
+C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.Application\obj\Debug\net8.0\PostService.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.Application\obj\Debug\net8.0\PostService.Application.AssemblyInfoInputs.cache
+C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.Application\obj\Debug\net8.0\PostService.Application.AssemblyInfo.cs
+C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.Application\obj\Debug\net8.0\PostService.Application.csproj.CoreCompileInputs.cache
+C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.Application\obj\Debug\net8.0\PostService.Application.sourcelink.json
+C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.Application\obj\Debug\net8.0\PostService.Application.dll
+C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.Application\obj\Debug\net8.0\refint\PostService.Application.dll
+C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.Application\obj\Debug\net8.0\PostService.Application.pdb

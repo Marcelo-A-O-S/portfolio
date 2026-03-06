@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "BfF2ZmmXvBk=",
+  "dgSpecHash": "ZJWfmtnB9yY=",
   "success": true,
-  "projectFilePath": "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.API\\PostService.API.csproj",
+  "projectFilePath": "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.API\\PostService.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\marce\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.21\\microsoft.aspnetcore.authentication.jwtbearer.8.0.21.nupkg.sha512",
     "C:\\Users\\marce\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.19\\microsoft.aspnetcore.openapi.8.0.19.nupkg.sha512",

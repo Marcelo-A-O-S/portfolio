@@ -12,11 +12,12 @@ namespace PostService.Application.Extensions
         {
             services.AddScoped<ICategoryServices, CategoryServices>();
             services.AddScoped<ILikeServices, LikeServices>();
-            services.AddScoped<IPostCategoryServices, PostCategoryServices>();
             services.AddScoped<IPostServices, PostServices>();
-            services.AddScoped<IPostToolServices, PostToolServices>();
-            services.AddScoped<ISectionServices, SectionServices>();
             services.AddScoped<IToolsServices, ToolsServices>();
+            services.AddScoped<ICategoryServices, CategoryServices>();
+            services.AddScoped<ICategoryContentServices, CategoryContentServices>();
+            services.AddScoped<IToolContentServices, ToolContentServices>();
+            services.AddScoped<IPostContentServices, PostContentServices>();
             return services;
         }
     }

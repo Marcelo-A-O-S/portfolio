@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Projetos\\portfolio\\backend\\Gateway\\src\\Gateway.Infrastructure\\Gateway.Infrastructure.csproj",
+      "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\Gateway\\src\\Gateway.Infrastructure\\Gateway.Infrastructure.csproj",
       "projectName": "Gateway.Infrastructure",
-      "projectPath": "D:\\Projetos\\portfolio\\backend\\Gateway\\src\\Gateway.Infrastructure\\Gateway.Infrastructure.csproj",
+      "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\Gateway\\src\\Gateway.Infrastructure\\Gateway.Infrastructure.csproj",
       "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-      "outputPath": "D:\\Projetos\\portfolio\\backend\\Gateway\\src\\Gateway.Infrastructure\\obj\\",
+      "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\Gateway\\src\\Gateway.Infrastructure\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"

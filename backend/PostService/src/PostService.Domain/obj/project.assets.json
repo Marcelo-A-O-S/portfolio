@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\PostService.Domain.csproj",
+      "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\PostService.Domain.csproj",
       "projectName": "PostService.Domain",
-      "projectPath": "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\PostService.Domain.csproj",
+      "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\PostService.Domain.csproj",
       "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-      "outputPath": "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\obj\\",
+      "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"

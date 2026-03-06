@@ -11,9 +11,11 @@ namespace PostService.API.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryServices categoryServices;
-        public CategoryController(ICategoryServices _categoryServices)
+        private readonly ICategoryContentServices categoryContentServices;
+        public CategoryController(ICategoryServices _categoryServices, ICategoryContentServices _categoryContentServices)
         {
             this.categoryServices = _categoryServices;
+            this.categoryContentServices = _categoryContentServices;
         }
         [HttpGet]
         [Authorize( Roles = "Administrador")]
@@ -45,8 +47,15 @@ namespace PostService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var category = new Category(categoryRequest.Name);
+                var category = new Category();
+                var categoryContent = await this.categoryContentServices.FindBy(c => c.Slug == categoryRequest.Slug);
+                if(categoryContent == null)
+                {
+                    return BadRequest(new { message = "Erro ao criar categoria."});
+                }
+                categoryContent.Update(category.Id, categoryRequest.Language, categoryRequest.Name, categoryRequest.Slug);
                 await this.categoryServices.Save(category);
+                await this.categoryContentServices.Save(categoryContent);
                 return Ok(new { message = "Categoria salva com sucesso." });
             }
             var errors = ModelState.Values.Select(x => x.Errors);
@@ -61,8 +70,11 @@ namespace PostService.API.Controllers
                 var category = await this.categoryServices.GetById(Id);
                 if (category == null)
                     return NotFound("Categoria não encontrada.");
-                category.Update(categoryRequest.Name);
-                await this.categoryServices.Update(category);
+                var categoryContent = await this.categoryContentServices.FindBy(c => c.Id == categoryRequest.Id &&  c.CategoryId == Id && c.Slug == categoryRequest.Slug && c.Language == categoryRequest.Language);
+                if(categoryContent == null)
+                    return NotFound("Categoria não encontrada.");
+                categoryContent.Update(category.Id, categoryRequest.Language, categoryRequest.Name, categoryRequest.Slug);
+                await this.categoryContentServices.Update(categoryContent);
                 return Ok(new { message = "Categoria atualizada com sucesso." });
             }
             var errors = ModelState.Values.Select(x => x.Errors);

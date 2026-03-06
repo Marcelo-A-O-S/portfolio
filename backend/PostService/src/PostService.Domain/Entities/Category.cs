@@ -3,15 +3,12 @@ namespace PostService.Domain.Entities
     public class Category
     {
         public Guid Id { get; private set; }
-        public string Name {get; private set;}
-        public Category(string name)
+        public ICollection<CategoryContent> CategoryContents { get; private set;}
+        public DateTime CreatedAt { get; private set; }
+        public Category()
         {
             this.Id = Guid.NewGuid();
-            this.Name = name;
-        }
-        public void Update(string name)
-        {
-            this.Name = name;
+            this.CreatedAt =  DateTime.UtcNow;
         }
     }
 }

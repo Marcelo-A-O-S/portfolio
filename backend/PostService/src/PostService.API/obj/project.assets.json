@@ -2307,11 +2307,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.API\\PostService.API.csproj",
+      "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.API\\PostService.API.csproj",
       "projectName": "PostService.API",
-      "projectPath": "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.API\\PostService.API.csproj",
+      "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.API\\PostService.API.csproj",
       "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-      "outputPath": "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.API\\obj\\",
+      "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.API\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -2326,11 +2326,11 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Application\\PostService.Application.csproj": {
-              "projectPath": "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Application\\PostService.Application.csproj"
+            "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Application\\PostService.Application.csproj": {
+              "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Application\\PostService.Application.csproj"
             },
-            "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Infrastructure\\PostService.Infrastructure.csproj": {
-              "projectPath": "D:\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Infrastructure\\PostService.Infrastructure.csproj"
+            "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Infrastructure\\PostService.Infrastructure.csproj": {
+              "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Infrastructure\\PostService.Infrastructure.csproj"
             }
           }
         }

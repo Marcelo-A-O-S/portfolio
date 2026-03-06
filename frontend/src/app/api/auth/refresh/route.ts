@@ -15,9 +15,7 @@ export async function POST(request: NextRequest){
     const refreshToken = cookieStore.get("RefreshToken")?.value;
     if(!deviceId || !refreshToken)
         return Response.json({error: "Unauthorized"}, { status: 401});
-    
     const response = await refreshAsync(token.userId, refreshToken,deviceId);
-
     if(!response.ok){
         cookieStore.delete("RefreshToken");
         cookieStore.delete("DeviceId");

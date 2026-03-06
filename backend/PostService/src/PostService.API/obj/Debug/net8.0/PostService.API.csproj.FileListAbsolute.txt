@@ -70,3 +70,6 @@ D:\Projetos\portfolio\backend\PostService\src\PostService.API\obj\Debug\net8.0\r
 D:\Projetos\portfolio\backend\PostService\src\PostService.API\obj\Debug\net8.0\PostService.API.pdb
 D:\Projetos\portfolio\backend\PostService\src\PostService.API\obj\Debug\net8.0\PostService.API.genruntimeconfig.cache
 D:\Projetos\portfolio\backend\PostService\src\PostService.API\obj\Debug\net8.0\ref\PostService.API.dll
+C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.API\obj\Debug\net8.0\PostService.API.dll
+C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.API\obj\Debug\net8.0\refint\PostService.API.dll
+C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.API\obj\Debug\net8.0\PostService.API.pdb

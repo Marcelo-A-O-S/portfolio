@@ -12,20 +12,20 @@ namespace PostService.Infrastructure.Extensions
         )
         {
             services.AddScoped<IGenerics<Category>,Generics<Category>>();
+            services.AddScoped<IGenerics<CategoryContent>, Generics<CategoryContent>>();
             services.AddScoped<IGenerics<Like>, Generics<Like>>();
-            services.AddScoped<IGenerics<Section>, Generics<Section>>();
             services.AddScoped<IGenerics<Tool>, Generics<Tool>>();
+            services.AddScoped<IGenerics<ToolContent>, Generics<ToolContent>>();
             services.AddScoped<IGenerics<Post>, Generics<Post>>();
-            services.AddScoped<IGenerics<PostTool>, Generics<PostTool>>();
-            services.AddScoped<IGenerics<PostCategory>, Generics<PostCategory>>();
+            services.AddScoped<IGenerics<PostContent>, Generics<PostContent>>();
 
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<ICategoryContentRepository, CategoryContentRepository>();
             services.AddScoped<ILikeRepository, LikeRepository>();
-            services.AddScoped<IPostCategoryRepository, PostCategoryRepository>();
             services.AddScoped<IPostRepository, PostRepository>();
-            services.AddScoped<IPostToolsRepository, PostToolsRepository>();
-            services.AddScoped<ISectionRepository, SectionRepository>();
+            services.AddScoped<IPostContentRepository, PostContentRepository>();
             services.AddScoped<IToolsRepository, ToolsRepository>();
+            services.AddScoped<IToolContentRepository, ToolContentRepository>();
             return services;
         }
     }

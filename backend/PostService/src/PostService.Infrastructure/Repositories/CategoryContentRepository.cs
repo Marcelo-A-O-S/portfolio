@@ -3,9 +3,9 @@ using PostService.Domain.Interfaces;
 using PostService.Infrastructure.Context;
 namespace PostService.Infrastructure.Repositories
 {
-    public class SectionRepository : Generics<Section>, ISectionRepository
+    public class CategoryContentRepository : Generics<CategoryContent>, ICategoryContentRepository
     {
-        public SectionRepository(DBContext _context) : base(_context)
+        public CategoryContentRepository(DBContext _context) : base(_context)
         {
         }
     }

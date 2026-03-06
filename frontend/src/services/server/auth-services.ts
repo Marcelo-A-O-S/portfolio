@@ -3,6 +3,7 @@ import { decode, getToken } from "next-auth/jwt";
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 const host = process.env.BACKEND_SERVER!;
+const hostNext = process.env.NEXT_BACKEND_API!;
 const authSecret = process.env.NEXTAUTH_SECRET!;
 export const loginOAuth = async (loginRequest: LoginRequest) => {
     const response = await fetch(`${host}/api/auth/login`, {
@@ -56,11 +57,18 @@ export const validateUser = async (roles: string[]) => {
     }
     return true;
 }
-export const validateUserByRequest = async (req: NextRequest, roles: string[]) =>{
+export const validateUserByRequest = async (req: NextRequest, roles: string[]) => {
     const token = await getToken({
         req,
         secret: authSecret
     })
+    if(!token?.expireIn || !token.role){
+        return false;
+    }
+    if (token.expireIn <= Date.now()) {
+        const response = await fetch(`${hostNext}/api/auth/refresh`);
+        if(!response.ok) return false;
+    }
     if (!token?.role || !roles.includes(token.role)) {
         return false;
     }
