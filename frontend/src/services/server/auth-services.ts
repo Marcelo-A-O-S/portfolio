@@ -17,7 +17,7 @@ export const loginOAuth = async (loginRequest: LoginRequest) => {
     const data = await response.json();
     return data;
 }
-export const refreshAsync = async (userId: string, refreshToken: string, deviceId: string) => {
+export const refreshAsync = async (userId: string, refreshToken: string, deviceId: string, deviceName: string) => {
     const response = await fetch(`${host}/api/auth/refreshToken`, {
         method: "POST",
         headers: {
@@ -26,7 +26,8 @@ export const refreshAsync = async (userId: string, refreshToken: string, deviceI
         body: JSON.stringify({
             userId,
             deviceId,
-            refreshToken
+            deviceName,
+            refreshToken,
         })
     })
     return response;

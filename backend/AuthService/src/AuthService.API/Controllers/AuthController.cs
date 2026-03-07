@@ -3,7 +3,6 @@ using AuthService.Application.DTOs.Response;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-
 namespace AuthService.API.Controllers
 {
     [ApiController]
@@ -49,7 +48,6 @@ namespace AuthService.API.Controllers
                 }
                 var accessData = await this.jwtBearerServices.GenerateAccessToken(user);
                 var data = await this.jwtBearerServices.GenerateRefreshToken(user.Id, loginRequest.DeviceId, loginRequest.DeviceName);
-                await this.refreshTokenServices.Save(data.entity);
                 return Ok(new AuthResponse
                 {
                     UserId = user.Id,
@@ -67,7 +65,7 @@ namespace AuthService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var authResponse = await this.jwtBearerServices.RefreshAsync(refreshRequest.UserId, refreshRequest.RefreshToken, refreshRequest.DeviceId);
+                var authResponse = await this.jwtBearerServices.RefreshAsync(refreshRequest.UserId, refreshRequest.RefreshToken, refreshRequest.DeviceId, refreshRequest.DeviceName);
                 return Ok(authResponse);
             }
             var erros = ModelState.Values.Select(x => x.Errors);

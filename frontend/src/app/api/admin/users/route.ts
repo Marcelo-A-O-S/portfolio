@@ -18,13 +18,11 @@ export async function GET(request: NextRequest){
         response = await getUsersService();
     }
     if(response.status !== 200 && response.status !== 201){
-        console.log(response.data);
         return NextResponse.json({
             message: response.data.message
         },{
             status: response.status
         })
     }
-    console.log(response.data);
     return NextResponse.json(response.data);
 }

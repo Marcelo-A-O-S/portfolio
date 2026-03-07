@@ -1,7 +1,6 @@
 using AuthService.Application.DTOs.Response;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
-using AuthService.Domain.Enums;
 using AuthService.Domain.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -38,7 +37,7 @@ namespace AuthService.Application.Services
             claims.Add(new Claim(ClaimTypes.Role, user.Role.ToString()));
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Secret));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expirationMinutes = 15;
+            var expirationMinutes = 1;
             var expireIn = (int)TimeSpan.FromMinutes(expirationMinutes).TotalSeconds;
             var expirationDate = DateTime.UtcNow.AddSeconds(expireIn);
             var token = new JwtSecurityToken(
@@ -51,6 +50,12 @@ namespace AuthService.Application.Services
         }
         public async Task<(RefreshToken entity, string plainToken)> GenerateRefreshToken(Guid userId, string deviceId, string deviceName)
         {
+            var existing = await this.refreshTokenRepository.FindBy(rt => rt.UserId == userId && rt.DeviceId == deviceId && !rt.IsRevoked);
+            if (existing != null)
+            {
+                existing.Revoke();
+                await this.refreshTokenRepository.Save(existing);
+            }
             var randomBytes = RandomNumberGenerator.GetBytes(64);
             var plainToken = Convert.ToBase64String(randomBytes);
             var hash = BCrypt.Net.BCrypt.HashPassword(plainToken);
@@ -61,21 +66,18 @@ namespace AuthService.Application.Services
                 deviceName,
                 DateTime.UtcNow.AddDays(7)
             );
+            await this.refreshTokenRepository.Save(entity);
             return (entity, plainToken);
         }
-        public async Task<AuthResponse> RefreshAsync(Guid userId, string refreshToken, string deviceId)
+        public async Task<AuthResponse> RefreshAsync(Guid userId, string refreshToken, string deviceId, string deviceName)
         {
             var user = await this.userRepository.GetById(userId);
-            if(user == null)
+            if (user == null)
             {
                 throw new Exception("Usuário não encontrado.");
             }
-            var token = await this.refreshTokenRepository.FindBy(rt => rt.UserId == userId && rt.DeviceId == deviceId);
+            var token = await this.refreshTokenRepository.FindBy(rt => rt.UserId == userId && rt.DeviceId == deviceId && !rt.IsRevoked);
             if (token == null)
-            {
-                throw new Exception("Refresh token inválido.");
-            }
-            if (!BCrypt.Net.BCrypt.Verify(refreshToken, token.TokenHash))
             {
                 throw new Exception("Refresh token inválido.");
             }
@@ -84,16 +86,22 @@ namespace AuthService.Application.Services
                 await this.refreshTokenRepository.Delete(token);
                 throw new Exception("Refresh token expirado. Gentileza realizar o login novamente.");
             }
+            if (!BCrypt.Net.BCrypt.Verify(refreshToken, token.TokenHash))
+            {
+                throw new Exception("Refresh token inválido.");
+            }
             if (token.IsRevoked)
             {
-                throw new Exception("Refresh token revogado.");
+                throw new Exception("Refresh token reutilizado.");
             }
+            token.Revoke();
+            var newRefresh = await this.GenerateRefreshToken(userId, deviceId, deviceName);
             var newAccessToken = await this.GenerateAccessToken(token.User);
             return new AuthResponse
             {
                 UserId = userId,
                 AccessToken = newAccessToken.token,
-                RefreshToken = refreshToken,
+                RefreshToken = newRefresh.plainToken,
                 ExpireIn = newAccessToken.expireIn,
                 Role = user.Role.ToString()
             };

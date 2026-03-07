@@ -6,6 +6,6 @@ namespace AuthService.Application.Interfaces
     {
         Task<(string token, int expireIn)> GenerateAccessToken(User user);
         Task<(RefreshToken entity, string plainToken)> GenerateRefreshToken(Guid userId, string deviceId, string deviceName);
-        Task<AuthResponse> RefreshAsync(Guid userId, string refreshToken, string deviceId);
+        Task<AuthResponse> RefreshAsync(Guid userId, string refreshToken, string deviceId, string deviceName);
     }
 }
