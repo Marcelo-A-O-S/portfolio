@@ -50,11 +50,11 @@ namespace AuthService.Application.Services
         }
         public async Task<(RefreshToken entity, string plainToken)> GenerateRefreshToken(Guid userId, string deviceId, string deviceName)
         {
-            var existing = await this.refreshTokenRepository.FindBy(rt => rt.UserId == userId && rt.DeviceId == deviceId && !rt.IsRevoked);
+            var existing = await this.refreshTokenRepository.FindBy(rt => rt.UserId == userId && rt.DeviceId == deviceId && rt.RevokedAt == null);
             if (existing != null)
             {
                 existing.Revoke();
-                await this.refreshTokenRepository.Save(existing);
+                await this.refreshTokenRepository.Update(existing);
             }
             var randomBytes = RandomNumberGenerator.GetBytes(64);
             var plainToken = Convert.ToBase64String(randomBytes);
@@ -76,7 +76,7 @@ namespace AuthService.Application.Services
             {
                 throw new Exception("Usuário não encontrado.");
             }
-            var token = await this.refreshTokenRepository.FindBy(rt => rt.UserId == userId && rt.DeviceId == deviceId && !rt.IsRevoked);
+            var token = await this.refreshTokenRepository.FindBy(rt => rt.UserId == userId && rt.DeviceId == deviceId && rt.RevokedAt == null);
             if (token == null)
             {
                 throw new Exception("Refresh token inválido.");
@@ -94,7 +94,6 @@ namespace AuthService.Application.Services
             {
                 throw new Exception("Refresh token reutilizado.");
             }
-            token.Revoke();
             var newRefresh = await this.GenerateRefreshToken(userId, deviceId, deviceName);
             var newAccessToken = await this.GenerateAccessToken(token.User);
             return new AuthResponse

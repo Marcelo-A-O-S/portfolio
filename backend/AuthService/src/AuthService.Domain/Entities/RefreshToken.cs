@@ -13,7 +13,6 @@ namespace AuthService.Domain.Entities
         public string DeviceName { get; private set;}
         public DateTime CreatedAt { get; private set;}
         public DateTime ExpiresAt { get; private set; }
-
         public DateTime? RevokedAt { get; private set;}
         public bool IsExpired => DateTime.UtcNow >= ExpiresAt;
         public bool IsRevoked => RevokedAt != null;

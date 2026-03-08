@@ -1,6 +1,6 @@
 import { LoginRequest } from "@/domain/dtos/LoginRequest";
 import { buildDeviceName } from "@/lib/build-device-name";
-import { loginOAuth, refreshAsync } from "@/services/server/auth-services";
+import { loginOAuth, logout, refreshAsync } from "@/services/server/auth-services";
 import NextAuth from "next-auth";
 import type { AuthOptions } from "next-auth";
 import Github from "next-auth/providers/github";
@@ -131,6 +131,7 @@ export const authOptions: AuthOptions = {
                             });
                             return token;
                         }
+                        await logout(token.userId, deviceId);
                     }
                 }
             }
@@ -138,6 +139,7 @@ export const authOptions: AuthOptions = {
         },
         async session({ session, token, user }) {
             session.user.username = token.username;
+            console.log("Função session next-auth: ",session.user)
             return session;
         }
     }

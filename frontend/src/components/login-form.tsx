@@ -2,18 +2,10 @@
 import { Github, Instagram, Linkedin, LogOutIcon, StickyNote } from "lucide-react";
 import { useEffect, useRef, useState } from "react"
 import { FaGoogle } from "react-icons/fa6";
-import { signIn, useSession, signOut } from "next-auth/react";
-import Image from "next/image";
-import gsap from "gsap";
-import Link from "next/link";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { Button } from "./ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { signIn} from "next-auth/react";
 export default function LoginForm() {
-    const { data: session } = useSession();
     const dialogRef = useRef<HTMLDialogElement | null>(null)
     const [isOpen, setIsOpen] = useState(false);
-    const [openDropdown, setOpenDropdown] = useState(false);
     useEffect(() => {
         if (!dialogRef.current) return;
         if (isOpen) {
@@ -47,53 +39,7 @@ export default function LoginForm() {
                     </div>
                 </div>
             </dialog>
-            {!session ?
-                <button onClick={() => setIsOpen(true)} className="border-2 border-white rounded-sm py-1 px-2 font-semibold cursor-pointer">Login</button> :
-                <>
-                    <DropdownMenu >
-                        <DropdownMenuTrigger asChild>
-                            <div className="flex items-center justify-center gap-2 flex-row-reverse">
-                                <Button variant="ghost" size="icon" className="rounded-full">
-                                    <Avatar>
-                                        <AvatarImage src={session.user.image!} alt={session.user.name!} />
-                                        <AvatarFallback>LR</AvatarFallback>
-                                    </Avatar>
-                                </Button>
-                                <div>
-                                    <p className="hidden md:flex text-sm font-semibold">{session.user.username!}</p>
-                                </div>
-                            </div>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-[200px]">
-                            <DropdownMenuGroup>
-                                <DropdownMenuItem>
-                                    <Link className="text-sm w-full" href={"/admin/dashboard"}>Gerenciador</Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Link className="text-sm w-full" href={"/admin/projects"}>Projetos</Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Link className="text-sm w-full" href={"/admin/certificates"}>Certificados</Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Link className="text-sm w-full" href={"/admin/tools"}>Ferramentas</Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Link className="text-sm w-full" href={"/admin/categories"}>Categorias</Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Link className="text-sm w-full" href={"/admin/users"}>Usuários</Link>
-                                </DropdownMenuItem>
-                            </DropdownMenuGroup>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>
-                                <LogOutIcon />
-                                Sign Out
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </>
-            }
+            <button onClick={() => setIsOpen(true)} className="border-2 border-white rounded-sm py-1 px-2 font-semibold cursor-pointer">Login</button>
         </>
     )
 }

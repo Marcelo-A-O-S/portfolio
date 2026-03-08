@@ -10,6 +10,11 @@ import { useSound } from "@/hooks/useSound";
 import LoginForm from "./login-form";
 import { FaXTwitter } from "react-icons/fa6";
 import { ToggleTheme } from "./toggle-theme";
+import { Session } from "next-auth";
+import NavUser from "./nav-user";
+type NavbarProps = {
+    session: Session | null
+}
 const links: LinkProps[] = [{
     imgString: "/assets/image_1.jpg",
     linkName: "Home",
@@ -27,7 +32,7 @@ const links: LinkProps[] = [{
     linkName: "Certificates",
     pathName: "/certificates"
 }]
-export default function Navbar() {
+export default function Navbar({session}:NavbarProps) {
     const { enableSounds, toggleSounds } = useMusic();
     const { playMenuClose, playMenuOpen, playLinkHover } = useSound();
     const imgPrevRef = useRef<HTMLImageElement | null>(null);
@@ -35,7 +40,6 @@ export default function Navbar() {
     const menuContentRef = useRef<HTMLDivElement | null>(null);
     const [imagePreview, setImagePreview] = useState("/assets/image_1.jpg");
     const [isOpen, setIsOpen] = useState(false);
-
     useEffect(() => {
         if (!menuOverlayRef.current || !menuContentRef.current) return;
         if (isOpen) {
@@ -108,7 +112,7 @@ export default function Navbar() {
                             <ToggleTheme/>
                         </div>
                         <div className="flex items-center justify-center cursor-pointer">
-                            <LoginForm/>
+                            {session? <NavUser session={session} />  :<LoginForm/>}
                         </div>
                         <div id="menu-toggle" className="flex items-center justify-center cursor-pointer" onClick={() => {
                             setIsOpen(!isOpen);
