@@ -89,6 +89,7 @@ export const authOptions: AuthOptions = {
                 token.username = user.username;
                 token.userId = data.userId;
                 token.accessToken = data.accessToken;
+                token.refreshTokenId = data.refreshTokenId;
                 token.expireIn = expireDate;
                 token.role = data.role;
                 cookieStore.set("DeviceId", deviceId, {
@@ -106,20 +107,21 @@ export const authOptions: AuthOptions = {
                     maxAge: 60 * 60 * 24 * 7
                 });
             }
-            if (token.expireIn && token.userId) {
-                const buffer = 20 * 1000;
+            if (token.expireIn && token.userId && token.refreshTokenId) {
+                const buffer = 35 * 1000;
                 if (token.expireIn - buffer <= Date.now()) {
                     const cookieStore = await cookies();
                     const deviceId = cookieStore.get("DeviceId")?.value;
                     const refreshToken = cookieStore.get("RefreshToken")?.value;
                     if (deviceId && refreshToken) {
                         const deviceName = await buildDeviceName();
-                        const response = await refreshAsync(token.userId, refreshToken, deviceId, deviceName)
+                        const response = await refreshAsync(token.refreshTokenId, token.userId, refreshToken, deviceId, deviceName)
                         if (response.status == 200 || response.status == 201) {
                             const data = await response.json();
                             const expireDate = Date.now() + data.expireIn * 1000;
                             token.userId = data.userId;
                             token.accessToken = data.accessToken;
+                            token.refreshTokenId = data.refreshTokenId;
                             token.expireIn = expireDate;
                             token.role = data.role;
                             cookieStore.set("RefreshToken", data.refreshToken, {
@@ -139,7 +141,6 @@ export const authOptions: AuthOptions = {
         },
         async session({ session, token, user }) {
             session.user.username = token.username;
-            console.log("Função session next-auth: ",session.user)
             return session;
         }
     }

@@ -20,7 +20,5 @@ export async function POST(request: NextRequest) {
     try{
         await logout(token.userId, deviceId);
     }catch {}
-    cookieStore.delete("DeviceId");
-    cookieStore.delete("RefreshToken");
     return NextResponse.json({ success: true });
 }

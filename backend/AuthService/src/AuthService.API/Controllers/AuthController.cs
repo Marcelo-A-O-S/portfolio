@@ -54,7 +54,8 @@ namespace AuthService.API.Controllers
                     AccessToken = accessData.token,
                     RefreshToken = data.plainToken,
                     ExpireIn = accessData.expireIn,
-                    Role = user.Role.ToString()
+                    Role = user.Role.ToString(),
+                    RefreshTokenId = data.entity.Id
                 });
             }
             var erros = ModelState.Values.Select(x => x.Errors);
@@ -65,7 +66,7 @@ namespace AuthService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var authResponse = await this.jwtBearerServices.RefreshAsync(refreshRequest.UserId, refreshRequest.RefreshToken, refreshRequest.DeviceId, refreshRequest.DeviceName);
+                var authResponse = await this.jwtBearerServices.RefreshAsync(refreshRequest.RefreshTokenId,refreshRequest.UserId, refreshRequest.RefreshToken, refreshRequest.DeviceId, refreshRequest.DeviceName);
                 return Ok(authResponse);
             }
             var erros = ModelState.Values.Select(x => x.Errors);

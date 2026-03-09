@@ -38,5 +38,6 @@ namespace AuthService.Domain.Entities
         {
             this.RevokedAt = DateTime.UtcNow;
         }
+        
     }
 }

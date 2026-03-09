@@ -69,14 +69,14 @@ namespace AuthService.Application.Services
             await this.refreshTokenRepository.Save(entity);
             return (entity, plainToken);
         }
-        public async Task<AuthResponse> RefreshAsync(Guid userId, string refreshToken, string deviceId, string deviceName)
+        public async Task<AuthResponse> RefreshAsync(Guid refreshTokenId, Guid userId, string refreshToken, string deviceId, string deviceName)
         {
             var user = await this.userRepository.GetById(userId);
             if (user == null)
             {
                 throw new Exception("Usuário não encontrado.");
             }
-            var token = await this.refreshTokenRepository.FindBy(rt => rt.UserId == userId && rt.DeviceId == deviceId && rt.RevokedAt == null);
+            var token = await this.refreshTokenRepository.FindBy(rt => rt.Id == refreshTokenId && rt.UserId == userId && rt.DeviceId == deviceId && rt.RevokedAt == null);
             if (token == null)
             {
                 throw new Exception("Refresh token inválido.");
@@ -86,6 +86,10 @@ namespace AuthService.Application.Services
                 await this.refreshTokenRepository.Delete(token);
                 throw new Exception("Refresh token expirado. Gentileza realizar o login novamente.");
             }
+            Console.WriteLine($"Token Id: {token.Id}");
+            Console.WriteLine($"DeviceId: {deviceId}");
+            Console.WriteLine($"RefreshToken: {refreshToken}");
+            Console.WriteLine($"Token Hash: {token.TokenHash}");
             if (!BCrypt.Net.BCrypt.Verify(refreshToken, token.TokenHash))
             {
                 throw new Exception("Refresh token inválido.");
@@ -102,7 +106,8 @@ namespace AuthService.Application.Services
                 AccessToken = newAccessToken.token,
                 RefreshToken = newRefresh.plainToken,
                 ExpireIn = newAccessToken.expireIn,
-                Role = user.Role.ToString()
+                Role = user.Role.ToString(),
+                RefreshTokenId = newRefresh.entity.Id,
             };
         }
     }

@@ -17,19 +17,21 @@ export const loginOAuth = async (loginRequest: LoginRequest) => {
     const data = await response.json();
     return data;
 }
-export const refreshAsync = async (userId: string, refreshToken: string, deviceId: string, deviceName: string) => {
+export const refreshAsync = async (refreshTokenId: string, userId: string, refreshToken: string, deviceId: string, deviceName: string) => {
     const response = await fetch(`${host}/api/auth/refreshToken`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
+            refreshTokenId,
             userId,
             deviceId,
             deviceName,
             refreshToken,
         })
     })
+    
     return response;
 }
 export const logout = async (userId: string, deviceId: string) => {
@@ -43,6 +45,9 @@ export const logout = async (userId: string, deviceId: string) => {
             deviceId
         })
     })
+    const cookieStore = await cookies();
+    cookieStore.delete("DeviceId");
+    cookieStore.delete("RefreshToken");
     return response;
 }
 export const validateUser = async (roles: string[]) => {
@@ -65,10 +70,6 @@ export const validateUserByRequest = async (req: NextRequest, roles: string[]) =
     })
     if(!token?.expireIn || !token.role){
         return false;
-    }
-    if (token.expireIn <= Date.now()) {
-        const response = await fetch(`${hostNext}/api/auth/refresh`);
-        if(!response.ok) return false;
     }
     if (!token?.role || !roles.includes(token.role)) {
         return false;

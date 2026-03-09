@@ -11,6 +11,9 @@ export async function GET(request: NextRequest){
         return NextResponse.json({message: "Unauthorized"}, {status: 401});
     const searchParams = request.nextUrl.searchParams;
     const page = searchParams.get("page");
+    const search = searchParams.get("search");
+    const role = searchParams.get("role");
+    const status = searchParams.get("status");
     let response = null;
     if(page){
         response = await getUsersByPaginationService(parseInt(page))

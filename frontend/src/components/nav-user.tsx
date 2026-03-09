@@ -9,7 +9,6 @@ type NavUserProps = {
     session: Session
 }
 export default function NavUser({ session }: NavUserProps) {
-    console.log("Session navuser: ", session);
     return (
         <>
             <DropdownMenu >

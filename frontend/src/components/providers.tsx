@@ -3,7 +3,8 @@
 import { SessionProvider } from "next-auth/react"
 import { ThemeProvider } from "@/providers/theme-provider"
 import { MusicProvider } from "@/contexts/MusicContext"
-
+import { QueryClientProvider, QueryClient} from "@tanstack/react-query"
+const queryClient = new QueryClient();
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <MusicProvider>
@@ -14,7 +15,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           enableSystem
           disableTransitionOnChange
         >
+          <QueryClientProvider client={queryClient}>
           {children}
+          </QueryClientProvider>
         </ThemeProvider>
       </SessionProvider>
     </MusicProvider>
