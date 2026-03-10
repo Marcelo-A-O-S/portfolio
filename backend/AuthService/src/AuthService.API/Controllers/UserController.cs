@@ -40,6 +40,17 @@ namespace AuthService.API.Controllers
                 return NotFound();
             return Ok(user);
         }
+        [HttpGet("GetByPagination")]
+        [Authorize(Roles = "Administrador,Client")]
+        public async Task<IActionResult> GetByPagination(
+            [FromQuery] int page,
+            [FromQuery] string? search,
+            [FromQuery] string? role,
+            [FromQuery] string? status)
+        {
+            var users = await this.userServices.GetByPagination(page, search, role, status);
+            return Ok(users);
+        }
         [HttpPatch("{Id}/ModifyRole")]
         [Authorize(Roles = "Administrador,Client")]
         public async Task<IActionResult> ModifyRole([FromRoute] Guid Id, [FromBody] UpdateRoleRequest updateRoleRequest)

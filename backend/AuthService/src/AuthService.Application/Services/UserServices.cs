@@ -47,9 +47,14 @@ namespace AuthService.Application.Services
             await this.userRepository.Save(entity);
         }
 
-        public Task Update(User entity)
+        public async Task Update(User entity)
         {
-            throw new NotImplementedException();
+            await this.userRepository.Update(entity);
+        }
+
+        public async Task<PaginatedResult<User>> GetByPagination(int page, string? search, string? role, string? status)
+        {
+            return await this.userRepository.GetByPagination(page, search, role, status);
         }
     }
 }

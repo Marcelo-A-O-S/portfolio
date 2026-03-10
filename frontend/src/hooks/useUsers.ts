@@ -1,11 +1,12 @@
+import { UsersFilters } from "@/domain/interfaces/UsersFilters";
 import { getUsersByPaginationService } from "@/services/client/user-services";
 import { useQuery } from "@tanstack/react-query";
 
-export function useUsers(page: number, search?: string, role?: string, status?: string) {
+export function useUsers(filters: UsersFilters) {
     return useQuery({
-        queryKey: ["users", page, search, role, status],
+        queryKey: ["users", filters],
         queryFn: async () => {
-            const response = await getUsersByPaginationService(page, search, role, status);
+            const response = await getUsersByPaginationService(filters);
             if (response.status != 200) {
                 throw new Error(response.data.message)
             }

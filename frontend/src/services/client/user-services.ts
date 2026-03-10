@@ -1,13 +1,23 @@
+import { UsersFilters } from "@/domain/interfaces/UsersFilters";
 import { apiClient } from "./api-client"
-
-export const getUsersByPaginationService = async(page: number, search?:string, role?:string, status?:string) =>{
+export const getUsersByPaginationService = async(filters: UsersFilters) =>{
     const api = await apiClient();
-    const response = await api.get(`/api/admin/users?page=${page}`);
+    const params = new URLSearchParams();
+    params.append("page",filters.page.toString());
+    if(filters.search){
+        params.append("search",filters.search.toString());
+    }
+    if(filters.role){
+        params.append("role",filters.role.toString());
+    }
+    if(filters.status){
+        params.append("status",filters.status.toString());
+    }
+    const response = await api.get(`/api/admin/users/pagination?${params}`);
     return response;
 }
-
-export const getUsersService = async() =>{
+export const getUsersService = async(page:number) =>{
     const api = await apiClient();
-    const response = await api.get(`/api/admin/users`);
+    const response = await api.get(`/api/admin/users?page=${page}`);
     return response;
 }
