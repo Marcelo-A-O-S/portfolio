@@ -21,7 +21,12 @@ export const getCategoriesByPaginationService = async(categoriesFilters: Categor
     const api = await apiClient();
     const params = new URLSearchParams();
     params.append("page",categoriesFilters.page.toString());
-    params.append("language",categoriesFilters.language);
+    if(categoriesFilters.language){
+        params.append("language",categoriesFilters.language);
+    }
+    if(categoriesFilters.search){
+        params.append("search",categoriesFilters.search);
+    }
     const response = await api.get(`/api/admin/categories/pagination?${params}`);
     return response;
 }

@@ -1,4 +1,5 @@
 export interface CategoriesFilters {
     page:number,
-    language: string,
+    language?: string,
+    search?: string
 }
