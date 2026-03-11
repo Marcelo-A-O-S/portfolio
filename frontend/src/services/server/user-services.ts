@@ -21,3 +21,10 @@ export const getUsersService = async(page:number) =>{
     const response = await api.get(`/api/User?page=${page}`);
     return response;
 }
+export const modifyRoleService = async(userId:string, role: string)=>{
+    const api = await apiServer();
+    const response = await api.patch(`/api/User/${userId}/ModifyRole`,{
+        role
+    });
+    return response;
+}

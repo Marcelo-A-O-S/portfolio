@@ -1,5 +1,5 @@
 "use client";
-import { DataTable } from "./components/data-table";
+import { DataTable } from "../../../components/data-table";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";

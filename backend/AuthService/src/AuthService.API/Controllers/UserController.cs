@@ -59,12 +59,17 @@ namespace AuthService.API.Controllers
         [EnableRateLimiting("patch")]
         public async Task<IActionResult> ModifyRole([FromRoute] Guid Id, [FromBody] UpdateRoleRequest updateRoleRequest)
         {
-            var user = await this.userServices.GetById(Id);
-            if (user == null)
-                return NotFound();
-            user.UpdateRole(updateRoleRequest.Role);
-            await this.userServices.Update(user);
-            return Ok(new { message = "Função de usuário atualizada com sucesso!" });
+            if (ModelState.IsValid)
+            {
+                var user = await this.userServices.GetById(Id);
+                if (user == null)
+                    return NotFound();
+                user.UpdateRole(updateRoleRequest.Role);
+                await this.userServices.Update(user);
+                return Ok(new { message = "Função de usuário atualizada com sucesso!" });
+            }
+            var errors = ModelState.Values.Select(e => e.Errors);
+            return BadRequest(errors);
         }
         [HttpDelete("{Id}")]
         [Authorize(Roles = "Administrador")]

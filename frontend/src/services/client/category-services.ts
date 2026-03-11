@@ -1,6 +1,6 @@
 import { CategorySchema } from "@/domain/schemas/CategorySchema";
 import { apiClient } from "./api-client";
-import { id } from "zod/v4/locales";
+import { CategoriesFilters } from "@/domain/interfaces/CategoriesFilters";
 
 export const addCategoryService = async(data: CategorySchema) => {
     const api = await apiClient();
@@ -15,5 +15,13 @@ export const updateCategoryService = async(id:string, data: CategorySchema) => {
 export const deleteCategoryByRouteService = async(id:string) => {
     const api = await apiClient();
     const response = await api.delete(`/api/categories/${id}`);
+    return response;
+}
+export const getCategoriesByPaginationService = async(categoriesFilters: CategoriesFilters) =>{
+    const api = await apiClient();
+    const params = new URLSearchParams();
+    params.append("page",categoriesFilters.page.toString());
+    params.append("language",categoriesFilters.language);
+    const response = await api.get(`/api/admin/categories/pagination?${params}`);
     return response;
 }
