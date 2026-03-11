@@ -3,6 +3,7 @@ using AuthService.Application.DTOs.Response;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 namespace AuthService.API.Controllers
 {
     [ApiController]
@@ -25,6 +26,7 @@ namespace AuthService.API.Controllers
             this.refreshTokenServices = _refreshTokenServices;
         }
         [HttpPost("login")]
+        [EnableRateLimiting("login")]
         public async Task<IActionResult> Login(LoginRequest loginRequest)
         {
             if (ModelState.IsValid)

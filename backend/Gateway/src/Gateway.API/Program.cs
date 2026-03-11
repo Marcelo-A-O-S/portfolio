@@ -27,7 +27,6 @@ app.UseSwaggerUI(options =>
     options.SwaggerEndpoint("http://localhost:5001/swagger/v1/swagger.json","Auth API");
     options.SwaggerEndpoint("http://localhost:5002/swagger/v1/swagger.json","Post API");
 });
-
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
@@ -35,5 +34,6 @@ app.UseAuthorization();
 app.UseMiddleware<ExceptionMiddleware>();
 app.MapControllers();
 app.MapReverseProxy();
+app.UseSimpleBlockBot();
 app.Run("http://+:5000");
 

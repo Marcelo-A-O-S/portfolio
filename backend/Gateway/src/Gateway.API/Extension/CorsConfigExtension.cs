@@ -10,7 +10,9 @@ namespace Gateway.API.Extension
             {
                options.AddPolicy("AllowAll", policy =>
                {
-                   policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                   policy.WithOrigins(
+                    "http://localhost:3000"
+                   ).AllowAnyHeader().AllowAnyMethod();
                }); 
             });
             return services;

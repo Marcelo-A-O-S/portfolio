@@ -2,8 +2,8 @@ using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using AuthService.Domain.Enums;
 using AuthService.Application.DTOs.Request;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace AuthService.API.Controllers
 {
@@ -18,6 +18,7 @@ namespace AuthService.API.Controllers
         }
         [HttpGet]
         [Authorize(Roles = "Administrador,Client")]
+        [EnableRateLimiting("read")]
         public async Task<IActionResult> List([FromQuery] int? page)
         {
             var users = new List<User>();
@@ -33,6 +34,7 @@ namespace AuthService.API.Controllers
         }
         [HttpGet("{Id}")]
         [Authorize(Roles = "Administrador")]
+        [EnableRateLimiting("read")]
         public async Task<IActionResult> GetById([FromRoute] Guid Id)
         {
             var user = await this.userServices.GetById(Id);
@@ -42,6 +44,7 @@ namespace AuthService.API.Controllers
         }
         [HttpGet("GetByPagination")]
         [Authorize(Roles = "Administrador,Client")]
+        [EnableRateLimiting("pagination")]
         public async Task<IActionResult> GetByPagination(
             [FromQuery] int page,
             [FromQuery] string? search,
@@ -53,6 +56,7 @@ namespace AuthService.API.Controllers
         }
         [HttpPatch("{Id}/ModifyRole")]
         [Authorize(Roles = "Administrador,Client")]
+        [EnableRateLimiting("patch")]
         public async Task<IActionResult> ModifyRole([FromRoute] Guid Id, [FromBody] UpdateRoleRequest updateRoleRequest)
         {
             var user = await this.userServices.GetById(Id);
@@ -64,6 +68,7 @@ namespace AuthService.API.Controllers
         }
         [HttpDelete("{Id}")]
         [Authorize(Roles = "Administrador")]
+        [EnableRateLimiting("sensitive")]
         public async Task<IActionResult> DeleteUser([FromRoute] Guid Id)
         {
             var user = await this.userServices.GetById(Id);
@@ -74,6 +79,7 @@ namespace AuthService.API.Controllers
         }
         [HttpPatch("{Id}/BanUser")]
         [Authorize(Roles = "Administrador")]
+        [EnableRateLimiting("sensitive")]
         public async Task<IActionResult> BanUser([FromRoute] Guid Id)
         {
             var user = await this.userServices.GetById(Id);

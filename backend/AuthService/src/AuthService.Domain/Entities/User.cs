@@ -1,5 +1,6 @@
 using AuthService.Domain.Enums;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Net;
 
 namespace AuthService.Domain.Entities
 {
@@ -35,6 +36,15 @@ namespace AuthService.Domain.Entities
         public void Ban()
         {
             this.Status = UserStatus.BANNED;
+        }
+        public async Task ValidateEmail()
+        {
+            var host = new Uri($"mailto:{this.Email}").Host;
+            var result = await Dns.GetHostEntryAsync(host);
+            if(result == null)
+            {
+                throw new Exception("Dominio de email inválido");
+            }
         }
     }
 }
