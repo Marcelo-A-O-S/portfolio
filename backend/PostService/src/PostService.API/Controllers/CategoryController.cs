@@ -32,6 +32,17 @@ namespace PostService.API.Controllers
             }
             return Ok(categories);
         }
+        [HttpGet]
+        [Authorize( Roles = "Administrador")]
+        public async Task<IActionResult> GetByPagination(
+            [FromQuery] int page,
+            [FromQuery] string? language,
+            [FromQuery] string? search
+        )
+        {
+            var categories = await this.categoryServices.GetByPagination(page, language, search);
+            return Ok(categories);
+        }
         [HttpGet("{Id}")]
         [Authorize( Roles = "Administrador")]
         public async Task<IActionResult> GetById([FromRoute] Guid Id)

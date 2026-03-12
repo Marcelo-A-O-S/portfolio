@@ -14,6 +14,11 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+   options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor; 
+});
+builder.Services.AddRateLimiteExtension();
 builder.Services.AddSwaggerConfig();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddCorsConfig();
@@ -29,6 +34,8 @@ app.UseSwagger(options=>{
 });
 app.UseSwaggerUI();
 app.UseHttpsRedirection();
+app.UseForwardedHeaders();
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<ExceptionMiddleware>();

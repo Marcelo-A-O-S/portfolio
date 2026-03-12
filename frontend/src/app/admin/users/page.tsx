@@ -111,7 +111,7 @@ export default function UsersPage() {
                         </SelectContent>
                     </Select>
                 </div>
-                <div className="flex  py-10 md:p-10">
+                <div className="flex py-10 md:p-10">
                     {isLoading ? (
                         <Skeleton className="h-[400px] w-full" />
                     ) : (

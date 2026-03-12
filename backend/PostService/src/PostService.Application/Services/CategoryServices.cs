@@ -27,6 +27,11 @@ namespace PostService.Application.Services
             return await this.categoryRepository.GetById(Id);
         }
 
+        public async Task<PaginatedResult<Category>> GetByPagination(int page, string? language, string? search)
+        {
+            return await this.categoryRepository.GetByPagination(page,language,search);
+        }
+
         public async Task<List<Category>> List()
         {
             return await this.categoryRepository.List();
