@@ -1,10 +1,10 @@
 import { CategorySchema } from "@/domain/schemas/CategorySchema";
 import { apiServer } from "./api-server";
-import { CategoriesFilters } from "@/domain/interfaces/CategoriesFilters";
+import { CategoriesFilters } from "@/domain/schemas/CategoriesFilters";
 
 export const addCategoryService = async(data: CategorySchema) =>{
     const api = await apiServer();
-    const response = await api.post("/api/admin/categories",data);
+    const response = await api.post("/api/Category",data);
     return response;
 }
 export const updateCategoryService = async(id:string, data: CategorySchema) =>{

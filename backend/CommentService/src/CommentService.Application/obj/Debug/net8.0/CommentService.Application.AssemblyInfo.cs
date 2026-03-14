@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CommentService.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+425dc0e05f152b637e5bf1b30acdf18b4ad97166")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+14d4187a59209b023a8c74ce8b47a26e5957f9f2")]
 [assembly: System.Reflection.AssemblyProductAttribute("CommentService.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CommentService.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

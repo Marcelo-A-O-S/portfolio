@@ -4,8 +4,8 @@ import { User } from "@/domain/types/User"
 import { useModifyRole } from "@/hooks/useModifyRole"
 import { MoreHorizontal } from "lucide-react"
 import Link from "next/link"
-import { Button } from "./ui/button"
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuPortal, DropdownMenuSubContent, DropdownMenuSeparator } from "./ui/dropdown-menu"
+import { Button } from "../../../../components/ui/button"
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuPortal, DropdownMenuSubContent, DropdownMenuSeparator } from "../../../../components/ui/dropdown-menu"
 interface UserActionsProps {
     user: User
 }

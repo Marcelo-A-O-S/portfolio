@@ -6,13 +6,10 @@ export function useModifyRole() {
   return useMutation({
     mutationFn: ({ userId, role }: { userId: string, role: string }) =>
       modifyRoleService(userId, role),
-
     onSuccess: () => {
-
       queryClient.invalidateQueries({
         queryKey: ["users"]
       })
-
     }
   })
 }

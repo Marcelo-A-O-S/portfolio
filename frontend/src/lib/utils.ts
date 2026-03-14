@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx"
+import { ReadonlyURLSearchParams } from "next/navigation";
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
@@ -30,4 +31,9 @@ export function generatePagination(currentPage: number, totalPages: number) {
     }
   }
   return pages;
+}
+export function createPageURL(page: number, searchParams: ReadonlyURLSearchParams) {
+  const params = new URLSearchParams(searchParams)
+  params.set("page", page.toString())
+  return `?${params.toString()}`
 }

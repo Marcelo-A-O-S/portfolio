@@ -4,6 +4,7 @@ using PostService.Infrastructure.Extensions;
 using Microsoft.OpenApi;
 using PostService.API.Middleware;
 using System.Text.Json.Serialization;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     });
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {

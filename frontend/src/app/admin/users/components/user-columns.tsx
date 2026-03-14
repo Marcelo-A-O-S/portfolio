@@ -3,7 +3,7 @@ import { User } from "@/domain/types/User"
 import { ColumnDef } from "@tanstack/react-table"
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { UserActions } from "@/components/user-actions"
+import { UserActions } from "@/app/admin/users/components/user-actions"
 export const getUsersColumns = () => {
     const columns: ColumnDef<User>[] = [
         {

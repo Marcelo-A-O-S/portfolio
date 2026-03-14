@@ -9,7 +9,7 @@ import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, Pagi
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { useUsers } from "@/hooks/useUsers";
-import { generatePagination } from "@/lib/utils";
+import { createPageURL, generatePagination } from "@/lib/utils";
 import { useDebounce } from "@/hooks/useDebounce";
 import { SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem, Select } from "@/components/ui/select";
 export default function UsersPage() {
@@ -41,16 +41,11 @@ export default function UsersPage() {
     }, [debouncedSearch])
     const totalPages = data?.totalPages || 1;
     const currentPage = data?.currentPage || 1;
-    console.log(data);
     const pages = generatePagination(currentPage, totalPages);
     if (error) {
         toast.error("Erro ao buscar usuários")
     }
-    function createPageURL(page: number) {
-        const params = new URLSearchParams(searchParams)
-        params.set("page", page.toString())
-        return `?${params.toString()}`
-    }
+   
     function updateFilter(key: string, value?: string) {
         const params = new URLSearchParams(searchParams)
         params.set("page", "1")
@@ -122,7 +117,7 @@ export default function UsersPage() {
                     <Pagination>
                         <PaginationContent>
                             <PaginationItem>
-                                <PaginationPrevious href={createPageURL(Math.max(currentPage - 1, 1))} />
+                                <PaginationPrevious href={createPageURL(Math.max(currentPage - 1, 1),searchParams)} />
                             </PaginationItem>
                             {pages.map((page, index) => {
                                 if (page === "ellipsis") {
@@ -136,7 +131,7 @@ export default function UsersPage() {
                                     <PaginationItem key={page}>
                                         <PaginationLink
                                             isActive={page === currentPage}
-                                            href={createPageURL(page)}
+                                            href={createPageURL(page,searchParams)}
                                         >
                                             {page}
                                         </PaginationLink>
@@ -145,7 +140,7 @@ export default function UsersPage() {
                             })}
                             <PaginationItem>
                                 <PaginationNext
-                                    href={createPageURL(Math.min(currentPage + 1, totalPages))}
+                                    href={createPageURL(Math.min(currentPage + 1, totalPages),searchParams)}
                                 />
                             </PaginationItem>
                         </PaginationContent>

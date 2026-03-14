@@ -9,6 +9,9 @@ import { getCategoryColumns } from "./components/category-columns";
 import { DataTable } from "@/components/data-table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDebounce } from "@/hooks/useDebounce";
+import { createPageURL, generatePagination } from "@/lib/utils";
+import { toast } from "sonner";
+import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationEllipsis, PaginationLink, PaginationNext } from "@/components/ui/pagination";
 export default function ToolsPage() {
     const { data: session } = useSession();
     const router = useRouter();
@@ -19,7 +22,7 @@ export default function ToolsPage() {
     const [searchInput, setSearchInput] = useState(search ?? "");
     const debouncedSearch = useDebounce(searchInput, 500);
     const columns = useMemo(() => getCategoryColumns(), []);
-    const { data, isLoading } = useCategories({
+    const { data, isLoading, error } = useCategories({
         page,
         language,
         search,
@@ -27,7 +30,7 @@ export default function ToolsPage() {
     useEffect(() => {
         const params = new URLSearchParams(searchParams)
         params.set("page", "1")
-        if(language){
+        if (language) {
             params.set("language", language)
         }
         if (debouncedSearch) {
@@ -37,7 +40,12 @@ export default function ToolsPage() {
         }
         router.push(`?${params.toString()}`)
     }, [debouncedSearch])
-    console.log(data);
+    const totalPages = data?.totalPages || 1;
+    const currentPage = data?.currentPage || 1;
+    const pages = generatePagination(currentPage, totalPages);
+    if (error) {
+        toast.error("Erro ao buscar usuários")
+    }
     return (
         <main className="relative mx-auto flex min-h-screen inset-0 w-screen max-w-[1440px] justify-center bg-white dark:bg-black ">
             <section className="relative w-screen h-svh px-10 py-18">
@@ -62,7 +70,41 @@ export default function ToolsPage() {
                         <Skeleton className="h-[400px] w-full" />
                     ) : (
                         <DataTable columns={columns} data={data.items ?? []} />
+
                     )}
+                </div>
+                <div className="relative bottom-0 ">
+                    <Pagination>
+                        <PaginationContent>
+                            <PaginationItem>
+                                <PaginationPrevious href={createPageURL(Math.max(currentPage - 1, 1), searchParams)} />
+                            </PaginationItem>
+                            {pages.map((page, index) => {
+                                if (page === "ellipsis") {
+                                    return (
+                                        <PaginationItem key={`ellipsis-${index}`}>
+                                            <PaginationEllipsis />
+                                        </PaginationItem>
+                                    )
+                                }
+                                return (
+                                    <PaginationItem key={page}>
+                                        <PaginationLink
+                                            isActive={page === currentPage}
+                                            href={createPageURL(page, searchParams)}
+                                        >
+                                            {page}
+                                        </PaginationLink>
+                                    </PaginationItem>
+                                )
+                            })}
+                            <PaginationItem>
+                                <PaginationNext
+                                    href={createPageURL(Math.min(currentPage + 1, totalPages), searchParams)}
+                                />
+                            </PaginationItem>
+                        </PaginationContent>
+                    </Pagination>
                 </div>
             </section>
         </main>

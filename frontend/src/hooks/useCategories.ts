@@ -1,4 +1,4 @@
-import { CategoriesFilters } from "@/domain/interfaces/CategoriesFilters";
+import { CategoriesFilters } from "@/domain/schemas/CategoriesFilters";
 import { getCategoriesByPaginationService } from "@/services/client/category-services";
 import { useQuery } from "@tanstack/react-query";
 
