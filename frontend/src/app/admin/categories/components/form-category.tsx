@@ -1,17 +1,23 @@
 "use client"
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { FieldGroup, Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { categorySchema, CategorySchema } from "@/domain/schemas/CategorySchema";
 import { useCreateCategory } from "@/hooks/useCreateCategory";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { toast } from "sonner";
-export default function FormCategory() {
-    const { mutateAsync } = useCreateCategory();
-    const { control, handleSubmit, formState: { errors } } = useForm<CategorySchema>({
+type FormCategoryProps = {
+    category?: CategorySchema
+}
+export default function FormCategory({ category }: FormCategoryProps) {
+    const { mutateAsync: createCategoryAsync } = useCreateCategory();
+    
+    const { control, handleSubmit, reset, formState: { errors } } = useForm<CategorySchema>({
         resolver: zodResolver(categorySchema),
         defaultValues: {
             categoryContents: [
@@ -27,25 +33,42 @@ export default function FormCategory() {
         control,
         name: "categoryContents"
     })
-    const onSubmit = async (data: CategorySchema) => {
-        const response = await mutateAsync(data);
-        if(response.status != 200){
-            toast.error(response.data.message);
-            return;
+    useEffect(() => {
+        if (category) {
+            reset(category);
         }
-        toast.success(response.data.message);
+    }, [category, reset]);
+    const onSubmit = async (data: CategorySchema) => {
+        if (category) {
+
+        } else {
+            const response = await createCategoryAsync(data);
+            if (response.status != 200) {
+                toast.error(response.data.message);
+                return;
+            }
+            toast.success(response.data.message);
+        }
+
     }
     return (
         <>
-            <Dialog >
+            <Dialog
+                onOpenChange={(open) => {
+                    if (!open) reset()
+                }}
+            >
                 <DialogTrigger asChild>
-                    <Button className="cursor-pointer">Add Category</Button>
+                    {category ?
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="cursor-pointer">Update Category</DropdownMenuItem>
+                        :
+                        <Button className="cursor-pointer">Add Category</Button>}
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-sm">
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <DialogHeader >
                             <div className="flex justify-between items-center p-2">
-                                <DialogTitle>Create Category</DialogTitle>
+                                <DialogTitle>{category ? "Update Category" : "Create Category"}</DialogTitle>
                                 <div>
                                     <Button
                                         type="button"
@@ -124,7 +147,7 @@ export default function FormCategory() {
                                 </div>
                             ))}
                         </FieldGroup>
-                        <DialogFooter>
+                        <DialogFooter className="px-2">
                             <DialogClose asChild>
                                 <Button variant="outline">Cancelar</Button>
                             </DialogClose>
