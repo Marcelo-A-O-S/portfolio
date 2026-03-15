@@ -24,10 +24,11 @@ export default function ToolCreatePage() {
                     slug: "",
                     language: ""
                 }
-            ]
+            ],
+
         }
     });
-    const { fields } = useFieldArray({
+    const { fields: fieldToolContents } = useFieldArray({
         control,
         name: "toolContents"
     });
@@ -45,14 +46,13 @@ export default function ToolCreatePage() {
                         </div>
                     </div>
                     <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col min-h-0">
-                        {fields.map((item, index) => (
+                        {fieldToolContents.map((item, index) => (
                             <div key={item.id} className="flex gap-4">
                                 <Card className="w-[40vw] max-h-full h-[600px] flex flex-col overflow-hidden">
                                     <CardHeader>
                                         <CardTitle>Write Post</CardTitle>
                                     </CardHeader>
                                     <CardContent className="flex-1 flex flex-col min-h-0">
-
                                         <div className="flex flex-col gap-6 flex-1 min-h-0">
                                             <Controller
                                                 name={`toolContents.${index}.name`}

@@ -12,7 +12,7 @@ using PostService.Infrastructure.Context;
 namespace PostService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20260306020348_CreateTables")]
+    [Migration("20260315052653_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -37,9 +37,14 @@ namespace PostService.Infrastructure.Migrations
                     b.Property<Guid?>("PostId")
                         .HasColumnType("RAW(16)");
 
+                    b.Property<Guid?>("ToolId")
+                        .HasColumnType("RAW(16)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("PostId");
+
+                    b.HasIndex("ToolId");
 
                     b.ToTable("Categories");
                 });
@@ -58,7 +63,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.Property<string>("Language")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
+                        .HasColumnType("NVARCHAR2(450)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -66,7 +71,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.Property<string>("Slug")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
+                        .HasColumnType("NVARCHAR2(450)");
 
                     b.Property<DateTime>("UpdateAt")
                         .HasColumnType("TIMESTAMP(7)");
@@ -74,6 +79,8 @@ namespace PostService.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("Slug", "Language");
 
                     b.ToTable("CategoriesContents");
                 });
@@ -128,6 +135,9 @@ namespace PostService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TIMESTAMP(7)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)");
@@ -162,7 +172,12 @@ namespace PostService.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TIMESTAMP(7)");
 
+                    b.Property<Guid?>("PostId")
+                        .HasColumnType("RAW(16)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("PostId");
 
                     b.ToTable("Tools");
                 });
@@ -185,7 +200,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.Property<string>("Language")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
+                        .HasColumnType("NVARCHAR2(450)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -193,7 +208,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.Property<string>("Slug")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
+                        .HasColumnType("NVARCHAR2(450)");
 
                     b.Property<Guid>("ToolId")
                         .HasColumnType("RAW(16)");
@@ -205,6 +220,8 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasIndex("ToolId");
 
+                    b.HasIndex("Slug", "Language");
+
                     b.ToTable("ToolContents");
                 });
 
@@ -213,6 +230,10 @@ namespace PostService.Infrastructure.Migrations
                     b.HasOne("PostService.Domain.Entities.Post", null)
                         .WithMany("Categories")
                         .HasForeignKey("PostId");
+
+                    b.HasOne("PostService.Domain.Entities.Tool", null)
+                        .WithMany("Categories")
+                        .HasForeignKey("ToolId");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.CategoryContent", b =>
@@ -248,6 +269,13 @@ namespace PostService.Infrastructure.Migrations
                     b.Navigation("Post");
                 });
 
+            modelBuilder.Entity("PostService.Domain.Entities.Tool", b =>
+                {
+                    b.HasOne("PostService.Domain.Entities.Post", null)
+                        .WithMany("Tools")
+                        .HasForeignKey("PostId");
+                });
+
             modelBuilder.Entity("PostService.Domain.Entities.ToolContent", b =>
                 {
                     b.HasOne("PostService.Domain.Entities.Tool", "Tool")
@@ -271,10 +299,14 @@ namespace PostService.Infrastructure.Migrations
                     b.Navigation("Likes");
 
                     b.Navigation("PostContents");
+
+                    b.Navigation("Tools");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.Tool", b =>
                 {
+                    b.Navigation("Categories");
+
                     b.Navigation("ToolContents");
                 });
 #pragma warning restore 612, 618

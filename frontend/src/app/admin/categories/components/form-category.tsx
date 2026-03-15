@@ -42,7 +42,7 @@ export default function FormCategory({ category }: FormCategoryProps) {
     const onSubmit = async (data: CategorySchema) => {
         if (category) {
             if(!category.id)
-                return toast.error("O identificador não pode ser nulo.");
+                return toast.error("O identificador não pode ser nulo.");           
             const response = await updateCategoryAsync({id: category.id, category: data})
             if (response.status != 200) {
                 toast.error(response.data.message);

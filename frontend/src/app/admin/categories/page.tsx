@@ -40,6 +40,7 @@ export default function ToolsPage() {
         }
         router.push(`?${params.toString()}`)
     }, [debouncedSearch])
+ 
     const totalPages = data?.totalPages || 1;
     const currentPage = data?.currentPage || 1;
     const pages = generatePagination(currentPage, totalPages);

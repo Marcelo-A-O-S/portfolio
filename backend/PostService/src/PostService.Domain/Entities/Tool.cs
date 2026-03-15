@@ -13,5 +13,17 @@ namespace PostService.Domain.Entities
             this.ToolContents = new List<ToolContent>();
             this.Categories = new List<Category>();
         }
+        public void AddCategory(Category category)
+        {
+            if(this.Categories == null)
+                throw new Exception("Lista de categorias não inicializada.");
+            this.Categories.Add(category);
+        }
+        public void AddToolContent(ToolContent toolContent)
+        {
+            if(this.ToolContents == null)
+                throw new Exception("Lista de conteudo não inicializada.");
+            this.ToolContents.Add(toolContent);
+        }
     }
 }

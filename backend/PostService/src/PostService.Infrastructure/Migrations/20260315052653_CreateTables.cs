@@ -26,36 +26,6 @@ namespace PostService.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tools",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tools", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Categories",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
-                    PostId = table.Column<Guid>(type: "RAW(16)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Categories", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Categories_Posts_PostId",
-                        column: x => x.PostId,
-                        principalTable: "Posts",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Likes",
                 columns: table => new
                 {
@@ -84,6 +54,7 @@ namespace PostService.Infrastructure.Migrations
                     Title = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
                     Description = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
                     Content = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false)
                 },
                 constraints: table =>
@@ -98,16 +69,58 @@ namespace PostService.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Tools",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
+                    PostId = table.Column<Guid>(type: "RAW(16)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tools", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Tools_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
+                    PostId = table.Column<Guid>(type: "RAW(16)", nullable: true),
+                    ToolId = table.Column<Guid>(type: "RAW(16)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Categories_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Categories_Tools_ToolId",
+                        column: x => x.ToolId,
+                        principalTable: "Tools",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ToolContents",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
                     ToolId = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    Language = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
+                    Language = table.Column<string>(type: "NVARCHAR2(450)", nullable: false),
                     Name = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
                     Description = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
                     Content = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
-                    Slug = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
+                    Slug = table.Column<string>(type: "NVARCHAR2(450)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false)
                 },
@@ -128,9 +141,9 @@ namespace PostService.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
                     CategoryId = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    Language = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
+                    Language = table.Column<string>(type: "NVARCHAR2(450)", nullable: false),
                     Name = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    Slug = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
+                    Slug = table.Column<string>(type: "NVARCHAR2(450)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
                     UpdateAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false)
                 },
@@ -151,9 +164,19 @@ namespace PostService.Infrastructure.Migrations
                 column: "PostId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Categories_ToolId",
+                table: "Categories",
+                column: "ToolId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CategoriesContents_CategoryId",
                 table: "CategoriesContents",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CategoriesContents_Slug_Language",
+                table: "CategoriesContents",
+                columns: new[] { "Slug", "Language" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Likes_PostId",
@@ -166,9 +189,19 @@ namespace PostService.Infrastructure.Migrations
                 column: "PostId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ToolContents_Slug_Language",
+                table: "ToolContents",
+                columns: new[] { "Slug", "Language" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ToolContents_ToolId",
                 table: "ToolContents",
                 column: "ToolId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tools_PostId",
+                table: "Tools",
+                column: "PostId");
         }
 
         /// <inheritdoc />

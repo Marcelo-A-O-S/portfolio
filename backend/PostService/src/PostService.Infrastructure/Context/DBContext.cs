@@ -18,6 +18,8 @@ namespace PostService.Infrastructure.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Post>().Property(p=> p.Status).HasConversion<string>();
+            modelBuilder.Entity<ToolContent>().HasIndex(tc => new { tc.Slug, tc.Language});
+            modelBuilder.Entity<CategoryContent>().HasIndex(cc => new { cc.Slug, cc.Language});
         }
     }
 }

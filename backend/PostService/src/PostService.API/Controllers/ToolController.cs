@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PostService.Application.DTOs.Request;
 using PostService.Application.Interfaces;
 using PostService.Domain.Entities;
+using PostService.Domain.Enums;
 
 namespace PostService.API.Controllers
 {
@@ -12,10 +13,15 @@ namespace PostService.API.Controllers
     {
         private readonly IToolsServices toolsServices;
         private readonly IToolContentServices toolContentServices;
-        public ToolController(IToolsServices _toolsServices, IToolContentServices _toolContentServices)
+        private readonly ICategoryServices categoryServices;
+        public ToolController(
+            IToolsServices _toolsServices, 
+            IToolContentServices _toolContentServices,
+            ICategoryServices _categoryServices)
         {
             this.toolsServices = _toolsServices;
             this.toolContentServices = _toolContentServices;
+            this.categoryServices = _categoryServices;
         }
         [HttpGet]
         [Authorize( Roles = "Administrador")]
@@ -47,15 +53,29 @@ namespace PostService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var toolContent = await this.toolContentServices.FindBy(x=> x.Slug == toolRequest.Slug && x.Language == toolRequest.Language);
-                if (toolContent != null)
-                {
-                    return BadRequest(new { message = "Erro ao criar ferramenta!" });
-                }
                 var tool = new Tool();
+                if(toolRequest.toolContents.Count == 0)
+                    return BadRequest("Não é possível salvar uma ferramenta sem seu conteudo relacionado.");
+                if(toolRequest.Categories.Count == 0)
+                    return BadRequest("Não é possível salvar uma ferramenta sem suas categorias relacionadas.");
+                foreach (var item in toolRequest.toolContents)
+                {
+                    var toolContent = await this.toolContentServices.FindBy(tc => tc.Slug == item.Slug && tc.Language == item.Language);
+                    if(toolContent != null)
+                        return BadRequest(new { message = "Erro ao validar dados!"});
+                    toolContent = new ToolContent(tool.Id, item.Language, item.Name, item.Description, item.Content,item.Slug);
+                    tool.AddToolContent(toolContent);
+                }
+                foreach(var item in toolRequest.Categories)
+                {
+                    if(item.Id is not Guid categoryId)
+                        return BadRequest(new { message = "O identificador relacionado as categorias são obrigatórios"});
+                    var category = await this.categoryServices.GetById(categoryId);
+                    if(category == null)
+                        return NotFound(new { message = "Categoria não encontrada."});
+                    tool.AddCategory(category);
+                }
                 await this.toolsServices.Save(tool);
-                toolContent = new ToolContent(tool.Id,toolRequest.Language,toolRequest.Name, toolRequest.Description, toolRequest.Content, toolRequest.Slug);
-                await this.toolContentServices.Save(toolContent);
                 return Ok(new { message = "Ferramenta salva com sucesso." });
             }
             var errors = ModelState.Values.Select(x => x.Errors);
@@ -67,18 +87,7 @@ namespace PostService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var tool = await this.toolsServices.GetById(Id);
-                if(tool == null)
-                {
-                    return NotFound("Ferramenta não encontrada.");
-                }
-                var toolContent = await this.toolContentServices.FindBy(tl => tl.Id == toolRequest.Id && tl.ToolId == Id && tl.Language == toolRequest.Language && tl.Slug == toolRequest.Slug);
-                if(toolContent == null)
-                {
-                    return NotFound("Ferramenta não encontrada.");
-                }
-                toolContent.Update(toolRequest.Language, toolRequest.Name, toolRequest.Description, toolRequest.Content, toolRequest.Slug);
-                await this.toolContentServices.Update(toolContent);
+                
                 return Ok(new { message = "Ferramenta atualizada com sucesso." });
             }
             var errors = ModelState.Values.Select(x => x.Errors);

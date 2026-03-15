@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using PostService.Application.Interfaces;
 using PostService.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -34,6 +35,7 @@ namespace PostService.API.Controllers
         }
         [HttpGet("GetByPagination")]
         [Authorize( Roles = "Administrador")]
+        [EnableRateLimiting("pagination")]
         public async Task<IActionResult> GetByPagination(
             [FromQuery] int page,
             [FromQuery] string? language,
@@ -45,6 +47,7 @@ namespace PostService.API.Controllers
         }
         [HttpGet("{Id}")]
         [Authorize( Roles = "Administrador")]
+        [EnableRateLimiting("read")]
         public async Task<IActionResult> GetById([FromRoute] Guid Id)
         {
             var category = await this.categoryServices.GetById(Id);
@@ -54,11 +57,14 @@ namespace PostService.API.Controllers
         }
         [HttpPost]
         [Authorize( Roles = "Administrador")]
+        [EnableRateLimiting("write")]
         public async Task<IActionResult> CreateCategory(CategoryRequest categoryRequest)
         {
             if (ModelState.IsValid)
             {
                 var category = new Category();
+                if(categoryRequest.CategoryContents.Count == 0)
+                    return BadRequest(new { message = "Não é possivel salvar uma categoria vazia"});
                 foreach(var ccRequest in categoryRequest.CategoryContents)
                 {
                     var categoryContent = await this.categoryContentServices.FindBy(cc => cc.Slug == ccRequest.Slug && cc.Language == ccRequest.Language);
@@ -75,6 +81,7 @@ namespace PostService.API.Controllers
         }
         [HttpPut("{Id}")]
         [Authorize( Roles = "Administrador")]
+        [EnableRateLimiting("write")]
         public async Task<IActionResult> UpdateCategory([FromRoute] Guid Id, CategoryRequest categoryRequest)
         {
             if (ModelState.IsValid)
@@ -85,21 +92,16 @@ namespace PostService.API.Controllers
                 foreach(var ccRequest in categoryRequest.CategoryContents)
                 {
                     var categoryContent = new CategoryContent();
-                    if (ccRequest.Id != null)
-                    {
-                        categoryContent = await this.categoryContentServices.FindBy(cc => cc.Id == ccRequest.Id && cc.Slug == ccRequest.Slug);
-                    }
-                    else
-                    {
-                        categoryContent = await this.categoryContentServices.FindBy(cc => cc.Slug == ccRequest.Slug);
-                    }
-                    if(categoryContent != null)
-                    {
-                        categoryContent.Update(ccRequest.Language, ccRequest.Name, ccRequest.Slug);
-                    }
-                    else
+                    if(ccRequest.Id is not Guid categoryContentId)
+                        return BadRequest(new { message = "O identificador relacionda ao conteudo da categoria é obrigatória."});
+                    categoryContent = await this.categoryContentServices.GetById(categoryContentId);
+                    if(categoryContent == null)
                     {
                         categoryContent = new CategoryContent(category.Id, ccRequest.Language, ccRequest.Name, ccRequest.Slug);
+                    }
+                    else
+                    {
+                        categoryContent.Update(ccRequest.Language, ccRequest.Name, ccRequest.Slug);
                     }
                     category.CategoryContents.Add(categoryContent);
                 }
@@ -111,6 +113,7 @@ namespace PostService.API.Controllers
         }
         [HttpDelete]
         [Authorize( Roles = "Administrador")]
+        [EnableRateLimiting("sensitive")]
         public async Task<IActionResult> DeleteCategory([FromRoute] Guid Id)
         {
             var category = await this.categoryServices.GetById(Id);
