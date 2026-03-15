@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { categorySchema, CategorySchema } from "@/domain/schemas/CategorySchema";
 import { useCreateCategory } from "@/hooks/useCreateCategory";
+import { useUpdateCategory } from "@/hooks/useUpdateCategory";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
@@ -16,7 +17,7 @@ type FormCategoryProps = {
 }
 export default function FormCategory({ category }: FormCategoryProps) {
     const { mutateAsync: createCategoryAsync } = useCreateCategory();
-    
+    const { mutateAsync: updateCategoryAsync } = useUpdateCategory();
     const { control, handleSubmit, reset, formState: { errors } } = useForm<CategorySchema>({
         resolver: zodResolver(categorySchema),
         defaultValues: {
@@ -40,7 +41,14 @@ export default function FormCategory({ category }: FormCategoryProps) {
     }, [category, reset]);
     const onSubmit = async (data: CategorySchema) => {
         if (category) {
-
+            if(!category.id)
+                return toast.error("O identificador não pode ser nulo.");
+            const response = await updateCategoryAsync({id: category.id, category: data})
+            if (response.status != 200) {
+                toast.error(response.data.message);
+                return;
+            }
+            toast.success(response.data.message);
         } else {
             const response = await createCategoryAsync(data);
             if (response.status != 200) {

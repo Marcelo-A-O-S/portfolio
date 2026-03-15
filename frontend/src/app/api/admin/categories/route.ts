@@ -4,8 +4,8 @@ import { addCategoryService } from "@/services/server/category-services";
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 type ApiErrorResponse = {
-  message?: string;
-  statusCode?: number;
+    message?: string;
+    statusCode?: number;
 };
 export async function POST(request: NextRequest) {
     try {

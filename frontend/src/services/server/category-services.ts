@@ -9,7 +9,7 @@ export const addCategoryService = async(data: CategorySchema) =>{
 }
 export const updateCategoryService = async(id:string, data: CategorySchema) =>{
     const api = await apiServer();
-    const response = await api.post(`/api/Category/${id}`,data);
+    const response = await api.put(`/api/Category/${id}`,data);
     return response;
 }
 export const deleteCategoryByRouteService = async(id:string) => {

@@ -9,12 +9,12 @@ export const addCategoryService = async(data: CategorySchema) => {
 }
 export const updateCategoryService = async(id:string, data: CategorySchema) => {
     const api = await apiClient();
-    const response = await api.put(`/api/categories/${id}`,data);
+    const response = await api.put(`/api/admin/categories/${id}`,data);
     return response;
 }
 export const deleteCategoryByRouteService = async(id:string) => {
     const api = await apiClient();
-    const response = await api.delete(`/api/categories/${id}`);
+    const response = await api.delete(`/api/admin/categories/${id}`);
     return response;
 }
 export const getCategoriesByPaginationService = async(categoriesFilters: CategoriesFilters) =>{

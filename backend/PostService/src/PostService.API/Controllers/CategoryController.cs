@@ -103,6 +103,7 @@ namespace PostService.API.Controllers
                     }
                     category.CategoryContents.Add(categoryContent);
                 }
+                await this.categoryServices.Update(category);
                 return Ok(new { message = "Categoria atualizada com sucesso." });
             }
             var errors = ModelState.Values.Select(x => x.Errors);

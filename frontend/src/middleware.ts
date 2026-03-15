@@ -14,14 +14,13 @@ const pathPublics = [
     "/api/auth/csrf"
 ]
 const roleProtectedRoutes: Record<string, string[]> = {
-    "/api/admin/post":["Administrador","Client"],
+    "/api/admin/post":["Administrador"],
     "/admin/users": ["Administrador","Client"],
-    "/admin/tools/create": ["Administrador","Client"],
-    "/admin/tools": ["Administrador","Client"],
-    "/admin/categories/create": ["Administrador","Client"],
-    "/admin/categories": ["Administrador","Client"],
-    "/admin/projects/create": ["Administrador","Client"],
-    "/admin/projects": ["Administrador","Client"],
+    "/admin/tools/create": ["Administrador"],
+    "/admin/tools": ["Administrador"],
+    "/admin/categories": ["Administrador"],
+    "/admin/projects/create": ["Administrador"],
+    "/admin/projects": ["Administrador"],
     "/admin/dashboard": ["Administrador"],
     "/admin/certificates": ["Administrador"],
     "/admin": ["Administrador"],

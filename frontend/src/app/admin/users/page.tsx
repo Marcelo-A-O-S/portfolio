@@ -59,7 +59,7 @@ export default function UsersPage() {
     return (
         <main className="relative mx-auto flex min-h-screen inset-0 w-screen max-w-[1440px] justify-center bg-white dark:bg-black ">
             <section className="relative w-full min-h-screen px-10 py-20 flex flex-col">
-                <div className="flex py-10 md:p-10 items-center justify-between ">
+                <div className="flex flex-col gap-3 sm:flex-row  py-10 md:p-10 sm:items-center justify-between">
                     <h1 className="text-3xl md:text-5xl font-semibold">Usuários</h1>
                     <div>
                         <Input
