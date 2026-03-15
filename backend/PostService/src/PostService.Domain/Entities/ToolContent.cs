@@ -1,10 +1,12 @@
+using System.Text.Json.Serialization;
 namespace PostService.Domain.Entities
 {
     public class ToolContent
     {
         public Guid Id { get; private set; }
         public Guid ToolId { get; private set; }
-        public Tool Tool { get; private set; }  
+        [JsonIgnore]
+        public Tool Tool { get; private set; } 
         public string Language { get; private set; }
         public string Name { get; private set; }
         public string Description { get; private set; }

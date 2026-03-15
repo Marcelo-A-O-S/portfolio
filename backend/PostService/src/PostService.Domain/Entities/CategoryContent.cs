@@ -12,9 +12,7 @@ namespace PostService.Domain.Entities
         public string Slug { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdateAt { get; private set; }
-        public CategoryContent()
-        {
-        }
+        public CategoryContent(){}
         public CategoryContent(Guid categoryId, string language, string name, string slug)
         {
             this.Id = Guid.NewGuid();

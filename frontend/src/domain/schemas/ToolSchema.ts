@@ -1,9 +1,7 @@
 import z from "zod";
+import { toolContentSchema } from "./ToolContentSchema";
 export const toolSchema = z.object({
-    id: z.string().nonempty(),
-    name: z.string().nonempty(),
-    description: z.string().nonempty(),
-    content: z.string().nonempty(),
-    slug: z.string().nonempty()
+    id: z.string().optional(),
+    toolContents: z.array(toolContentSchema)
 })
 export type ToolSchema = z.infer<typeof toolSchema>

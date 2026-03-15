@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { ToolSchema, toolSchema } from "@/domain/schemas/ToolSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { Switch } from "@/components/ui/switch"
 import MarkdownRenderer from "@/components/markdown-renderer";
 export default function ToolCreatePage() {
@@ -16,15 +16,24 @@ export default function ToolCreatePage() {
     const { control, handleSubmit, formState: { }, watch } = useForm<ToolSchema>({
         resolver: zodResolver(toolSchema),
         defaultValues: {
-            name: '',
-            slug: '',
-            content: '',
-            description: '',
+            toolContents: [
+                {
+                    content: "",
+                    description: "",
+                    name: "",
+                    slug: "",
+                    language: ""
+                }
+            ]
         }
+    });
+    const { fields } = useFieldArray({
+        control,
+        name: "toolContents"
     });
     const onSubmit = async (data: ToolSchema) => {
     }
-    const contentValue = watch("content");
+    const contents = watch("toolContents")
     return (
         <>
             <main className="relative mx-auto flex min-h-full inset-0 w-screen max-w-[1440px] justify-center bg-background overflow-x-hidden">
@@ -32,96 +41,99 @@ export default function ToolCreatePage() {
                     <div className="w-full flex p-10 items-center justify-between">
                         <h1 className="text-3xl md:text-5xl font-semibold">Create Tool</h1>
                         <div className="flex gap-2 items-center">
-                            <Button className="cursor-pointer" onClick={() => openPreview(!preview)} >Preview</Button>
+                            <Button type="button" className="cursor-pointer" onClick={() => openPreview(!preview)} >Preview</Button>
                         </div>
                     </div>
-                    <div className="flex gap-4">
-                        <Card className="w-[40vw] max-h-full h-[600px] flex flex-col overflow-hidden">
-                            <CardHeader>
-                                <CardTitle>Write Post</CardTitle>
-                            </CardHeader>
-                            <CardContent className="flex-1 flex flex-col min-h-0">
-                                <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col min-h-0">
-                                    <div className="flex flex-col gap-6 flex-1 min-h-0">
-                                        <Controller
-                                            name="name"
-                                            control={control}
-                                            render={({ field }) => (
-                                                <div className="grid gap-2">
-                                                    <Label htmlFor="title">Name</Label>
-                                                    <Input
-                                                        {...field}
-                                                        placeholder="Informe o nome da ferramenta..."
-                                                    />
-                                                </div>
-                                            )}
-                                        />
-                                        <Controller
-                                            name="slug"
-                                            control={control}
-                                            render={({ field }) => (
-                                                <div className="grid gap-2">
-                                                    <Label htmlFor="title">Slug</Label>
-                                                    <Input
-                                                        {...field}
-                                                        placeholder="Informe um nome amigável da URL... "
-                                                    />
-                                                </div>
-                                            )}
-                                        />
-                                        <Controller
-                                            name="description"
-                                            control={control}
-                                            render={({ field }) => (
-                                                <div className="grid gap-2">
-                                                    <Label htmlFor="description">Description</Label>
-                                                    <Input
-                                                        {...field}
-                                                        placeholder="Informe uma breve descrição da ferramenta..."
-                                                    />
-                                                </div>
-                                            )}
-                                        />
-                                        <Controller
-                                            name="content"
-                                            control={control}
-                                            render={({ field }) => (
-                                                <Field className="flex flex-col flex-1  min-h-0">
-                                                    <FieldLabel htmlFor="block-start-textarea">Content</FieldLabel>
-                                                    <InputGroup className="flex-1 min-h-0 items-stretch">
-                                                        <InputGroupTextarea
+                    <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col min-h-0">
+                        {fields.map((item, index) => (
+                            <div key={item.id} className="flex gap-4">
+                                <Card className="w-[40vw] max-h-full h-[600px] flex flex-col overflow-hidden">
+                                    <CardHeader>
+                                        <CardTitle>Write Post</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="flex-1 flex flex-col min-h-0">
+
+                                        <div className="flex flex-col gap-6 flex-1 min-h-0">
+                                            <Controller
+                                                name={`toolContents.${index}.name`}
+                                                control={control}
+                                                render={({ field }) => (
+                                                    <div className="grid gap-2">
+                                                        <Label htmlFor="title">Name</Label>
+                                                        <Input
                                                             {...field}
-                                                            placeholder="Informe o conteudo aqui..."
-                                                            className="flex-1 resize-none overflow-y-auto"
+                                                            placeholder="Informe o nome da ferramenta..."
                                                         />
-                                                    </InputGroup>
-                                                </Field>
-                                            )}
-                                        />
-                                        <Field orientation="horizontal" className="w-fit">
-                                            <FieldLabel htmlFor="2fa">Publish</FieldLabel>
-                                            <Switch id="2fa" />
-                                        </Field>
-                                    </div>
-                                </form>
-                            </CardContent>
-                            <CardFooter className="flex-col gap-2">
-                            </CardFooter>
-                        </Card>
-                        <Card className={`${preview ? "flex" : "hidden"} w-[40vw]`}>
-                            <CardHeader>
-                                <CardTitle>Preview</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <MarkdownRenderer content={contentValue || "# Crie agora uma postagem! \n\nDescreva sua **postagem** no campo content ..."} />
-                            </CardContent>
-                            <CardFooter className="flex-col gap-2">
-                            </CardFooter>
-                        </Card>
-                    </div>
+                                                    </div>
+                                                )}
+                                            />
+                                            <Controller
+                                                name={`toolContents.${index}.slug`}
+                                                control={control}
+                                                render={({ field }) => (
+                                                    <div className="grid gap-2">
+                                                        <Label htmlFor="title">Slug</Label>
+                                                        <Input
+                                                            {...field}
+                                                            placeholder="Informe um nome amigável da URL... "
+                                                        />
+                                                    </div>
+                                                )}
+                                            />
+                                            <Controller
+                                                name={`toolContents.${index}.description`}
+                                                control={control}
+                                                render={({ field }) => (
+                                                    <div className="grid gap-2">
+                                                        <Label htmlFor="description">Description</Label>
+                                                        <Input
+                                                            {...field}
+                                                            placeholder="Informe uma breve descrição da ferramenta..."
+                                                        />
+                                                    </div>
+                                                )}
+                                            />
+                                            <Controller
+                                                name={`toolContents.${index}.content`}
+                                                control={control}
+                                                render={({ field }) => (
+                                                    <Field className="flex flex-col flex-1  min-h-0">
+                                                        <FieldLabel htmlFor="block-start-textarea">Content</FieldLabel>
+                                                        <InputGroup className="flex-1 min-h-0 items-stretch">
+                                                            <InputGroupTextarea
+                                                                {...field}
+                                                                placeholder="Informe o conteudo aqui..."
+                                                                className="flex-1 resize-none overflow-y-auto"
+                                                            />
+                                                        </InputGroup>
+                                                    </Field>
+                                                )}
+                                            />
+                                            <Field orientation="horizontal" className="w-fit">
+                                                <FieldLabel htmlFor="2fa">Publish</FieldLabel>
+                                                <Switch id="2fa" />
+                                            </Field>
+                                        </div>
+                                    </CardContent>
+                                    <CardFooter className="flex-col gap-2">
+                                    </CardFooter>
+                                </Card>
+                                <Card className={`${preview ? "flex" : "hidden"} w-[40vw]`}>
+                                    <CardHeader>
+                                        <CardTitle>Preview</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <MarkdownRenderer content={contents[index]?.content || "# Crie agora uma postagem! \n\nDescreva sua **postagem** no campo content ..."} />
+                                    </CardContent>
+                                    <CardFooter className="flex-col gap-2">
+                                    </CardFooter>
+                                </Card>
+                            </div>
+                        ))}
+                    </form>
 
                 </section>
-            </main>
+            </main >
         </>
     )
 }
