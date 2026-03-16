@@ -59,6 +59,7 @@ namespace PostService.API.Controllers
                     return BadRequest(new { message = "Erro ao validar os dados." });
                 language = new Language(languageRequest.Code, languageRequest.Name);
                 await this.languageServices.Save(language);
+                return Ok(new { message = "Linguagem salva com sucesso. "});
             }
             var errors = ModelState.Values.Select(e=> e.Errors);
             return BadRequest(errors);
@@ -76,6 +77,7 @@ namespace PostService.API.Controllers
                     return NotFound(new { message = "Linguagem não encontrada."});
                 language.Update(language.Code, language.Name);
                 await this.languageServices.Update(language);
+                return Ok(new { message = "Linguagem atualizada com sucesso."});
             }
             var errors = ModelState.Values.Select(e => e.Errors);
             return BadRequest(errors);

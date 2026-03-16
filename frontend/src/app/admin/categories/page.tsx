@@ -12,6 +12,9 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { createPageURL, generatePagination } from "@/lib/utils";
 import { toast } from "sonner";
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationEllipsis, PaginationLink, PaginationNext } from "@/components/ui/pagination";
+import { SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem, Select } from "@/components/ui/select";
+import { getLanguages } from "@/services/client/language-services";
+import { useLanguages } from "@/hooks/useLanguages";
 export default function ToolsPage() {
     const { data: session } = useSession();
     const router = useRouter();
@@ -22,7 +25,8 @@ export default function ToolsPage() {
     const [searchInput, setSearchInput] = useState(search ?? "");
     const debouncedSearch = useDebounce(searchInput, 500);
     const columns = useMemo(() => getCategoryColumns(), []);
-    const { data, isLoading, error } = useCategories({
+    const { data: languages } = useLanguages();
+    const { data: categories, isLoading, error } = useCategories({
         page,
         language,
         search,
@@ -40,10 +44,10 @@ export default function ToolsPage() {
         }
         router.push(`?${params.toString()}`)
     }, [debouncedSearch])
- 
-    const totalPages = data?.totalPages || 1;
-    const currentPage = data?.currentPage || 1;
+    const totalPages = categories?.totalPages || 1;
+    const currentPage = categories?.currentPage || 1;
     const pages = generatePagination(currentPage, totalPages);
+    console.log(languages);
     if (error) {
         toast.error("Erro ao buscar usuários")
     }
@@ -64,13 +68,25 @@ export default function ToolsPage() {
                     </div>
                 </div>
                 <div className="flex md:px-10 gap-2">
-
+                    <Select>
+                        <SelectTrigger className="w-full max-w-48">
+                            <SelectValue placeholder="Selecione o idioma" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Idiomas</SelectLabel>
+                                {languages?.map((item, index) => (
+                                    <SelectItem key={index} value={item.code}>{item.name}</SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
                 </div>
                 <div className="flex py-10 md:p-10">
                     {isLoading ? (
                         <Skeleton className="h-[400px] w-full" />
                     ) : (
-                        <DataTable columns={columns} data={data.items ?? []} />
+                        <DataTable columns={columns} data={categories.items ?? []} />
 
                     )}
                 </div>

@@ -4,12 +4,11 @@ import { validateUserByRequest } from "@/services/server/auth-services";
 import { addCategoryService } from "@/services/server/category-services";
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
-
 export async function POST(request: NextRequest) {
     try {
         const allowed = await validateUserByRequest(request, ["Administrador"]);
         if (!allowed)
-            return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         const data = await request.json();
         const result = await categorySchema.safeParseAsync(data);
         if (result.error) {
@@ -32,7 +31,6 @@ export async function POST(request: NextRequest) {
     } catch (error: unknown) {
         if (axios.isAxiosError<ApiErrorResponse>(error)) {
             console.log("Erro backend:", error.response?.data);
-
             return NextResponse.json(
                 {
                     message: error.response?.data?.message ?? "Erro no backend"
@@ -43,5 +41,9 @@ export async function POST(request: NextRequest) {
             );
         }
     }
-
+}
+export async function GET(request: NextRequest) {
+    const allowed = await validateUserByRequest(request, ["Administrador"]);
+    if (!allowed)
+        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 }

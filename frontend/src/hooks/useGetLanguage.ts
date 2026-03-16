@@ -3,7 +3,7 @@ import { getLanguagesByPagination } from "@/services/client/language-services";
 import { useQuery } from "@tanstack/react-query";
 export default function useGetLanguages(languageFilters: LanguageFilters){
     return useQuery({
-        queryKey: ["languages", languageFilters],
+        queryKey: ["languages-pagination", languageFilters],
         queryFn: async ()=> {
             const response = await getLanguagesByPagination(languageFilters);
             if (response.status != 200) {

@@ -30,3 +30,8 @@ export const getCategoriesByPaginationService = async(categoriesFilters: Categor
     const response = await api.get(`/api/admin/categories/pagination?${params}`);
     return response;
 }
+export const getCategories = async() =>{
+    const api = await apiClient();
+    const response = await api.get(`/api/admin/categories`);
+    return response;
+}
