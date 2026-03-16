@@ -23,3 +23,10 @@ C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.Application\obj
 C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.Application\obj\Debug\net8.0\PostService.Application.dll
 C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.Application\obj\Debug\net8.0\refint\PostService.Application.dll
 C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.Application\obj\Debug\net8.0\PostService.Application.pdb
+C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.Application\bin\Debug\net8.0\PostService.Application.deps.json
+C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.Application\bin\Debug\net8.0\PostService.Application.dll
+C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.Application\bin\Debug\net8.0\PostService.Application.pdb
+C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.Application\bin\Debug\net8.0\PostService.Domain.dll
+C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.Application\bin\Debug\net8.0\PostService.Domain.pdb
+C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.Application\obj\Debug\net8.0\PostServ.E1AAFB4F.Up2Date
+C:\Backup\Projetos\portfolio\backend\PostService\src\PostService.Application\obj\Debug\net8.0\ref\PostService.Application.dll

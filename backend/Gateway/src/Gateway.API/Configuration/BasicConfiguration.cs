@@ -51,6 +51,15 @@ namespace Gateway.API.Configuration
                     {
                         Path = "/api/category/{**catch-all}"
                     }
+                },
+                new RouteConfig
+                {
+                    RouteId = "Language",
+                    ClusterId = "postCluster",
+                    Match = new RouteMatch
+                    {
+                        Path = "/api/language/{**catch-all}"
+                    }
                 }
             };
         }

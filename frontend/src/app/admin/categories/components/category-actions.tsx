@@ -28,7 +28,6 @@ export function CategoryActions({ category }: CategoryActionsProps) {
                         ) : (
                             <></>
                         )}
-
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className="cursor-pointer" onClick={() =>

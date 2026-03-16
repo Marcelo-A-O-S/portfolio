@@ -58,9 +58,8 @@ namespace PostService.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TIMESTAMP(7)");
 
-                    b.Property<string>("Language")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR2(450)");
+                    b.Property<Guid>("LanguageId")
+                        .HasColumnType("RAW(16)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -77,9 +76,36 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("Slug", "Language");
+                    b.HasIndex("LanguageId");
+
+                    b.HasIndex("Slug");
 
                     b.ToTable("CategoriesContents");
+                });
+
+            modelBuilder.Entity("PostService.Domain.Entities.Language", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("RAW(16)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR2(2000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TIMESTAMP(7)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR2(2000)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TIMESTAMP(7)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Languages");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.Like", b =>
@@ -195,9 +221,8 @@ namespace PostService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)");
 
-                    b.Property<string>("Language")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR2(450)");
+                    b.Property<Guid>("LanguageId")
+                        .HasColumnType("RAW(16)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -215,9 +240,11 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ToolId");
+                    b.HasIndex("LanguageId");
 
-                    b.HasIndex("Slug", "Language");
+                    b.HasIndex("Slug");
+
+                    b.HasIndex("ToolId");
 
                     b.ToTable("ToolContents");
                 });
@@ -241,7 +268,15 @@ namespace PostService.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("PostService.Domain.Entities.Language", "Language")
+                        .WithMany()
+                        .HasForeignKey("LanguageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Category");
+
+                    b.Navigation("Language");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.Like", b =>
@@ -275,11 +310,19 @@ namespace PostService.Infrastructure.Migrations
 
             modelBuilder.Entity("PostService.Domain.Entities.ToolContent", b =>
                 {
+                    b.HasOne("PostService.Domain.Entities.Language", "Language")
+                        .WithMany()
+                        .HasForeignKey("LanguageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PostService.Domain.Entities.Tool", "Tool")
                         .WithMany("ToolContents")
                         .HasForeignKey("ToolId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Language");
 
                     b.Navigation("Tool");
                 });

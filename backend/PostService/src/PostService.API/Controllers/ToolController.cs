@@ -60,10 +60,10 @@ namespace PostService.API.Controllers
                     return BadRequest("Não é possível salvar uma ferramenta sem suas categorias relacionadas.");
                 foreach (var item in toolRequest.toolContents)
                 {
-                    var toolContent = await this.toolContentServices.FindBy(tc => tc.Slug == item.Slug && tc.Language == item.Language);
+                    var toolContent = await this.toolContentServices.FindBy(tc => tc.Slug == item.Slug && tc.LanguageId == item.LanguageId);
                     if(toolContent != null)
                         return BadRequest(new { message = "Erro ao validar dados!"});
-                    toolContent = new ToolContent(tool.Id, item.Language, item.Name, item.Description, item.Content,item.Slug);
+                    toolContent = new ToolContent(tool.Id, item.LanguageId, item.Name, item.Description, item.Content,item.Slug);
                     tool.AddToolContent(toolContent);
                 }
                 foreach(var item in toolRequest.Categories)

@@ -18,6 +18,7 @@ namespace PostService.Application.Extensions
             services.AddScoped<ICategoryContentServices, CategoryContentServices>();
             services.AddScoped<IToolContentServices, ToolContentServices>();
             services.AddScoped<IPostContentServices, PostContentServices>();
+            services.AddScoped<ILanguageServices, LanguageServices>();
             return services;
         }
     }

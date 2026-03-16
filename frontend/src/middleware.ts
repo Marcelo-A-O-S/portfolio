@@ -15,6 +15,10 @@ const pathPublics = [
 ]
 const roleProtectedRoutes: Record<string, string[]> = {
     "/api/admin/post":["Administrador"],
+    "/api/admin/categories":["Administrador"],
+    "/api/admin/languages":["Administrador"],
+    "/api/admin/users":["Administrador","Client"],
+    "/admin/languages":["Administrador"],
     "/admin/users": ["Administrador","Client"],
     "/admin/tools/create": ["Administrador"],
     "/admin/tools": ["Administrador"],

@@ -1,12 +1,10 @@
 import { categorySchema } from "@/domain/schemas/CategorySchema";
+import { ApiErrorResponse } from "@/domain/types/ApiErrorResponse";
 import { validateUserByRequest } from "@/services/server/auth-services";
 import { addCategoryService } from "@/services/server/category-services";
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
-type ApiErrorResponse = {
-    message?: string;
-    statusCode?: number;
-};
+
 export async function POST(request: NextRequest) {
     try {
         const allowed = await validateUserByRequest(request, ["Administrador"]);

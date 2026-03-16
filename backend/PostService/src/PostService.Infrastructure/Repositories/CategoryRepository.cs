@@ -20,7 +20,7 @@ namespace PostService.Infrastructure.Repositories
             {
                 query = query.Where(c =>
                     c.CategoryContents.Any(cc =>
-                        (string.IsNullOrWhiteSpace(language) || cc.Language == language) &&
+                        (string.IsNullOrWhiteSpace(language) || cc.Language.Code == language) &&
                         (
                             string.IsNullOrWhiteSpace(search) ||
                             EF.Functions.Like(cc.Name, $"%{search}%") ||
@@ -32,8 +32,7 @@ namespace PostService.Infrastructure.Repositories
             var totalItems = await query.CountAsync();
             var items = await query.Skip((page - 1) * itemsPage)
             .Take(itemsPage)
-            .Include(c => c.CategoryContents
-                .Where(cc => language == null || cc.Language == language))
+            .Include(c => c.CategoryContents.Where(cc => string.IsNullOrWhiteSpace(language) || cc.Language.Code == language))
             .ToListAsync();
             return new PaginatedResult<Category>
             {

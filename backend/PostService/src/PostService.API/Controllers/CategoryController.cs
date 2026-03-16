@@ -67,10 +67,10 @@ namespace PostService.API.Controllers
                     return BadRequest(new { message = "Não é possivel salvar uma categoria vazia"});
                 foreach(var ccRequest in categoryRequest.CategoryContents)
                 {
-                    var categoryContent = await this.categoryContentServices.FindBy(cc => cc.Slug == ccRequest.Slug && cc.Language == ccRequest.Language);
+                    var categoryContent = await this.categoryContentServices.FindBy(cc => cc.Slug == ccRequest.Slug && cc.LanguageId == ccRequest.LanguageId);
                     if(categoryContent != null)
                         return BadRequest(new { message ="Erro ao validar dados!"});
-                    categoryContent = new CategoryContent(category.Id,ccRequest.Language, ccRequest.Name, ccRequest.Slug);
+                    categoryContent = new CategoryContent(category.Id,ccRequest.LanguageId, ccRequest.Name, ccRequest.Slug);
                     category.AddCategoryContent(categoryContent);
                 }
                 await this.categoryServices.Save(category);
@@ -97,11 +97,11 @@ namespace PostService.API.Controllers
                     categoryContent = await this.categoryContentServices.GetById(categoryContentId);
                     if(categoryContent == null)
                     {
-                        categoryContent = new CategoryContent(category.Id, ccRequest.Language, ccRequest.Name, ccRequest.Slug);
+                        categoryContent = new CategoryContent(category.Id, ccRequest.LanguageId, ccRequest.Name, ccRequest.Slug);
                     }
                     else
                     {
-                        categoryContent.Update(ccRequest.Language, ccRequest.Name, ccRequest.Slug);
+                        categoryContent.Update(ccRequest.LanguageId, ccRequest.Name, ccRequest.Slug);
                     }
                     category.CategoryContents.Add(categoryContent);
                 }

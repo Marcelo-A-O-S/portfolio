@@ -12,6 +12,21 @@ namespace PostService.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Languages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
+                    Code = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
+                    Name = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Languages", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Posts",
                 columns: table => new
                 {
@@ -116,7 +131,7 @@ namespace PostService.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
                     ToolId = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    Language = table.Column<string>(type: "NVARCHAR2(450)", nullable: false),
+                    LanguageId = table.Column<Guid>(type: "RAW(16)", nullable: false),
                     Name = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
                     Description = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
                     Content = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
@@ -127,6 +142,12 @@ namespace PostService.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ToolContents", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ToolContents_Languages_LanguageId",
+                        column: x => x.LanguageId,
+                        principalTable: "Languages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ToolContents_Tools_ToolId",
                         column: x => x.ToolId,
@@ -141,7 +162,7 @@ namespace PostService.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
                     CategoryId = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    Language = table.Column<string>(type: "NVARCHAR2(450)", nullable: false),
+                    LanguageId = table.Column<Guid>(type: "RAW(16)", nullable: false),
                     Name = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
                     Slug = table.Column<string>(type: "NVARCHAR2(450)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
@@ -154,6 +175,12 @@ namespace PostService.Infrastructure.Migrations
                         name: "FK_CategoriesContents_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CategoriesContents_Languages_LanguageId",
+                        column: x => x.LanguageId,
+                        principalTable: "Languages",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -174,9 +201,14 @@ namespace PostService.Infrastructure.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CategoriesContents_Slug_Language",
+                name: "IX_CategoriesContents_LanguageId",
                 table: "CategoriesContents",
-                columns: new[] { "Slug", "Language" });
+                column: "LanguageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CategoriesContents_Slug",
+                table: "CategoriesContents",
+                column: "Slug");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Likes_PostId",
@@ -189,9 +221,14 @@ namespace PostService.Infrastructure.Migrations
                 column: "PostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ToolContents_Slug_Language",
+                name: "IX_ToolContents_LanguageId",
                 table: "ToolContents",
-                columns: new[] { "Slug", "Language" });
+                column: "LanguageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ToolContents_Slug",
+                table: "ToolContents",
+                column: "Slug");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ToolContents_ToolId",
@@ -221,6 +258,9 @@ namespace PostService.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "Languages");
 
             migrationBuilder.DropTable(
                 name: "Tools");

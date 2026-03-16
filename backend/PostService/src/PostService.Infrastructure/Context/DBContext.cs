@@ -15,11 +15,12 @@ namespace PostService.Infrastructure.Context
         public DbSet<Like> Likes { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<PostContent> PostContents { get; set;}
+        public DbSet<Language> Languages {get; set;}
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Post>().Property(p=> p.Status).HasConversion<string>();
-            modelBuilder.Entity<ToolContent>().HasIndex(tc => new { tc.Slug, tc.Language});
-            modelBuilder.Entity<CategoryContent>().HasIndex(cc => new { cc.Slug, cc.Language});
+            modelBuilder.Entity<ToolContent>().HasIndex(tc => new { tc.Slug});
+            modelBuilder.Entity<CategoryContent>().HasIndex(cc => new { cc.Slug});
         }
     }
 }
