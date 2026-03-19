@@ -32,6 +32,13 @@ export const getCategoriesByPaginationService = async(filters: CategoriesFilters
 }
 export const getCategories = async() =>{
     const api = await apiServer();
-    const response = await api.get(`/api/Category`);
+    const response = await api.get(`/api/Category/GetCategories`);
+    return response;
+}
+export const getCategoriesByLanguage = async(language:string) =>{
+    const api = await apiServer();
+    const params = new URLSearchParams();
+    params.append("language",language);
+    const response = await api.get(`/api/Category?${params}`);
     return response;
 }

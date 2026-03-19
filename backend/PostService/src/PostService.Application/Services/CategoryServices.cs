@@ -32,6 +32,16 @@ namespace PostService.Application.Services
             return await this.categoryRepository.GetByPagination(page,language,search);
         }
 
+        public async Task<List<Category>> GetCategories()
+        {
+            return await this.categoryRepository.GetCategories();
+        }
+
+        public async Task<List<Category>> GetCategoriesByLanguage(string language)
+        {
+            return await this.categoryRepository.GetCategoriesByLanguage(language);
+        }
+
         public async Task<List<Category>> List()
         {
             return await this.categoryRepository.List();

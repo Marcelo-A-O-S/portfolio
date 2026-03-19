@@ -12,7 +12,6 @@ namespace PostService.Infrastructure.Repositories
         {
             this.context = _context;
         }
-
         public async Task<PaginatedResult<Category>> GetByPagination(int page, string? language, string? search, int itemsPage = 10)
         {
             var query = this.context.Categories.AsQueryable();
@@ -43,6 +42,23 @@ namespace PostService.Infrastructure.Repositories
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling(totalItems / (double)itemsPage)
             };
+        }
+        public async Task<List<Category>> GetCategoriesByLanguage(string language)
+        {
+            var query = this.context.Categories.AsQueryable();
+            var items = await query.Include(c => c.CategoryContents
+                .Where(cc => string.IsNullOrWhiteSpace(language) || cc.Language.Code == language))
+                .ThenInclude( cc => cc.Language)
+                .ToListAsync();
+            return items;
+        }
+        public async Task<List<Category>> GetCategories()
+        {
+            var query = this.context.Categories.AsQueryable();
+            var items = await query.Include(c => c.CategoryContents)
+                .ThenInclude( cc => cc.Language)
+                .ToListAsync();
+            return items;
         }
     }
 }

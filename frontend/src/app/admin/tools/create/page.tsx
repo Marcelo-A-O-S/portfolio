@@ -18,12 +18,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Category } from "@/domain/types/Category";
 import { CategorySchema } from "@/domain/schemas/CategorySchema";
 export default function ToolCreatePage() {
+    const { data: categories } = useCategories();
+    const { data: languages } = useLanguages();
     const [preview, openPreview] = useState(false);
     const [previewIndex, setPreviewIndex] = useState<number | null>(null);
     const [open, setOpen] = useState(false);
     const [selectedCategories, setSelectedCategories] = useState<CategorySchema[]>([])
-    const { data: categories } = useCategories();
-    const { data: languages } = useLanguages();
     const { control, handleSubmit, formState: { }, watch } = useForm<ToolSchema>({
         resolver: zodResolver(toolSchema),
         defaultValues: {
@@ -39,11 +39,11 @@ export default function ToolCreatePage() {
 
         }
     });
-    const { fields: fieldToolContents, append, remove } = useFieldArray({
+    const { fields: fieldToolContents, append, remove : removeTool } = useFieldArray({
         control,
         name: "toolContents"
     });
-    const { fields: fieldCategories } = useFieldArray({
+    const { fields: fieldCategories, append: appendCategory, remove } = useFieldArray({
         control,
         name: "categories"
     })
@@ -52,10 +52,14 @@ export default function ToolCreatePage() {
         console.log(data);
     }
     const addCategory = (data: CategorySchema) => {
-
+        // setSelectedCategories((prev) => prev.push(data));
+        setSelectedCategories((prev)=> [...prev, data])
+        appendCategory(data);
     }
     const removeCategory = (id: string) => {
-
+         setSelectedCategories((prev)=> 
+            prev.filter((p) => p.id !== id)
+        )
     }
     const contents = watch("toolContents")
     return (
@@ -65,19 +69,16 @@ export default function ToolCreatePage() {
                     <DialogHeader>
                         <DialogTitle>Selecionar categorias</DialogTitle>
                     </DialogHeader>
-
-                    {/* BUSCA */}
                     <Input placeholder="Buscar categoria..." />
-
-                    {/* LISTA */}
                     <div className="max-h-60 overflow-y-auto">
                         {categories?.map((cat, index) => (
                             <div
                                 key={cat.id}
                                 className="flex items-center justify-between p-2 hover:bg-muted rounded"
                             >
-                                <span>{cat.categoryContents.find(cc => cc.languageId == contents[index].languageId)?.name}</span>
-
+                                {cat.categoryContents.map((cc, index) => (
+                                    <span key={index}>{`${cc.name}`}</span>
+                                ))}
                                 <Button
                                     size="sm"
                                     onClick={() => addCategory(cat)}
@@ -200,25 +201,24 @@ export default function ToolCreatePage() {
                                                     </div>
                                                     <div className="flex flex-col gap-2">
                                                         <Label>Categorias</Label>
-
-                                                        {/* BOTÃO DE ADICIONAR */}
                                                         <Button
+                                                            className="cursor-pointer"
                                                             type="button"
                                                             variant="outline"
                                                             onClick={() => setOpen(true)}
                                                         >
                                                             + Adicionar categoria
                                                         </Button>
-
-                                                        {/* TAGS */}
                                                         <div className="flex flex-wrap gap-2">
                                                             {selectedCategories.map((cat) => (
                                                                 <div
                                                                     key={cat.id}
                                                                     className="flex items-center gap-2 px-3 py-1 bg-muted rounded-full text-sm"
                                                                 >
-                                                                    {cat.categoryContents.find(cc => cc.languageId == contents[index].languageId)?.name}
-                                                                    <button onClick={() => cat.id? removeCategory(cat.id) : console.log("Identificador vazio")}>
+                                                                    {cat.categoryContents.map((cc, index) => (
+                                                                        <span key={index}>{`${cc.name}`}</span>
+                                                                    ))}
+                                                                    <button onClick={() => cat.id ? removeCategory(cat.id) : console.log("Identificador vazio")}>
                                                                         ✕
                                                                     </button>
                                                                 </div>

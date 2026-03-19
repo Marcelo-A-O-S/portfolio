@@ -1,7 +1,7 @@
 import { categorySchema } from "@/domain/schemas/CategorySchema";
 import { ApiErrorResponse } from "@/domain/types/ApiErrorResponse";
 import { validateUserByRequest } from "@/services/server/auth-services";
-import { addCategoryService, getCategories } from "@/services/server/category-services";
+import { addCategoryService, getCategories, getCategoriesByLanguage } from "@/services/server/category-services";
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
@@ -46,11 +46,18 @@ export async function GET(request: NextRequest) {
     const allowed = await validateUserByRequest(request, ["Administrador"]);
     if (!allowed)
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    const response = await getCategories();
-    if(response.status !== 200 && response.status !== 201){
+    const searchParams = request.nextUrl.searchParams;
+    const language = searchParams.get("language");
+    let response = null;
+    if (language) {
+        response = await getCategoriesByLanguage(language);
+    } else {
+        response = await getCategories();
+    }
+    if (response.status !== 200 && response.status !== 201) {
         return NextResponse.json({
             message: response.data.message
-        },{
+        }, {
             status: response.status
         });
     }
