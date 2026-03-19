@@ -12,7 +12,7 @@ using PostService.Infrastructure.Context;
 namespace PostService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20260315230159_CreateTables")]
+    [Migration("20260317185611_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -94,7 +94,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
+                        .HasColumnType("NVARCHAR2(450)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TIMESTAMP(7)");
@@ -107,6 +107,8 @@ namespace PostService.Infrastructure.Migrations
                         .HasColumnType("TIMESTAMP(7)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Code");
 
                     b.ToTable("Languages");
                 });

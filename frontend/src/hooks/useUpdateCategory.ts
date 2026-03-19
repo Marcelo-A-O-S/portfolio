@@ -16,7 +16,7 @@ export function useUpdateCategory(){
             updateCategoryService(id,category),
         onSuccess: (response)=>{
             queryClient.invalidateQueries({
-                queryKey: ["categories"]
+                queryKey: ["categories-pagination"]
             })
             toast.success(response.data.message);
         },

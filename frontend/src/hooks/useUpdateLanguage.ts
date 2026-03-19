@@ -14,7 +14,7 @@ export function useUpdateLanguage(){
         mutationFn: ({ id, language})=> updateLanguageService(id, language),
         onSuccess: (response)=>{
             queryClient.invalidateQueries({
-                queryKey: ["languages"]
+                queryKey: ["languages-pagination"]
             });
             toast.success(response.data.message);
         },

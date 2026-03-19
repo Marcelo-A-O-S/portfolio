@@ -37,3 +37,13 @@ export function createPageURL(page: number, searchParams: ReadonlyURLSearchParam
   params.set("page", page.toString())
   return `?${params.toString()}`
 }
+export function updateFilter(key: string, searchParams: ReadonlyURLSearchParams, value?: string) {
+  const params = new URLSearchParams(searchParams)
+  params.set("page", "1")
+  if (!value || value === "ALL") {
+    params.delete(key)
+  } else {
+    params.set(key, value)
+  }
+  return `?${params.toString()}`;
+}

@@ -21,6 +21,7 @@ namespace PostService.Infrastructure.Context
             modelBuilder.Entity<Post>().Property(p=> p.Status).HasConversion<string>();
             modelBuilder.Entity<ToolContent>().HasIndex(tc => new { tc.Slug});
             modelBuilder.Entity<CategoryContent>().HasIndex(cc => new { cc.Slug});
+            modelBuilder.Entity<Language>().HasIndex(lg => new { lg.Code});
         }
     }
 }

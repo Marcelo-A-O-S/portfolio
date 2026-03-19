@@ -32,7 +32,9 @@ namespace PostService.Infrastructure.Repositories
             var totalItems = await query.CountAsync();
             var items = await query.Skip((page - 1) * itemsPage)
             .Take(itemsPage)
-            .Include(c => c.CategoryContents.Where(cc => string.IsNullOrWhiteSpace(language) || cc.Language.Code == language))
+            .Include(c => c.CategoryContents
+                .Where(cc => string.IsNullOrWhiteSpace(language) || cc.Language.Code == language))
+            .ThenInclude(cc => cc.Language)
             .ToListAsync();
             return new PaginatedResult<Category>
             {

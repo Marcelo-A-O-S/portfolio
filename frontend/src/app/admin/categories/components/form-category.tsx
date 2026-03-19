@@ -5,8 +5,10 @@ import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { FieldGroup, Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { categorySchema, CategorySchema } from "@/domain/schemas/CategorySchema";
 import { useCreateCategory } from "@/hooks/useCreateCategory";
+import { useLanguages } from "@/hooks/useLanguages";
 import { useUpdateCategory } from "@/hooks/useUpdateCategory";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
@@ -18,14 +20,15 @@ type FormCategoryProps = {
 export default function FormCategory({ category }: FormCategoryProps) {
     const { mutateAsync: createCategoryAsync } = useCreateCategory();
     const { mutateAsync: updateCategoryAsync } = useUpdateCategory();
+    const { data: languages } = useLanguages();
     const { control, handleSubmit, reset, formState: { errors } } = useForm<CategorySchema>({
         resolver: zodResolver(categorySchema),
         defaultValues: {
             categoryContents: [
                 {
-                    language: "",
                     name: "",
-                    slug: ""
+                    slug: "",
+                    languageId:""
                 }
             ]
         }
@@ -41,9 +44,9 @@ export default function FormCategory({ category }: FormCategoryProps) {
     }, [category, reset]);
     const onSubmit = async (data: CategorySchema) => {
         if (category) {
-            if(!category.id)
-                return toast.error("O identificador não pode ser nulo.");           
-            const response = await updateCategoryAsync({id: category.id, category: data})
+            if (!category.id)
+                return toast.error("O identificador não pode ser nulo.");
+            const response = await updateCategoryAsync({ id: category.id, category: data })
             if (response.status != 200) {
                 toast.error(response.data.message);
                 return;
@@ -57,7 +60,6 @@ export default function FormCategory({ category }: FormCategoryProps) {
             }
             toast.success(response.data.message);
         }
-
     }
     return (
         <>
@@ -83,9 +85,9 @@ export default function FormCategory({ category }: FormCategoryProps) {
                                         className="cursor-pointer"
                                         onClick={() =>
                                             append({
-                                                language: "",
                                                 name: "",
-                                                slug: ""
+                                                slug: "",
+                                                languageId: ""
                                             })
                                         }
                                     >
@@ -97,20 +99,32 @@ export default function FormCategory({ category }: FormCategoryProps) {
                                 Gerencie uma categoria:
                             </DialogDescription>
                         </DialogHeader>
-                        <FieldGroup className="-mx-4 max-h-[50vh] overflow-y-auto px-4 w-[350px] overflow-x-hidden">
+                        <FieldGroup className="-mx-4 max-h-[50vh] overflow-y-auto py-2 px-2 w-[350px] overflow-x-hidden">
                             {fields.map((item, index) => (
                                 <div key={item.id} className="border p-4 rounded-sm">
-                                    <div className="grid grid-cols-2 gap-2 p-1">
+                                    <div className="grid grid-cols-2 gap-1 p-1">
                                         <Controller
-                                            name={`categoryContents.${index}.language`}
+                                            name={`categoryContents.${index}.languageId`}
                                             control={control}
                                             render={({ field }) => (
                                                 <Field className="">
-                                                    <Label htmlFor="Language">Language</Label>
-                                                    <Input {...field}
-                                                        onChange={e => field.onChange(e.target.value)}
-                                                        placeholder="Informe o idioma" />
-                                                    {/* <span className="text-sm text-red-600 text-wrap text-justify ">{errors.language?.message}</span> */}
+                                                    <Label htmlFor="language">Language</Label>
+                                                    <Select
+                                                        onValueChange={(value) => field.onChange(value)}
+                                                        value={field.value}
+                                                    >
+                                                        <SelectTrigger className="w-full max-w-48">
+                                                            <SelectValue placeholder="Selecione o idioma" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectGroup>
+                                                                <SelectLabel>Idiomas</SelectLabel>
+                                                                {languages?.map((item, index) => (
+                                                                    <SelectItem key={index} value={`${item.id}`}>{item.name}</SelectItem>
+                                                                ))}
+                                                            </SelectGroup>
+                                                        </SelectContent>
+                                                    </Select>
                                                 </Field>
                                             )}
                                         />
@@ -119,7 +133,7 @@ export default function FormCategory({ category }: FormCategoryProps) {
                                             control={control}
                                             render={({ field }) => (
                                                 <Field className="w-full">
-                                                    <Label htmlFor="username-1">Slug</Label>
+                                                    <Label htmlFor="slug">Slug</Label>
                                                     <Input {...field}
                                                         onChange={e => field.onChange(e.target.value)}
                                                         placeholder="Informe o slug" />
@@ -134,7 +148,7 @@ export default function FormCategory({ category }: FormCategoryProps) {
                                             control={control}
                                             render={({ field }) => (
                                                 <Field className="">
-                                                    <Label htmlFor="username-1">Name</Label>
+                                                    <Label htmlFor="name">Name</Label>
                                                     <Input {...field}
                                                         onChange={e => field.onChange(e.target.value)}
                                                         placeholder="Informe o nome" />

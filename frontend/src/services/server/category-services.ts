@@ -30,3 +30,8 @@ export const getCategoriesByPaginationService = async(filters: CategoriesFilters
     const response = await api.get(`/api/Category/GetByPagination?${params}`);
     return response;
 }
+export const getCategories = async() =>{
+    const api = await apiServer();
+    const response = await api.get(`/api/Category`);
+    return response;
+}

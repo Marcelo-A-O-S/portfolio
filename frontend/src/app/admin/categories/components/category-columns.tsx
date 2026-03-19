@@ -3,8 +3,10 @@ import { ColumnDef } from "@tanstack/react-table"
 import { format } from "date-fns/format"
 import { ptBR } from "date-fns/locale"
 import { CategoryActions } from "./category-actions"
+import { LanguageSchema } from "@/domain/schemas/LanguageSchema"
+import { CategorySchema } from "@/domain/schemas/CategorySchema"
 export const getCategoryColumns = () => {
-    const columns: ColumnDef<Category>[] = [
+    const columns: ColumnDef<CategorySchema>[] = [
         
         {
             id: "names",
@@ -52,7 +54,7 @@ export const getCategoryColumns = () => {
                     <div className="flex flex-col">
                         {languages.map((item, index) => (
                             <div key={index}>
-                                {item}
+                                {item?.code}
                             </div>
                         ))}
                     </div>

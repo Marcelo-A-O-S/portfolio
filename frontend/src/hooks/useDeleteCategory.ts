@@ -13,7 +13,7 @@ export function useDeleteCategory() {
             deleteCategoryByRouteService(id),
         onSuccess: (response) => {
             queryClient.invalidateQueries({
-                queryKey: ["categories"]
+                queryKey: ["categories-pagination"]
             })
             toast.success(response.data.message);
         },

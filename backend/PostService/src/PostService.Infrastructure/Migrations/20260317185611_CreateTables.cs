@@ -16,7 +16,7 @@ namespace PostService.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    Code = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
+                    Code = table.Column<string>(type: "NVARCHAR2(450)", nullable: false),
                     Name = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false)
@@ -209,6 +209,11 @@ namespace PostService.Infrastructure.Migrations
                 name: "IX_CategoriesContents_Slug",
                 table: "CategoriesContents",
                 column: "Slug");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Languages_Code",
+                table: "Languages",
+                column: "Code");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Likes_PostId",

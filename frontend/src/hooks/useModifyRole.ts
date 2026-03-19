@@ -8,7 +8,7 @@ export function useModifyRole() {
       modifyRoleService(userId, role),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["users"]
+        queryKey: ["users-pagination"]
       })
     }
   })

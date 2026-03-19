@@ -70,12 +70,10 @@ namespace PostService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                if(languageRequest.Id is not Guid languageId)
-                    return BadRequest(new { message= "O identificador é obrigatório"});
-                var language = await this.languageServices.GetById(languageId);
+                var language = await this.languageServices.GetById(Id);
                 if(language == null)
                     return NotFound(new { message = "Linguagem não encontrada."});
-                language.Update(language.Code, language.Name);
+                language.Update(languageRequest.Code, languageRequest.Name);
                 await this.languageServices.Update(language);
                 return Ok(new { message = "Linguagem atualizada com sucesso."});
             }

@@ -11,7 +11,7 @@ export function useCreateCategory() {
         mutationFn: addCategoryService,
         onSuccess: (response) => {
             queryClient.invalidateQueries({
-                queryKey: ["categories"]
+                queryKey: ["categories-pagination"]
             })
             toast.success(response.data.message)
         },

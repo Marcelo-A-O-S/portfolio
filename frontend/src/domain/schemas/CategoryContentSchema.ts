@@ -1,8 +1,10 @@
 import z from "zod";
+import { languageSchema, LanguageSchema } from "./LanguageSchema";
 export const categoryContentSchema = z.object({
-    id: z.uuid().optional(),
-    categoryId: z.string().optional(),
-    language: z.string().nonempty(),
+    id: z.string().uuid().optional(),
+    categoryId: z.string().uuid().optional(),
+    languageId: z.string().uuid().optional(),
+    language: languageSchema.optional(),
     name: z.string().nonempty(),
     slug: z.string().nonempty()
 })

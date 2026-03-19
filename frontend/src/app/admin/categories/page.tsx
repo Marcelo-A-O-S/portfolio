@@ -4,12 +4,12 @@ import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import FormCategory from "./components/form-category";
-import { useCategories } from "@/hooks/useCategories";
+import { useGetCategories } from "@/hooks/useGetCategories";
 import { getCategoryColumns } from "./components/category-columns";
 import { DataTable } from "@/components/data-table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDebounce } from "@/hooks/useDebounce";
-import { createPageURL, generatePagination } from "@/lib/utils";
+import { createPageURL, generatePagination, updateFilter } from "@/lib/utils";
 import { toast } from "sonner";
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationEllipsis, PaginationLink, PaginationNext } from "@/components/ui/pagination";
 import { SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem, Select } from "@/components/ui/select";
@@ -26,11 +26,12 @@ export default function ToolsPage() {
     const debouncedSearch = useDebounce(searchInput, 500);
     const columns = useMemo(() => getCategoryColumns(), []);
     const { data: languages } = useLanguages();
-    const { data: categories, isLoading, error } = useCategories({
+    const { data: categories, isLoading, error } = useGetCategories({
         page,
         language,
         search,
     })
+    console.log(categories);
     useEffect(() => {
         const params = new URLSearchParams(searchParams)
         params.set("page", "1")
@@ -47,7 +48,6 @@ export default function ToolsPage() {
     const totalPages = categories?.totalPages || 1;
     const currentPage = categories?.currentPage || 1;
     const pages = generatePagination(currentPage, totalPages);
-    console.log(languages);
     if (error) {
         toast.error("Erro ao buscar usuários")
     }
@@ -68,7 +68,10 @@ export default function ToolsPage() {
                     </div>
                 </div>
                 <div className="flex md:px-10 gap-2">
-                    <Select>
+                    <Select
+                        value={language}
+                        onValueChange={(value) => router.push(updateFilter("language", searchParams, value))}
+                    >
                         <SelectTrigger className="w-full max-w-48">
                             <SelectValue placeholder="Selecione o idioma" />
                         </SelectTrigger>
