@@ -1,6 +1,5 @@
 import z from "zod";
 import { languageSchema } from "./LanguageSchema";
-
 export const toolContentSchema = z.object({
     id: z.uuid().optional(),
     toolId: z.uuid().optional(),

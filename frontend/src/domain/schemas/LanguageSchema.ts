@@ -1,5 +1,4 @@
 import z from "zod";
-
 export const languageSchema = z.object({
     id: z.uuid().optional(),
     code: z.string(),

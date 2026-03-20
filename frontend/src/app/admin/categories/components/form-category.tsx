@@ -54,11 +54,6 @@ export default function FormCategory({ category }: FormCategoryProps) {
             toast.success(response.data.message);
         } else {
             const response = await createCategoryAsync(data);
-            if (response.status != 200) {
-                toast.error(response.data.message);
-                return;
-            }
-            toast.success(response.data.message);
         }
     }
     return (
