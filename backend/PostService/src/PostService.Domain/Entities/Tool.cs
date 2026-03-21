@@ -3,6 +3,7 @@ namespace PostService.Domain.Entities
     public class Tool
     {
         public Guid Id { get; private set; }
+        public string ImgUrl { get; private set; } 
         public ICollection<ToolContent> ToolContents { get; private set;} 
         public ICollection<Category> Categories { get; private set;}
         public DateTime CreatedAt { get; private set; }

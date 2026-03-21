@@ -31,6 +31,7 @@ namespace PostService.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
+                    ImgUrl = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: true),
                     Status = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false)
@@ -88,6 +89,7 @@ namespace PostService.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
+                    ImgUrl = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
                     PostId = table.Column<Guid>(type: "RAW(16)", nullable: true)
                 },

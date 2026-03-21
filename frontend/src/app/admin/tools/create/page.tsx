@@ -16,15 +16,21 @@ import { SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, Se
 import { useCategories } from "@/hooks/useCategories";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CategorySchema } from "@/domain/schemas/CategorySchema";
+import { useUpdateTool } from "@/hooks/useUpdateTool";
+import { useCreateTool } from "@/hooks/useCreateTool";
+
 export default function ToolCreatePage() {
     const { data: categories } = useCategories();
     const { data: languages } = useLanguages();
+    const { mutateAsync: updateTool } = useUpdateTool();
+    const { mutateAsync: createTool } = useCreateTool();
     const [preview, openPreview] = useState(false);
     const [previewIndex, setPreviewIndex] = useState<number | null>(null);
     const [open, setOpen] = useState(false);
     const { control, handleSubmit, formState: { }, watch } = useForm<ToolSchema>({
         resolver: zodResolver(toolSchema),
         defaultValues: {
+            imgUrl: "",
             toolContents: [
                 {
                     content: "",
@@ -34,7 +40,6 @@ export default function ToolCreatePage() {
                     languageId: ""
                 }
             ],
-
         }
     });
     const { fields: fieldToolContents, append, remove: removeTool } = useFieldArray({
@@ -48,7 +53,7 @@ export default function ToolCreatePage() {
     const categoriesWatch = watch("categories");
     const contents = watch("toolContents");
     const onSubmit = async (data: ToolSchema) => {
-        console.log(data);
+        await createTool(data);
     }
     const addCategory = (data: CategorySchema) => {
         const exists = fieldCategories.some(
@@ -65,7 +70,6 @@ export default function ToolCreatePage() {
             remove(index)
         }
     }
-
     return (
         <>
             <Dialog open={open} onOpenChange={setOpen}>
@@ -121,6 +125,21 @@ export default function ToolCreatePage() {
                                     <CardTitle>Write Post</CardTitle>
                                 </CardHeader>
                                 <CardContent className="">
+                                    <div className="py-2">
+                                        <Controller
+                                            name={`imgUrl`}
+                                            control={control}
+                                            render={({ field }) => (
+                                                <div className="grid gap-2">
+                                                    <Label htmlFor="imgUrl">Imagem</Label>
+                                                    <Input
+                                                        {...field}
+                                                        placeholder="Informe a url ..."
+                                                    />
+                                                </div>
+                                            )}
+                                        />
+                                    </div>
                                     <div className="flex flex-col gap-2 border-b pb-3 w-full">
                                         <Label>Categorias</Label>
                                         <Button
@@ -147,6 +166,7 @@ export default function ToolCreatePage() {
                                             ))}
                                         </div>
                                     </div>
+
                                     {fieldToolContents.map((item, index) => (
                                         <div key={item.id} className="w-full max-h-full h-[500px] flex flex-col overflow-hidden">
                                             <div className="flex flex-col gap-6 flex-1 min-h-0 border-b pb-3 py-3">
