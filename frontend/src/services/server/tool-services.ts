@@ -3,7 +3,7 @@ import { apiServer } from "./api-server";
 
 export const addToolService = async(tool: ToolSchema) =>{
     const api = await apiServer();
-    const response = await api.post("/api/tools",tool);
+    const response = await api.post("/api/Tool",tool);
     return response;
 }
 export const updateToolService = async(id:string, tool: ToolSchema) =>{

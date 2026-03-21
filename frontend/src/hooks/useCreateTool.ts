@@ -13,6 +13,10 @@ export function useCreateTool() {
                 queryKey: ["tool-pagination"]
             })
             toast.success(response.data.message);
+        },
+        onError:(error)=>{
+            console.log(error.response?.data);
+            toast.error(error.response?.data?.message ?? "Erro ao criar linguagem");
         }
     })
 }

@@ -7,12 +7,13 @@ namespace PostService.Domain.Entities
         public ICollection<ToolContent> ToolContents { get; private set;} 
         public ICollection<Category> Categories { get; private set;}
         public DateTime CreatedAt { get; private set; }
-        public Tool()
+        public Tool(string imgUrl)
         {
             this.Id = Guid.NewGuid();
             this.CreatedAt = DateTime.UtcNow;
             this.ToolContents = new List<ToolContent>();
             this.Categories = new List<Category>();
+            this.ImgUrl = imgUrl;
         }
         public void AddCategory(Category category)
         {

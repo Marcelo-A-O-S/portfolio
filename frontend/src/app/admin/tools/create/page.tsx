@@ -31,6 +31,7 @@ export default function ToolCreatePage() {
         resolver: zodResolver(toolSchema),
         defaultValues: {
             imgUrl: "",
+            status: "DRAFT",
             toolContents: [
                 {
                     content: "",
@@ -53,6 +54,7 @@ export default function ToolCreatePage() {
     const categoriesWatch = watch("categories");
     const contents = watch("toolContents");
     const onSubmit = async (data: ToolSchema) => {
+        console.log(data);
         await createTool(data);
     }
     const addCategory = (data: CategorySchema) => {
@@ -119,10 +121,38 @@ export default function ToolCreatePage() {
                         </div>
                     </div>
                     <div className="flex md:p-10">
-                        <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col gap-2 min-h-0">
+                        <form onSubmit={handleSubmit(onSubmit,
+                            (errors) => {
+                                console.log("ERROS:", errors);
+                            })} className="flex-1 flex flex-col gap-2 min-h-0">
                             <Card className="">
-                                <CardHeader className="flex flex-row items-center border-b pb-3 justify-between">
+                                <CardHeader className="flex flex-col md:flex-row md:items-center justify-between">
                                     <CardTitle>Write Post</CardTitle>
+                                    <div className="flex  gap-2">
+                                        <Controller
+                                            name="status"
+                                            control={control}
+                                            render={({ field }) => (
+                                                <Select
+                                                    onValueChange={field.onChange}
+                                                    value={field.value}
+                                                >
+                                                    <SelectTrigger className="w-full">
+                                                        <SelectValue placeholder="Selecione o tipo de movimentação" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectGroup>
+                                                            <SelectLabel>Status</SelectLabel>
+                                                            <SelectItem value="DRAFT">Rascunho</SelectItem>
+                                                            <SelectItem value="PUBLISH">Publicado</SelectItem>
+                                                            <SelectItem value="ARCHIVED">Arquivado</SelectItem>
+                                                        </SelectGroup>
+                                                    </SelectContent>
+                                                </Select>
+                                            )}
+                                        />
+                                        <Button className="cursor-pointer" type="submit">Save changes</Button>
+                                    </div>
                                 </CardHeader>
                                 <CardContent className="">
                                     <div className="py-2">
@@ -169,7 +199,7 @@ export default function ToolCreatePage() {
 
                                     {fieldToolContents.map((item, index) => (
                                         <div key={item.id} className="w-full max-h-full h-[500px] flex flex-col overflow-hidden">
-                                            <div className="flex flex-col gap-6 flex-1 min-h-0 border-b pb-3 py-3">
+                                            <div className="flex flex-col gap-6 flex-1 min-h-0 border-t pb-3 py-3">
                                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-2">
                                                     <Controller
                                                         name={`toolContents.${index}.name`}
@@ -253,11 +283,7 @@ export default function ToolCreatePage() {
                                                         </Field>
                                                     )}
                                                 />
-                                                <div className="flex justify-between">
-                                                    <Field orientation="horizontal" className="w-fit">
-                                                        <FieldLabel htmlFor="2fa">Publish</FieldLabel>
-                                                        <Switch id="2fa" />
-                                                    </Field>
+                                                <div className="flex justify-end">
                                                     <Button
                                                         className="cursor-pointer"
                                                         type="button"
@@ -271,9 +297,6 @@ export default function ToolCreatePage() {
                                         </div>
                                     ))}
                                 </CardContent>
-                                <CardFooter className="flex flex-row items-center gap-2 justify-end w-full">
-                                    <Button type="submit">Save changes</Button>
-                                </CardFooter>
                             </Card>
                         </form>
                     </div>

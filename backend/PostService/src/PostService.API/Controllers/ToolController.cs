@@ -53,11 +53,12 @@ namespace PostService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var tool = new Tool();
+                
                 if(toolRequest.toolContents.Count == 0)
                     return BadRequest("Não é possível salvar uma ferramenta sem seu conteudo relacionado.");
                 if(toolRequest.Categories.Count == 0)
                     return BadRequest("Não é possível salvar uma ferramenta sem suas categorias relacionadas.");
+                var tool = new Tool(toolRequest.ImgUrl);
                 foreach (var item in toolRequest.toolContents)
                 {
                     var toolContent = await this.toolContentServices.FindBy(tc => tc.Slug == item.Slug && tc.LanguageId == item.LanguageId);

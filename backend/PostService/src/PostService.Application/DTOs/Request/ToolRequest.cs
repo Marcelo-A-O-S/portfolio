@@ -6,6 +6,9 @@ namespace PostService.Application.DTOs.Request
     {
         public Guid? Id { get; set; }
         [NotNull]
+        [Required( ErrorMessage = "A imagem relacionada á ferramenta é obrigatória")]
+        public string ImgUrl { get; set; }
+        [NotNull]
         [Required( ErrorMessage = "A lista de conteudo da ferramenta é obrigatória")]
         public List<ToolContentRequest> toolContents { get; set; }
         [NotNull]
