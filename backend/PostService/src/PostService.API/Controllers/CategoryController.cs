@@ -105,10 +105,9 @@ namespace PostService.API.Controllers
                     return NotFound(new { message = "Categoria não encontrada." });
                 foreach (var ccRequest in categoryRequest.CategoryContents)
                 {
-                    var categoryContent = new CategoryContent();
                     if (ccRequest.Id is not Guid categoryContentId)
                         return BadRequest(new { message = "O identificador relacionda ao conteudo da categoria é obrigatória." });
-                    categoryContent = await this.categoryContentServices.GetById(categoryContentId);
+                    var categoryContent = await this.categoryContentServices.GetById(categoryContentId);
                     if (categoryContent == null)
                     {
                         categoryContent = new CategoryContent(category.Id, ccRequest.LanguageId, ccRequest.Name, ccRequest.Slug);
@@ -117,7 +116,7 @@ namespace PostService.API.Controllers
                     {
                         categoryContent.Update(ccRequest.LanguageId, ccRequest.Name, ccRequest.Slug);
                     }
-                    category.CategoryContents.Add(categoryContent);
+                    category.AddCategoryContent(categoryContent);
                 }
                 await this.categoryServices.Update(category);
                 return Ok(new { message = "Categoria atualizada com sucesso." });

@@ -53,7 +53,7 @@ export default function ToolCreatePage() {
         control,
         name: "toolContents"
     });
-    const { fields: fieldCategories, append: appendCategory, remove } = useFieldArray({
+    const { fields: fieldCategories, append: appendCategory, remove: removeFieldCategory } = useFieldArray({
         control,
         name: "categories"
     })
@@ -75,11 +75,11 @@ export default function ToolCreatePage() {
         appendCategory(data);
     }
     const removeCategory = (id: string) => {
-        const index = fieldCategories.findIndex(
+        const index = categoriesWatch.findIndex(
             (c) => c.id === id
         )
         if (index !== -1) {
-            remove(index)
+            removeFieldCategory(index)
         }
     }
     return (
@@ -191,7 +191,7 @@ export default function ToolCreatePage() {
                                             + Adicionar categoria
                                         </Button>
                                         <div className="flex flex-wrap gap-2">
-                                            {fieldCategories.map((cat) => (
+                                            {categoriesWatch?.map((cat, index) => (
                                                 <div
                                                     key={cat.id}
                                                     className="flex items-center gap-2 px-3 py-1 bg-muted rounded-full text-sm"
@@ -199,7 +199,7 @@ export default function ToolCreatePage() {
                                                     {cat.categoryContents.map((cc, index) => (
                                                         <span key={index}>{`${cc.name}`}</span>
                                                     ))}
-                                                    <button type="button" onClick={() => cat.id && removeCategory(cat.id)}>
+                                                    <button type="button" className="cursor-pointer" onClick={() => removeFieldCategory(index)}>
                                                         ✕
                                                     </button>
                                                 </div>

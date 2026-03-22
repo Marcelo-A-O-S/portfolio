@@ -110,10 +110,14 @@ namespace PostService.API.Controllers
                     return BadRequest("Não é possível atualizar uma ferramenta sem seu conteudo relacionado.");
                 if (toolRequest.Categories.Count == 0)
                     return BadRequest("Não é possível atualizar uma ferramenta sem suas categorias relacionadas.");
-                var tool = await this.toolsServices.GetById(Id);
+                var tool = await this.toolsServices.GetForUpdate(Id);
                 if (tool == null)
                     return NotFound("Ferramenta não encontrada.");
                 tool.Update(toolRequest.ImgUrl);
+                var requestToolContentIds = toolRequest.toolContents
+                    .Where(c => c.Id.HasValue)
+                    .Select(c => c.Id!.Value);
+                tool.RemoveToolContents(requestToolContentIds);
                 foreach (var item in toolRequest.toolContents)
                 {
                     if (item.Id is not Guid toolContentId)
@@ -122,12 +126,20 @@ namespace PostService.API.Controllers
                     if (toolContent == null)
                         return NotFound("Conteúdo da ferramenta não encontrada.");
                     toolContent.Update(item.LanguageId, item.Name, item.Description, item.Content, item.Slug);
-                    tool.AddToolContent(toolContent);
+                    var exists = tool.ToolContents.Any(tc => tc.Id == toolContentId);
+                    if (!exists)
+                        tool.AddToolContent(toolContent);
                 }
+                var requestCategoryIds = toolRequest.Categories
+                    .Where(c => c.Id.HasValue)
+                    .Select(c => c.Id!.Value);
+                tool.RemoveCategories(requestCategoryIds);
                 foreach (var item in toolRequest.Categories)
                 {
                     if (item.Id is not Guid categoryId)
                         return BadRequest("Não é possível atualizar uma categoria sem seu identificador");
+                    var exists = tool.Categories.Any(c => c.Id == categoryId);
+                    if (exists) continue;
                     var category = await this.categoryServices.GetById(categoryId);
                     if (category == null)
                         return NotFound("Conteúdo da categoria não encontrada.");

@@ -31,5 +31,27 @@ namespace PostService.Domain.Entities
                 throw new Exception("Lista de conteudo não inicializada.");
             this.ToolContents.Add(toolContent);
         }
+        public void RemoveCategories(IEnumerable<Guid> categoryIds)
+        {
+            if(this.Categories == null)
+                throw new Exception("Lista de categorias não inicializada.");
+            var ids = categoryIds.ToHashSet();
+            var toRemove = this.Categories
+                .Where(c => !ids.Contains(c.Id))
+                .ToList();
+            foreach(var category in toRemove)
+                this.Categories.Remove(category);
+        }
+        public void RemoveToolContents(IEnumerable<Guid> toolContentIds)
+        {
+            if(this.ToolContents == null)
+                throw new Exception("Lista de conteudo não inicializada.");
+            var ids = toolContentIds.ToHashSet();
+            var toRemove = this.ToolContents
+                .Where(tc => !ids.Contains(tc.Id))
+                .ToList();
+            foreach(var toolContent in toRemove)
+                this.ToolContents.Remove(toolContent);
+        }
     }
 }

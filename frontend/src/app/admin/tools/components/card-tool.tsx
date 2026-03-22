@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem, Select } from "@/components/ui/select"
 import { LanguageSchema } from "@/domain/schemas/LanguageSchema"
 import { ToolSchema } from "@/domain/schemas/ToolSchema"
@@ -7,6 +7,7 @@ import { Heart, MessageCircle } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
 import ToolActions from "./tool-actions"
+import Link from "next/link"
 type CardToolProps = {
     languages?: LanguageSchema[]
     item: ToolSchema
@@ -21,10 +22,8 @@ export default function CardTool({ languages, item }: CardToolProps) {
             const content = c.categoryContents.find(
                 cc => cc.language?.code === lang
             );
-
             return content;
         })
-    console.log("Categorias: ", categories);
     return (
         <div className="bg-background border border-primary max-w-xl w-full rounded-lg overflow-hidden shadow-sm">
             <article className="p-4 flex space-x-3">
@@ -70,21 +69,21 @@ export default function CardTool({ languages, item }: CardToolProps) {
                     </div>
                     <div className="flex items-center justify-between mt-4 text-primary text-xs sm:text-sm">
                         <div className="flex">
-                            <button className="flex items-center space-x-1 p-2 rounded-full">
+                            {/* <button className="flex items-center space-x-1 p-2 rounded-full">
                                 <Heart />
                                 <span>15</span>
                             </button>
                             <button className="flex items-center space-x-1 p-2 rounded-full">
                                 <MessageCircle />
                                 <span>15</span>
-                            </button>
+                            </button> */}
                         </div>
                         <div>
                             <ToolActions tool={item} />
                         </div>
                         
                     </div>
-                    <Button className="w-full">View Tool</Button>
+                    <Link className={buttonVariants({ variant: "default" }) + ` w-full`} href={`/admin/tools/${item.id}/${lang}`}>View Tool</Link>
                 </div>
             </article>
         </div>

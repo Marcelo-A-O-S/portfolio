@@ -8,6 +8,9 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import CardTool from "./components/card-tool";
+import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationEllipsis, PaginationLink, PaginationNext } from "@/components/ui/pagination";
+import { createPageURL, generatePagination } from "@/lib/utils";
+import pages from "next/dist/build/templates/pages";
 export default function ToolsPage() {
     const { data: session } = useSession();
     const router = useRouter();
@@ -22,6 +25,7 @@ export default function ToolsPage() {
     });
     const totalPages = tools?.totalPages || 1;
     const currentPage = tools?.currentPage || 1;
+    const pages = generatePagination(currentPage, totalPages);
     return (
         <main className="relative mx-auto flex min-h-screen inset-0 w-screen max-w-[1440px] justify-center bg-white dark:bg-black ">
             <section className="relative w-full min-h-screen px-10 py-20 flex flex-col">
@@ -46,8 +50,40 @@ export default function ToolsPage() {
                         {tools?.items.map((item, index) => (
                             <CardTool key={index} item={item} languages={languages} />
                         ))}
-
                     </div>
+                </div>
+                <div className="relative bottom-0 ">
+                    <Pagination>
+                        <PaginationContent>
+                            <PaginationItem>
+                                <PaginationPrevious href={createPageURL(Math.max(currentPage - 1, 1), searchParams)} />
+                            </PaginationItem>
+                            {pages.map((page, index) => {
+                                if (page === "ellipsis") {
+                                    return (
+                                        <PaginationItem key={`ellipsis-${index}`}>
+                                            <PaginationEllipsis />
+                                        </PaginationItem>
+                                    )
+                                }
+                                return (
+                                    <PaginationItem key={page}>
+                                        <PaginationLink
+                                            isActive={page === currentPage}
+                                            href={createPageURL(page, searchParams)}
+                                        >
+                                            {page}
+                                        </PaginationLink>
+                                    </PaginationItem>
+                                )
+                            })}
+                            <PaginationItem>
+                                <PaginationNext
+                                    href={createPageURL(Math.min(currentPage + 1, totalPages), searchParams)}
+                                />
+                            </PaginationItem>
+                        </PaginationContent>
+                    </Pagination>
                 </div>
 
             </section>
