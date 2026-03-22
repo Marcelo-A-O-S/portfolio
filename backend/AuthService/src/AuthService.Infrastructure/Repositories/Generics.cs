@@ -35,7 +35,7 @@ namespace AuthService.Infrastructure.Repositories
 
         public async Task<List<T>> List(int page = 1, int itemsPage = 10)
         {
-            var query = this.context.Set<T>().AsQueryable();
+            var query = this.context.Set<T>().AsNoTracking().AsQueryable();
             var items = await query.Skip((page - 1) * itemsPage)
             .Take(itemsPage)
             .ToListAsync();

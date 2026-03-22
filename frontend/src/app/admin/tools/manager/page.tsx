@@ -1,16 +1,14 @@
 "use client"
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { InputGroup, InputGroupTextarea } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import { ToolSchema, toolSchema } from "@/domain/schemas/ToolSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { Switch } from "@/components/ui/switch"
-import MarkdownRenderer from "@/components/markdown-renderer";
 import { useLanguages } from "@/hooks/useLanguages";
 import { SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem, Select } from "@/components/ui/select";
 import { useCategories } from "@/hooks/useCategories";
@@ -18,16 +16,20 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { CategorySchema } from "@/domain/schemas/CategorySchema";
 import { useUpdateTool } from "@/hooks/useUpdateTool";
 import { useCreateTool } from "@/hooks/useCreateTool";
-
+import { useRouter, useSearchParams } from "next/navigation";
+import { useGetByIdTool } from "@/hooks/useGetByIdTool";
 export default function ToolCreatePage() {
+    const searchParams = useSearchParams();
+    const toolId = searchParams.get("toolId") || undefined;
     const { data: categories } = useCategories();
     const { data: languages } = useLanguages();
+    const { data: tool } = useGetByIdTool(toolId)
     const { mutateAsync: updateTool } = useUpdateTool();
     const { mutateAsync: createTool } = useCreateTool();
     const [preview, openPreview] = useState(false);
     const [previewIndex, setPreviewIndex] = useState<number | null>(null);
     const [open, setOpen] = useState(false);
-    const { control, handleSubmit, formState: { }, watch } = useForm<ToolSchema>({
+    const { control, handleSubmit, formState: { }, watch, reset } = useForm<ToolSchema>({
         resolver: zodResolver(toolSchema),
         defaultValues: {
             imgUrl: "",
@@ -43,6 +45,10 @@ export default function ToolCreatePage() {
             ],
         }
     });
+    useEffect(()=>{
+        if(!tool) return;
+        reset(tool)
+    },[tool, reset]);
     const { fields: fieldToolContents, append, remove: removeTool } = useFieldArray({
         control,
         name: "toolContents"
@@ -51,14 +57,18 @@ export default function ToolCreatePage() {
         control,
         name: "categories"
     })
+    console.log(tool);
     const categoriesWatch = watch("categories");
     const contents = watch("toolContents");
     const onSubmit = async (data: ToolSchema) => {
-        console.log(data);
-        await createTool(data);
+        if(tool){
+            await updateTool({id: tool.id, data: data});
+        }else{
+            await createTool(data);
+        }
     }
     const addCategory = (data: CategorySchema) => {
-        const exists = fieldCategories.some(
+        const exists = categoriesWatch.some(
             (c) => c.id === data.id
         )
         if (exists) return
@@ -189,14 +199,13 @@ export default function ToolCreatePage() {
                                                     {cat.categoryContents.map((cc, index) => (
                                                         <span key={index}>{`${cc.name}`}</span>
                                                     ))}
-                                                    <button onClick={() => cat.id && removeCategory(cat.id)}>
+                                                    <button type="button" onClick={() => cat.id && removeCategory(cat.id)}>
                                                         ✕
                                                     </button>
                                                 </div>
                                             ))}
                                         </div>
                                     </div>
-
                                     {fieldToolContents.map((item, index) => (
                                         <div key={item.id} className="w-full max-h-full h-[500px] flex flex-col overflow-hidden">
                                             <div className="flex flex-col gap-6 flex-1 min-h-0 border-t pb-3 py-3">

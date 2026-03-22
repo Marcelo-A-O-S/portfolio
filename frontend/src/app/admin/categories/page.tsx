@@ -13,7 +13,6 @@ import { createPageURL, generatePagination, updateFilter } from "@/lib/utils";
 import { toast } from "sonner";
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationEllipsis, PaginationLink, PaginationNext } from "@/components/ui/pagination";
 import { SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem, Select } from "@/components/ui/select";
-import { getLanguages } from "@/services/client/language-services";
 import { useLanguages } from "@/hooks/useLanguages";
 export default function ToolsPage() {
     const { data: session } = useSession();
@@ -31,7 +30,6 @@ export default function ToolsPage() {
         language,
         search,
     })
-    console.log(categories);
     useEffect(() => {
         const params = new URLSearchParams(searchParams)
         params.set("page", "1")

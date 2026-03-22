@@ -1,10 +1,24 @@
 import { toolSchema } from "@/domain/schemas/ToolSchema";
 import { validateUserByRequest } from "@/services/server/auth-services";
-import { deleteToolByRouteService, updateToolService } from "@/services/server/tool-services";
+import { deleteToolByRouteService, getToolByIdService, updateToolService } from "@/services/server/tool-services";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
-
+export async function GET(request: NextRequest, { params }: { params: Promise<{Id: string}>}) {
+    const allowed = await validateUserByRequest(request, ["Administrador", "Client"]);
+    if (!allowed) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const {Id} = await params;
+    const response = await getToolByIdService(Id);
+    if (response.status !== 200 && response.status !== 201) {
+        return NextResponse.json({
+            message: response.data.message
+        }, {
+            status: response.status
+        });
+    }
+    return NextResponse.json(response.data)
+    
 }
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ Id: string }> }) {
     const allowed = await validateUserByRequest(request, ["Administrador", "Client"]);

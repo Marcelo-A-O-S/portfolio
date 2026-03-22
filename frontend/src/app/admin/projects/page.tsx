@@ -52,7 +52,6 @@ export default function ProjectPage() {
                                 </div>
                             </article>
                         </div>
-
                         <div className="bg-background border border-primary max-w-xl w-full rounded-lg overflow-hidden shadow-sm">
                             <article className="p-4 flex space-x-3">
                                 <div className="flex-1 min-w-0">

@@ -16,7 +16,10 @@ namespace AuthService.Infrastructure.Repositories
 
         public async Task<PaginatedResult<User>> GetByPagination(int page, string? search, string? role, string? status, int itemsPage = 10)
         {
-            var query =  this.context.Users.AsQueryable();
+            var query =  this.context.Users
+                .AsNoTracking()
+                .AsSplitQuery()
+                .AsQueryable();
             if (!string.IsNullOrWhiteSpace(search))
             {
                 query = query.Where(u =>
@@ -39,10 +42,12 @@ namespace AuthService.Infrastructure.Repositories
                 );
             }
             var totalItems = await query.CountAsync();
-            var items = await query.Skip((page - 1) * itemsPage)
-            .Take(itemsPage)
-            .Include(u => u.SocialAccounts)
-            .ToListAsync();
+            var items = await query
+                .OrderByDescending(u => u.CreatedAt)
+                .Include(u => u.SocialAccounts)
+                .Skip((page - 1) * itemsPage)
+                .Take(itemsPage)
+                .ToListAsync();
             return new PaginatedResult<User>{
                 Items = items,
                 TotalItems = totalItems,

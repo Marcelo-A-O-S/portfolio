@@ -14,7 +14,10 @@ namespace PostService.Infrastructure.Repositories
         }
         public async Task<PaginatedResult<Category>> GetByPagination(int page, string? language, string? search, int itemsPage = 10)
         {
-            var query = this.context.Categories.AsQueryable();
+            var query = this.context.Categories
+                .AsNoTracking()
+                .AsSplitQuery()
+                .AsQueryable();
             if (!string.IsNullOrWhiteSpace(language) || !string.IsNullOrWhiteSpace(search))
             {
                 query = query.Where(c =>
@@ -29,12 +32,14 @@ namespace PostService.Infrastructure.Repositories
                 );
             }
             var totalItems = await query.CountAsync();
-            var items = await query.Skip((page - 1) * itemsPage)
-            .Take(itemsPage)
-            .Include(c => c.CategoryContents
-                .Where(cc => string.IsNullOrWhiteSpace(language) || cc.Language.Code == language))
-            .ThenInclude(cc => cc.Language)
-            .ToListAsync();
+            var items = await query
+                .OrderByDescending(c => c.CreatedAt)
+                .Include(c => c.CategoryContents
+                    .Where(cc => string.IsNullOrWhiteSpace(language) || cc.Language.Code == language))
+                .ThenInclude(cc => cc.Language)
+                .Skip((page - 1) * itemsPage)
+                .Take(itemsPage)
+                .ToListAsync();
             return new PaginatedResult<Category>
             {
                 Items = items,
@@ -45,7 +50,9 @@ namespace PostService.Infrastructure.Repositories
         }
         public async Task<List<Category>> GetCategoriesByLanguage(string language)
         {
-            var query = this.context.Categories.AsQueryable();
+            var query = this.context.Categories
+                .AsNoTracking()
+                .AsQueryable();
             var items = await query.Include(c => c.CategoryContents
                 .Where(cc => string.IsNullOrWhiteSpace(language) || cc.Language.Code == language))
                 .ThenInclude( cc => cc.Language)
@@ -54,7 +61,9 @@ namespace PostService.Infrastructure.Repositories
         }
         public async Task<List<Category>> GetCategories()
         {
-            var query = this.context.Categories.AsQueryable();
+            var query = this.context.Categories
+                .AsNoTracking()
+                .AsQueryable();
             var items = await query.Include(c => c.CategoryContents)
                 .ThenInclude( cc => cc.Language)
                 .ToListAsync();

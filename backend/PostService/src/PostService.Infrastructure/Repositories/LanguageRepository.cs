@@ -13,7 +13,9 @@ namespace PostService.Infrastructure.Repositories
         }
         public async Task<PaginatedResult<Language>> GetPagination(int page, string? search, string? code, int itemsPage = 10)
         {
-            var query = this.context.Languages.AsQueryable();
+            var query = this.context.Languages
+                .AsNoTracking()
+                .AsQueryable();
             if (!string.IsNullOrWhiteSpace(search))
             {
                 query = query.Where(lg =>
@@ -23,9 +25,11 @@ namespace PostService.Infrastructure.Repositories
                         ));
             }
             var totalItems = await query.CountAsync();
-            var items =  await query.Skip((page - 1) * itemsPage)
-            .Take(itemsPage)
-            .ToListAsync();
+            var items =  await query
+                .OrderByDescending(l => l.CreatedAt)
+                .Skip((page - 1) * itemsPage)
+                .Take(itemsPage)
+                .ToListAsync();
             return new PaginatedResult<Language>
             {
                 Items = items,

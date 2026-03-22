@@ -27,6 +27,16 @@ namespace PostService.Application.Services
             return await this.toolsRepository.GetById(Id);
         }
 
+        public async Task<PaginatedResult<Tool>> GetByPagination(int page, string? search)
+        {
+            return await this.toolsRepository.GetByPagination(page,search);
+        }
+
+        public async Task<Tool> GetToolById(Guid Id)
+        {
+            return await this.toolsRepository.GetToolById(Id);
+        }
+
         public async Task<List<Tool>> List()
         {
             return await this.toolsRepository.List();

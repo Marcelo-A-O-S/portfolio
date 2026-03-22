@@ -15,6 +15,10 @@ namespace PostService.Domain.Entities
             this.Categories = new List<Category>();
             this.ImgUrl = imgUrl;
         }
+        public void Update(string imgUrl)
+        {
+            this.ImgUrl = imgUrl;
+        }
         public void AddCategory(Category category)
         {
             if(this.Categories == null)
