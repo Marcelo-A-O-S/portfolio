@@ -9,6 +9,9 @@ type ToolViewProps = {
 export default function ToolView({ toolData, content, categoriesData }: ToolViewProps) {
     return (
         <>
+        <main className="">
+
+        </main>
         </>
     )
 }
