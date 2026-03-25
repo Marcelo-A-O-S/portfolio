@@ -14,22 +14,9 @@ type ToolViewProps = {
     categoriesData: string[]
 }
 export default function ToolView({ toolData, toolContent, categoriesData }: ToolViewProps) {
-    const result = unified()
-        .use(remarkParse)
-        .use(remarkGfm)  
-        .use(remarkRehype, { allowDangerousHtml: true })
-        .use(rehypeRaw)
-        .use(rehypeHighlight)
-        .use(rehypeStringify)
-        .processSync(toolContent.content).toString()
-
     return (
         <>
             <main className="">
-                <MaxWidthWrapper className="prose dark:prose-invert">
-                    <h1 className="text-2xl font-bold">{toolContent.name}</h1>
-                    <div dangerouslySetInnerHTML={{__html:result}}/>
-                </MaxWidthWrapper>
             </main>
         </>
     )
