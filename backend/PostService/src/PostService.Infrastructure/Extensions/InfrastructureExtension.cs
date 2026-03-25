@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-
 namespace PostService.Infrastructure.Extensions
 {
     public static class InfrastructureExtension

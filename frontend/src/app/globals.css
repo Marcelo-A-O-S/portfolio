@@ -1,4 +1,6 @@
+
 @import "tailwindcss";
+@plugin '@tailwindcss/typography';
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
@@ -113,26 +115,6 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
-}
-
-.prose h1 {
-  @apply text-4xl font-bold;
-}
-
-.prose h2 {
-  @apply text-3xl font-semibold;
-}
-
-.prose h3 {
-  @apply text-2xl font-semibold;
-}
-
-.prose pre {
-  @apply bg-muted p-4 rounded-lg overflow-x-auto;
-}
-
-.prose code {
-  @apply bg-muted px-1 py-0.5 rounded text-sm;
 }
 
 @layer base {

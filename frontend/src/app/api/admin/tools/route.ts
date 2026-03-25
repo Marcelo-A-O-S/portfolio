@@ -20,7 +20,6 @@ export async function POST(request: NextRequest) {
             });
         }
         const tool = result.data;
-        console.log(JSON.stringify(tool, null, 2))
         const response = await addToolService(tool);
         if (response.status !== 200 && response.status !== 201) {
             return NextResponse.json({

@@ -72,12 +72,12 @@ namespace PostService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (toolRequest.toolContents.Count == 0)
+                if (toolRequest.ToolContents.Count == 0)
                     return BadRequest("Não é possível salvar uma ferramenta sem seu conteudo relacionado.");
                 if (toolRequest.Categories.Count == 0)
                     return BadRequest("Não é possível salvar uma ferramenta sem suas categorias relacionadas.");
-                var tool = new Tool(toolRequest.ImgUrl);
-                foreach (var item in toolRequest.toolContents)
+                var tool = new Tool(toolRequest.ImgUrl, toolRequest.Status);
+                foreach (var item in toolRequest.ToolContents)
                 {
                     var toolContent = await this.toolContentServices.FindBy(tc => tc.Slug == item.Slug && tc.LanguageId == item.LanguageId);
                     if (toolContent != null)
@@ -106,19 +106,19 @@ namespace PostService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (toolRequest.toolContents.Count == 0)
+                if (toolRequest.ToolContents.Count == 0)
                     return BadRequest("Não é possível atualizar uma ferramenta sem seu conteudo relacionado.");
                 if (toolRequest.Categories.Count == 0)
                     return BadRequest("Não é possível atualizar uma ferramenta sem suas categorias relacionadas.");
                 var tool = await this.toolsServices.GetForUpdate(Id);
                 if (tool == null)
                     return NotFound("Ferramenta não encontrada.");
-                tool.Update(toolRequest.ImgUrl);
-                var requestToolContentIds = toolRequest.toolContents
+                tool.Update(toolRequest.ImgUrl, toolRequest.Status);
+                var requestToolContentIds = toolRequest.ToolContents
                     .Where(c => c.Id.HasValue)
                     .Select(c => c.Id!.Value);
                 tool.RemoveToolContents(requestToolContentIds);
-                foreach (var item in toolRequest.toolContents)
+                foreach (var item in toolRequest.ToolContents)
                 {
                     if (item.Id is not Guid toolContentId)
                         return BadRequest("Não é possivel atualizar um conteúdo sem seu identificador");

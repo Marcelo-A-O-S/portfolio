@@ -15,11 +15,11 @@ namespace PostService.Infrastructure.Migrations
                 name: "Languages",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    Code = table.Column<string>(type: "NVARCHAR2(450)", nullable: false),
-                    Name = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Code = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -30,11 +30,11 @@ namespace PostService.Infrastructure.Migrations
                 name: "Posts",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    ImgUrl = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: true),
-                    Status = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ImgUrl = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Status = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -45,9 +45,9 @@ namespace PostService.Infrastructure.Migrations
                 name: "Likes",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    PostId = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    UserId = table.Column<Guid>(type: "RAW(16)", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -64,14 +64,14 @@ namespace PostService.Infrastructure.Migrations
                 name: "PostContents",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    PostId = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    Language = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    Title = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    Description = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    Content = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Language = table.Column<string>(type: "text", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -88,10 +88,11 @@ namespace PostService.Infrastructure.Migrations
                 name: "Tools",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    ImgUrl = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
-                    PostId = table.Column<Guid>(type: "RAW(16)", nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ImgUrl = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -107,10 +108,10 @@ namespace PostService.Infrastructure.Migrations
                 name: "Categories",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
-                    PostId = table.Column<Guid>(type: "RAW(16)", nullable: true),
-                    ToolId = table.Column<Guid>(type: "RAW(16)", nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ToolId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -131,15 +132,15 @@ namespace PostService.Infrastructure.Migrations
                 name: "ToolContents",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    ToolId = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    LanguageId = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    Name = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    Description = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    Content = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
-                    Slug = table.Column<string>(type: "NVARCHAR2(450)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ToolId = table.Column<Guid>(type: "uuid", nullable: false),
+                    LanguageId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: true),
+                    Slug = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -162,13 +163,13 @@ namespace PostService.Infrastructure.Migrations
                 name: "CategoriesContents",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    CategoryId = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    LanguageId = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    Name = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    Slug = table.Column<string>(type: "NVARCHAR2(450)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
-                    UpdateAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CategoryId = table.Column<Guid>(type: "uuid", nullable: false),
+                    LanguageId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Slug = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {

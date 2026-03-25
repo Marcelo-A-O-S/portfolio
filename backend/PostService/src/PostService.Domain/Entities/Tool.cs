@@ -1,3 +1,4 @@
+using PostService.Domain.Enums;
 namespace PostService.Domain.Entities
 {
     public class Tool
@@ -7,17 +8,20 @@ namespace PostService.Domain.Entities
         public ICollection<ToolContent> ToolContents { get; private set;} 
         public ICollection<Category> Categories { get; private set;}
         public DateTime CreatedAt { get; private set; }
-        public Tool(string imgUrl)
+        public Status Status { get; private set; }
+        public Tool(string imgUrl, Status status)
         {
             this.Id = Guid.NewGuid();
             this.CreatedAt = DateTime.UtcNow;
             this.ToolContents = new List<ToolContent>();
             this.Categories = new List<Category>();
             this.ImgUrl = imgUrl;
+            this.Status = status;
         }
-        public void Update(string imgUrl)
+        public void Update(string imgUrl, Status status)
         {
             this.ImgUrl = imgUrl;
+            this.Status = status;
         }
         public void AddCategory(Category category)
         {

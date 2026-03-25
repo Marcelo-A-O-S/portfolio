@@ -15,12 +15,12 @@ namespace AuthService.Infrastructure.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    Email = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    Name = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    Role = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
-                    Status = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Role = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -31,14 +31,14 @@ namespace AuthService.Infrastructure.Migrations
                 name: "RefreshTokens",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    UserId = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    TokenHash = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    DeviceId = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    DeviceName = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
-                    ExpiresAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
-                    RevokedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TokenHash = table.Column<string>(type: "text", nullable: false),
+                    DeviceId = table.Column<string>(type: "text", nullable: false),
+                    DeviceName = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    RevokedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -55,12 +55,12 @@ namespace AuthService.Infrastructure.Migrations
                 name: "SocialAccounts",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    UserId = table.Column<Guid>(type: "RAW(16)", nullable: false),
-                    Username = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    ProfileUrl = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    ProviderId = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    Provider = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Username = table.Column<string>(type: "text", nullable: false),
+                    ProfileUrl = table.Column<string>(type: "text", nullable: false),
+                    ProviderId = table.Column<string>(type: "text", nullable: false),
+                    Provider = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace PostService.Infrastructure.Context
@@ -14,10 +13,10 @@ namespace PostService.Infrastructure.Context
                 .SetBasePath(basePath)
                 .AddJsonFile("appsettings.json")
                 .Build();
-            var connectionString = configuration.GetConnectionString("OracleConnection");
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
 
             var optionsBuilder = new DbContextOptionsBuilder<DBContext>();
-            optionsBuilder.UseOracle(connectionString);
+            optionsBuilder.UseNpgsql(connectionString);
             return new DBContext(optionsBuilder.Options);
         }
     }

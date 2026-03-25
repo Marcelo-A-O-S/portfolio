@@ -5,7 +5,6 @@ using Microsoft.OpenApi;
 using PostService.API.Middleware;
 using System.Text.Json.Serialization;
 using System.Text.Json;
-
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ToolView from "../../components/tool-view";
 type Props = {
-    params: Promise<{ id: string, language:string }>
+    params: Promise<{ Id: string, language:string }>
 }
 async function getToolOrThrow(id: string) {
     const response = await getToolByIdService(id);
@@ -12,14 +12,15 @@ async function getToolOrThrow(id: string) {
         notFound();
     }
     const result = await toolSchema.safeParseAsync(response.data);
-    if (!result.success) {
+    if (result.error) {
+        console.log(`Error ao validar: ${result.error.message}`);
         notFound();
     }
     return result.data;
 }
 export async function generateMetadata({ params }:Props): Promise<Metadata>{
-    const { id, language } = await params;
-    const tool = await getToolOrThrow(id);
+    const { Id, language } = await params;
+    const tool = await getToolOrThrow(Id);
     const content = tool.toolContents.find(
         c => c.language?.code === language
     )
@@ -58,13 +59,14 @@ export async function generateMetadata({ params }:Props): Promise<Metadata>{
         keywords: keywords,
     }
 }
+
 export default async function PageById({ params }: Props) {
-    const { id, language } = await params;
-    const tool = await getToolOrThrow(id);
-    const content = tool.toolContents.find(
+    const { Id, language } = await params;
+    const tool = await getToolOrThrow(Id);
+    const toolContent = tool.toolContents.find(
         c => c.language?.code === language
     )
-    if(!content){
+    if(!toolContent){
         return notFound();
     }
     const categories = tool.categories
@@ -75,9 +77,5 @@ export default async function PageById({ params }: Props) {
             return categoryContent?.name;
         })
         .filter((c): c is string => Boolean(c));
-    return (
-        <>
-        <ToolView toolData={tool} content={content} categoriesData={categories} />
-        </>
-    )
+    return <ToolView toolData={tool} toolContent={toolContent} categoriesData={categories} />
 }

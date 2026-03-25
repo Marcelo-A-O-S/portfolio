@@ -13,10 +13,10 @@ namespace AuthService.Infrastructure.Context
                 .SetBasePath(basePath)
                 .AddJsonFile("appsettings.json")
                 .Build();
-            var connectionString = configuration.GetConnectionString("OracleConnection");
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
 
             var optionsBuilder = new DbContextOptionsBuilder<DBContext>();
-            optionsBuilder.UseOracle(connectionString);
+            optionsBuilder.UseNpgsql(connectionString);
             return new DBContext(optionsBuilder.Options);
         }
     }
