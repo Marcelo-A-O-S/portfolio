@@ -118,6 +118,10 @@ namespace PostService.API.Controllers
                     return BadRequest(new { message = "Não é possível salvar um post sem suas ferramentas relacionadas."});
                 if(postRequest.PostContents.Count == 0)
                     return BadRequest(new { message = "Não é possível salvar um post sem seu conteúdo relacionado."});
+                var post = await this.postServices.GetForUpdate(Id);
+                if(post == null)
+                    return NotFound(new { message = "Postagem não encontrada."});
+                post.Update(postRequest.Status);
             }
             var errors = ModelState.Values.Select(e => e.Errors);
             return BadRequest(errors);

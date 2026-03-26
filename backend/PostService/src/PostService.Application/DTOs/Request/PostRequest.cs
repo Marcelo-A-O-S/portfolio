@@ -9,10 +9,6 @@ namespace PostService.Application.DTOs.Request
         [Required( ErrorMessage ="A imagem principal do projeto é obrigatório.")]
         public string ImgUrl { get; set; }
         [Required( ErrorMessage ="O titulo do projeto é obrigatório.")]
-        public string Title { get; set; }
-        [Required( ErrorMessage ="A descrição do projeto é obrigatório.")]
-        public string Description { get; set; }
-        [Required( ErrorMessage ="A lista de ferramentas é obrigatória.")]
         public List<ToolRequest> Tools { get; set; }
         [Required( ErrorMessage ="A lista das categorias é obrigatória.")]
         public List<CategoryRequest> Categories { get; set; }

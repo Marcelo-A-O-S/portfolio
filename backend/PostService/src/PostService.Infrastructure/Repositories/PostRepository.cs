@@ -12,7 +12,6 @@ namespace PostService.Infrastructure.Repositories
         {
             this.context = _context;
         }
-
         public async Task<PaginatedResult<Post>> GetByPagination(int page, string? search, int itemsPage = 10)
         {
             var query = this.context.Posts
@@ -35,7 +34,11 @@ namespace PostService.Infrastructure.Repositories
                 .Include(p => p.PostContents)
                     .ThenInclude(pt => pt.Language)
                 .Include(p => p.Categories)
+                    .ThenInclude(c => c.CategoryContents)
+                        .ThenInclude(cc => cc.Language)
                 .Include(p => p.Tools)
+                    .ThenInclude(t => t.ToolContents)
+                        .ThenInclude(tl => tl.Language)
                 .Skip((page - 1) * itemsPage)
                 .Take(itemsPage)
                 .ToListAsync();
@@ -46,6 +49,33 @@ namespace PostService.Infrastructure.Repositories
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling(totalItems / (double)itemsPage)
             };
+        }
+
+        public async Task<Post> GetForUpdate(Guid Id)
+        {
+            return await context.Posts
+                .Include(p => p.PostContents)
+                .Include(p => p.Categories)
+                .Include(p => p.Tools)
+                .FirstOrDefaultAsync(t => t.Id == Id);
+        }
+
+        public async Task<Post> GetPostById(Guid Id)
+        {
+            var item  = await this.context.Posts
+                .AsNoTracking()
+                .AsSplitQuery()
+                .Where(t => t.Id == Id)
+                .Include(p => p.PostContents)
+                    .ThenInclude(pt => pt.Language)
+                .Include(p => p.Categories)
+                    .ThenInclude(c => c.CategoryContents)
+                        .ThenInclude(cc => cc.Language)
+                .Include(p => p.Tools)
+                    .ThenInclude(t => t.ToolContents)
+                        .ThenInclude(tl => tl.Language)
+                .FirstOrDefaultAsync();
+            return item;
         }
     }
 }
