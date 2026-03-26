@@ -10,14 +10,14 @@ namespace CertificateService.Infrastructure.Extensions
             this IServiceCollection services, IConfiguration configuration
         )
         {
-            var connectionString = configuration.GetConnectionString("OracleConnection");
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
             if (string.IsNullOrEmpty(connectionString))
             {
                 throw new InvalidOperationException("ConnectionString não configurada.");
             }
             services.AddDbContext<DBContext>(options =>
             {
-                options.UseOracle(connectionString);
+                options.UseNpgsql(connectionString);
             });
             return services;
         }

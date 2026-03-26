@@ -27,6 +27,11 @@ namespace PostService.Application.Services
             return await this.postRepository.GetById(Id);
         }
 
+        public async Task<PaginatedResult<Post>> GetByPagination(int page, string? search)
+        {
+            return await this.postRepository.GetByPagination(page, search);
+        }
+
         public async Task<List<Post>> List()
         {
             return await this.postRepository.List();

@@ -35,7 +35,7 @@ namespace PostService.Domain.Entities
                 throw new Exception("Lista de conteudo não inicializada.");
             this.ToolContents.Add(toolContent);
         }
-        public void RemoveCategories(IEnumerable<Guid> categoryIds)
+        public void ValidateCategories(IEnumerable<Guid> categoryIds)
         {
             if(this.Categories == null)
                 throw new Exception("Lista de categorias não inicializada.");
@@ -46,7 +46,7 @@ namespace PostService.Domain.Entities
             foreach(var category in toRemove)
                 this.Categories.Remove(category);
         }
-        public void RemoveToolContents(IEnumerable<Guid> toolContentIds)
+        public void ValidateToolContents(IEnumerable<Guid> toolContentIds)
         {
             if(this.ToolContents == null)
                 throw new Exception("Lista de conteudo não inicializada.");

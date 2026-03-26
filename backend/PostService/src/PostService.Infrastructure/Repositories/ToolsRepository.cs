@@ -48,7 +48,6 @@ namespace PostService.Infrastructure.Repositories
                 TotalPages = (int)Math.Ceiling(totalItems / (double)itemsPage)
             };
         }
-
         public async Task<Tool> GetForUpdate(Guid Id)
         {
             return await context.Tools
@@ -56,7 +55,6 @@ namespace PostService.Infrastructure.Repositories
                 .Include(t => t.ToolContents)
                 .FirstOrDefaultAsync(t => t.Id == Id);
         }
-
         public async Task<Tool> GetToolById(Guid Id)
         {
             var item  = await this.context.Tools
