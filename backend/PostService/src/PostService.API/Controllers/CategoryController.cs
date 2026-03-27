@@ -103,6 +103,10 @@ namespace PostService.API.Controllers
                 var category = await this.categoryServices.GetById(Id);
                 if (category == null)
                     return NotFound(new { message = "Categoria não encontrada." });
+                var requestCategoryContentIds = categoryRequest.CategoryContents
+                    .Where(cc => cc.Id.HasValue)
+                    .Select(cc => cc.Id!.Value);
+                category.ValidateCategoryContents(requestCategoryContentIds);
                 foreach (var ccRequest in categoryRequest.CategoryContents)
                 {
                     if (ccRequest.Id is not Guid categoryContentId)

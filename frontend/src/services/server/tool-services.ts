@@ -14,7 +14,7 @@ export const updateToolService = async(id:string, tool: ToolSchema) =>{
 }
 export const deleteToolByRouteService = async(id:string) =>{
     const api = await apiServer();
-    const response = await api.delete(`/api/tools/${id}`);
+    const response = await api.delete(`/api/Tool/${id}`);
     return response;
 }
 export const getToolsByPagination = async(filters: ToolFilters) =>{

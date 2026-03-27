@@ -10,7 +10,7 @@ export function useDeleteTool(){
         mutationFn: (id:string) => deleteToolByRouteService(id),
         onSuccess: (response)=>{
             queryClient.invalidateQueries({
-                queryKey: ["languages-pagination"]
+                queryKey: ["tool-pagination"]
             })
             toast.success(response.data.message);
         },

@@ -63,8 +63,16 @@ namespace Gateway.API.Configuration
                 }
             };
         }
-        public static IReadOnlyList<ClusterConfig> GetClusters()
+        public static IReadOnlyList<ClusterConfig> GetClusters(
+            IConfiguration configuration
+        )
         {
+            var authAddress = configuration.GetSection("Destinations:AuthAddress").Value;
+            var postAddress = configuration.GetSection("Destinations:PostAddress").Value;
+            if (string.IsNullOrEmpty(authAddress) || string.IsNullOrEmpty(postAddress))
+            {
+                throw new InvalidOperationException("Chaves de destino não configuradas corretamente.");
+            }
             return new[]
             {
                 new ClusterConfig
@@ -73,7 +81,7 @@ namespace Gateway.API.Configuration
                     Destinations = new Dictionary<string, DestinationConfig>
                     {
                         {
-                            "authservice", new DestinationConfig { Address = "http://authservice:5001/" }
+                            "authservice", new DestinationConfig { Address = authAddress }
                         }
                     }
                 },
@@ -83,7 +91,7 @@ namespace Gateway.API.Configuration
                     Destinations = new Dictionary<string, DestinationConfig>
                     {
                         {
-                            "postservice", new DestinationConfig { Address = "http://postservice:5002/"}
+                            "postservice", new DestinationConfig { Address = postAddress}
                         }
                     }
                 }

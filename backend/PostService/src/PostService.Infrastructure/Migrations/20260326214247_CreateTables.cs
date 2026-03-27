@@ -42,6 +42,24 @@ namespace PostService.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Categories_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Likes",
                 columns: table => new
                 {
@@ -66,16 +84,23 @@ namespace PostService.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     PostId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Language = table.Column<string>(type: "text", nullable: false),
+                    LanguageId = table.Column<Guid>(type: "uuid", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     Content = table.Column<string>(type: "text", nullable: false),
+                    Slug = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PostContents", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PostContents_Languages_LanguageId",
+                        column: x => x.LanguageId,
+                        principalTable: "Languages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_PostContents_Posts_PostId",
                         column: x => x.PostId,
@@ -105,27 +130,56 @@ namespace PostService.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Categories",
+                name: "CategoriesContents",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CategoryId = table.Column<Guid>(type: "uuid", nullable: false),
+                    LanguageId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Slug = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    PostId = table.Column<Guid>(type: "uuid", nullable: true),
-                    ToolId = table.Column<Guid>(type: "uuid", nullable: true)
+                    UpdateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Categories", x => x.Id);
+                    table.PrimaryKey("PK_CategoriesContents", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Categories_Posts_PostId",
-                        column: x => x.PostId,
-                        principalTable: "Posts",
-                        principalColumn: "Id");
+                        name: "FK_CategoriesContents_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Categories_Tools_ToolId",
-                        column: x => x.ToolId,
+                        name: "FK_CategoriesContents_Languages_LanguageId",
+                        column: x => x.LanguageId,
+                        principalTable: "Languages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CategoryTool",
+                columns: table => new
+                {
+                    CategoriesId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ToolsId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoryTool", x => new { x.CategoriesId, x.ToolsId });
+                    table.ForeignKey(
+                        name: "FK_CategoryTool_Categories_CategoriesId",
+                        column: x => x.CategoriesId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CategoryTool_Tools_ToolsId",
+                        column: x => x.ToolsId,
                         principalTable: "Tools",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -159,44 +213,10 @@ namespace PostService.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "CategoriesContents",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CategoryId = table.Column<Guid>(type: "uuid", nullable: false),
-                    LanguageId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Slug = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CategoriesContents", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CategoriesContents_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CategoriesContents_Languages_LanguageId",
-                        column: x => x.LanguageId,
-                        principalTable: "Languages",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_Categories_PostId",
                 table: "Categories",
                 column: "PostId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Categories_ToolId",
-                table: "Categories",
-                column: "ToolId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CategoriesContents_CategoryId",
@@ -214,6 +234,11 @@ namespace PostService.Infrastructure.Migrations
                 column: "Slug");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CategoryTool_ToolsId",
+                table: "CategoryTool",
+                column: "ToolsId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Languages_Code",
                 table: "Languages",
                 column: "Code");
@@ -224,9 +249,19 @@ namespace PostService.Infrastructure.Migrations
                 column: "PostId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PostContents_LanguageId",
+                table: "PostContents",
+                column: "LanguageId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PostContents_PostId",
                 table: "PostContents",
                 column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PostContents_Slug",
+                table: "PostContents",
+                column: "Slug");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ToolContents_LanguageId",
@@ -254,6 +289,9 @@ namespace PostService.Infrastructure.Migrations
         {
             migrationBuilder.DropTable(
                 name: "CategoriesContents");
+
+            migrationBuilder.DropTable(
+                name: "CategoryTool");
 
             migrationBuilder.DropTable(
                 name: "Likes");

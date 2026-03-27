@@ -49,6 +49,7 @@ export default function ToolsPage() {
     if (error) {
         toast.error("Erro ao buscar usuários")
     }
+    console.log(categories);
     return (
         <main className="relative mx-auto flex min-h-screen inset-0 w-screen max-w-[1440px] justify-center bg-white dark:bg-black ">
             <section className="relative w-screen h-svh px-10 py-18">

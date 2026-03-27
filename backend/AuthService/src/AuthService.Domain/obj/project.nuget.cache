@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "pHpGf2z8a70=",
+  "dgSpecHash": "BBqocbfTQrg=",
   "success": true,
-  "projectFilePath": "C:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Domain\\AuthService.Domain.csproj",
+  "projectFilePath": "c:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Domain\\AuthService.Domain.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

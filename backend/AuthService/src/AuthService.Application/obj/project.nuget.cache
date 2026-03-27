@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "7SMFceqNGjM=",
+  "dgSpecHash": "TXk9INZkzF0=",
   "success": true,
-  "projectFilePath": "C:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Application\\AuthService.Application.csproj",
+  "projectFilePath": "c:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Application\\AuthService.Application.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\marce\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\marce\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.21\\microsoft.aspnetcore.authentication.jwtbearer.8.0.21.nupkg.sha512",

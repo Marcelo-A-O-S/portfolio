@@ -12,7 +12,7 @@ using PostService.Infrastructure.Context;
 namespace PostService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20260325044801_CreateTables")]
+    [Migration("20260326214247_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -24,6 +24,21 @@ namespace PostService.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("CategoryTool", b =>
+                {
+                    b.Property<Guid>("CategoriesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ToolsId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("CategoriesId", "ToolsId");
+
+                    b.HasIndex("ToolsId");
+
+                    b.ToTable("CategoryTool");
+                });
 
             modelBuilder.Entity("PostService.Domain.Entities.Category", b =>
                 {
@@ -37,14 +52,9 @@ namespace PostService.Infrastructure.Migrations
                     b.Property<Guid?>("PostId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("ToolId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PostId");
-
-                    b.HasIndex("ToolId");
 
                     b.ToTable("Categories");
                 });
@@ -174,12 +184,15 @@ namespace PostService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Language")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("LanguageId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -190,7 +203,11 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LanguageId");
+
                     b.HasIndex("PostId");
+
+                    b.HasIndex("Slug");
 
                     b.ToTable("PostContents");
                 });
@@ -266,15 +283,26 @@ namespace PostService.Infrastructure.Migrations
                     b.ToTable("ToolContents");
                 });
 
+            modelBuilder.Entity("CategoryTool", b =>
+                {
+                    b.HasOne("PostService.Domain.Entities.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PostService.Domain.Entities.Tool", null)
+                        .WithMany()
+                        .HasForeignKey("ToolsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("PostService.Domain.Entities.Category", b =>
                 {
                     b.HasOne("PostService.Domain.Entities.Post", null)
                         .WithMany("Categories")
                         .HasForeignKey("PostId");
-
-                    b.HasOne("PostService.Domain.Entities.Tool", null)
-                        .WithMany("Categories")
-                        .HasForeignKey("ToolId");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.CategoryContent", b =>
@@ -309,11 +337,19 @@ namespace PostService.Infrastructure.Migrations
 
             modelBuilder.Entity("PostService.Domain.Entities.PostContent", b =>
                 {
+                    b.HasOne("PostService.Domain.Entities.Language", "Language")
+                        .WithMany()
+                        .HasForeignKey("LanguageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PostService.Domain.Entities.Post", "Post")
                         .WithMany("PostContents")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Language");
 
                     b.Navigation("Post");
                 });
@@ -362,8 +398,6 @@ namespace PostService.Infrastructure.Migrations
 
             modelBuilder.Entity("PostService.Domain.Entities.Tool", b =>
                 {
-                    b.Navigation("Categories");
-
                     b.Navigation("ToolContents");
                 });
 #pragma warning restore 612, 618

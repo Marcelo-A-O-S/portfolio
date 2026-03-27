@@ -12,21 +12,23 @@ namespace PostService.Domain.Entities
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
         public Status Status { get; private set; }
-        public Post(Status status)
+        public Post(string imgUrl, Status status)
         {
             this.Id = Guid.NewGuid();
             this.CreatedAt = DateTime.UtcNow;
             this.UpdatedAt = DateTime.UtcNow;
+            this.ImgUrl = imgUrl;
             this.Status = status;
             this.Categories = new List<Category>();
             this.Likes = new List<Like>();
             this.Tools = new List<Tool>();
             this.PostContents = new List<PostContent>();
         }
-        public void Update(Status status)
+        public void Update(string imgUrl, Status status)
         {
             this.UpdatedAt = DateTime.UtcNow;
             this.Status = status;
+            this.ImgUrl = imgUrl;
         }
         public void AddTool(Tool tool)
         {

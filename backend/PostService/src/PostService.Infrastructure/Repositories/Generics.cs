@@ -44,13 +44,33 @@ namespace PostService.Infrastructure.Repositories
 
         public async Task Save(T entity)
         {
-            await this.context.Set<T>().AddAsync(entity);
+            context.ChangeTracker.TrackGraph(entity, e =>
+            {
+                if (e.Entry.Entity == entity)
+                {
+                    e.Entry.State = EntityState.Added;
+                    return;
+                }
+                e.Entry.State = e.Entry.State == EntityState.Detached
+                    ? EntityState.Added
+                    : EntityState.Unchanged;
+            });
             await this.context.SaveChangesAsync();
         }
 
         public async Task Update(T entity)
         {
-            this.context.Set<T>().Update(entity);
+            context.ChangeTracker.TrackGraph(entity, e =>
+            {
+                if (e.Entry.Entity == entity)
+                {
+                    e.Entry.State = EntityState.Modified;
+                    return;
+                }
+                e.Entry.State = e.Entry.IsKeySet
+                    ? EntityState.Unchanged
+                    : EntityState.Added;
+            });
             await this.context.SaveChangesAsync();
         }
     }

@@ -34,9 +34,8 @@ namespace PostService.Infrastructure.Repositories
             var totalItems = await query.CountAsync();
             var items = await query
                 .OrderByDescending(c => c.CreatedAt)
-                .Include(c => c.CategoryContents
-                    .Where(cc => string.IsNullOrWhiteSpace(language) || cc.Language.Code == language))
-                .ThenInclude(cc => cc.Language)
+                .Include(c => c.CategoryContents)
+                    .ThenInclude(cc => cc.Language)
                 .Skip((page - 1) * itemsPage)
                 .Take(itemsPage)
                 .ToListAsync();
