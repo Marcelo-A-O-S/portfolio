@@ -1,15 +1,13 @@
 import z from "zod";
 import { categorySchema } from "./CategorySchema";
 import { toolSchema } from "./ToolSchema";
+import { postContentSchema } from "./PostContentSchema";
 export const PostStatusEnum = z.enum(["DRAFT", "PUBLISH"])
 export const postSchema = z.object({
-    certificateId: z.string().optional(),
-    title: z.string().nonempty(""),
-    description: z.string().nonempty(),
-    content: z.string().nonempty(),
-    imageUrl: z.string().nonempty(),
+    id: z.uuid().optional(),
+    imgUrl: z.string().nonempty(),
     status: PostStatusEnum,
-    slug: z.string().nonempty(),
+    postContents: z.array(postContentSchema),
     categories: z.array(categorySchema),
     tools: z.array(toolSchema)
 })

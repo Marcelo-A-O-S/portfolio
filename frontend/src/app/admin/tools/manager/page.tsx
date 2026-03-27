@@ -131,13 +131,10 @@ export default function ToolCreatePage() {
                         </div>
                     </div>
                     <div className="flex md:p-10">
-                        <form onSubmit={handleSubmit(onSubmit,
-                            (errors) => {
-                                console.log("ERROS:", errors);
-                            })} className="flex-1 flex flex-col gap-2 min-h-0">
+                        <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col gap-2 min-h-0">
                             <Card className="">
                                 <CardHeader className="flex flex-col md:flex-row md:items-center justify-between">
-                                    <CardTitle>Write Post</CardTitle>
+                                    <CardTitle>Write Tool</CardTitle>
                                     <div className="flex  gap-2">
                                         <Controller
                                             name="status"

@@ -10,7 +10,6 @@ import { useState } from "react";
 import CardTool from "./components/card-tool";
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationEllipsis, PaginationLink, PaginationNext } from "@/components/ui/pagination";
 import { createPageURL, generatePagination } from "@/lib/utils";
-import pages from "next/dist/build/templates/pages";
 export default function ToolsPage() {
     const { data: session } = useSession();
     const router = useRouter();
@@ -26,7 +25,6 @@ export default function ToolsPage() {
     const totalPages = tools?.totalPages || 1;
     const currentPage = tools?.currentPage || 1;
     const pages = generatePagination(currentPage, totalPages);
-    console.log("Data: ",tools?.items)
     return (
         <main className="relative mx-auto flex min-h-screen inset-0 w-screen max-w-[1440px] justify-center bg-white dark:bg-black ">
             <section className="relative w-full min-h-screen px-10 py-20 flex flex-col">
