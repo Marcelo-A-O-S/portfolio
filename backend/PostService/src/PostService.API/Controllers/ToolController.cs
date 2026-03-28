@@ -23,6 +23,13 @@ namespace PostService.API.Controllers
             this.toolContentServices = _toolContentServices;
             this.categoryServices = _categoryServices;
         }
+        [HttpGet("GetTools")]
+        [Authorize( Roles = "Administrador")]
+        public async Task<IActionResult> GetTools()
+        {
+            var tools = await this.toolsServices.GetTools();
+            return Ok(tools);
+        }
         [HttpGet]
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> List([FromQuery] int? page)

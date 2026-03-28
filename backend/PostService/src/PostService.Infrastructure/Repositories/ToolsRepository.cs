@@ -69,5 +69,19 @@ namespace PostService.Infrastructure.Repositories
                 .FirstOrDefaultAsync();
             return item;
         }
+
+        public async Task<List<Tool>> GetTools()
+        {
+            return await this.context.Tools
+                .AsNoTracking()
+                .AsSplitQuery()
+                .OrderByDescending(t => t.CreatedAt)
+                .Include(t => t.ToolContents)
+                    .ThenInclude(tl => tl.Language)
+                .Include(t => t.Categories)
+                    .ThenInclude(c => c.CategoryContents)
+                        .ThenInclude(cc => cc.Language)
+                .ToListAsync();
+        }
     }
 }

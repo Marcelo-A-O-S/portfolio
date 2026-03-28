@@ -77,5 +77,22 @@ namespace PostService.Infrastructure.Repositories
                 .FirstOrDefaultAsync();
             return item;
         }
+
+        public async Task<List<Post>> GetPosts()
+        {
+            return await this.context.Posts
+                .AsNoTracking()
+                .AsSplitQuery()
+                .OrderByDescending(p=> p.CreatedAt)
+                .Include(p => p.PostContents)
+                    .ThenInclude(pt => pt.Language)
+                .Include(p => p.Categories)
+                    .ThenInclude(c => c.CategoryContents)
+                        .ThenInclude(cc => cc.Language)
+                .Include(p => p.Tools)
+                    .ThenInclude(t => t.ToolContents)
+                        .ThenInclude(tl => tl.Language)
+                .ToListAsync();
+        }
     }
 }

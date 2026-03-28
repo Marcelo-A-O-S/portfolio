@@ -42,6 +42,11 @@ namespace PostService.Application.Services
             return await this.postRepository.GetPostById(Id);
         }
 
+        public async Task<List<Post>> GetPosts()
+        {
+            return await this.postRepository.GetPosts();
+        }
+
         public async Task<List<Post>> List()
         {
             return await this.postRepository.List();

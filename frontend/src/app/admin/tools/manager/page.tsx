@@ -59,7 +59,7 @@ export default function ToolCreatePage() {
     })
     console.log(tool);
     const categoriesWatch = watch("categories");
-    const contents = watch("toolContents");
+    const toolsWatch = watch("toolContents");
     const onSubmit = async (data: ToolSchema) => {
         if(tool){
             await updateTool({id: tool.id, data: data});
@@ -73,14 +73,6 @@ export default function ToolCreatePage() {
         )
         if (exists) return
         appendCategory(data);
-    }
-    const removeCategory = (id: string) => {
-        const index = categoriesWatch.findIndex(
-            (c) => c.id === id
-        )
-        if (index !== -1) {
-            removeFieldCategory(index)
-        }
     }
     return (
         <>

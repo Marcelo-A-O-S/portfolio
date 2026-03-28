@@ -6,5 +6,6 @@ namespace PostService.Application.Interfaces
         Task<PaginatedResult<Tool>> GetByPagination(int page, string? search);
         Task<Tool> GetToolById(Guid Id);
         Task<Tool> GetForUpdate(Guid Id);
+        Task<List<Tool>> GetTools();
     }
 }

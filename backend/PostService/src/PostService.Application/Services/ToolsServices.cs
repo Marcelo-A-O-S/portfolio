@@ -42,6 +42,11 @@ namespace PostService.Application.Services
             return await this.toolsRepository.GetToolById(Id);
         }
 
+        public async Task<List<Tool>> GetTools()
+        {
+            return await this.toolsRepository.GetTools();
+        }
+
         public async Task<List<Tool>> List()
         {
             return await this.toolsRepository.List();

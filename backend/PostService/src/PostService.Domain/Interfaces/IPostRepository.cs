@@ -7,6 +7,6 @@ namespace PostService.Domain.Interfaces
         Task<PaginatedResult<Post>> GetByPagination(int page, string? search, int itemsPage = 10);
         Task<Post> GetPostById(Guid Id);
         Task<Post> GetForUpdate(Guid Id);
-
+        Task<List<Post>> GetPosts();
     }
 }

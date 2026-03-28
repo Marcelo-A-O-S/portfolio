@@ -32,3 +32,8 @@ export const getToolByIdService = async(id:string) =>{
     const response = await api.get(`/api/Tool/GetToolById/${id}`);
     return response;
 }
+export const getTools = async()=>{
+    const api = await apiServer();
+    const response = await api.get(`/api/Tool/GetTools`);
+    return response;
+}

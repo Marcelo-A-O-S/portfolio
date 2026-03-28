@@ -1,24 +1,23 @@
 "use client"
 import { Button } from "@/components/ui/button";
-import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupText, InputGroupTextarea } from "@/components/ui/input-group";
+import { InputGroup, InputGroupTextarea } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { postSchema, PostSchema } from "@/domain/schemas/PostSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FileCodeIcon, CopyIcon } from "lucide-react";
 import { useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { Switch } from "@/components/ui/switch"
-import MarkdownRenderer from "@/components/markdown-renderer";
 import { addPostService } from "@/services/client/post-services";
 import { toast } from "sonner";
 import { useCategories } from "@/hooks/useCategories";
 import { useLanguages } from "@/hooks/useLanguages";
 import { useSearchParams } from "next/navigation";
 import { SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem, Select } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { CategorySchema } from "@/domain/schemas/CategorySchema";
+import { ToolSchema } from "@/domain/schemas/ToolSchema";
 export default function ProjectCreate() {
     const searchParams = useSearchParams();
     const toolId = searchParams.get("postId") || undefined;
@@ -60,12 +59,54 @@ export default function ProjectCreate() {
             return toast.error("Erro ao salvar postagem: ", response.data.message);
         }
     }
+    const addTool = (data: ToolSchema) => {
+        const exists = categoriesWatch.some(
+            (c) => c.id === data.id
+        )
+        if (exists) return
+        appendFieldTools(data);
+    }
+    const addCategory = (data: CategorySchema) => {
+        const exists = categoriesWatch.some(
+            (c) => c.id === data.id
+        )
+        if (exists) return
+        appendFieldCategory(data);
+    }
     return (
         <>
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Selecionar categorias</DialogTitle>
+                    </DialogHeader>
+                    <Input placeholder="Buscar categoria..." />
+                    <div className="max-h-60 overflow-y-auto">
+                        {categories?.map((cat, index) => (
+                            <div
+                                key={cat.id}
+                                className="flex items-center justify-between p-2 hover:bg-muted rounded"
+                            >
+                                {cat.categoryContents.map((cc, index) => (
+                                    <span key={index}>{`${cc.name}`}</span>
+                                ))}
+                                <Button
+                                    size="sm"
+                                    className="cursor-pointer"
+                                    disabled={categoriesWatch?.some(c => c.id === cat.id)}
+                                    onClick={() => addCategory(cat)}
+                                >
+                                    Adicionar
+                                </Button>
+                            </div>
+                        ))}
+                    </div>
+                </DialogContent>
+            </Dialog>
             <main className="relative mx-auto flex min-h-full inset-0 w-screen max-w-[1440px] justify-center bg-background overflow-x-hidden">
                 <section className="relative w-full min-h-screen px-10 py-20 flex flex-col">
                     <div className="flex flex-col gap-3 sm:flex-row py-10 md:p-10 sm:items-center justify-between">
-                        <h1 className="text-3xl md:text-5xl font-semibold">Create Post</h1>
+                        <h1 className="text-3xl md:text-5xl font-semibold">Create Project</h1>
                         <div className="flex gap-2 items-center">
                             <Button type="button"
                                 className="cursor-pointer"
@@ -84,7 +125,7 @@ export default function ProjectCreate() {
                         <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col gap-2 min-h-0">
                             <Card className="">
                                 <CardHeader className="flex flex-col md:flex-row md:items-center justify-between">
-                                    <CardTitle>Write Post</CardTitle>
+                                    <CardTitle>Write Project</CardTitle>
                                     <div className="flex  gap-2">
                                         <Controller
                                             name="status"
