@@ -26,6 +26,7 @@ export default function ProjectCreate() {
     const { data: languages } = useLanguages();
     const [preview, openPreview] = useState(false);
     const [postData, setPostData] = useState({})
+    const [open, setOpen] = useState(false);
     const { control, handleSubmit, formState: { }, watch } = useForm<PostSchema>({
         resolver: zodResolver(postSchema),
         defaultValues: {
@@ -39,18 +40,20 @@ export default function ProjectCreate() {
             }]
         }
     });
-    const { fields: fieldPostContents , append } = useFieldArray({
+    const { fields: fieldPostContents, append } = useFieldArray({
         control,
-        name:"postContents"
+        name: "postContents"
     })
-    const { fields: fieldTools, append: appendFieldTools } = useFieldArray({
+    const { fields: fieldTools, append: appendFieldTools, remove: removeFieldTool } = useFieldArray({
         control,
         name: "tools"
     })
-    const { fields: fieldCategories, append: appendFieldCategory } = useFieldArray({
+    const { fields: fieldCategories, append: appendFieldCategory, remove: removeFieldCategory } = useFieldArray({
         control,
         name: "categories"
     })
+    const categoriesWatch = watch("categories");
+    const toolsWatch = watch("tools");
     const onSubmit = async (data: PostSchema) => {
         const response = await addPostService(data);
         if (response.status !== 200 && response.status !== 201) {
@@ -109,10 +112,173 @@ export default function ProjectCreate() {
                                     </div>
                                 </CardHeader>
                                 <CardContent className="flex-1 flex flex-col min-h-0">
+                                    <div className="py-2">
+                                        <Controller
+                                            name={`imgUrl`}
+                                            control={control}
+                                            render={({ field }) => (
+                                                <div className="grid gap-2">
+                                                    <Label htmlFor="imgUrl">Imagem</Label>
+                                                    <Input
+                                                        {...field}
+                                                        placeholder="Informe a url ..."
+                                                    />
+                                                </div>
+                                            )}
+                                        />
+                                    </div>
+                                    <div className="flex flex-col gap-2  pb-3 w-full">
+                                        <Label>Tools</Label>
+                                        <Button
+                                            className="cursor-pointer"
+                                            type="button"
+                                            variant="outline"
+                                            onClick={() => setOpen(true)}
+                                        >
+                                            + Adicionar ferramenta
+                                        </Button>
+                                        <div className="flex flex-wrap gap-2">
+                                            {toolsWatch?.map((tool, index) => (
+                                                <div
+                                                    key={tool.id}
+                                                    className="flex items-center gap-2 px-3 py-1 bg-muted rounded-full text-sm"
+                                                >
+                                                    {tool.toolContents.map((tc, index) => (
+                                                        <span key={index}>{`${tc.name}`}</span>
+                                                    ))}
+                                                    <button type="button" className="cursor-pointer" onClick={() => removeFieldTool(index)}>
+                                                        ✕
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col gap-2 pb-3 w-full">
+                                        <Label>Categorias</Label>
+                                        <Button
+                                            className="cursor-pointer"
+                                            type="button"
+                                            variant="outline"
+                                            onClick={() => setOpen(true)}
+                                        >
+                                            + Adicionar categoria
+                                        </Button>
+                                        <div className="flex flex-wrap gap-2">
+                                            {categoriesWatch?.map((cat, index) => (
+                                                <div
+                                                    key={cat.id}
+                                                    className="flex items-center gap-2 px-3 py-1 bg-muted rounded-full text-sm"
+                                                >
+                                                    {cat.categoryContents.map((cc, index) => (
+                                                        <span key={index}>{`${cc.name}`}</span>
+                                                    ))}
+                                                    <button type="button" className="cursor-pointer" onClick={() => removeFieldCategory(index)}>
+                                                        ✕
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    {fieldPostContents.map((item, index) => (
+                                        <div key={item.id} className="w-full max-h-full h-[500px] flex flex-col overflow-hidden">
+                                            <div className="flex flex-col gap-6 flex-1 min-h-0 border-t pb-3 py-3">
+                                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-2">
+                                                    <Controller
+                                                        name={`postContents.${index}.title`}
+                                                        control={control}
+                                                        render={({ field }) => (
+                                                            <Field className="grid gap-2">
+                                                                <Label htmlFor="title">Title</Label>
+                                                                <Input
+                                                                    {...field}
+                                                                    placeholder="Informe o titulo..."
+                                                                />
+                                                            </Field>
+                                                        )}
+                                                    />
+                                                    <Controller
+                                                        name={`postContents.${index}.slug`}
+                                                        control={control}
+                                                        render={({ field }) => (
+                                                            <Field className="grid gap-2">
+                                                                <Label htmlFor="slug">Slug</Label>
+                                                                <Input
+                                                                    {...field}
+                                                                    placeholder="Informe a URL... "
+                                                                />
+                                                            </Field>
+                                                        )}
+                                                    />
+                                                    <Controller
+                                                        name={`postContents.${index}.languageId`}
+                                                        control={control}
+                                                        render={({ field }) => (
+                                                            <Field className="grid gap-2">
+                                                                <Label htmlFor="language">Language</Label>
+                                                                <Select
 
+                                                                    onValueChange={(value) => field.onChange(value)}
+                                                                    value={field.value}
+                                                                >
+                                                                    <SelectTrigger className="w-full ">
+                                                                        <SelectValue placeholder="Selecione o idioma" />
+                                                                    </SelectTrigger>
+                                                                    <SelectContent>
+                                                                        <SelectGroup>
+                                                                            <SelectLabel>Idiomas</SelectLabel>
+                                                                            {languages?.map((item, index) => (
+                                                                                <SelectItem key={index} value={`${item.id}`}>{item.name}</SelectItem>
+                                                                            ))}
+                                                                        </SelectGroup>
+                                                                    </SelectContent>
+                                                                </Select>
+                                                            </Field>
+                                                        )}
+                                                    />
+                                                </div>
+                                                <Controller
+                                                    name={`postContents.${index}.description`}
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                        <div className="grid gap-2">
+                                                            <Label htmlFor="description">Description</Label>
+                                                            <Input
+                                                                {...field}
+                                                                placeholder="Informe a descrição..."
+                                                            />
+                                                        </div>
+                                                    )}
+                                                />
+                                                <Controller
+                                                    name={`postContents.${index}.content`}
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                        <Field className="flex flex-col flex-1 min-h-0">
+                                                            <FieldLabel htmlFor="block-start-textarea">Content</FieldLabel>
+                                                            <InputGroup className="flex-1 min-h-0 items-stretch">
+                                                                <InputGroupTextarea
+                                                                    {...field}
+                                                                    placeholder="Informe o conteudo aqui..."
+                                                                    className="flex-1 resize-none overflow-y-auto text-sm leading-relaxed"
+                                                                />
+                                                            </InputGroup>
+                                                        </Field>
+                                                    )}
+                                                />
+                                                <div className="flex justify-end">
+                                                    <Button
+                                                        className="cursor-pointer"
+                                                        type="button"
+                                                        variant="destructive"
+                                                        onClick={() => removeFieldTool(index)}
+                                                    >
+                                                        Remove
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </CardContent>
-                                <CardFooter className="flex-col gap-2">
-                                </CardFooter>
                             </Card>
                         </form>
                     </div>

@@ -177,7 +177,8 @@ export default function ToolCreatePage() {
                                             )}
                                         />
                                     </div>
-                                    <div className="flex flex-col gap-2 border-b pb-3 w-full">
+                                    
+                                    <div className="flex flex-col gap-2 pb-3 w-full">
                                         <Label>Categorias</Label>
                                         <Button
                                             className="cursor-pointer"

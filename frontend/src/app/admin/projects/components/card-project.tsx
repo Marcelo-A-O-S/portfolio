@@ -1,5 +1,4 @@
 import { LanguageSchema } from "@/domain/schemas/LanguageSchema"
-
 type CardProjectProps = {
     languages: LanguageSchema[]
 }
