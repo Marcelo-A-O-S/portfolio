@@ -1,5 +1,5 @@
 "use client";
-import { useMusic } from "@/contexts/MusicContext";
+import { useMusic } from "@/contexts/music-context";
 import gsap from "gsap";
 import { LoaderCircle } from "lucide-react";
 import { usePathname } from "next/navigation";

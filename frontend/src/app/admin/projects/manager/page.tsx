@@ -18,14 +18,17 @@ import { SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, Se
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CategorySchema } from "@/domain/schemas/CategorySchema";
 import { ToolSchema } from "@/domain/schemas/ToolSchema";
+import { useTools } from "@/hooks/useTools";
 export default function ProjectCreate() {
     const searchParams = useSearchParams();
     const toolId = searchParams.get("postId") || undefined;
     const { data: categories } = useCategories();
     const { data: languages } = useLanguages();
+    const { data: tools } = useTools();
     const [preview, openPreview] = useState(false);
     const [postData, setPostData] = useState({})
-    const [open, setOpen] = useState(false);
+    const [openDialogCategory, setOpenDialogCategory] = useState(false);
+    const [openDialogTools, setOpenDialogTools] = useState(false);
     const { control, handleSubmit, formState: { }, watch } = useForm<PostSchema>({
         resolver: zodResolver(postSchema),
         defaultValues: {
@@ -75,7 +78,35 @@ export default function ProjectCreate() {
     }
     return (
         <>
-            <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog open={openDialogTools} onOpenChange={setOpenDialogTools}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Selecionar Ferramentas</DialogTitle>
+                    </DialogHeader>
+                    <Input placeholder="Buscar ferramenta..." />
+                    <div className="max-h-60 overflow-y-auto">
+                        {tools?.map((tool, index) => (
+                            <div
+                                key={tool.id}
+                                className="flex items-center justify-between p-2 hover:bg-muted rounded"
+                            >
+                                {tool.toolContents.map((tc, index) => (
+                                    <span key={index}>{`${tc.name}`}</span>
+                                ))}
+                                <Button
+                                    size="sm"
+                                    className="cursor-pointer"
+                                    disabled={toolsWatch?.some(c => c.id === tool.id)}
+                                    onClick={() => addTool(tool)}
+                                >
+                                    Adicionar
+                                </Button>
+                            </div>
+                        ))}
+                    </div>
+                </DialogContent>
+            </Dialog>
+            <Dialog open={openDialogCategory} onOpenChange={setOpenDialogCategory}>
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Selecionar categorias</DialogTitle>
@@ -174,7 +205,7 @@ export default function ProjectCreate() {
                                             className="cursor-pointer"
                                             type="button"
                                             variant="outline"
-                                            onClick={() => setOpen(true)}
+                                            onClick={() => setOpenDialogTools(true)}
                                         >
                                             + Adicionar ferramenta
                                         </Button>
@@ -182,11 +213,14 @@ export default function ProjectCreate() {
                                             {toolsWatch?.map((tool, index) => (
                                                 <div
                                                     key={tool.id}
-                                                    className="flex items-center gap-2 px-3 py-1 bg-muted rounded-full text-sm"
+                                                    className="flex items-center gap-2 px-3 py-1 bg-muted  text-sm"
                                                 >
-                                                    {tool.toolContents.map((tc, index) => (
-                                                        <span key={index}>{`${tc.name}`}</span>
-                                                    ))}
+                                                    <div className="flex flex-col">
+                                                        {tool.toolContents.map((tc, index) => (
+                                                            <span key={index}>{`${tc.name}`}</span>
+                                                        ))}
+                                                    </div>
+
                                                     <button type="button" className="cursor-pointer" onClick={() => removeFieldTool(index)}>
                                                         ✕
                                                     </button>
@@ -200,7 +234,7 @@ export default function ProjectCreate() {
                                             className="cursor-pointer"
                                             type="button"
                                             variant="outline"
-                                            onClick={() => setOpen(true)}
+                                            onClick={() => setOpenDialogCategory(true)}
                                         >
                                             + Adicionar categoria
                                         </Button>
@@ -210,9 +244,12 @@ export default function ProjectCreate() {
                                                     key={cat.id}
                                                     className="flex items-center gap-2 px-3 py-1 bg-muted rounded-full text-sm"
                                                 >
-                                                    {cat.categoryContents.map((cc, index) => (
-                                                        <span key={index}>{`${cc.name}`}</span>
-                                                    ))}
+                                                    <div className="flex flex-col">
+                                                        {cat.categoryContents.map((cc, index) => (
+                                                            <span key={index}>{`${cc.name}`}</span>
+                                                        ))}
+                                                    </div>
+
                                                     <button type="button" className="cursor-pointer" onClick={() => removeFieldCategory(index)}>
                                                         ✕
                                                     </button>

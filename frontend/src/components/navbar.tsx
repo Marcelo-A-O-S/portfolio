@@ -5,7 +5,7 @@ import Image from "next/image";
 import ItemLink, { LinkProps } from "./item-link";
 import { ArrowUpRight, Github, Instagram, Linkedin, Volume2, VolumeX, Menu, X } from "lucide-react";
 import gsap from "gsap";
-import { useMusic } from "@/contexts/MusicContext";
+import { useMusic } from "@/contexts/music-context";
 import { useSound } from "@/hooks/useSound";
 import LoginForm from "./login-form";
 import { FaXTwitter } from "react-icons/fa6";
