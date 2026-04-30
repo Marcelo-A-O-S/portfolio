@@ -42,6 +42,11 @@ namespace PostService.Application.Services
             return await this.categoryRepository.GetCategoriesByLanguage(language);
         }
 
+        public async Task<Category> GetForUpdate(Guid Id)
+        {
+            return await this.categoryRepository.GetForUpdate(Id);
+        }
+
         public async Task<List<Category>> List()
         {
             return await this.categoryRepository.List();

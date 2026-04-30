@@ -41,7 +41,7 @@ namespace PostService.API.Controllers
             var result = await this.languageServices.GetPagination(page, search, code);
             return Ok(result);
         }
-        [HttpGet("{Id}")]
+        [HttpGet("{Id:guid}")]
         [Authorize( Roles = "Administrador")]
         public async Task<IActionResult> GetById([FromRoute] Guid Id)
         {
@@ -64,7 +64,7 @@ namespace PostService.API.Controllers
             var errors = ModelState.Values.Select(e=> e.Errors);
             return BadRequest(errors);
         }
-        [HttpPut("{Id}")]
+        [HttpPut("{Id:guid}")]
         [Authorize( Roles = "Administrador")]
         public async Task<IActionResult> UpdateLanguage([FromRoute] Guid Id, [FromBody] LanguageRequest languageRequest)
         {
@@ -80,7 +80,7 @@ namespace PostService.API.Controllers
             var errors = ModelState.Values.Select(e => e.Errors);
             return BadRequest(errors);
         }
-        [HttpDelete("{Id}")]
+        [HttpDelete("{Id:guid}")]
         [Authorize( Roles = "Administrador")]
         public async Task<IActionResult> DeleteByRoute([FromRoute] Guid Id)
         {

@@ -14,6 +14,7 @@ namespace PostService.Application.DTOs.Request
         public string Description { get; set; }
         [Required(ErrorMessage = "O conteúdo da ferramenta é obrigatório.")]
         public string Content { get; set; }
+        public List<string> ImagesUrls { get; set;}
         [Required(ErrorMessage = "O slug de pesquisa é obrigatório.")]
         [StringLength(30, MinimumLength = 5, ErrorMessage = "O slug deve ter entre 5 a 30 caracteres")]
         public string Slug { get; set; }

@@ -60,6 +60,24 @@ namespace Gateway.API.Configuration
                     {
                         Path = "/api/language/{**catch-all}"
                     }
+                },
+                new RouteConfig
+                {
+                    RouteId = "fileRoute",
+                    ClusterId = "postCluster",
+                    Match = new RouteMatch
+                    {
+                        Path = "/api/file/{**catch-all}"
+                    }
+                },
+                new RouteConfig
+                {
+                    RouteId = "mediaRoute",
+                    ClusterId = "postCluster",
+                    Match = new RouteMatch
+                    {
+                        Path = "/media/{**catch-all}"
+                    }
                 }
             };
         }

@@ -16,7 +16,6 @@ namespace PostService.Domain.Entities
         public CategoryContent(){}
         public CategoryContent(Guid categoryId, Guid languageId, string name, string slug)
         {
-            this.Id = Guid.NewGuid();
             this.CategoryId = categoryId;
             this.LanguageId = languageId;
             this.Name = name;

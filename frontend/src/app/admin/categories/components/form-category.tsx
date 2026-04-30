@@ -46,14 +46,9 @@ export default function FormCategory({ category }: FormCategoryProps) {
         if (category) {
             if (!category.id)
                 return toast.error("O identificador não pode ser nulo.");
-            const response = await updateCategoryAsync({ id: category.id, category: data })
-            if (response.status != 200) {
-                toast.error(response.data.message);
-                return;
-            }
-            toast.success(response.data.message);
+            await updateCategoryAsync({ id: category.id, category: data })
         } else {
-            const response = await createCategoryAsync(data);
+            await createCategoryAsync(data);
         }
     }
     return (

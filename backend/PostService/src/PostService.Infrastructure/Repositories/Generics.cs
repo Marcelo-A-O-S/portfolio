@@ -44,33 +44,35 @@ namespace PostService.Infrastructure.Repositories
 
         public async Task Save(T entity)
         {
-            context.ChangeTracker.TrackGraph(entity, e =>
-            {
-                if (e.Entry.Entity == entity)
-                {
-                    e.Entry.State = EntityState.Added;
-                    return;
-                }
-                e.Entry.State = e.Entry.State == EntityState.Detached
-                    ? EntityState.Added
-                    : EntityState.Unchanged;
-            });
+            // context.ChangeTracker.TrackGraph(entity, e =>
+            // {
+            //     if (e.Entry.Entity == entity)
+            //     {
+            //         e.Entry.State = EntityState.Added;
+            //         return;
+            //     }
+            //     e.Entry.State = e.Entry.State == EntityState.Detached
+            //         ? EntityState.Added
+            //         : EntityState.Unchanged;
+            // });
+            await this.context.AddAsync(entity);
             await this.context.SaveChangesAsync();
         }
 
         public async Task Update(T entity)
         {
-            context.ChangeTracker.TrackGraph(entity, e =>
-            {
-                if (e.Entry.Entity == entity)
-                {
-                    e.Entry.State = EntityState.Modified;
-                    return;
-                }
-                e.Entry.State = e.Entry.IsKeySet
-                    ? EntityState.Unchanged
-                    : EntityState.Added;
-            });
+            // context.ChangeTracker.TrackGraph(entity, e =>
+            // {
+            //     if (e.Entry.Entity == entity)
+            //     {
+            //         e.Entry.State = EntityState.Modified;
+            //         return;
+            //     }
+            //     e.Entry.State = e.Entry.IsKeySet
+            //         ? EntityState.Unchanged
+            //         : EntityState.Added;
+            // });
+            this.context.Update(entity);
             await this.context.SaveChangesAsync();
         }
     }

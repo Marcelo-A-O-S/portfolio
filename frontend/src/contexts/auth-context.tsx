@@ -11,9 +11,6 @@ type AuthProviderProps = {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const { data: session } = useSession();
     const [loading, setLoading] = useState(true);
-    useEffect(() => {
-        checkAuth();
-    }, [])
     const checkAuth = async () => {
         try {
             const response = await fetch("/api/auth/me", {

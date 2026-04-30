@@ -9,19 +9,22 @@ namespace PostService.Domain.Entities
         public ICollection<Category> Categories { get; private set;}
         public DateTime CreatedAt { get; private set; }
         public Status Status { get; private set; }
-        public Tool(string imgUrl, Status status)
+        public Tool( Status status)
         {
-            this.Id = Guid.NewGuid();
             this.CreatedAt = DateTime.UtcNow;
             this.ToolContents = new List<ToolContent>();
             this.Categories = new List<Category>();
-            this.ImgUrl = imgUrl;
+            this.ImgUrl = "";
             this.Status = status;
         }
         public void Update(string imgUrl, Status status)
         {
             this.ImgUrl = imgUrl;
             this.Status = status;
+        }
+        public void AddImgUrl(string imgUrl)
+        {
+            this.ImgUrl = imgUrl;
         }
         public void AddCategory(Category category)
         {

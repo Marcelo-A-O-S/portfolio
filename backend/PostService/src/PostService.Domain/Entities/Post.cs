@@ -14,7 +14,6 @@ namespace PostService.Domain.Entities
         public Status Status { get; private set; }
         public Post(string imgUrl, Status status)
         {
-            this.Id = Guid.NewGuid();
             this.CreatedAt = DateTime.UtcNow;
             this.UpdatedAt = DateTime.UtcNow;
             this.ImgUrl = imgUrl;

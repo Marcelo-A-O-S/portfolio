@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using PostService.Domain.Entities;
 using PostService.Domain.Interfaces;
 using PostService.Infrastructure.Context;
-
 namespace PostService.Infrastructure.Repositories
 {
     public class CategoryRepository : Generics<Category>, ICategoryRepository
@@ -67,6 +66,14 @@ namespace PostService.Infrastructure.Repositories
                 .ThenInclude( cc => cc.Language)
                 .ToListAsync();
             return items;
+        }
+        public async Task<Category> GetForUpdate(Guid Id)
+        {
+            return await this.context.Categories
+                .Where(c => c.Id == Id)
+                .Include(c => c.CategoryContents)
+                    .ThenInclude(cc => cc.Language)
+                .FirstOrDefaultAsync();
         }
     }
 }

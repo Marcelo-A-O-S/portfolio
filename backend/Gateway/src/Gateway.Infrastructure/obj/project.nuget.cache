@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "i74DzoXbccE=",
+  "dgSpecHash": "25kZfp9zaBQ=",
   "success": true,
   "projectFilePath": "C:\\Backup\\Projetos\\portfolio\\backend\\Gateway\\src\\Gateway.Infrastructure\\Gateway.Infrastructure.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\marce\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.25\\microsoft.netcore.app.ref.8.0.25.nupkg.sha512",
+    "C:\\Users\\marce\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.25\\microsoft.windowsdesktop.app.ref.8.0.25.nupkg.sha512",
+    "C:\\Users\\marce\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.25\\microsoft.aspnetcore.app.ref.8.0.25.nupkg.sha512"
+  ],
   "logs": []
 }

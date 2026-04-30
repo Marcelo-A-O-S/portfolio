@@ -1,9 +1,9 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using PostService.Application.DTOs.Request;
 using PostService.Application.Interfaces;
 using PostService.Domain.Entities;
-using Microsoft.AspNetCore.Authorization;
-using PostService.Application.DTOs.Request;
 
 namespace PostService.API.Controllers
 {
@@ -26,7 +26,7 @@ namespace PostService.API.Controllers
             return Ok(categories);
         }
         [HttpGet("GetCategoriesByLanguage")]
-        [Authorize( Roles = "Administrador")]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> GetCategoriesByLanguage([FromQuery] string language)
         {
             var categories = await this.categoryServices.GetCategoriesByLanguage(language);
@@ -59,7 +59,7 @@ namespace PostService.API.Controllers
             var result = await this.categoryServices.GetByPagination(page, language, search);
             return Ok(result);
         }
-        [HttpGet("{Id}")]
+        [HttpGet("{Id:guid}")]
         [Authorize(Roles = "Administrador")]
         [EnableRateLimiting("read")]
         public async Task<IActionResult> GetById([FromRoute] Guid Id)
@@ -93,14 +93,14 @@ namespace PostService.API.Controllers
             var errors = ModelState.Values.Select(x => x.Errors);
             return BadRequest(errors);
         }
-        [HttpPut("{Id}")]
+        [HttpPut("{Id:guid}")]
         [Authorize(Roles = "Administrador")]
         [EnableRateLimiting("write")]
         public async Task<IActionResult> UpdateCategory([FromRoute] Guid Id, CategoryRequest categoryRequest)
         {
             if (ModelState.IsValid)
             {
-                var category = await this.categoryServices.GetById(Id);
+                var category = await this.categoryServices.GetForUpdate(Id);
                 if (category == null)
                     return NotFound(new { message = "Categoria não encontrada." });
                 var requestCategoryContentIds = categoryRequest.CategoryContents
@@ -109,18 +109,19 @@ namespace PostService.API.Controllers
                 category.ValidateCategoryContents(requestCategoryContentIds);
                 foreach (var ccRequest in categoryRequest.CategoryContents)
                 {
-                    if (ccRequest.Id is not Guid categoryContentId)
-                        return BadRequest(new { message = "O identificador relacionda ao conteudo da categoria é obrigatória." });
-                    var categoryContent = await this.categoryContentServices.GetById(categoryContentId);
-                    if (categoryContent == null)
+                    
+                    if (ccRequest.Id.HasValue)
                     {
-                        categoryContent = new CategoryContent(category.Id, ccRequest.LanguageId, ccRequest.Name, ccRequest.Slug);
+                        var categoryContent = category.CategoryContents.FirstOrDefault(cc => cc.Id == ccRequest.Id.Value);
+                        if (categoryContent == null)
+                            return NotFound(new { message = "Conteudo da categoria não encontrado."});
+                        categoryContent.Update(ccRequest.LanguageId, ccRequest.Name, ccRequest.Slug);
                     }
                     else
                     {
-                        categoryContent.Update(ccRequest.LanguageId, ccRequest.Name, ccRequest.Slug);
-                    }
-                    category.AddCategoryContent(categoryContent);
+                        var categoryContent = new CategoryContent(category.Id, ccRequest.LanguageId, ccRequest.Name, ccRequest.Slug);
+                        category.AddCategoryContent(categoryContent);
+                    }                        
                 }
                 await this.categoryServices.Update(category);
                 return Ok(new { message = "Categoria atualizada com sucesso." });
@@ -128,7 +129,7 @@ namespace PostService.API.Controllers
             var errors = ModelState.Values.Select(x => x.Errors);
             return BadRequest(errors);
         }
-        [HttpDelete]
+        [HttpDelete("{Id:guid}")]
         [Authorize(Roles = "Administrador")]
         [EnableRateLimiting("sensitive")]
         public async Task<IActionResult> DeleteCategory([FromRoute] Guid Id)

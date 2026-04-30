@@ -31,11 +31,6 @@ c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\Ga
 c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\Gateway.API.sourcelink.json
 c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\staticwebassets.build.json
 c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\staticwebassets.development.json
-c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\staticwebassets\msbuild.Gateway.API.Microsoft.AspNetCore.StaticWebAssets.props
-c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\staticwebassets\msbuild.build.Gateway.API.props
-c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.Gateway.API.props
-c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.Gateway.API.props
-c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\staticwebassets.pack.json
 c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\scopedcss\bundle\Gateway.API.styles.css
 c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\Gateway..9802D141.Up2Date
 c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\Gateway.API.dll
@@ -43,3 +38,11 @@ c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\re
 c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\Gateway.API.pdb
 c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\Gateway.API.genruntimeconfig.cache
 c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\ref\Gateway.API.dll
+c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\bin\Debug\net8.0\Gateway.API.staticwebassets.endpoints.json
+c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\rpswa.dswa.cache.json
+c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\rjimswa.dswa.cache.json
+c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\staticwebassets.build.json.cache
+c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+c:\Backup\Projetos\portfolio\backend\Gateway\src\Gateway.API\obj\Debug\net8.0\swae.build.ex.cache

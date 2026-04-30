@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { ToolSchema, toolSchema } from "@/domain/schemas/ToolSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { Controller, ControllerRenderProps, useFieldArray, useForm } from "react-hook-form";
 import { useLanguages } from "@/hooks/useLanguages";
 import { SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem, Select } from "@/components/ui/select";
 import { useCategories } from "@/hooks/useCategories";
@@ -18,6 +18,8 @@ import { useUpdateTool } from "@/hooks/useUpdateTool";
 import { useCreateTool } from "@/hooks/useCreateTool";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useGetByIdTool } from "@/hooks/useGetByIdTool";
+import { addImageMarkDown } from "@/services/client/image-client";
+import { toast } from "sonner";
 export default function ToolCreatePage() {
     const searchParams = useSearchParams();
     const toolId = searchParams.get("toolId") || undefined;
@@ -29,10 +31,9 @@ export default function ToolCreatePage() {
     const [preview, openPreview] = useState(false);
     const [previewIndex, setPreviewIndex] = useState<number | null>(null);
     const [open, setOpen] = useState(false);
-    const { control, handleSubmit, formState: { }, watch, reset } = useForm<ToolSchema>({
+    const { control, handleSubmit, formState: { errors: errorsTool }, watch, reset, getValues, setValue } = useForm<ToolSchema>({
         resolver: zodResolver(toolSchema),
         defaultValues: {
-            imgUrl: "",
             status: "DRAFT",
             toolContents: [
                 {
@@ -45,10 +46,10 @@ export default function ToolCreatePage() {
             ],
         }
     });
-    useEffect(()=>{
-        if(!tool) return;
+    useEffect(() => {
+        if (!tool) return;
         reset(tool)
-    },[tool, reset]);
+    }, [tool, reset]);
     const { fields: fieldToolContents, append, remove: removeTool } = useFieldArray({
         control,
         name: "toolContents"
@@ -61,9 +62,9 @@ export default function ToolCreatePage() {
     const categoriesWatch = watch("categories");
     const toolsWatch = watch("toolContents");
     const onSubmit = async (data: ToolSchema) => {
-        if(tool){
-            await updateTool({id: tool.id, data: data});
-        }else{
+        if (tool) {
+            await updateTool({ id: tool.id, data: data });
+        } else {
             await createTool(data);
         }
     }
@@ -74,6 +75,28 @@ export default function ToolCreatePage() {
         if (exists) return
         appendCategory(data);
     }
+    const handleDrop = async (e: React.DragEvent<HTMLTextAreaElement>, field: ControllerRenderProps<ToolSchema, `toolContents.${number}.content`>, index: number) => {
+        e.preventDefault();
+        const file = e.dataTransfer.files?.[0];
+        if (!file || !file.type.startsWith("image/")) return;
+        const textarea = e.currentTarget;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const response = await addImageMarkDown(file);
+        if (response.status !== 200 && response.status !== 201) {
+            toast.error(`Erro ao adicionar imagem: ${response.data.message}`);
+            return;
+        }
+        const url = response.data.url;
+        const urlMarkdown = `\n![image](${url})\n`
+        const newValue = field.value.substring(0, start) + urlMarkdown + field.value.substring(end);
+        field.onChange(newValue);
+        const currentImages = getValues(`toolContents.${index}.imagesUrls`) ?? [];
+        setValue(`toolContents.${index}.imagesUrls`, [...currentImages, url]);
+        const imagesUpdated = getValues(`toolContents.${index}.imagesUrls`);
+        console.log(imagesUpdated);
+    }
+
     return (
         <>
             <Dialog open={open} onOpenChange={setOpen}>
@@ -104,7 +127,7 @@ export default function ToolCreatePage() {
                     </div>
                 </DialogContent>
             </Dialog>
-            <main className="relative mx-auto flex min-h-full inset-0 w-screen max-w-[1440px] justify-center bg-background overflow-x-hidden">
+            <main className="relative mx-auto flex min-h-full inset-0 w-full max-w-[1440px] justify-center ">
                 <section className="relative w-full min-h-screen px-10 py-20 flex flex-col">
                     <div className="flex flex-col gap-3 sm:flex-row py-10 md:p-10 sm:items-center justify-between">
                         <h1 className="text-3xl md:text-5xl font-semibold">Create Tool</h1>
@@ -160,16 +183,19 @@ export default function ToolCreatePage() {
                                             control={control}
                                             render={({ field }) => (
                                                 <div className="grid gap-2">
-                                                    <Label htmlFor="imgUrl">Imagem</Label>
-                                                    <Input
-                                                        {...field}
-                                                        placeholder="Informe a url ..."
-                                                    />
+                                                    <div className="flex flex-col gap-2">
+                                                        <Label htmlFor="imgUrl">Imagem</Label>
+                                                        <Input
+                                                            onChange={(e) => field.onChange(e.target.files?.[0])}
+                                                            type="file"
+                                                            className="cursor-pointer"
+                                                        />
+                                                    </div>
+                                                    {errorsTool.imgUrl && <span className="text-wrap text-red-600 text-sm">{errorsTool.imgUrl.message}</span>}
                                                 </div>
                                             )}
                                         />
                                     </div>
-                                    
                                     <div className="flex flex-col gap-2 pb-3 w-full">
                                         <Label>Categorias</Label>
                                         <Button
@@ -181,19 +207,22 @@ export default function ToolCreatePage() {
                                             + Adicionar categoria
                                         </Button>
                                         <div className="flex flex-wrap gap-2">
-                                            {categoriesWatch?.map((cat, index) => (
-                                                <div
-                                                    key={cat.id}
-                                                    className="flex items-center gap-2 px-3 py-1 bg-muted rounded-full text-sm"
-                                                >
-                                                    {cat.categoryContents.map((cc, index) => (
-                                                        <span key={index}>{`${cc.name}`}</span>
-                                                    ))}
-                                                    <button type="button" className="cursor-pointer" onClick={() => removeFieldCategory(index)}>
-                                                        ✕
-                                                    </button>
-                                                </div>
-                                            ))}
+                                            <div className="flex gap-2">
+                                                {categoriesWatch?.map((cat, index) => (
+                                                    <div
+                                                        key={cat.id}
+                                                        className="flex items-center gap-2 px-3 py-1 bg-muted rounded-full text-sm"
+                                                    >
+                                                        {cat.categoryContents.map((cc, index) => (
+                                                            <span key={index}>{`${cc.name}`}</span>
+                                                        ))}
+                                                        <button type="button" className="cursor-pointer" onClick={() => removeFieldCategory(index)}>
+                                                            ✕
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                                {errorsTool.categories && <span className="text-wrap text-red-600 text-sm">{errorsTool.categories.message}</span>}
                                         </div>
                                     </div>
                                     {fieldToolContents.map((item, index) => (
@@ -205,11 +234,14 @@ export default function ToolCreatePage() {
                                                         control={control}
                                                         render={({ field }) => (
                                                             <Field className="grid gap-2">
-                                                                <Label htmlFor="title">Name</Label>
-                                                                <Input
-                                                                    {...field}
-                                                                    placeholder="Informe o nome..."
-                                                                />
+                                                                <div className="flex flex-col gap-2">
+                                                                    <Label htmlFor="title">Name</Label>
+                                                                    <Input
+                                                                        {...field}
+                                                                        placeholder="Informe o nome..."
+                                                                    />
+                                                                    {errorsTool.toolContents?.[index]?.name && <span className="text-wrap text-red-600 text-sm">{errorsTool.toolContents[index]?.name?.message}</span>}
+                                                                </div>
                                                             </Field>
                                                         )}
                                                     />
@@ -218,11 +250,14 @@ export default function ToolCreatePage() {
                                                         control={control}
                                                         render={({ field }) => (
                                                             <Field className="grid gap-2">
-                                                                <Label htmlFor="title">Slug</Label>
-                                                                <Input
-                                                                    {...field}
-                                                                    placeholder="Informe a URL... "
-                                                                />
+                                                                <div className="flex flex-col gap-2">
+                                                                    <Label htmlFor="title">Slug</Label>
+                                                                    <Input
+                                                                        {...field}
+                                                                        placeholder="Informe a URL... "
+                                                                    />
+                                                                    {errorsTool.toolContents?.[index]?.slug && <span className="text-wrap text-red-600 text-sm">{errorsTool.toolContents[index]?.slug?.message}</span>}
+                                                                </div>
                                                             </Field>
                                                         )}
                                                     />
@@ -231,24 +266,28 @@ export default function ToolCreatePage() {
                                                         control={control}
                                                         render={({ field }) => (
                                                             <Field className="grid gap-2">
-                                                                <Label htmlFor="language">Language</Label>
-                                                                <Select
+                                                                <div className="flex flex-col gap-2">
+                                                                    <Label htmlFor="language">Language</Label>
+                                                                    <Select
 
-                                                                    onValueChange={(value) => field.onChange(value)}
-                                                                    value={field.value}
-                                                                >
-                                                                    <SelectTrigger className="w-full ">
-                                                                        <SelectValue placeholder="Selecione o idioma" />
-                                                                    </SelectTrigger>
-                                                                    <SelectContent>
-                                                                        <SelectGroup>
-                                                                            <SelectLabel>Idiomas</SelectLabel>
-                                                                            {languages?.map((item, index) => (
-                                                                                <SelectItem key={index} value={`${item.id}`}>{item.name}</SelectItem>
-                                                                            ))}
-                                                                        </SelectGroup>
-                                                                    </SelectContent>
-                                                                </Select>
+                                                                        onValueChange={(value) => field.onChange(value)}
+                                                                        value={field.value}
+                                                                    >
+                                                                        <SelectTrigger className="w-full ">
+                                                                            <SelectValue placeholder="Selecione o idioma" />
+                                                                        </SelectTrigger>
+                                                                        <SelectContent>
+                                                                            <SelectGroup>
+                                                                                <SelectLabel>Idiomas</SelectLabel>
+                                                                                {languages?.map((item, index) => (
+                                                                                    <SelectItem key={index} value={`${item.id}`}>{item.name}</SelectItem>
+                                                                                ))}
+                                                                            </SelectGroup>
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                    {errorsTool.toolContents?.[index]?.languageId && <span className="text-wrap text-red-600 text-sm">{errorsTool.toolContents[index]?.languageId?.message}</span>}
+                                                                </div>
+
                                                             </Field>
                                                         )}
                                                     />
@@ -258,11 +297,14 @@ export default function ToolCreatePage() {
                                                     control={control}
                                                     render={({ field }) => (
                                                         <div className="grid gap-2">
-                                                            <Label htmlFor="description">Description</Label>
-                                                            <Input
-                                                                {...field}
-                                                                placeholder="Informe a descrição..."
-                                                            />
+                                                            <div className="flex flex-col gap-2">
+                                                                <Label htmlFor="description">Description</Label>
+                                                                <Input
+                                                                    {...field}
+                                                                    placeholder="Informe a descrição..."
+                                                                />
+                                                                {errorsTool.toolContents?.[index]?.description && <span className="text-wrap text-red-600 text-sm">{errorsTool.toolContents[index]?.description?.message}</span>}
+                                                            </div>
                                                         </div>
                                                     )}
                                                 />
@@ -277,8 +319,11 @@ export default function ToolCreatePage() {
                                                                     {...field}
                                                                     placeholder="Informe o conteudo aqui..."
                                                                     className="flex-1 resize-none overflow-y-auto text-sm leading-relaxed"
+                                                                    onDragOver={(e) => e.preventDefault()}
+                                                                    onDrop={(e) => handleDrop(e, field, index)}
                                                                 />
                                                             </InputGroup>
+                                                            {errorsTool.toolContents?.[index]?.content && <span className="text-wrap text-red-600 text-sm">{errorsTool.toolContents[index]?.content?.message}</span>}
                                                         </Field>
                                                     )}
                                                 />

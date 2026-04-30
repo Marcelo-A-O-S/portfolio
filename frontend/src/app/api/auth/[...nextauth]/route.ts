@@ -10,16 +10,21 @@ import { cookies } from "next/headers";
 const hostNext = process.env.NEXT_BACKEND_API!;
 const githubId = process.env.GITHUB_ID!;
 const githubSecret = process.env.GITHUB_SECRET!;
+const githubIssuer = process.env.GITHUB_ISSUER!;
 const googleId = process.env.GOOGLE_ID!;
 const googleSecret = process.env.GOOGLE_SECRET!;
 const linkedlnId = process.env.LINKEDLN_ID!;
 const linkedlnSecret = process.env.LINKEDLN_SECRET!;
+const linkedlnIssuer = process.env.LINKEDLN_ISSUER!;
+const linkedlnbWellknown = process.env.LINKEDLN_WELLKNOWN!;
 export const authOptions: AuthOptions = {
     secret: process.env.NEXTAUTH_SECRET!,
     providers: [
         Github({
             clientId: githubId,
             clientSecret: githubSecret,
+            checks: ["state"],
+            issuer: githubIssuer,
             profile(profile) {
                 return {
                     id: profile.id.toString(),
@@ -46,8 +51,8 @@ export const authOptions: AuthOptions = {
         LinkedIn({
             clientId: linkedlnId,
             clientSecret: linkedlnSecret,
-            issuer: "https://www.linkedin.com/oauth",
-            wellKnown: "https://www.linkedin.com/oauth/.well-known/openid-configuration",
+            issuer: linkedlnIssuer,
+            wellKnown: linkedlnbWellknown,
             authorization: {
                 params: {
                     scope: "openid profile email",
@@ -116,6 +121,7 @@ export const authOptions: AuthOptions = {
                     if (deviceId && refreshToken) {
                         const deviceName = await buildDeviceName();
                         const response = await refreshAsync(token.refreshTokenId, token.userId, refreshToken, deviceId, deviceName)
+                        console.log("Status: ", response.status);
                         if (response.status == 200 || response.status == 201) {
                             const data = await response.json();
                             const expireDate = Date.now() + data.expireIn * 1000;

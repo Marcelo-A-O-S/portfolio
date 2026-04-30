@@ -1,7 +1,8 @@
 import { clsx, type ClassValue } from "clsx"
 import { ReadonlyURLSearchParams } from "next/navigation";
 import { twMerge } from "tailwind-merge"
-
+import type { Element, Root } from "hast";
+import { visit } from "unist-util-visit"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -46,4 +47,20 @@ export function updateFilter(key: string, searchParams: ReadonlyURLSearchParams,
     params.set(key, value)
   }
   return `?${params.toString()}`;
+}
+export function rehypePrefixImageHost(host: string) {
+  return function plugin() {
+    return function transformer(tree: Root) {
+      visit(tree, "element", (node) => {
+        if (
+          node.tagName === "img" &&
+          node.properties?.src &&
+          typeof node.properties.src === "string"
+        ) {
+          node.properties.class = "object-cover w-full"
+          node.properties.src = `${host}/${node.properties.src}`;
+        }
+      })
+    }
+  }
 }

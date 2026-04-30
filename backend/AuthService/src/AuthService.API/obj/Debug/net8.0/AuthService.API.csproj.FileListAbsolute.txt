@@ -124,11 +124,6 @@ C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\n
 C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\AuthService.API.sourcelink.json
 C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\staticwebassets.build.json
 C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\staticwebassets.development.json
-C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\staticwebassets\msbuild.AuthService.API.Microsoft.AspNetCore.StaticWebAssets.props
-C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\staticwebassets\msbuild.build.AuthService.API.props
-C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.AuthService.API.props
-C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.AuthService.API.props
-C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\staticwebassets.pack.json
 C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\scopedcss\bundle\AuthService.API.styles.css
 C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\AuthServ.AA2E8EA6.Up2Date
 C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\AuthService.API.dll
@@ -138,3 +133,11 @@ C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\n
 C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\ref\AuthService.API.dll
 C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\bin\Debug\net8.0\Npgsql.dll
 C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\bin\Debug\net8.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+c:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\bin\Debug\net8.0\AuthService.API.staticwebassets.endpoints.json
+c:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\rpswa.dswa.cache.json
+c:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\rjimswa.dswa.cache.json
+c:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+c:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+c:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\staticwebassets.build.json.cache
+c:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+c:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\swae.build.ex.cache

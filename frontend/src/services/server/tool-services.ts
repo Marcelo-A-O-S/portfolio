@@ -4,7 +4,16 @@ import { ToolFilters } from "@/domain/schemas/ToolFilters";
 
 export const addToolService = async(tool: ToolSchema) =>{
     const api = await apiServer();
-    const response = await api.post("/api/Tool",tool);
+    const formData = new FormData();
+    formData.append("imgUrl", tool.imgUrl);
+    formData.append("status", tool.status);
+    formData.append("categories", JSON.stringify(tool.categories));
+    formData.append("toolContents", JSON.stringify(tool.toolContents));
+    const response = await api.post("/api/Tool",formData,{
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }
+    });
     return response;
 }
 export const updateToolService = async(id:string, tool: ToolSchema) =>{

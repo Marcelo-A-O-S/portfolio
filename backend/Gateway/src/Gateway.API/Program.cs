@@ -1,22 +1,15 @@
 using Gateway.API.Extension;
 using Gateway.API.Middleware;
 using Microsoft.OpenApi;
-
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddControllers();
 builder.Services.AddYarpConfig(builder.Configuration);
 builder.Services.AddSwaggerConfig();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddCorsConfig();
 builder.Services.AddHttpClient();
-
 var app = builder.Build();
 app.UseCors("AllowAll");
-
-// Configure the HTTP request pipeline.
 app.UseSwagger(options =>
 {
     options.OpenApiVersion = OpenApiSpecVersion.OpenApi2_0;
@@ -33,7 +26,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<ExceptionMiddleware>();
 app.MapControllers();
+app.UseStaticFiles();
 app.MapReverseProxy();
 app.UseSimpleBlockBot();
 app.Run("http://+:5000");
-

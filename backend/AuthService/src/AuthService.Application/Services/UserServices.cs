@@ -16,7 +16,6 @@ namespace AuthService.Application.Services
         {
             await this.userRepository.Delete(entity);
         }
-
         public async Task<User> FindBy(Expression<Func<User, bool>> predicate)
         {
             return await this.userRepository.FindBy(predicate);

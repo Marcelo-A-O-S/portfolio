@@ -1,4 +1,4 @@
-import { toolSchema } from "@/domain/schemas/ToolSchema";
+import { toolSchema, toolViewSchema } from "@/domain/schemas/ToolSchema";
 import { getToolByIdService } from "@/services/server/tool-services"
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -18,6 +18,8 @@ import rehypeSlug from 'rehype-slug'
 import OnThisPage from "../../components/on-this-page";
 import rehypePrettyCode from "rehype-pretty-code";
 import { transformerCopyButton } from '@rehype-pretty/transformers'
+import { rehypePrefixImageHost } from "@/lib/utils";
+const hostBackend = process.env.BACKEND_SERVER!;
 type Props = {
     params: Promise<{ Id: string, language: string }>
 }
@@ -26,7 +28,7 @@ async function getToolOrThrow(id: string) {
     if (response.status !== 200) {
         notFound();
     }
-    const result = await toolSchema.safeParseAsync(response.data);
+    const result = await toolViewSchema.safeParseAsync(response.data);
     if (result.error) {
         console.log(`Error ao validar: ${result.error.message}`);
         notFound();
@@ -66,7 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             title: content.name,
             description: content.description,
             images: [{
-                url: tool.imgUrl,
+                url: `${hostBackend}/${tool.imgUrl}`,
                 alt: content.name
             }],
             type: "article"
@@ -74,7 +76,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         keywords: keywords,
     }
 }
-
 export default async function PageById({ params }: Props) {
     const session = await getServerSession();
     const { Id, language } = await params;
@@ -106,9 +107,10 @@ export default async function PageById({ params }: Props) {
                 }),
             ],
         })
-        .use(rehypeStringify)
+        .use(rehypePrefixImageHost(hostBackend))
         .use(rehypeSlug)
         .use(rehypeAutolinkHeadings)
+        .use(rehypeStringify)
         .process(toolContent.content)).toString()
     return (
         <>
@@ -123,7 +125,7 @@ export default async function PageById({ params }: Props) {
                                 ))}
                             </div>
                             <div>
-                                <img src={tool.imgUrl} alt={toolContent.name} className="object-cover w-full"/>
+                                <img src={`${hostBackend}/${tool.imgUrl}`} alt={toolContent.name} className="object-cover w-full"/>
                             </div>
                             <div dangerouslySetInnerHTML={{ __html: result }} />
                         </div>

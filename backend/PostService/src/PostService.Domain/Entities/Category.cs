@@ -13,7 +13,6 @@ namespace PostService.Domain.Entities
         public DateTime CreatedAt { get; private set; }
         public Category()
         {
-            this.Id = Guid.NewGuid();
             this.Tools = new List<Tool>();
             this.CategoryContents = new List<CategoryContent>();
             this.CreatedAt =  DateTime.UtcNow;

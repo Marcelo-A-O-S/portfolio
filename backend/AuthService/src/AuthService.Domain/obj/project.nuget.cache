@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "pHpGf2z8a70=",
+  "dgSpecHash": "uMGd7+bJ09w=",
   "success": true,
   "projectFilePath": "C:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Domain\\AuthService.Domain.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\marce\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.25\\microsoft.netcore.app.ref.8.0.25.nupkg.sha512",
+    "C:\\Users\\marce\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.25\\microsoft.windowsdesktop.app.ref.8.0.25.nupkg.sha512",
+    "C:\\Users\\marce\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.25\\microsoft.aspnetcore.app.ref.8.0.25.nupkg.sha512"
+  ],
   "logs": []
 }

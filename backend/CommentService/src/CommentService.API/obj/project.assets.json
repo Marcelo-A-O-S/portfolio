@@ -487,11 +487,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\CommentService.API.csproj",
+      "projectUniqueName": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\CommentService.API.csproj",
       "projectName": "CommentService.API",
-      "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\CommentService.API.csproj",
+      "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\CommentService.API.csproj",
       "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-      "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\obj\\",
+      "outputPath": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -517,7 +517,8 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      }
+      },
+      "SdkAnalysisLevel": "10.0.200"
     },
     "frameworks": {
       "net8.0": {
@@ -543,6 +544,24 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[8.0.25, 8.0.25]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.win-x64",
+            "version": "[8.0.25, 8.0.25]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[8.0.25, 8.0.25]"
+          },
+          {
+            "name": "Microsoft.WindowsDesktop.App.Ref",
+            "version": "[8.0.25, 8.0.25]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
@@ -551,7 +570,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.413/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

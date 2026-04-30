@@ -41,7 +41,7 @@ export default function CardTool({ languages, item }: CardToolProps) {
                             value={lang}
                             onValueChange={(value) => setLang(value)}
                         >
-                            <SelectTrigger className="w-[80px] max-w-48">
+                            <SelectTrigger className="w-[90px] max-w-48">
                                 <SelectValue placeholder="Selecione o idioma" />
                             </SelectTrigger>
                             <SelectContent>
@@ -64,7 +64,7 @@ export default function CardTool({ languages, item }: CardToolProps) {
 
                     </div>
                     <div className="mt-3 rounded-xl border tweet-border overflow-hidden">
-                        <img src={`${item.imgUrl}`}
+                        <img src={`${process.env.NEXT_PUBLIC_FILES_URL}/${item.imgUrl}`}
                             alt="" className="w-full object-cover aspect-video" />
                     </div>
                     <div className="flex items-center justify-between mt-4 text-primary text-xs sm:text-sm">
