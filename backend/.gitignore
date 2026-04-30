@@ -6,6 +6,10 @@ AuthService/src/AuthService.API/appsettings.json
 AuthService/src/AuthService.Application/bin
 AuthService/src/AuthService.Domain/bin
 AuthService/src/AuthService.Infrastructure/bin
+AuthService/src/AuthService.API/AuthService.API.csproj.lscache
+AuthService/src/AuthService.Application/AuthService.Application.csproj.lscache
+AuthService/src/AuthService.Domain/AuthService.Domain.csproj.lscache
+AuthService/src/AuthService.Infrastructure/AuthService.Infrastructure.csproj.lscache
 
 CertificateService/src/CertificateService.API/bin
 CertificateService/src/CertificateService.API/appsettings.Development.json
@@ -13,6 +17,10 @@ CertificateService/src/CertificateService.API/appsettings.json
 CertificateService/src/CertificateService.Application/bin
 CertificateService/src/CertificateService.Domain/bin
 CertificateService/src/CertificateService.Infrastructure/bin
+CertificateService/src/CertificateService.API/CertificateService.API.csproj.lscache
+CertificateService/src/CertificateService.Application/CertificateService.Application.csproj.lscache
+CertificateService/src/CertificateService.Domain/CertificateService.Domain.csproj.lscache
+CertificateService/src/CertificateService.Infrastructure/CertificateService.Infrastructure.csproj.lscache
 
 CommentService/src/CommentService.API/bin
 CommentService/src/CommentService.API/appsettings.Development.json
@@ -20,6 +28,10 @@ CommentService/src/CommentService.API/appsettings.json
 CommentService/src/CommentService.Application/bin
 CommentService/src/CommentService.Domain/bin
 CommentService/src/CommentService.Infrastructure/bin
+CommentService/src/CommentService.API/CommentService.API.csproj.lscache
+CommentService/src/CommentService.Application/CommentService.Application.csproj.lscache
+CommentService/src/CommentService.Domain/CommentService.Domain.csproj.lscache
+CommentService/src/GateCommentServiceway.Infrastructure/CommentService.Infrastructure.csproj.lscache
 
 Gateway/src/Gateway.API/bin
 Gateway/src/Gateway.API/appsettings.Development.json
@@ -27,6 +39,10 @@ Gateway/src/Gateway.API/appsettings.json
 Gateway/src/Gateway.Application/bin
 Gateway/src/Gateway.Domain/bin
 Gateway/src/Gateway.Infrastructure/bin
+Gateway/src/Gateway.API/Gateway.API.csproj.lscache
+Gateway/src/Gateway.Application/Gateway.Application.csproj.lscache
+Gateway/src/Gateway.Domain/Gateway.Domain.csproj.lscache
+Gateway/src/Gateway.Infrastructure/Gateway.Infrastructure.csproj.lscache
 
 PostService/src/PostService.API/bin
 PostService/src/PostService.API/appsettings.Development.json
@@ -34,3 +50,7 @@ PostService/src/PostService.API/appsettings.json
 PostService/src/PostService.Application/bin
 PostService/src/PostService.Domain/bin
 PostService/src/PostService.Infrastructure/bin
+PostService/src/PostService.API/PostService.API.csproj.lscache
+PostService/src/PostService.Application/PostService.Application.csproj.lscache
+PostService/src/PostService.Domain/PostService.Domain.csproj.lscache
+PostService/src/PostService.Infrastructure/PostService.Infrastructure.csproj.lscache

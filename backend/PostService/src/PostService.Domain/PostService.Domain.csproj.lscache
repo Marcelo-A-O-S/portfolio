@@ -58,6 +58,7 @@ Entities/
  CategoryContent.cs
  Language.cs
  Like.cs
+ MediaFile.cs
  PaginatedResult.cs
  Post.cs
  PostContent.cs
@@ -70,6 +71,7 @@ Interfaces/
  IGenerics.cs
  ILanguageRepository.cs
  ILikeRepository.cs
+ IMediaFileRepository.cs
  IPostContentRepository.cs
  IPostRepository.cs
  IToolContentRepository.cs

@@ -8,6 +8,7 @@ namespace PostService.Infrastructure.Context
         {
 
         }
+        public DbSet<MediaFile> MediaFiles { get; set; }
         public DbSet<Tool> Tools { get; set; }
         public DbSet<ToolContent> ToolContents { get; set; }
         public DbSet<Category> Categories { get; set; }

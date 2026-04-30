@@ -72,6 +72,7 @@ Interfaces/
  IFileServices.cs
  ILanguageServices.cs
  ILikeServices.cs
+ IMediaFileServices.cs
  IPostContentServices.cs
  IPostServices.cs
  IServices.cs
@@ -87,6 +88,7 @@ Services/
  FileServices.cs
  LanguageServices.cs
  LikeServices.cs
+ MediaFileServices.cs
  PostContentServices.cs
  PostServices.cs
  ToolContentServices.cs

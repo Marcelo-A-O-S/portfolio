@@ -62,8 +62,8 @@ Extensions/
  DependencyInjectionExtension.cs
  InfrastructureExtension.cs
 Migrations/
- 20260410025416_CreateTables.cs
- 20260410025416_CreateTables.Designer.cs
+ 20260430031322_CreateTables.cs
+ 20260430031322_CreateTables.Designer.cs
  DBContextModelSnapshot.cs
 obj/Debug/net8.0/
  .NETCoreApp,Version=v8.0.AssemblyAttributes.cs
@@ -75,6 +75,7 @@ Repositories/
  Generics.cs
  LanguageRepository.cs
  LikeRepository.cs
+ MediaFileRepository.cs
  PostContentRepository.cs
  PostRepository.cs
  ToolContentRepository.cs

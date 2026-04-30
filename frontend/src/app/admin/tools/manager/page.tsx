@@ -29,7 +29,7 @@ export default function ToolCreatePage() {
     const { mutateAsync: updateTool } = useUpdateTool();
     const { mutateAsync: createTool } = useCreateTool();
     const [preview, openPreview] = useState(false);
-    const [previewIndex, setPreviewIndex] = useState<number | null>(null);
+    const [previewImage, setImagePreview ] = useState(false);
     const [open, setOpen] = useState(false);
     const { control, handleSubmit, formState: { errors: errorsTool }, watch, reset, getValues, setValue } = useForm<ToolSchema>({
         resolver: zodResolver(toolSchema),
@@ -48,19 +48,19 @@ export default function ToolCreatePage() {
     });
     useEffect(() => {
         if (!tool) return;
+        //URL.createObjectURL(tool.imgUrl);
         reset(tool)
     }, [tool, reset]);
     const { fields: fieldToolContents, append, remove: removeTool } = useFieldArray({
         control,
         name: "toolContents"
     });
-    const { fields: fieldCategories, append: appendCategory, remove: removeFieldCategory } = useFieldArray({
+    const { append: appendCategory, remove: removeFieldCategory } = useFieldArray({
         control,
         name: "categories"
     })
-    console.log(tool);
+    console.log("Update Tool: ",tool);
     const categoriesWatch = watch("categories");
-    const toolsWatch = watch("toolContents");
     const onSubmit = async (data: ToolSchema) => {
         if (tool) {
             await updateTool({ id: tool.id, data: data });
@@ -106,7 +106,7 @@ export default function ToolCreatePage() {
                     </DialogHeader>
                     <Input placeholder="Buscar categoria..." />
                     <div className="max-h-60 overflow-y-auto">
-                        {categories?.map((cat, index) => (
+                        {categories?.map((cat) => (
                             <div
                                 key={cat.id}
                                 className="flex items-center justify-between p-2 hover:bg-muted rounded"
