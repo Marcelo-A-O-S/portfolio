@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using PostService.Application.DTOs.Request;
 using PostService.Application.Interfaces;
 using PostService.Domain.Entities;
-using PostService.Domain.Enums;
 using PostService.Application.Validations;
 
 namespace PostService.API.Controllers
@@ -17,16 +16,19 @@ namespace PostService.API.Controllers
         private readonly IToolsServices toolsServices;
         private readonly IToolContentServices toolContentServices;
         private readonly ICategoryServices categoryServices;
+        private readonly IMediaFileServices mediaFileServices;
         public ToolController(
             IToolsServices _toolsServices,
             IToolContentServices _toolContentServices,
             ICategoryServices _categoryServices,
-            IFileServices _fileServices)
+            IFileServices _fileServices,
+            IMediaFileServices _mediaFileServices)
         {
             this.toolsServices = _toolsServices;
             this.toolContentServices = _toolContentServices;
             this.categoryServices = _categoryServices;
             this.fileServices = _fileServices;
+            this.mediaFileServices = _mediaFileServices;
         }
         [HttpGet("GetTools")]
         [Authorize( Roles = "Administrador")]

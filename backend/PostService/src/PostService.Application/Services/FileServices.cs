@@ -26,7 +26,6 @@ namespace PostService.Application.Services
                 throw new Exception("Arquivo não encontrado");
             File.Delete(pathImage);
         }
-
         public async Task<string?> SaveImageAsync(IFormFile file, string folder)
         {
             if(file == null || file.Length == 0)
