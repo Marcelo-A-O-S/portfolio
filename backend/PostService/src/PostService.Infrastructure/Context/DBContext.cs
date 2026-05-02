@@ -21,10 +21,11 @@ namespace PostService.Infrastructure.Context
         {
             modelBuilder.Entity<Post>().Property(p=> p.Status).HasConversion<string>();
             modelBuilder.Entity<Tool>().Property(p=> p.Status).HasConversion<string>();
-            modelBuilder.Entity<PostContent>().HasIndex(pc => new { pc.Slug });
-            modelBuilder.Entity<ToolContent>().HasIndex(tc => new { tc.Slug});
-            modelBuilder.Entity<CategoryContent>().HasIndex(cc => new { cc.Slug});
-            modelBuilder.Entity<Language>().HasIndex(lg => new { lg.Code});
+            modelBuilder.Entity<PostContent>().HasIndex(pc => pc.Slug);
+            modelBuilder.Entity<ToolContent>().HasIndex(tc => tc.Slug);
+            modelBuilder.Entity<CategoryContent>().HasIndex(cc => cc.Slug);
+            modelBuilder.Entity<Language>().HasIndex(lg => lg.Code);
+            modelBuilder.Entity<MediaFile>().HasIndex(mf => mf.Path).IsUnique();
         }
     }
 }

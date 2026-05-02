@@ -40,7 +40,7 @@ namespace PostService.Domain.Entities
         public void SetImagesUrls(List<string> imagesUrls){
             if(this.ImagesUrls == null)
                 throw new Exception("Lista de imagens envolvendo o conteúdo  não foi inicializada.");
-            this.ImagesUrls.AddRange(imagesUrls);
+            this.ImagesUrls = imagesUrls;
         }
         public void AddImagesUrls(string imagesUrl){
             if(this.ImagesUrls == null)

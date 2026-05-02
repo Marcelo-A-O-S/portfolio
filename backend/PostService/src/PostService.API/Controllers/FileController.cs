@@ -13,17 +13,23 @@ namespace PostService.API.Controllers
     public class FileController : ControllerBase
     {
         private readonly IFileServices fileServices;
-        public FileController(IFileServices _fileServices)
+        private readonly IMediaFileServices mediaFileServices;
+        public FileController(
+            IFileServices _fileServices,
+            IMediaFileServices _mediaFileServices)
         {
             this.fileServices = _fileServices;
+            this.mediaFileServices = _mediaFileServices;
         }
         [HttpPost("Upload/Markdown")]
         public async Task<IActionResult> Upload([FromForm]ImageMarkdownCreate imageMarkdown)
         {
             if (ModelState.IsValid)
             {
-                var url = await this.fileServices.SaveImageAsync(imageMarkdown.file, "media/markdown");
-                return Ok(new { url });
+                var mediaContentMarkDown = await this.mediaFileServices.SaveImageAsync(imageMarkdown.file, "media/markdown");
+                if(mediaContentMarkDown is null)
+                    return BadRequest("Erro ao salvar imagem");
+                return Ok(new { url =  mediaContentMarkDown.Path });
             }
             var errors = ModelState.Values.Select(e => e.Errors);
             return BadRequest(errors);

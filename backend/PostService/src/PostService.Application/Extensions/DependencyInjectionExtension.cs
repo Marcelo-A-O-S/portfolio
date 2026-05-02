@@ -19,6 +19,7 @@ namespace PostService.Application.Extensions
             services.AddScoped<IToolContentServices, ToolContentServices>();
             services.AddScoped<IPostContentServices, PostContentServices>();
             services.AddScoped<ILanguageServices, LanguageServices>();
+            services.AddScoped<IMediaFileServices, MediaFileServices>();
             services.AddScoped<IFileServices, FileServices>();
             return services;
         }

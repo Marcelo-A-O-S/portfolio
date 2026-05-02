@@ -13,7 +13,7 @@ using PostService.Infrastructure.Context;
 namespace PostService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20260430031322_CreateTables")]
+    [Migration("20260430191126_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -170,6 +170,9 @@ namespace PostService.Infrastructure.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Path")
+                        .IsUnique();
 
                     b.ToTable("MediaFiles");
                 });

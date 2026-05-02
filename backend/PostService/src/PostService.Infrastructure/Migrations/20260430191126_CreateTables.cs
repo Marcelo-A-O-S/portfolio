@@ -269,6 +269,12 @@ namespace PostService.Infrastructure.Migrations
                 column: "PostId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MediaFiles_Path",
+                table: "MediaFiles",
+                column: "Path",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PostContents_LanguageId",
                 table: "PostContents",
                 column: "LanguageId");

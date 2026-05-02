@@ -17,6 +17,7 @@ import { CategorySchema } from "@/domain/schemas/CategorySchema";
 import { useUpdateTool } from "@/hooks/useUpdateTool";
 import { useCreateTool } from "@/hooks/useCreateTool";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Image as ImageIcon } from 'lucide-react';
 import { useGetByIdTool } from "@/hooks/useGetByIdTool";
 import { addImageMarkDown } from "@/services/client/image-client";
 import { toast } from "sonner";
@@ -29,7 +30,7 @@ export default function ToolCreatePage() {
     const { mutateAsync: updateTool } = useUpdateTool();
     const { mutateAsync: createTool } = useCreateTool();
     const [preview, openPreview] = useState(false);
-    const [previewImage, setImagePreview ] = useState(false);
+    const [toolPreview, setToolPreview] = useState<string | null>(null);
     const [open, setOpen] = useState(false);
     const { control, handleSubmit, formState: { errors: errorsTool }, watch, reset, getValues, setValue } = useForm<ToolSchema>({
         resolver: zodResolver(toolSchema),
@@ -50,6 +51,7 @@ export default function ToolCreatePage() {
         if (!tool) return;
         //URL.createObjectURL(tool.imgUrl);
         reset(tool)
+        setToolPreview(`${process.env.NEXT_PUBLIC_FILES_URL}/${tool.imgUrl}`);
     }, [tool, reset]);
     const { fields: fieldToolContents, append, remove: removeTool } = useFieldArray({
         control,
@@ -59,7 +61,7 @@ export default function ToolCreatePage() {
         control,
         name: "categories"
     })
-    console.log("Update Tool: ",tool);
+    console.log("Update Tool: ", tool);
     const categoriesWatch = watch("categories");
     const onSubmit = async (data: ToolSchema) => {
         if (tool) {
@@ -96,7 +98,13 @@ export default function ToolCreatePage() {
         const imagesUpdated = getValues(`toolContents.${index}.imagesUrls`);
         console.log(imagesUpdated);
     }
+    const handleImage = async (e: React.ChangeEvent<HTMLInputElement>, field: ControllerRenderProps<ToolSchema, `imgUrl`>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
 
+        field.onChange(file);
+        setToolPreview(URL.createObjectURL(file));
+    }
     return (
         <>
             <Dialog open={open} onOpenChange={setOpen}>
@@ -146,7 +154,7 @@ export default function ToolCreatePage() {
                         </div>
                     </div>
                     <div className="flex md:p-10">
-                        <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col gap-2 min-h-0">
+                        <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col gap-2 ">
                             <Card className="">
                                 <CardHeader className="flex flex-col md:flex-row md:items-center justify-between">
                                     <CardTitle>Write Tool</CardTitle>
@@ -178,6 +186,35 @@ export default function ToolCreatePage() {
                                 </CardHeader>
                                 <CardContent className="">
                                     <div className="py-2">
+                                        <div className="flex flex-col gap-2">
+                                            <div className="flex justify-between flex-col gap-2 md:flex-row">
+                                                <Label>Preview</Label>
+                                                <Button>Clear Preview</Button>
+                                            </div>
+                                            <div className="flex relative border rounded-sm h-45 items-center justify-center text-sm">
+                                                {toolPreview ? (
+                                                    <>
+                                                    <div className="relative">
+                                                        <img
+                                                            src={toolPreview}
+                                                            alt="Preview"
+                                                            className="h-42 rounded border object-cover"
+                                                        />
+                                                    </div>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <div className="flex flex-col justify-center items-center">
+                                                            <ImageIcon />
+                                                            Imagem não adicionada
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div className="py-2">
                                         <Controller
                                             name={`imgUrl`}
                                             control={control}
@@ -186,7 +223,7 @@ export default function ToolCreatePage() {
                                                     <div className="flex flex-col gap-2">
                                                         <Label htmlFor="imgUrl">Imagem</Label>
                                                         <Input
-                                                            onChange={(e) => field.onChange(e.target.files?.[0])}
+                                                            onChange={(e) => handleImage(e, field)}
                                                             type="file"
                                                             className="cursor-pointer"
                                                         />
@@ -222,7 +259,7 @@ export default function ToolCreatePage() {
                                                     </div>
                                                 ))}
                                             </div>
-                                                {errorsTool.categories && <span className="text-wrap text-red-600 text-sm">{errorsTool.categories.message}</span>}
+                                            {errorsTool.categories && <span className="text-wrap text-red-600 text-sm">{errorsTool.categories.message}</span>}
                                         </div>
                                     </div>
                                     {fieldToolContents.map((item, index) => (

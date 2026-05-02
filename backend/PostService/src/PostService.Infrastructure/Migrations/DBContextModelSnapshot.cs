@@ -168,6 +168,9 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Path")
+                        .IsUnique();
+
                     b.ToTable("MediaFiles");
                 });
 
