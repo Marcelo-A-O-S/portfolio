@@ -86,9 +86,11 @@ namespace PostService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (toolRequest.ImgUrl == null)
+                if(toolRequest.ImgUrl == null)
+                    return BadRequest(new { message = "Endereço de imagem obrigatório."});
+                if (toolRequest.ImgFile == null)
                     return BadRequest(new { message = "Imagem é obrigatória." });
-                if (!toolRequest.ImgUrl.ContentType.StartsWith("image/"))
+                if (!toolRequest.ImgFile.ContentType.StartsWith("image/"))
                     return BadRequest(new { message = "Arquivo deve ser uma imagem." });
                 var options = new JsonSerializerOptions
                 {
@@ -142,7 +144,7 @@ namespace PostService.API.Controllers
                         return NotFound(new { message = "Categoria não encontrada." });
                     tool.AddCategory(category);
                 }
-                var mediaFileTool = await this.mediaFileServices.SaveImageAsync(toolRequest.ImgUrl, "media/tools");
+                var mediaFileTool = await this.mediaFileServices.SaveImageAsync(toolRequest.ImgFile, "media/tools");
                 if (mediaFileTool is null)
                     return BadRequest(new { message = "Erro ao salvar imagem." });
                 tool.AddImgUrl(mediaFileTool.Path);
@@ -164,9 +166,11 @@ namespace PostService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (toolRequest.ImgUrl == null)
+                if(toolRequest.ImgUrl == null)
+                    return BadRequest(new { message = "Endereço de imagem obrigatório."});
+                if (toolRequest.ImgFile == null)
                     return BadRequest(new { message = "Imagem é obrigatória." });
-                if (!toolRequest.ImgUrl.ContentType.StartsWith("image/"))
+                if (!toolRequest.ImgFile.ContentType.StartsWith("image/"))
                     return BadRequest(new { message = "Arquivo deve ser uma imagem." });
                 var options = new JsonSerializerOptions
                 {
@@ -250,7 +254,7 @@ namespace PostService.API.Controllers
                         return NotFound(new { message= "Conteúdo da categoria não encontrada."});
                     tool.AddCategory(category);
                 }
-                var searchMediaFileContent = await this.mediaFileServices.GetByPath(toolRequest.ImgUrl.FileName);
+                var searchMediaFileContent = await this.mediaFileServices.GetByPath(toolRequest.ImgFile.FileName);
                 if (searchMediaFileContent is not null)
                 {
                     mediasToCommit.Add(searchMediaFileContent);
@@ -274,7 +278,7 @@ namespace PostService.API.Controllers
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> DeleteTool([FromRoute] Guid Id)
         {
-            var tool = await this.toolsServices.GetById(Id);
+            var tool = await this.toolsServices.GetFullDataById(Id);
             var mediaToDelete = new List<MediaFile>();
             if (tool == null)
                 return NotFound(new { message = "Ferramenta não encontrada." });
@@ -290,7 +294,7 @@ namespace PostService.API.Controllers
                         mediaToDelete.Add(mediaImageContent);
                 }
             }
-            await this.toolsServices.Delete(tool);
+            await this.toolsServices.DeleteById(tool.Id);
             foreach(var media in mediaToDelete)
             {
                 await this.mediaFileServices.DeleteImageAsync(media);

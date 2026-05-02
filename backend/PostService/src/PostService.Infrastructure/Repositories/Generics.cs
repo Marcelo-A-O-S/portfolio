@@ -17,6 +17,12 @@ namespace PostService.Infrastructure.Repositories
             this.context.Set<T>().Remove(entity);
             await this.context.SaveChangesAsync();
         }
+        public async Task DeleteById(Guid Id)
+        {
+            var entity = await this.context.Set<T>().FindAsync(Id);
+            this.context.Set<T>().Remove(entity);
+            await this.context.SaveChangesAsync();
+        }
 
         public async Task<T> FindBy(Expression<Func<T, bool>> predicate)
         {

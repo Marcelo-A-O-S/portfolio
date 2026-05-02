@@ -55,6 +55,15 @@ namespace PostService.Infrastructure.Repositories
                 .Include(t => t.ToolContents)
                 .FirstOrDefaultAsync(t => t.Id == Id);
         }
+
+        public async Task<Tool> GetFullDataById(Guid Id)
+        {
+            return await context.Tools
+                .Include(t => t.Categories)
+                .Include(t => t.ToolContents)
+                .FirstOrDefaultAsync(t => t.Id == Id);
+        }
+
         public async Task<Tool> GetToolById(Guid Id)
         {
             var item  = await this.context.Tools

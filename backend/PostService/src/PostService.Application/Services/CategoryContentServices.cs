@@ -17,6 +17,11 @@ namespace PostService.Application.Services
             await this.categoryContentRepository.Delete(entity);
         }
 
+        public async Task DeleteById(Guid Id)
+        {
+            await this.categoryContentRepository.DeleteById(Id);
+        }
+
         public async Task<CategoryContent> FindBy(Expression<Func<CategoryContent, bool>> predicate)
         {
             return await this.categoryContentRepository.FindBy(predicate);

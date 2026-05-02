@@ -29,8 +29,15 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
         const { Id } = await params;
-        const data = await request.json();
-        const result = await toolSchema.safeParseAsync(data);
+        const formData = await request.formData();
+        const parsedData = {
+            imgUrl: formData.get("imgUrl"),
+            imgFile: formData.get("imgFile"),
+            status: formData.get("status"),
+            categories: JSON.parse(formData.get("categories") as string),
+            toolContents: JSON.parse(formData.get("toolContents") as string)
+        };
+        const result = await toolSchema.safeParseAsync(parsedData);
         if (result.error) {
             return NextResponse.json({
                 message: `Erro ao validar dados: ${result.error.message}`

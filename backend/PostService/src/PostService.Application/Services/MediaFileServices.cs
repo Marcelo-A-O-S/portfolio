@@ -20,6 +20,12 @@ namespace PostService.Application.Services
         {
             await this.repository.Delete(entity);
         }
+
+        public async Task DeleteById(Guid Id)
+        {
+            await this.repository.DeleteById(Id);
+        }
+
         public async Task DeleteImageAsync(MediaFile mediaFile)
         {
             var pathImage = Path.Combine(

@@ -17,6 +17,11 @@ namespace PostService.Application.Services
             await this.languageRepository.Delete(entity);
         }
 
+        public async Task DeleteById(Guid Id)
+        {
+            await this.languageRepository.DeleteById(Id);
+        }
+
         public async Task<Language> FindBy(Expression<Func<Language, bool>> predicate)
         {
             return await this.languageRepository.FindBy(predicate);

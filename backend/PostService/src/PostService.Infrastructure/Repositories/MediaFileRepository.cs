@@ -11,7 +11,6 @@ namespace PostService.Infrastructure.Repositories
         {
             this.context = _context;
         }
-
         public async Task<MediaFile> GetByPath(string path)
         {
             return await this.context.MediaFiles.Where(media => media.Path == path).FirstOrDefaultAsync();

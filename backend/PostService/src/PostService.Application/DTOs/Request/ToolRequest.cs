@@ -7,10 +7,11 @@ namespace PostService.Application.DTOs.Request
 {
     public class ToolRequest
     {
-        [Required]
+        public string? ImgUrl { get; set; }
+
         [MaxFileSize(2 * 1024 * 1024, ErrorMessage = "O tamanho maximo aceito de imagem é 2 MB.")]
         [AllowedExtension(new[] { ".jpg", ".png", ".jpeg" })]
-        public IFormFile ImgUrl { get; set; }
+        public IFormFile? ImgFile { get; set; }
         [Required]
         public Status Status { get; set; }
         [Required]

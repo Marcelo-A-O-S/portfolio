@@ -6,6 +6,8 @@ export const addToolService = async(tool: ToolSchema) =>{
     const api = await apiServer();
     const formData = new FormData();
     formData.append("imgUrl", tool.imgUrl);
+    if(tool.imgFile)
+        formData.append("imgFile", tool.imgFile);
     formData.append("status", tool.status);
     formData.append("categories", JSON.stringify(tool.categories));
     formData.append("toolContents", JSON.stringify(tool.toolContents));
@@ -18,7 +20,18 @@ export const addToolService = async(tool: ToolSchema) =>{
 }
 export const updateToolService = async(id:string, tool: ToolSchema) =>{
     const api = await apiServer();
-    const response = await api.put(`/api/Tool/${id}`,tool);
+    const formData = new FormData();
+    formData.append("imgUrl", tool.imgUrl);
+    if(tool.imgFile)
+        formData.append("imgFile", tool.imgFile);
+    formData.append("status", tool.status);
+    formData.append("categories", JSON.stringify(tool.categories));
+    formData.append("toolContents", JSON.stringify(tool.toolContents));
+    const response = await api.put(`/api/Tool/${id}`,formData, {
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }
+    });
     return response;
 }
 export const deleteToolByRouteService = async(id:string) =>{

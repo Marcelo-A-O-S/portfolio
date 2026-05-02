@@ -7,5 +7,6 @@ namespace PostService.Domain.Interfaces
         Task<Tool> GetToolById(Guid Id);
         Task<Tool> GetForUpdate(Guid Id);
         Task<List<Tool>> GetTools();
+        Task<Tool> GetFullDataById(Guid Id);
     }
 }

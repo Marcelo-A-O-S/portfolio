@@ -29,7 +29,6 @@ export default function ToolCreatePage() {
     const { data: tool } = useGetByIdTool(toolId)
     const { mutateAsync: updateTool } = useUpdateTool();
     const { mutateAsync: createTool } = useCreateTool();
-    const [preview, openPreview] = useState(false);
     const [toolPreview, setToolPreview] = useState<string | null>(null);
     const [open, setOpen] = useState(false);
     const { control, handleSubmit, formState: { errors: errorsTool }, watch, reset, getValues, setValue } = useForm<ToolSchema>({
@@ -50,7 +49,10 @@ export default function ToolCreatePage() {
     useEffect(() => {
         if (!tool) return;
         //URL.createObjectURL(tool.imgUrl);
-        reset(tool)
+        reset({
+            ...tool,
+            imgFile: undefined
+        })
         setToolPreview(`${process.env.NEXT_PUBLIC_FILES_URL}/${tool.imgUrl}`);
     }, [tool, reset]);
     const { fields: fieldToolContents, append, remove: removeTool } = useFieldArray({
@@ -98,11 +100,12 @@ export default function ToolCreatePage() {
         const imagesUpdated = getValues(`toolContents.${index}.imagesUrls`);
         console.log(imagesUpdated);
     }
-    const handleImage = async (e: React.ChangeEvent<HTMLInputElement>, field: ControllerRenderProps<ToolSchema, `imgUrl`>) => {
+    const handleImage = async (e: React.ChangeEvent<HTMLInputElement>, field: ControllerRenderProps<ToolSchema, `imgFile`>) => {
         const file = e.target.files?.[0];
         if (!file) return;
-
         field.onChange(file);
+        setValue("imgFile", file);
+        setValue("imgUrl", file.name);
         setToolPreview(URL.createObjectURL(file));
     }
     return (
@@ -194,13 +197,13 @@ export default function ToolCreatePage() {
                                             <div className="flex relative border rounded-sm h-45 items-center justify-center text-sm">
                                                 {toolPreview ? (
                                                     <>
-                                                    <div className="relative">
-                                                        <img
-                                                            src={toolPreview}
-                                                            alt="Preview"
-                                                            className="h-42 rounded border object-cover"
-                                                        />
-                                                    </div>
+                                                        <div className="relative">
+                                                            <img
+                                                                src={toolPreview}
+                                                                alt="Preview"
+                                                                className="h-42 rounded border object-cover"
+                                                            />
+                                                        </div>
                                                     </>
                                                 ) : (
                                                     <>
@@ -216,12 +219,12 @@ export default function ToolCreatePage() {
                                     </div>
                                     <div className="py-2">
                                         <Controller
-                                            name={`imgUrl`}
+                                            name={`imgFile`}
                                             control={control}
                                             render={({ field }) => (
                                                 <div className="grid gap-2">
                                                     <div className="flex flex-col gap-2">
-                                                        <Label htmlFor="imgUrl">Imagem</Label>
+                                                        <Label htmlFor="imgFile">Imagem</Label>
                                                         <Input
                                                             onChange={(e) => handleImage(e, field)}
                                                             type="file"

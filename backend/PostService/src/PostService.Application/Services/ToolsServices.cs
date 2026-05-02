@@ -17,6 +17,11 @@ namespace PostService.Application.Services
             await this.toolsRepository.Delete(entity);
         }
 
+        public async Task DeleteById(Guid Id)
+        {
+            await this.toolsRepository.DeleteById(Id);
+        }
+
         public async Task<Tool> FindBy(Expression<Func<Tool, bool>> predicate)
         {
             return await this.toolsRepository.FindBy(predicate);
@@ -35,6 +40,11 @@ namespace PostService.Application.Services
         public async Task<Tool> GetForUpdate(Guid Id)
         {
             return await this.toolsRepository.GetForUpdate(Id);
+        }
+
+        public async Task<Tool> GetFullDataById(Guid Id)
+        {
+            return await this.toolsRepository.GetFullDataById(Id);
         }
 
         public async Task<Tool> GetToolById(Guid Id)

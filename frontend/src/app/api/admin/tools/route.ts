@@ -13,6 +13,7 @@ export async function POST(request: NextRequest) {
         const formData = await request.formData();
         const parsedData = {
             imgUrl: formData.get("imgUrl"),
+            imgFile: formData.get("imgFile"),
             status: formData.get("status"),
             categories: JSON.parse(formData.get("categories") as string),
             toolContents: JSON.parse(formData.get("toolContents") as string)
