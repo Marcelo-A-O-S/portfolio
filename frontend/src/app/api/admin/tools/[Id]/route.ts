@@ -31,12 +31,13 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         const { Id } = await params;
         const formData = await request.formData();
         const parsedData = {
-            imgUrl: formData.get("imgUrl"),
-            imgFile: formData.get("imgFile"),
+            imgUrl: formData.get("imgUrl") || undefined,
+            imgFile: formData.get("imgFile") || undefined,
             status: formData.get("status"),
             categories: JSON.parse(formData.get("categories") as string),
             toolContents: JSON.parse(formData.get("toolContents") as string)
         };
+        console.log(parsedData);
         const result = await toolSchema.safeParseAsync(parsedData);
         if (result.error) {
             return NextResponse.json({

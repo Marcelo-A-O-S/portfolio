@@ -97,6 +97,7 @@ Validations/
  AllowedExtensionAttribute.cs
  MaxFileSizeAttribute.cs
  ValidationHelper.cs
+ ValidationImageAttribute.cs
 
 [metadataReferences]
 ../PostService.Domain/obj/Debug/net8.0/ref/PostService.Domain.dll

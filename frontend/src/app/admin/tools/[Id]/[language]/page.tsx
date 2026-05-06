@@ -1,12 +1,9 @@
-import { toolSchema, toolViewSchema } from "@/domain/schemas/ToolSchema";
+import { toolSchema } from "@/domain/schemas/ToolSchema";
 import { getToolByIdService } from "@/services/server/tool-services"
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import ToolView from "../../components/tool-view";
 import { getServerSession } from "next-auth";
 import remarkGfm from "remark-gfm";
-import rehypeHighlight from "rehype-highlight";
-import rehypeRaw from "rehype-raw";
 import rehypeStringify from "rehype-stringify";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
@@ -28,7 +25,7 @@ async function getToolOrThrow(id: string) {
     if (response.status !== 200) {
         notFound();
     }
-    const result = await toolViewSchema.safeParseAsync(response.data);
+    const result = await toolSchema.safeParseAsync(response.data);
     if (result.error) {
         console.log(`Error ao validar: ${result.error.message}`);
         notFound();

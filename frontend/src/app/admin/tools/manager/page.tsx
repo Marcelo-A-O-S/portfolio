@@ -48,7 +48,6 @@ export default function ToolCreatePage() {
     });
     useEffect(() => {
         if (!tool) return;
-        //URL.createObjectURL(tool.imgUrl);
         reset({
             ...tool,
             imgFile: undefined
@@ -63,9 +62,9 @@ export default function ToolCreatePage() {
         control,
         name: "categories"
     })
-    console.log("Update Tool: ", tool);
     const categoriesWatch = watch("categories");
     const onSubmit = async (data: ToolSchema) => {
+        console.log("Atualizando objeto:", data);
         if (tool) {
             await updateTool({ id: tool.id, data: data });
         } else {
