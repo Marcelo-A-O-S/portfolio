@@ -1,4 +1,5 @@
-Tools
+Tools/docker-compose.yaml
+Tools/docker-compose.prod.yaml
 
 AuthService/src/AuthService.API/bin
 AuthService/src/AuthService.API/appsettings.Development.json

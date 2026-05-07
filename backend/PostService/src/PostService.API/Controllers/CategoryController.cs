@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using PostService.Application.DTOs.Request;
 using PostService.Application.Interfaces;
+using PostService.Application.UseCases.Categories.Interfaces;
 using PostService.Domain.Entities;
 
 namespace PostService.API.Controllers
@@ -13,10 +14,21 @@ namespace PostService.API.Controllers
     {
         private readonly ICategoryServices categoryServices;
         private readonly ICategoryContentServices categoryContentServices;
-        public CategoryController(ICategoryServices _categoryServices, ICategoryContentServices _categoryContentServices)
+        private readonly ICreateCategory createCategory;
+        private readonly IUpdateCategory updateCategory;
+        private readonly IDeleteCategory deleteCategory;
+        public CategoryController(
+            ICategoryServices _categoryServices, 
+            ICategoryContentServices _categoryContentServices,
+            ICreateCategory _createCategory,
+            IUpdateCategory _updateCategory,
+            IDeleteCategory _deleteCategory)
         {
             this.categoryServices = _categoryServices;
             this.categoryContentServices = _categoryContentServices;
+            this.createCategory = _createCategory;
+            this.updateCategory = _updateCategory;
+            this.deleteCategory = _deleteCategory;
         }
         [HttpGet("GetCategories")]
         [Authorize(Roles = "Administrador")]
@@ -76,18 +88,7 @@ namespace PostService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var category = new Category();
-                if (categoryRequest.CategoryContents.Count == 0)
-                    return BadRequest(new { message = "Não é possivel salvar uma categoria vazia" });
-                foreach (var ccRequest in categoryRequest.CategoryContents)
-                {
-                    var categoryContent = await this.categoryContentServices.FindBy(cc => cc.Slug == ccRequest.Slug && cc.LanguageId == ccRequest.LanguageId);
-                    if (categoryContent != null)
-                        return BadRequest(new { message = "Erro ao validar dados!" });
-                    categoryContent = new CategoryContent(category.Id, ccRequest.LanguageId, ccRequest.Name, ccRequest.Slug);
-                    category.AddCategoryContent(categoryContent);
-                }
-                await this.categoryServices.Save(category);
+                await this.createCategory.ExecuteAsync(categoryRequest);
                 return Ok(new { message = "Categoria salva com sucesso." });
             }
             var errors = ModelState.Values.Select(x => x.Errors);
@@ -100,30 +101,7 @@ namespace PostService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var category = await this.categoryServices.GetForUpdate(Id);
-                if (category == null)
-                    return NotFound(new { message = "Categoria não encontrada." });
-                var requestCategoryContentIds = categoryRequest.CategoryContents
-                    .Where(cc => cc.Id.HasValue)
-                    .Select(cc => cc.Id!.Value);
-                category.ValidateCategoryContents(requestCategoryContentIds);
-                foreach (var ccRequest in categoryRequest.CategoryContents)
-                {
-                    
-                    if (ccRequest.Id.HasValue)
-                    {
-                        var categoryContent = category.CategoryContents.FirstOrDefault(cc => cc.Id == ccRequest.Id.Value);
-                        if (categoryContent == null)
-                            return NotFound(new { message = "Conteudo da categoria não encontrado."});
-                        categoryContent.Update(ccRequest.LanguageId, ccRequest.Name, ccRequest.Slug);
-                    }
-                    else
-                    {
-                        var categoryContent = new CategoryContent(category.Id, ccRequest.LanguageId, ccRequest.Name, ccRequest.Slug);
-                        category.AddCategoryContent(categoryContent);
-                    }                        
-                }
-                await this.categoryServices.Update(category);
+                await this.updateCategory.ExecuteAsync(Id, categoryRequest);
                 return Ok(new { message = "Categoria atualizada com sucesso." });
             }
             var errors = ModelState.Values.Select(x => x.Errors);
@@ -134,10 +112,7 @@ namespace PostService.API.Controllers
         [EnableRateLimiting("sensitive")]
         public async Task<IActionResult> DeleteCategory([FromRoute] Guid Id)
         {
-            var category = await this.categoryServices.GetById(Id);
-            if (category == null)
-                return NotFound("Categoria não encontrada.");
-            await this.categoryServices.Delete(category);
+            await this.deleteCategory.ExecuteAsync(Id);
             return Ok(new { message = "Categoria atualizada com sucesso." });
         }
     }

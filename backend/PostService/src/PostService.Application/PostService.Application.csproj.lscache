@@ -93,6 +93,25 @@ Services/
  PostServices.cs
  ToolContentServices.cs
  ToolsServices.cs
+UseCases/Categories/
+ CreateCategory.cs
+ DeleteCategory.cs
+ Interfaces/
+  ICreateCategory.cs
+  IDeleteCategory.cs
+  IUpdateCategory.cs
+ UpdateCategory.cs
+UseCases/Projects/
+ CreateProject.cs
+ Interfaces/ICreateProject.cs
+UseCases/Tools/
+ CreateTool.cs
+ DeleteTool.cs
+ Interfaces/
+  ICreateTool.cs
+  IDeleteTool.cs
+  IUpdateTool.cs
+ UpdateTool.cs
 Validations/
  AllowedExtensionAttribute.cs
  MaxFileSizeAttribute.cs

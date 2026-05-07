@@ -1,0 +1,28 @@
+version: '3.8'
+networks:
+  backend-network:
+    external: true
+services:
+  db-main:
+    image: postgres:15
+    container_name: db-main
+    networks:
+      - backend-network
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: DBMAIN
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+    volumes:
+      - db-main:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 120s
+    restart: unless-stopped
+volumes:
+  db-main:

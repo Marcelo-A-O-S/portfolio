@@ -79,10 +79,11 @@ namespace PostService.API.Controllers
         }
         [HttpPost]
         [Authorize(Roles = "Administrador")]
-        public async Task<IActionResult> CreatePost(PostRequest postRequest)
+        public async Task<IActionResult> CreatePost([FromForm] PostRequest postRequest)
         {
             if (ModelState.IsValid)
             {
+                
                 // if (postRequest.Categories.Count == 0)
                 //     return BadRequest(new { message = "Não é possível salvar um post sem suas categorias relacionadas." });
                 // if (postRequest.Tools.Count == 0)
