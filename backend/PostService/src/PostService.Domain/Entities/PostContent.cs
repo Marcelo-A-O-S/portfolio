@@ -23,6 +23,7 @@ namespace PostService.Domain.Entities
             this.Title = title;
             this.Description = description;
             this.Content = content;
+            this.ImagesUrls = new List<string>();
             this.Slug = slug;
             this.CreatedAt = DateTime.UtcNow;
             this.UpdatedAt = DateTime.UtcNow;
@@ -35,6 +36,12 @@ namespace PostService.Domain.Entities
             this.Content = content;
             this.Slug = slug;
             this.UpdatedAt = DateTime.UtcNow;
+        }
+        public void SetImagesUrls(List<string> imagesUrls)
+        {
+            if(this.ImagesUrls == null)
+                throw new Exception("Lista de imagens envolvendo o conteúdo  não foi inicializada.");
+            this.ImagesUrls = imagesUrls;
         }
         public void ValidateImagesUrls()
         {

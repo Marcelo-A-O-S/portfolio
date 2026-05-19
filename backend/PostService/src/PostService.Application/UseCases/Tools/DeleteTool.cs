@@ -1,3 +1,4 @@
+using PostService.Application.Exceptions;
 using PostService.Application.Interfaces;
 using PostService.Application.UseCases.Tools.Interfaces;
 using PostService.Domain.Entities;
@@ -29,7 +30,7 @@ namespace PostService.Application.UseCases.Tools
         {
             var tool = await this.toolsServices.GetFullDataById(Id);
             if (tool == null)
-                throw new Exception("Ferramenta não encontrada.");
+                throw new NotFoundException("Ferramenta não encontrada.");
             return tool;
         }
         private async Task ProcessToolImage(Tool tool, List<MediaFile> mediasToDelete)

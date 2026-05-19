@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PostService.Application.DTOs.Request;
 using PostService.Application.Interfaces;
+using PostService.Application.UseCases.Languages.Interfaces;
 using PostService.Domain.Entities;
 
 namespace PostService.API.Controllers
@@ -11,9 +12,19 @@ namespace PostService.API.Controllers
     public class LanguageController : ControllerBase
     {
         private readonly ILanguageServices languageServices;
-        public LanguageController(ILanguageServices _languageServices)
+        private readonly ICreateLanguage createLanguage;
+        private readonly IUpdateLanguage updateLanguage;
+        private readonly IDeleteLanguage deleteLanguage;
+        public LanguageController(
+            ILanguageServices _languageServices,
+            ICreateLanguage _createLanguage,
+            IUpdateLanguage _updateLanguage,
+            IDeleteLanguage _deleteLanguage)
         {
             this.languageServices = _languageServices;
+            this.createLanguage = _createLanguage;
+            this.updateLanguage = _updateLanguage;
+            this.deleteLanguage = _deleteLanguage;
         }
         [HttpGet]
         [Authorize( Roles = "Administrador")]
@@ -54,11 +65,7 @@ namespace PostService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var language = await this.languageServices.FindBy(lg => lg.Code == languageRequest.Code && lg.Name == languageRequest.Name);
-                if(language != null)
-                    return BadRequest(new { message = "Erro ao validar os dados." });
-                language = new Language(languageRequest.Code, languageRequest.Name);
-                await this.languageServices.Save(language);
+                await this.createLanguage.ExecuteAsync(languageRequest);
                 return Ok(new { message = "Linguagem salva com sucesso. "});
             }
             var errors = ModelState.Values.Select(e=> e.Errors);
@@ -70,11 +77,7 @@ namespace PostService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var language = await this.languageServices.GetById(Id);
-                if(language == null)
-                    return NotFound(new { message = "Linguagem não encontrada."});
-                language.Update(languageRequest.Code, languageRequest.Name);
-                await this.languageServices.Update(language);
+                await this.updateLanguage.ExecuteAsync(Id, languageRequest);
                 return Ok(new { message = "Linguagem atualizada com sucesso."});
             }
             var errors = ModelState.Values.Select(e => e.Errors);
@@ -84,10 +87,7 @@ namespace PostService.API.Controllers
         [Authorize( Roles = "Administrador")]
         public async Task<IActionResult> DeleteByRoute([FromRoute] Guid Id)
         {
-            var language = await this.languageServices.GetById(Id);
-            if(language == null)
-                return NotFound(new { message = "Linguagem não encontrada."});
-            await this.languageServices.Delete(language);
+            await this.deleteLanguage.ExecuteAsync(Id);
             return Ok(new { message ="Linguagem deletada com sucesso."});
         }
     }

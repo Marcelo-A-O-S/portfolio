@@ -12,11 +12,11 @@ namespace PostService.Domain.Entities
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
         public Status Status { get; private set; }
-        public Post(string imgUrl, Status status)
+        public Post(Status status)
         {
             this.CreatedAt = DateTime.UtcNow;
             this.UpdatedAt = DateTime.UtcNow;
-            this.ImgUrl = imgUrl;
+            this.ImgUrl = "";
             this.Status = status;
             this.Categories = new List<Category>();
             this.Likes = new List<Like>();
@@ -27,6 +27,10 @@ namespace PostService.Domain.Entities
         {
             this.UpdatedAt = DateTime.UtcNow;
             this.Status = status;
+            this.ImgUrl = imgUrl;
+        }
+        public void AddImgUrl(string imgUrl)
+        {
             this.ImgUrl = imgUrl;
         }
         public void AddTool(Tool tool)
@@ -47,6 +51,7 @@ namespace PostService.Domain.Entities
                 throw new Exception("Lista de conteudo não inicializada.");
             this.PostContents.Add(postContent);
         }
+        
         public void ValidateTools(IEnumerable<Guid> toolIds)
         {
             if(this.Tools == null)

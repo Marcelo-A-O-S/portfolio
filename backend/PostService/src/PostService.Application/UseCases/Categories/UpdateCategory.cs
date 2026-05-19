@@ -1,8 +1,10 @@
 using PostService.Application.DTOs.Request;
+using PostService.Application.Exceptions;
 using PostService.Application.Interfaces;
 using PostService.Application.UseCases.Categories.Interfaces;
 using PostService.Application.Validations;
 using PostService.Domain.Entities;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace PostService.Application.UseCases.Categories
 {
@@ -29,7 +31,7 @@ namespace PostService.Application.UseCases.Categories
         {
             var validationError = ValidationHelper.Validate(categoryRequest);
             if (validationError.Count > 0)
-                throw new Exception($"Erro ao validar dados: {validationError}");
+                throw new ValidationException($"Erro ao validar dados: {validationError}");
         }
         private static async Task ProcessCategories(Category category, List<CategoryContentRequest> categoryContentRequests)
         {
@@ -41,12 +43,12 @@ namespace PostService.Application.UseCases.Categories
             {
                 var validationError = ValidationHelper.Validate(ccRequest);
                 if (validationError.Count > 0)
-                    throw new Exception($"Erro ao validar dados: {validationError}");
+                    throw new ValidationException($"Erro ao validar dados: {validationError}");
                 if (ccRequest.Id.HasValue)
                 {
                     var categoryContent = category.CategoryContents.FirstOrDefault(cc => cc.Id == ccRequest.Id.Value);
                     if (categoryContent == null)
-                        throw new Exception("Conteudo da categoria não encontrado.");
+                        throw new NotFoundException("Conteudo da categoria não encontrado.");
                     categoryContent.Update(ccRequest.LanguageId, ccRequest.Name, ccRequest.Slug);
                 }
                 else

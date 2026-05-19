@@ -53,6 +53,12 @@ TemporaryDependencyNodeTargetIdentifier=net8.0
 /warnaserror+:NU1605,SYSLIB0011
 
 [sourceFiles]
+DTOs/Deserialize/
+ CategoryContentDeserialize.cs
+ CategoryDeserialize.cs
+ PostContentDeserialize.cs
+ ToolContentDeserialize.cs
+ ToolDeserialize.cs
 DTOs/Request/
  CategoryContentRequest.cs
  CategoryRequest.cs
@@ -63,6 +69,9 @@ DTOs/Request/
  ToolContentRequest.cs
  ToolCreateRequest.cs
  ToolRequest.cs
+Exceptions/
+ NotFoundException.cs
+ ValidationException.cs
 Extensions/
  ApplicationExtension.cs
  DependencyInjectionExtension.cs
@@ -101,9 +110,21 @@ UseCases/Categories/
   IDeleteCategory.cs
   IUpdateCategory.cs
  UpdateCategory.cs
+UseCases/Languages/
+ CreateLanguage.cs
+ DeleteLanguage.cs
+ Interfaces/
+  ICreateLanguage.cs
+  IDeleteLanguage.cs
+  IUpdateLanguage.cs
+ UpdateLanguage.cs
 UseCases/Projects/
  CreateProject.cs
- Interfaces/ICreateProject.cs
+ Interfaces/
+  ICreateProject.cs
+  IDeleteProject.cs
+  IUpdateProject.cs
+ UpdateProject.cs
 UseCases/Tools/
  CreateTool.cs
  DeleteTool.cs

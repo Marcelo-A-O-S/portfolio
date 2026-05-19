@@ -1,4 +1,5 @@
 using PostService.Application.DTOs.Request;
+using PostService.Application.Exceptions;
 using PostService.Application.Interfaces;
 using PostService.Application.UseCases.Categories.Interfaces;
 using PostService.Application.Validations;
@@ -28,7 +29,7 @@ namespace PostService.Application.UseCases.Categories
         {
             var validationError = ValidationHelper.Validate(categoryRequest);
             if (validationError.Count > 0)
-                throw new Exception($"Erro ao validar dados: {validationError}");
+                throw new ValidationException($"Erro ao validar dados: {validationError}");
         }
         private async Task ProcessCategoryContents(Category category, List<CategoryContentRequest> categoryContentRequests)
         {
@@ -36,10 +37,10 @@ namespace PostService.Application.UseCases.Categories
             {
                 var validationError = ValidationHelper.Validate(ccRequest);
                 if (validationError.Count > 0)
-                    throw new Exception($"Erro ao validar dados: {validationError}");
+                    throw new ValidationException($"Erro ao validar dados: {validationError}");
                 var categoryContent = await this.categoryContentServices.FindBy(cc => cc.Slug == ccRequest.Slug && cc.LanguageId == ccRequest.LanguageId);
                 if (categoryContent != null)
-                    throw new Exception("Erro ao validar dados!");
+                    throw new ValidationException("Erro ao validar dados!");
                 categoryContent = new CategoryContent(category.Id, ccRequest.LanguageId, ccRequest.Name, ccRequest.Slug);
                 category.AddCategoryContent(categoryContent);
             }

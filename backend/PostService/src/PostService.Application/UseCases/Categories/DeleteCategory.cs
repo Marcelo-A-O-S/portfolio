@@ -1,3 +1,4 @@
+using PostService.Application.Exceptions;
 using PostService.Application.Interfaces;
 using PostService.Application.UseCases.Categories.Interfaces;
 using PostService.Domain.Entities;
@@ -22,7 +23,7 @@ namespace PostService.Application.UseCases.Categories
         {
             var category = await this.categoryServices.GetById(Id);
             if (category == null)
-                throw new Exception("Categoria não encontrada.");
+                throw new NotFoundException("Categoria não encontrada.");
             return category;
         }
     }

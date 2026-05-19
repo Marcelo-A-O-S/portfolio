@@ -1,5 +1,7 @@
 using System.Text.Json;
+using PostService.Application.DTOs.Deserialize;
 using PostService.Application.DTOs.Request;
+using PostService.Application.Exceptions;
 using PostService.Application.Interfaces;
 using PostService.Application.UseCases.Tools.Interfaces;
 using PostService.Application.Validations;
@@ -48,34 +50,34 @@ namespace PostService.Application.UseCases.Tools
         private static void ValidateMainImage(ToolRequest request)
         {
             if (request.ImgUrl == null)
-                throw new Exception("Endereço de imagem obrigatório.");
+                throw new ValidationException("Endereço de imagem obrigatório.");
             if (request.ImgFile == null)
-                throw new Exception("Imagem obrigatória.");
+                throw new ValidationException("Imagem obrigatória.");
         }
-        private static List<ToolContentRequest> DeserializeToolContents(string jsonToolContents)
+        private static List<ToolContentDeserialize> DeserializeToolContents(string jsonToolContents)
         {
-            var toolContentRequest = JsonSerializer.Deserialize<List<ToolContentRequest>>(jsonToolContents, JsonOptions);
+            var toolContentRequest = JsonSerializer.Deserialize<List<ToolContentDeserialize>>(jsonToolContents, JsonOptions);
             if (toolContentRequest is null || toolContentRequest.Count == 0)
-                throw new Exception("Não é possivel salvar uma ferramenta sem seu conteudo relacionado.");
+                throw new ValidationException("Não é possivel salvar uma ferramenta sem seu conteudo relacionado.");
             return toolContentRequest;
         }
-        private static List<CategoryRequest> DeserializeCategories(string jsonCategories)
+        private static List<CategoryDeserialize> DeserializeCategories(string jsonCategories)
         {
-            var categoriesRequest = JsonSerializer.Deserialize<List<CategoryRequest>>(jsonCategories, JsonOptions);
+            var categoriesRequest = JsonSerializer.Deserialize<List<CategoryDeserialize>>(jsonCategories, JsonOptions);
             if (categoriesRequest is null || categoriesRequest.Count == 0)
-                throw new Exception("Não é possivel salvar uma ferramenta sem suas categorias relacionadas.");
+                throw new ValidationException("Não é possivel salvar uma ferramenta sem suas categorias relacionadas.");
             return categoriesRequest;
         }
-        private async Task ProcessToolContents(Tool tool, List<ToolContentRequest> toolContentRequests, List<MediaFile> mediasToCommit, List<MediaFile> mediasToDelete)
+        private async Task ProcessToolContents(Tool tool, List<ToolContentDeserialize> toolContentRequests, List<MediaFile> mediasToCommit, List<MediaFile> mediasToDelete)
         {
             foreach (var item in toolContentRequests)
             {
                 var validationError = ValidationHelper.Validate(item);
                 if (validationError.Count > 0)
-                    throw new Exception($"Erro ao validar dados: {validationError}");
+                    throw new ValidationException($"Erro ao validar dados: {validationError}");
                 var toolContent = await this.toolContentServices.FindBy(tc => tc.Slug == item.Slug && tc.LanguageId == item.LanguageId);
                 if (toolContent != null)
-                    throw new Exception("Erro ao validar dados!");
+                    throw new ValidationException("Erro ao validar dados!");
                 toolContent = new ToolContent(tool.Id, item.LanguageId, item.Name, item.Description, item.Content, item.Slug);
                 var toRemoveImages = item.ImagesUrls.Where(image => !item.Content.Contains(image)).ToList();
                 foreach (var removeImageUrl in toRemoveImages)
@@ -99,18 +101,18 @@ namespace PostService.Application.UseCases.Tools
                 tool.AddToolContent(toolContent);
             }
         }
-        private async Task ProcessCategories(Tool tool, List<CategoryRequest> categoriesRequest)
+        private async Task ProcessCategories(Tool tool, List<CategoryDeserialize> categoriesRequest)
         {
             foreach (var item in categoriesRequest)
             {
                 var validationError = ValidationHelper.Validate(item);
                 if (validationError.Count > 0)
-                    throw new Exception($"Erro ao validar dados: {validationError}");
+                    throw new ValidationException($"Erro ao validar dados: {validationError}");
                 if (item.Id is not Guid categoryId)
-                    throw new Exception("O identificador relacionado as categorias são obrigatórios");
+                    throw new ValidationException("O identificador relacionado as categorias são obrigatórios");
                 var category = await this.categoryServices.GetById(categoryId);
                 if (category == null)
-                    throw new Exception("Categoria não encontrada.");
+                    throw new NotFoundException("Categoria não encontrada.");
                 tool.AddCategory(category);
             }
         }

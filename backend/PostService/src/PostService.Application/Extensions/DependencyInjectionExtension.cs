@@ -5,7 +5,10 @@ using PostService.Application.UseCases.Categories.Interfaces;
 using PostService.Application.UseCases.Categories;
 using PostService.Application.UseCases.Tools;
 using PostService.Application.UseCases.Tools.Interfaces;
-
+using PostService.Application.UseCases.Languages.Interfaces;
+using PostService.Application.UseCases.Languages;
+using PostService.Application.UseCases.Projects.Interfaces;
+using PostService.Application.UseCases.Projects;
 namespace PostService.Application.Extensions
 {
     public static class DependencyInjectionExtension
@@ -32,6 +35,11 @@ namespace PostService.Application.Extensions
             services.AddScoped<ICreateCategory, CreateCategory>();
             services.AddScoped<IUpdateCategory, UpdateCategory>();
             services.AddScoped<IDeleteCategory, DeleteCategory>();
+            services.AddScoped<ICreateLanguage, CreateLanguage>();
+            services.AddScoped<IUpdateLanguage, UpdateLanguage>();
+            services.AddScoped<IDeleteLanguage, DeleteLanguage>();
+            services.AddScoped<ICreateProject, CreateProject>();
+            services.AddScoped<IUpdateProject, UpdateProject>();
             return services;
         }
     }

@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using PostService.Application.Exceptions;
 
 namespace PostService.API.Middleware
 {
@@ -21,15 +22,27 @@ namespace PostService.API.Middleware
             catch(Exception ex)
             {
                 this.logger.LogError(ex, "Erro inesperado: {Message}", ex.Message);
+                await HandleException(context, ex);
             }
         }
         private static Task HandleException(HttpContext context, Exception exception)
         {
+            HttpStatusCode statusCode = HttpStatusCode.InternalServerError;
+            switch(exception)
+            {
+                case NotFoundException:
+                    statusCode = HttpStatusCode.NotFound;
+                    break;
+
+                case ValidationException:
+                    statusCode = HttpStatusCode.BadRequest;
+                    break;
+            }
             var response = new
             {
               title = "Erro interno no servidor",
               detail = exception.Message,
-              status = (int)HttpStatusCode.InternalServerError  
+              status = (int)statusCode  
             };
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = response.status;
