@@ -9,6 +9,8 @@ using PostService.Application.UseCases.Languages.Interfaces;
 using PostService.Application.UseCases.Languages;
 using PostService.Application.UseCases.Projects.Interfaces;
 using PostService.Application.UseCases.Projects;
+using PostService.Application.UseCases.Likes.Interfaces;
+using PostService.Application.UseCases.Likes;
 namespace PostService.Application.Extensions
 {
     public static class DependencyInjectionExtension
@@ -40,6 +42,8 @@ namespace PostService.Application.Extensions
             services.AddScoped<IDeleteLanguage, DeleteLanguage>();
             services.AddScoped<ICreateProject, CreateProject>();
             services.AddScoped<IUpdateProject, UpdateProject>();
+            services.AddScoped<IDeleteProject, DeleteProject>();
+            services.AddScoped<IAddLike, AddLike>();
             return services;
         }
     }

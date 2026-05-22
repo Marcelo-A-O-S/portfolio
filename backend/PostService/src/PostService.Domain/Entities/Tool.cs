@@ -1,10 +1,13 @@
+using System.Text.Json.Serialization;
 using PostService.Domain.Enums;
 namespace PostService.Domain.Entities
 {
     public class Tool
     {
         public Guid Id { get; private set; }
-        public string ImgUrl { get; private set; } 
+        public string ImgUrl { get; private set; }
+        [JsonIgnore]
+        public ICollection<Post> Posts { get; private set; }
         public ICollection<ToolContent> ToolContents { get; private set;} 
         public ICollection<Category> Categories { get; private set;}
         public DateTime CreatedAt { get; private set; }
@@ -12,6 +15,7 @@ namespace PostService.Domain.Entities
         public Tool( Status status)
         {
             this.CreatedAt = DateTime.UtcNow;
+            this.Posts = new List<Post>();
             this.ToolContents = new List<ToolContent>();
             this.Categories = new List<Category>();
             this.ImgUrl = "";

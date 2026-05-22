@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             return categoryContent?.name;
         })
         .filter((c): c is string => Boolean(c));
-    const keywords = [...categories, content.name, content.slug]
+    const keywords = [...categories, content.name, content.title, content.slug]
     return {
         title: content.name,
         description: content.description,
@@ -62,7 +62,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         category: "education",
         openGraph: {
             siteName: content.name,
-            title: content.name,
+            title: content.title,
             description: content.description,
             images: [{
                 url: `${hostBackend}/${tool.imgUrl}`,
@@ -115,7 +115,7 @@ export default async function PageById({ params }: Props) {
                 <MaxWidthWrapper className="prose prose-neutral dark:prose-invert px-10 py-20">
                     <div className="flex px-12 gap-8">
                         <div className="">
-                            <h1 className="text-5xl font-bold">{toolContent.name}</h1>
+                            <h1 className="text-5xl font-bold">{toolContent.title}</h1>
                             <div className="flex">
                                 {categories.map((name, index) => (
                                     <Badge key={index} variant="secondary">{name}</Badge>

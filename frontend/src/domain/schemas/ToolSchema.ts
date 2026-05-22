@@ -2,6 +2,7 @@ import z from "zod";
 import { toolContentSchema } from "./ToolContentSchema";
 import { categorySchema } from "./CategorySchema";
 export const Status = z.enum(["DRAFT", "PUBLISH", "ARCHIVED"]);
+
 export const toolSchema = z.object({
     id: z.string().optional(),
     imgUrl: z.string(),

@@ -8,5 +8,6 @@ namespace PostService.Application.Interfaces
         Task<Post> GetPostById(Guid Id);
         Task<Post> GetForUpdate(Guid Id);
         Task<List<Post>> GetPosts();
+        Task<Post> GetFullDataById(Guid Id);
     }
 }

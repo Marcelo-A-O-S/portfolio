@@ -4,7 +4,6 @@ import { SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, Se
 import { LanguageSchema } from "@/domain/schemas/LanguageSchema"
 import { ToolSchema } from "@/domain/schemas/ToolSchema"
 import { Heart, MessageCircle } from "lucide-react"
-import Image from "next/image"
 import { useState } from "react"
 import ToolActions from "./tool-actions"
 import Link from "next/link"
@@ -25,15 +24,16 @@ export default function CardTool({ languages, item }: CardToolProps) {
             return content;
         })
     return (
-        <div className="bg-background border border-primary max-w-xl w-full rounded-lg overflow-hidden shadow-sm">
-            <article className="p-4 flex space-x-3">
-                <div className="flex-1 min-w-0">
+        <div className="bg-background border border-primary max-w-sm w-full max-h-[450px] h-full rounded-lg overflow-hidden shadow-sm
+            hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col">
+            <article className="p-4 flex flex-col space-x-3">
+                <div className="flex flex-col justify-between flex-1 min-w-0">
                     <div className="flex justify-between items-center mb-1">
                         <div className="flex items-baseline space-x-1 text-sm min-w-0">
                             <span className="font-bold text-primary truncate hover:underline cursor-pointer">
-                                {content?.name}
+                                {content?.title}
                             </span>
-                            <span className="text-primary hover:underline cursor-pointer whitespace-nowrap">
+                            <span className="text-primary hover:underline cursor-pointer whitespace-nowrap text-xs">
                                 3h
                             </span>
                         </div>
@@ -54,10 +54,10 @@ export default function CardTool({ languages, item }: CardToolProps) {
                             </SelectContent>
                         </Select>
                     </div>
-                    <p className="text-primary text-sm leading-normal mb-2">
+                    <p className="text-primary text-sm line-clamp-4 mb-2">
                         {content?.description}
                     </p>
-                    <div>
+                    <div className="flex flex-wrap gap-2 mt-2 line-clamp-1">
                         {categories.map((cc, index) => (
                             <Badge key={index} variant="secondary">{cc?.name}</Badge>
                         ))}
@@ -65,7 +65,7 @@ export default function CardTool({ languages, item }: CardToolProps) {
                     </div>
                     <div className="mt-3 rounded-xl border tweet-border overflow-hidden">
                         <img src={`${process.env.NEXT_PUBLIC_FILES_URL}/${item.imgUrl}`}
-                            alt="" className="w-full object-cover aspect-video" />
+                            alt="" className="w-full object-cover aspect-video border border-primary" />
                     </div>
                     <div className="flex items-center justify-between mt-4 text-primary text-xs sm:text-sm">
                         <div className="flex">

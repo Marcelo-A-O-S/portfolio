@@ -54,6 +54,17 @@ namespace PostService.Infrastructure.Repositories
         public async Task<Post> GetForUpdate(Guid Id)
         {
             return await context.Posts
+                .AsSplitQuery()
+                .Include(p => p.PostContents)
+                .Include(p => p.Categories)
+                .Include(p => p.Tools)
+                .FirstOrDefaultAsync(t => t.Id == Id);
+        }
+
+        public async Task<Post> GetFullDataById(Guid Id)
+        {
+            return await context.Posts
+                .AsSplitQuery()
                 .Include(p => p.PostContents)
                 .Include(p => p.Categories)
                 .Include(p => p.Tools)

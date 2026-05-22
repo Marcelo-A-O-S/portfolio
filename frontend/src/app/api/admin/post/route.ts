@@ -10,8 +10,16 @@ export async function POST(request: NextRequest) {
         const allowed = await validateUserByRequest(request, ["Administrador"]);
         if (!allowed)
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-        const data = await request.json();
-        const result = await postSchema.safeParseAsync(data);
+        const formData = await request.formData();
+        const parsedData = {
+            imgUrl: formData.get("imgUrl"),
+            imgFile: formData.get("imgFile"),
+            status: formData.get("status"),
+            categories: JSON.parse(formData.get("categories") as string),
+            tools: JSON.parse(formData.get("tools") as string),
+            postContents: JSON.parse(formData.get("postContents") as string)
+        };
+        const result = await postSchema.safeParseAsync(parsedData);
         if (result.error) {
             return NextResponse.json({
                 message: `Erro ao validar dados: ${result.error.message}`

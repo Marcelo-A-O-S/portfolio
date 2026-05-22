@@ -74,11 +74,14 @@ namespace PostService.Application.UseCases.Tools
             {
                 var validationError = ValidationHelper.Validate(item);
                 if (validationError.Count > 0)
-                    throw new ValidationException($"Erro ao validar dados: {validationError}");
+                {
+                    var errors = string.Join(", ", validationError.Select(e => e.ErrorMessage));
+                    throw new ValidationException($"Erro ao validar dados: {errors}");
+                }
                 var toolContent = await this.toolContentServices.FindBy(tc => tc.Slug == item.Slug && tc.LanguageId == item.LanguageId);
                 if (toolContent != null)
                     throw new ValidationException("Erro ao validar dados!");
-                toolContent = new ToolContent(tool.Id, item.LanguageId, item.Name, item.Description, item.Content, item.Slug);
+                toolContent = new ToolContent(tool.Id, item.LanguageId, item.Name, item.Title, item.Description, item.Content, item.Slug);
                 var toRemoveImages = item.ImagesUrls.Where(image => !item.Content.Contains(image)).ToList();
                 foreach (var removeImageUrl in toRemoveImages)
                 {
@@ -107,7 +110,10 @@ namespace PostService.Application.UseCases.Tools
             {
                 var validationError = ValidationHelper.Validate(item);
                 if (validationError.Count > 0)
-                    throw new ValidationException($"Erro ao validar dados: {validationError}");
+                {
+                    var errors = string.Join(", ", validationError.Select(e => e.ErrorMessage));
+                    throw new ValidationException($"Erro ao validar dados: {errors}");
+                }
                 if (item.Id is not Guid categoryId)
                     throw new ValidationException("O identificador relacionado as categorias são obrigatórios");
                 var category = await this.categoryServices.GetById(categoryId);

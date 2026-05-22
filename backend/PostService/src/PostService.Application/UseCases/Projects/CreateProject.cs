@@ -43,9 +43,12 @@ namespace PostService.Application.UseCases.Projects
             var post = new Post(postRequest.Status);
             var mediasToCommit = new List<MediaFile>();
             var mediasToDelete = new List<MediaFile>();
+            await ProcessPostContents(post, postContents, mediasToCommit, mediasToDelete);
             await ProcessCategories(post, categories);
             await ProcessTools(post, tools);
-            await ProcessPostContents(post, postContents, mediasToCommit, mediasToDelete);
+            var media = await mediaFileServices.SaveImageAsync(postRequest.ImgFile!, "media/posts");
+            post.AddImgUrl(media!.Path);
+            mediasToCommit.Add(media);
             await this.postServices.Save(post);
             await CommitMedias(mediasToCommit);
             await DeleteMedias(mediasToDelete);
@@ -54,7 +57,10 @@ namespace PostService.Application.UseCases.Projects
         {
             var validationError = ValidationHelper.Validate(postRequest);
             if (validationError.Count > 0)
-                throw new ValidationException($"Erro ao validar dados: {validationError}");
+            {
+                var errors = string.Join(", ", validationError.Select(e => e.ErrorMessage));
+                throw new ValidationException($"Erro ao validar dados: {errors}");
+            }
         }
         private static List<ToolDeserialize> DeserializeTools(string jsonTools)
         {
@@ -83,7 +89,10 @@ namespace PostService.Application.UseCases.Projects
             {
                 var validationError = ValidationHelper.Validate(item);
                 if (validationError.Count > 0)
-                    throw new ValidationException($"Erro ao validar dados: {validationError}");
+                {
+                    var errors = string.Join(", ", validationError.Select(e => e.ErrorMessage));
+                    throw new ValidationException($"Erro ao validar dados: {errors}");
+                }
                 if (item.Id is not Guid categoryId)
                     throw new ValidationException("O identificador relacionado as categorias são obrigatórios");
                 var category = await this.categoryServices.GetById(categoryId);
@@ -94,28 +103,34 @@ namespace PostService.Application.UseCases.Projects
         }
         private async Task ProcessTools(Post post, List<ToolDeserialize> toolRequests)
         {
-            foreach(var item in toolRequests)
+            foreach (var item in toolRequests)
             {
                 var validationError = ValidationHelper.Validate(item);
                 if (validationError.Count > 0)
-                    throw new ValidationException($"Erro ao validar dados: {validationError}");
+                {
+                    var errors = string.Join(", ", validationError.Select(e => e.ErrorMessage));
+                    throw new ValidationException($"Erro ao validar dados: {errors}");
+                }
                 if (item.Id is not Guid toolId)
-                    throw new ValidationException("O identificador relacionado as categorias são obrigatórios");
+                    throw new ValidationException("O identificador da ferramenta relacionado ao projeto é obrigatório");
                 var tool = await this.toolsServices.GetById(toolId);
-                if(tool == null)
-                    throw new NotFoundException("Categoria não encontrada.");
+                if (tool == null)
+                    throw new NotFoundException("Ferramenta não encontrada.");
                 post.AddTool(tool);
             }
         }
         private async Task ProcessPostContents(Post post, List<PostContentDeserialize> postContents, List<MediaFile> mediasToCommit, List<MediaFile> mediasToDelete)
         {
-            foreach(var item in postContents)
+            foreach (var item in postContents)
             {
                 var validationError = ValidationHelper.Validate(item);
                 if (validationError.Count > 0)
-                    throw new ValidationException($"Erro ao validar dados: {validationError}");
+                {
+                    var errors = string.Join(", ", validationError.Select(e => e.ErrorMessage));
+                    throw new ValidationException($"Erro ao validar dados: {errors}");
+                }
                 var postContent = await this.postContentServices.FindBy(pc => pc.Slug == item.Slug && pc.LanguageId == item.LanguageId);
-                if(postContent != null)
+                if (postContent != null)
                     throw new ValidationException("Erro ao validar dados");
                 postContent = new PostContent(post.Id, item.LanguageId, item.Title, item.Description, item.Content, item.Slug);
                 var toRemoveImages = item.ImagesUrls.Where(image => !item.Content.Contains(image)).ToList();

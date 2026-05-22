@@ -42,6 +42,11 @@ namespace PostService.Application.Services
             return await this.postRepository.GetForUpdate(Id);
         }
 
+        public async Task<Post> GetFullDataById(Guid Id)
+        {
+            return await this.postRepository.GetFullDataById(Id);
+        }
+
         public async Task<Post> GetPostById(Guid Id)
         {
             return await this.postRepository.GetPostById(Id);

@@ -7,15 +7,26 @@ import { Heart, MessageCircle } from 'lucide-react';
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { useLanguages } from "@/hooks/useLanguages";
+import { useSession } from "next-auth/react";
+import { usePaginationProject } from "@/hooks/usePaginationProject";
+import CardProject from "./components/card-project";
 export default function ProjectPage() {
+    const { data: session } = useSession();
     const searchParams = useSearchParams();
     const page = Number(searchParams.get("page")) || 1;
     const search = searchParams.get("search") || undefined;
     const [searchInput, setSearchInput] = useState(search ?? "");
+    const { data: languages } = useLanguages();
+    const { data: projects } = usePaginationProject({
+        page,
+        search
+    })
+    console.log("Projetos: ",projects);
     return (
         <>
-            <main className="relative mx-auto flex min-h-screen inset-0 w-screen max-w-[1440px] justify-center bg-white dark:bg-black ">
-                <section className="relative w-screen h-svh px-10 py-18">
+            <main className="relative mx-auto flex min-h-screen inset-0 w-full max-w-[1440px] justify-center bg-white dark:bg-black ">
+                <section className="relative w-full min-h-screen px-10 py-18">
                     <div className="flex p-10 items-center justify-between">
                         <h1 className="text-3xl md:text-5xl">Projects</h1>
                         <div className="flex gap-2 items-center">
@@ -34,7 +45,10 @@ export default function ProjectPage() {
                     </div>
                     <div className="flex py-10 md:p-10">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-5">
-                            <div className="bg-background border border-primary max-w-xl w-full rounded-lg overflow-hidden shadow-sm">
+                            {projects?.items.map((item, index)=>(
+                                <CardProject key={index} item={item} languages={languages} />
+                            ))}
+                            {/* <div className="bg-background border border-primary max-w-xl w-full rounded-lg overflow-hidden shadow-sm">
                                 <article className="p-4 flex space-x-3">
                                     <div className="flex-1 min-w-0">
                                         <div className="flex justify-between items-center mb-1">
@@ -144,7 +158,7 @@ export default function ProjectPage() {
                                         <Button className="w-full">View Event</Button>
                                     </div>
                                 </article>
-                            </div>
+                            </div> */}
                         </div>
 
                     </div>

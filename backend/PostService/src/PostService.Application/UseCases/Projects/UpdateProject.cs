@@ -142,7 +142,10 @@ namespace PostService.Application.UseCases.Projects
             {
                 var validationError = ValidationHelper.Validate(item);
                 if (validationError.Count > 0)
-                    throw new ValidationException($"Erro ao validar dados: {validationError}");
+                {
+                    var errors = string.Join(", ", validationError.Select(e => e.ErrorMessage));
+                    throw new ValidationException($"Erro ao validar dados: {errors}");
+                }
                 if (item.Id.HasValue)
                 {
                     var postContent = post.PostContents.FirstOrDefault(pc => pc.Id == item.Id.Value);

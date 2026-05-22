@@ -41,7 +41,8 @@ export default function ToolCreatePage() {
                     description: "",
                     name: "",
                     slug: "",
-                    languageId: ""
+                    languageId: "",
+                    title: ""
                 }
             ],
         }
@@ -147,6 +148,7 @@ export default function ToolCreatePage() {
                                 onClick={() =>
                                     append({
                                         languageId: "",
+                                        title:"",
                                         name: "",
                                         slug: "",
                                         content: "",
@@ -214,7 +216,6 @@ export default function ToolCreatePage() {
                                                 )}
                                             </div>
                                         </div>
-
                                     </div>
                                     <div className="py-2">
                                         <Controller
@@ -265,16 +266,17 @@ export default function ToolCreatePage() {
                                         </div>
                                     </div>
                                     {fieldToolContents.map((item, index) => (
-                                        <div key={item.id} className="w-full max-h-full h-[500px] flex flex-col overflow-hidden">
+                                        <div key={item.id} className="w-full max-h-full h-[550px] flex flex-col overflow-hidden">
                                             <div className="flex flex-col gap-6 flex-1 min-h-0 border-t pb-3 py-3">
                                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-2">
+                                                   
                                                     <Controller
                                                         name={`toolContents.${index}.name`}
                                                         control={control}
                                                         render={({ field }) => (
                                                             <Field className="grid gap-2">
                                                                 <div className="flex flex-col gap-2">
-                                                                    <Label htmlFor="title">Name</Label>
+                                                                    <Label htmlFor="name">Name</Label>
                                                                     <Input
                                                                         {...field}
                                                                         placeholder="Informe o nome..."
@@ -331,6 +333,22 @@ export default function ToolCreatePage() {
                                                         )}
                                                     />
                                                 </div>
+                                                 <Controller
+                                                        name={`toolContents.${index}.title`}
+                                                        control={control}
+                                                        render={({ field }) => (
+                                                            <Field className="grid gap-2">
+                                                                <div className="flex flex-col gap-2">
+                                                                    <Label htmlFor="name">Title</Label>
+                                                                    <Input
+                                                                        {...field}
+                                                                        placeholder="Informe o titulo..."
+                                                                    />
+                                                                    {errorsTool.toolContents?.[index]?.title && <span className="text-wrap text-red-600 text-sm">{errorsTool.toolContents[index]?.title?.message}</span>}
+                                                                </div>
+                                                            </Field>
+                                                        )}
+                                                    />
                                                 <Controller
                                                     name={`toolContents.${index}.description`}
                                                     control={control}

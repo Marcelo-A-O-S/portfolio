@@ -44,8 +44,8 @@ export default function ToolsPage() {
                 <div className="flex md:px-10 gap-2">
 
                 </div>
-                <div className="flex py-10 md:p-10">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
+                <div className="flex  justify-center py-10 md:p-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
                         {tools?.items.map((item, index) => (
                             <CardTool key={index} item={item} languages={languages} />
                         ))}

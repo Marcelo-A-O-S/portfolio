@@ -7,9 +7,8 @@ import { InputGroup, InputGroupTextarea } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import { postSchema, PostSchema } from "@/domain/schemas/PostSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { addPostService } from "@/services/client/post-services";
+import { useEffect, useState } from "react";
+import { Controller, ControllerRenderProps, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useCategories } from "@/hooks/useCategories";
 import { useLanguages } from "@/hooks/useLanguages";
@@ -19,17 +18,24 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { CategorySchema } from "@/domain/schemas/CategorySchema";
 import { ToolSchema } from "@/domain/schemas/ToolSchema";
 import { useTools } from "@/hooks/useTools";
+import { ImageIcon } from "lucide-react";
+import { useGetByIdPost } from "@/hooks/useGetByIdPost";
+import { addImageMarkDown } from "@/services/client/image-client";
+import { useCreateProject } from "@/hooks/useCreateProject";
+import { useUpdateProject } from "@/hooks/useUpdateProject";
 export default function ProjectCreate() {
     const searchParams = useSearchParams();
-    const toolId = searchParams.get("postId") || undefined;
+    const postId = searchParams.get("postId") || undefined;
     const { data: categories } = useCategories();
     const { data: languages } = useLanguages();
     const { data: tools } = useTools();
-    const [preview, openPreview] = useState(false);
-    const [postData, setPostData] = useState({})
+    const { data: post } = useGetByIdPost(postId);
+    const { mutateAsync: updateProject } = useUpdateProject();
+    const { mutateAsync: createProject } = useCreateProject();
+    const [postPreview, setPostPreview] = useState<string | null>(null);
     const [openDialogCategory, setOpenDialogCategory] = useState(false);
     const [openDialogTools, setOpenDialogTools] = useState(false);
-    const { control, handleSubmit, formState: { }, watch } = useForm<PostSchema>({
+    const { control, handleSubmit, formState: { errors: errorsPost }, watch, reset, getValues, setValue } = useForm<PostSchema>({
         resolver: zodResolver(postSchema),
         defaultValues: {
             imgUrl: '',
@@ -42,6 +48,14 @@ export default function ProjectCreate() {
             }]
         }
     });
+    useEffect(() => {
+        if (!post) return;
+        reset({
+            ...post,
+            imgFile: undefined
+        })
+        setPostPreview(`${process.env.NEXT_PUBLIC_FILES_URL}/${post.imgUrl}`);
+    }, [post, reset]);
     const { fields: fieldPostContents, append } = useFieldArray({
         control,
         name: "postContents"
@@ -57,13 +71,15 @@ export default function ProjectCreate() {
     const categoriesWatch = watch("categories");
     const toolsWatch = watch("tools");
     const onSubmit = async (data: PostSchema) => {
-        const response = await addPostService(data);
-        if (response.status !== 200 && response.status !== 201) {
-            return toast.error("Erro ao salvar postagem: ", response.data.message);
+        console.log("Atualizando Projeto: ",data);
+        if (post) {
+            await updateProject({ id: post.id, data: data });
+        } else {
+            await createProject(data);
         }
     }
     const addTool = (data: ToolSchema) => {
-        const exists = categoriesWatch.some(
+        const exists = toolsWatch.some(
             (c) => c.id === data.id
         )
         if (exists) return
@@ -75,6 +91,35 @@ export default function ProjectCreate() {
         )
         if (exists) return
         appendFieldCategory(data);
+    }
+    const handleDrop = async (e: React.DragEvent<HTMLTextAreaElement>, field: ControllerRenderProps<PostSchema, `postContents.${number}.content`>, index: number) => {
+        e.preventDefault();
+        const file = e.dataTransfer.files?.[0];
+        if (!file || !file.type.startsWith("image/")) return;
+        const textarea = e.currentTarget;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const response = await addImageMarkDown(file);
+        if (response.status !== 200 && response.status !== 201) {
+            toast.error(`Erro ao adicionar imagem: ${response.data.message}`);
+            return;
+        }
+        const url = response.data.url;
+        const urlMarkdown = `\n![image](${url})\n`
+        const newValue = field.value.substring(0, start) + urlMarkdown + field.value.substring(end);
+        field.onChange(newValue);
+        const currentImages = getValues(`postContents.${index}.imagesUrls`) ?? [];
+        setValue(`postContents.${index}.imagesUrls`, [...currentImages, url]);
+        const imagesUpdated = getValues(`postContents.${index}.imagesUrls`);
+        console.log(imagesUpdated);
+    }
+    const handleImage = async (e: React.ChangeEvent<HTMLInputElement>, field: ControllerRenderProps<PostSchema, `imgFile`>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        field.onChange(file);
+        setValue("imgFile", file);
+        setValue("imgUrl", file.name);
+        setPostPreview(URL.createObjectURL(file));
     }
     return (
         <>
@@ -134,7 +179,7 @@ export default function ProjectCreate() {
                     </div>
                 </DialogContent>
             </Dialog>
-            <main className="relative mx-auto flex min-h-full inset-0 w-screen max-w-[1440px] justify-center bg-background overflow-x-hidden">
+            <main className="relative mx-auto flex min-h-full inset-0 w-full max-w-[1440px] justify-center bg-background overflow-x-hidden">
                 <section className="relative w-full min-h-screen px-10 py-20 flex flex-col">
                     <div className="flex flex-col gap-3 sm:flex-row py-10 md:p-10 sm:items-center justify-between">
                         <h1 className="text-3xl md:text-5xl font-semibold">Create Project</h1>
@@ -185,16 +230,48 @@ export default function ProjectCreate() {
                                 </CardHeader>
                                 <CardContent className="flex-1 flex flex-col min-h-0">
                                     <div className="py-2">
+                                        <div className="flex flex-col gap-2">
+                                            <div className="flex justify-between flex-col gap-2 md:flex-row">
+                                                <Label>Preview</Label>
+                                                <Button>Clear Preview</Button>
+                                            </div>
+                                            <div className="flex relative border rounded-sm h-45 items-center justify-center text-sm">
+                                                {postPreview ? (
+                                                    <>
+                                                        <div className="relative">
+                                                            <img
+                                                                src={postPreview}
+                                                                alt="Preview"
+                                                                className="h-42 rounded border object-cover"
+                                                            />
+                                                        </div>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <div className="flex flex-col justify-center items-center">
+                                                            <ImageIcon />
+                                                            Imagem não adicionada
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="py-2">
                                         <Controller
-                                            name={`imgUrl`}
+                                            name={`imgFile`}
                                             control={control}
                                             render={({ field }) => (
                                                 <div className="grid gap-2">
-                                                    <Label htmlFor="imgUrl">Imagem</Label>
-                                                    <Input
-                                                        {...field}
-                                                        placeholder="Informe a url ..."
-                                                    />
+                                                    <div className="flex flex-col gap-2">
+                                                        <Label htmlFor="imgFile">Imagem</Label>
+                                                        <Input
+                                                            onChange={(e) => handleImage(e, field)}
+                                                            type="file"
+                                                            className="cursor-pointer"
+                                                        />
+                                                    </div>
+                                                    {errorsPost.imgUrl && <span className="text-wrap text-red-600 text-sm">{errorsPost.imgUrl.message}</span>}
                                                 </div>
                                             )}
                                         />
@@ -338,6 +415,8 @@ export default function ProjectCreate() {
                                                                     {...field}
                                                                     placeholder="Informe o conteudo aqui..."
                                                                     className="flex-1 resize-none overflow-y-auto text-sm leading-relaxed"
+                                                                    onDragOver={(e) => e.preventDefault()}
+                                                                    onDrop={(e) => handleDrop(e, field, index)}
                                                                 />
                                                             </InputGroup>
                                                         </Field>

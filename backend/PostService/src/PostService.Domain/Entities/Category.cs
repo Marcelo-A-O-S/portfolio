@@ -1,12 +1,11 @@
-using System.Collections.Generic;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json.Serialization;
 namespace PostService.Domain.Entities
 {
     public class Category
     {
         public Guid Id { get; private set; }
+        [JsonIgnore]
+        public ICollection<Post> Posts { get; private set; }
         [JsonIgnore]
         public ICollection<Tool> Tools {get; private set; }
         public ICollection<CategoryContent> CategoryContents { get; private set;}

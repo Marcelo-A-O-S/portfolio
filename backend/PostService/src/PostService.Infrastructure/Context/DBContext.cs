@@ -26,6 +26,7 @@ namespace PostService.Infrastructure.Context
             modelBuilder.Entity<CategoryContent>().HasIndex(cc => cc.Slug);
             modelBuilder.Entity<Language>().HasIndex(lg => lg.Code);
             modelBuilder.Entity<MediaFile>().HasIndex(mf => mf.Path).IsUnique();
+            modelBuilder.Entity<Like>().HasIndex(l => new { l.PostId, l.UserId}).IsUnique();
         }
     }
 }

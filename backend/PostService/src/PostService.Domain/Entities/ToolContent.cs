@@ -10,17 +10,19 @@ namespace PostService.Domain.Entities
         public Guid LanguageId {get; private set;}
         public Language Language { get; private set; }
         public string Name { get; private set; }
+        public string Title { get; private set; }
         public string Description { get; private set; }
         public string? Content { get; private set; }
         public List<string> ImagesUrls { get; private set; }
         public string Slug { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
-        public ToolContent(Guid toolId, Guid languageId, string name, string description, string content, string slug)
+        public ToolContent(Guid toolId, Guid languageId, string name, string title, string description, string content, string slug)
         {
             this.ToolId = toolId;
             this.LanguageId = languageId;
             this.Name = name;
+            this.Title = title;
             this.Description = description;
             this.Content = content;
             this.ImagesUrls = new List<string>();
@@ -28,10 +30,11 @@ namespace PostService.Domain.Entities
             this.CreatedAt = DateTime.UtcNow;
             this.UpdatedAt = DateTime.UtcNow;
         }
-        public void Update(Guid languageId, string name, string description, string content, string slug)
+        public void Update(Guid languageId, string name, string title, string description, string content, string slug)
         {
             this.LanguageId = languageId;
             this.Name = name;
+            this.Title = title;
             this.Description = description;
             this.Content = content;
             this.Slug = slug;

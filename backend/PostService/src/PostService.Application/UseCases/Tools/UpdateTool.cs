@@ -1,13 +1,13 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using PostService.Application.DTOs.Deserialize;
 using PostService.Application.DTOs.Request;
 using PostService.Application.Exceptions;
 using PostService.Application.Interfaces;
 using PostService.Application.UseCases.Tools.Interfaces;
 using PostService.Application.Validations;
 using PostService.Domain.Entities;
-using Microsoft.AspNetCore.Http.HttpResults;
-using PostService.Application.DTOs.Deserialize;
 
 namespace PostService.Application.UseCases.Tools
 {
@@ -51,7 +51,10 @@ namespace PostService.Application.UseCases.Tools
                 throw new ValidationException("Endereço de imagem obrigatório.");
             var validationError = ValidationHelper.Validate(toolRequest);
             if (validationError.Count > 0)
-                throw new ValidationException($"Erro ao validar dados: {validationError}");
+            {
+                var errors = string.Join(", ", validationError.Select(e => e.ErrorMessage));
+                throw new ValidationException($"Erro ao validar dados: {errors}");
+            }
         }
         private static List<ToolContentDeserialize> DeserializeToolContents(string jsonToolContents)
         {
@@ -101,13 +104,13 @@ namespace PostService.Application.UseCases.Tools
                     var toolContent = tool.ToolContents.FirstOrDefault(tc => tc.Id == item.Id.Value);
                     if (toolContent == null)
                         throw new NotFoundException("Conteúdo da ferramenta não encontrada.");
-                    toolContent.Update(item.LanguageId, item.Name, item.Description, item.Content, item.Slug);
+                    toolContent.Update(item.LanguageId, item.Name, item.Title, item.Description, item.Content, item.Slug);
                     await ProcessToolContentImages(item, mediasToCommit, mediasToDelete);
                     toolContent.SetImagesUrls(item.ImagesUrls);
                 }
                 else
                 {
-                    var toolContent = new ToolContent(tool.Id, item.LanguageId, item.Name, item.Description, item.Content, item.Slug);
+                    var toolContent = new ToolContent(tool.Id, item.LanguageId, item.Name, item.Title, item.Description, item.Content, item.Slug);
                     await ProcessToolContentImages(item, mediasToCommit, mediasToDelete);
                     toolContent.SetImagesUrls(item.ImagesUrls);
                     tool.AddToolContent(toolContent);
