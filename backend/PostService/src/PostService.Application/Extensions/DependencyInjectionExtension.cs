@@ -30,6 +30,7 @@ namespace PostService.Application.Extensions
             services.AddScoped<ILanguageServices, LanguageServices>();
             services.AddScoped<IMediaFileServices, MediaFileServices>();
             services.AddScoped<IFileServices, FileServices>();
+            services.AddScoped<IUserCacheServices, UserCacheServices>();
 
             services.AddScoped<ICreateTool, CreateTool>();
             services.AddScoped<IUpdateTool, UpdateTool>();

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AuthService.Application.DTOs.Request;
 using Microsoft.AspNetCore.RateLimiting;
+using AuthService.Application.UseCases.Users.Interfaces;
 
 namespace AuthService.API.Controllers
 {
@@ -12,9 +13,20 @@ namespace AuthService.API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserServices userServices;
-        public UserController(IUserServices _userServices)
+        private readonly IDeleteUser deleteUser;
+        private readonly IBanUser banUser;
+        private readonly IModifyRoleUser modifyRoleUser;
+        public UserController(
+            IUserServices _userServices,
+            IDeleteUser _deleteUser,
+            IBanUser _banUser,
+            IModifyRoleUser _modifyRoleUser
+            )
         {
             this.userServices = _userServices;
+            this.deleteUser = _deleteUser;
+            this.banUser = _banUser;
+            this.modifyRoleUser = _modifyRoleUser;
         }
         [HttpGet]
         [Authorize(Roles = "Administrador,Client")]
@@ -61,11 +73,7 @@ namespace AuthService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await this.userServices.GetById(Id);
-                if (user == null)
-                    return NotFound();
-                user.UpdateRole(updateRoleRequest.Role);
-                await this.userServices.Update(user);
+                await this.modifyRoleUser.ExecuteAsync(Id, updateRoleRequest);
                 return Ok(new { message = "Função de usuário atualizada com sucesso!" });
             }
             var errors = ModelState.Values.Select(e => e.Errors);
@@ -76,10 +84,7 @@ namespace AuthService.API.Controllers
         [EnableRateLimiting("sensitive")]
         public async Task<IActionResult> DeleteUser([FromRoute] Guid Id)
         {
-            var user = await this.userServices.GetById(Id);
-            if (user == null)
-                return NotFound();
-            await this.userServices.Delete(user);
+            await this.deleteUser.ExecuteAsync(Id);
             return Ok(new { message = "Usuário deletado com sucesso!" });
         }
         [HttpPatch("{Id}/BanUser")]
@@ -87,11 +92,7 @@ namespace AuthService.API.Controllers
         [EnableRateLimiting("sensitive")]
         public async Task<IActionResult> BanUser([FromRoute] Guid Id)
         {
-            var user = await this.userServices.GetById(Id);
-            if (user == null)
-                return NotFound();
-            user.Ban();
-            await this.userServices.Update(user);
+            await this.banUser.ExecuteAsync(Id);
             return Ok(new { message = "Usuário banido com sucesso!" });
         }
     }

@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PostService.Domain.Entities;
 using PostService.Domain.Interfaces;
 using PostService.Infrastructure.Repositories;
+using PostService.Infrastructure.Workers;
 
 namespace PostService.Infrastructure.Extensions
 {
@@ -30,6 +31,8 @@ namespace PostService.Infrastructure.Extensions
             services.AddScoped<IToolContentRepository, ToolContentRepository>();
             services.AddScoped<ILanguageRepository, LanguageRepository>();
             services.AddScoped<IMediaFileRepository, MediaFileRepository>();
+
+            services.AddSingleton<IRabbitMQProducer, RabbitMQProducer>();
             return services;
         }
     }

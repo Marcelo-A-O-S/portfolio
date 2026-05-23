@@ -23,6 +23,7 @@ namespace PostService.Infrastructure.Jobs
             {
                 try
                 {
+                    this.logger.LogInformation("Iniciando limpeza de imagens não utilizadas...");
                     using var scope = this.serviceProvider.CreateScope();
                     var cleanupMedia = scope.ServiceProvider.GetRequiredService<IMediaFileRepository>();
                     await cleanupMedia.DeleteExpiredPendingMediaAsync();

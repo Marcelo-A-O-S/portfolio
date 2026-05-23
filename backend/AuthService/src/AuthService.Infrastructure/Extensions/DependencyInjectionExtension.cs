@@ -2,6 +2,7 @@ using AuthService.Domain.Interfaces;
 using AuthService.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using AuthService.Domain.Entities;
+using AuthService.Infrastructure.Workers;
 
 namespace AuthService.Infrastructure.Extensions
 {
@@ -18,6 +19,8 @@ namespace AuthService.Infrastructure.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ISocialAccountRepository, SocialAccountRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+
+            services.AddSingleton<IRabbitMQProducer, RabbitMQProducer>();
             return services;
         }
     }

@@ -8,6 +8,8 @@ namespace PostService.Infrastructure.Extensions
             this IServiceCollection services, IConfiguration configuration
         )
         {
+            services.AddIntegrations(configuration);
+            services.AddRedis(configuration);
             services.AddDBContextExtension(configuration);
             services.AddDependencyInjection();
             return services;

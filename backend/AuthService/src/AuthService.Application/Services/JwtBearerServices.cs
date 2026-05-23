@@ -34,6 +34,7 @@ namespace AuthService.Application.Services
             claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()));
             claims.Add(new Claim(JwtRegisteredClaimNames.Name, user.Name));
             claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
+            claims.Add(new Claim("Status", user.Status.ToString()));
             claims.Add(new Claim(ClaimTypes.Role, user.Role.ToString()));
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Secret));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

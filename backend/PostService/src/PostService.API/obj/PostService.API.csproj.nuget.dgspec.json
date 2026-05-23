@@ -59,6 +59,10 @@
               "target": "Package",
               "version": "[8.0.19, )"
             },
+            "StackExchange.Redis": {
+              "target": "Package",
+              "version": "[2.13.1, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.6.2, )"
@@ -298,6 +302,9 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
+              "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Application\\PostService.Application.csproj": {
+                "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Application\\PostService.Application.csproj"
+              },
               "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\PostService.Domain.csproj": {
                 "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\PostService.Domain.csproj"
               }
@@ -346,9 +353,25 @@
               "target": "Package",
               "version": "[8.0.1, )"
             },
+            "Microsoft.Extensions.Http.Polly": {
+              "target": "Package",
+              "version": "[8.0.27, )"
+            },
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
               "version": "[8.0.11, )"
+            },
+            "Polly": {
+              "target": "Package",
+              "version": "[8.6.6, )"
+            },
+            "RabbitMQ.Client": {
+              "target": "Package",
+              "version": "[7.2.1, )"
+            },
+            "StackExchange.Redis": {
+              "target": "Package",
+              "version": "[2.13.1, )"
             }
           },
           "imports": [

@@ -137,6 +137,9 @@ namespace PostService.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
 
@@ -145,7 +148,8 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PostId");
+                    b.HasIndex("PostId", "UserId")
+                        .IsUnique();
 
                     b.ToTable("Likes");
                 });
