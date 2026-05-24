@@ -17,6 +17,11 @@ namespace AuthService.Application.Services
             await this.socialAccountRepository.Delete(entity);
         }
 
+        public async Task<bool> Exists(Guid Id)
+        {
+            return await this.socialAccountRepository.Exists(Id);
+        }
+
         public async Task<SocialAccount> FindBy(Expression<Func<SocialAccount, bool>> predicate)
         {
             return await this.socialAccountRepository.FindBy(predicate);

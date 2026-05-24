@@ -9,6 +9,8 @@ namespace AuthService.Infrastructure.Extensions
             this IServiceCollection services, IConfiguration configuration
         )
         {
+            services.AddRedis(configuration);
+            services.AddRabbitMQConnection(configuration);
             services.AddDBContextExtension(configuration);
             services.AddDependencyInjection();
             services.AddHostedExtension();

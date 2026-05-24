@@ -49,6 +49,25 @@ namespace AuthService.Application.Services
             );
             return (new JwtSecurityTokenHandler().WriteToken(token), expireIn);
         }
+
+        public async Task<string> GenerateInternalToken(List<Claim> claims)
+        {
+            var Secret = this.configuration.GetSection("JWT:Secret").Value;
+            var IssuerSecret = this.configuration.GetSection("JWT:Issuer").Value;
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Secret));
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var expirationMinutes = 1;
+            var expireIn = (int)TimeSpan.FromMinutes(expirationMinutes).TotalSeconds;
+            var expirationDate = DateTime.UtcNow.AddSeconds(expireIn);
+            var token = new JwtSecurityToken(
+                issuer: IssuerSecret,
+                claims: claims,
+                expires: expirationDate,
+                signingCredentials: credentials
+            );
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
         public async Task<(RefreshToken entity, string plainToken)> GenerateRefreshToken(Guid userId, string deviceId, string deviceName)
         {
             var existing = await this.refreshTokenRepository.FindBy(rt => rt.UserId == userId && rt.DeviceId == deviceId && rt.RevokedAt == null);

@@ -19,6 +19,12 @@ namespace AuthService.Application.Services
         {
             await this.refreshTokenRepository.Delete(entity);
         }
+
+        public async Task<bool> Exists(Guid Id)
+        {
+            return await this.refreshTokenRepository.Exists(Id);
+        }
+
         public async Task<RefreshToken> FindBy(Expression<Func<RefreshToken, bool>> predicate)
         {
             return await this.refreshTokenRepository.FindBy(predicate);

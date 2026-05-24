@@ -10,6 +10,7 @@ namespace PostService.Infrastructure.Extensions
         {
             services.AddIntegrations(configuration);
             services.AddRedis(configuration);
+            services.AddRabbitMQConnection(configuration);
             services.AddDBContextExtension(configuration);
             services.AddDependencyInjection();
             return services;

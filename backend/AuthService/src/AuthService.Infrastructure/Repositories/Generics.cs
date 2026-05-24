@@ -18,6 +18,13 @@ namespace AuthService.Infrastructure.Repositories
             await this.context.SaveChangesAsync();
         }
 
+        public async Task<bool> Exists(Guid Id)
+        {
+            var entity = await this.context.Set<T>().FindAsync(Id);
+            if(entity == null)
+                return false;
+            return true;
+        }
         public async Task<T> FindBy(Expression<Func<T, bool>> predicate)
         {
             return await this.context.Set<T>().Where(predicate).FirstOrDefaultAsync();

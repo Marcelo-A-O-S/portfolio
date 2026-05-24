@@ -12,5 +12,6 @@ namespace AuthService.Application.Interfaces
         Task<T> GetById(Guid Id);
         Task<List<T>> List();
         Task<List<T>> List(int page);
+        Task<bool> Exists(Guid Id);
     }
 }

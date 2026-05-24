@@ -55,5 +55,10 @@ namespace AuthService.Application.Services
         {
             return await this.userRepository.GetByPagination(page, search, role, status);
         }
+
+        public async Task<bool> Exists(Guid Id)
+        {
+            return await this.userRepository.Exists(Id);
+        }
     }
 }

@@ -114,6 +114,20 @@ namespace AuthService.API.Extension
                      }
                  );
                 });
+                options.AddPolicy("internal-auth", context =>
+                {
+                    var partitionKey = GetPartitionKey(context);
+                    return RateLimitPartition.GetFixedWindowLimiter(
+                     partitionKey,
+                     factory: _ => new FixedWindowRateLimiterOptions
+                     {
+                         PermitLimit = 10,
+                         Window = TimeSpan.FromMinutes(1),
+                         QueueLimit = 5,
+                         QueueProcessingOrder = QueueProcessingOrder.OldestFirst
+                     }
+                 );
+                });
             });
             return services;
         }

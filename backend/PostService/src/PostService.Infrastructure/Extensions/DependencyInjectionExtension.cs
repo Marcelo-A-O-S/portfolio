@@ -31,7 +31,7 @@ namespace PostService.Infrastructure.Extensions
             services.AddScoped<IToolContentRepository, ToolContentRepository>();
             services.AddScoped<ILanguageRepository, LanguageRepository>();
             services.AddScoped<IMediaFileRepository, MediaFileRepository>();
-
+            
             services.AddSingleton<IRabbitMQProducer, RabbitMQProducer>();
             return services;
         }

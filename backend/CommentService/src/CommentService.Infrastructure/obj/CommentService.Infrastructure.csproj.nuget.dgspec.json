@@ -131,17 +131,29 @@
               "target": "Package",
               "version": "[8.0.21, )"
             },
+            "Microsoft.EntityFrameworkCore.Relational": {
+              "target": "Package",
+              "version": "[8.0.21, )"
+            },
             "Microsoft.Extensions.Hosting.Abstractions": {
               "target": "Package",
               "version": "[8.0.1, )"
             },
-            "Oracle.EntityFrameworkCore": {
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
-              "version": "[8.23.26100, )"
+              "version": "[8.0.11, )"
             },
-            "Oracle.ManagedDataAccess.Core": {
+            "Polly": {
               "target": "Package",
-              "version": "[23.26.100, )"
+              "version": "[8.6.6, )"
+            },
+            "RabbitMQ.Client": {
+              "target": "Package",
+              "version": "[7.2.1, )"
+            },
+            "StackExchange.Redis": {
+              "target": "Package",
+              "version": "[2.13.1, )"
             }
           },
           "imports": [

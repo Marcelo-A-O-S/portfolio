@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using AuthService.Application.DTOs.Response;
 using AuthService.Domain.Entities;
+using System.Collections.Generic;
 namespace AuthService.Application.Interfaces
 {
     public interface IJwtBearerServices
@@ -7,5 +9,6 @@ namespace AuthService.Application.Interfaces
         Task<(string token, int expireIn)> GenerateAccessToken(User user);
         Task<(RefreshToken entity, string plainToken)> GenerateRefreshToken(Guid userId, string deviceId, string deviceName);
         Task<AuthResponse> RefreshAsync(Guid refreshTokenId, Guid userId, string refreshToken, string deviceId, string deviceName);
+        Task<string> GenerateInternalToken(List<Claim> claims);
     }
 }

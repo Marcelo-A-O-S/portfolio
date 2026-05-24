@@ -1,7 +1,10 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
+using PostService.Application.Exceptions;
 using PostService.Domain.Interfaces;
 using PostService.Infrastructure.Context;
+using PostService.Domain.Entities;
 
 namespace PostService.Infrastructure.Repositories
 {
@@ -47,11 +50,22 @@ namespace PostService.Infrastructure.Repositories
             .ToListAsync();
             return items;
         }
-
         public async Task Save(T entity)
         {
-            await this.context.AddAsync(entity);
-            await this.context.SaveChangesAsync();
+            try
+            {
+                await this.context.AddAsync(entity);
+                await this.context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is PostgresException postgresEx
+                    && postgresEx.SqlState == PostgresErrorCodes.UniqueViolation)
+                {
+                    throw new DuplicateException();
+                }
+                throw;
+            }
         }
 
         public async Task Update(T entity)

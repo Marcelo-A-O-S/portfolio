@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using PostService.Domain.Entities;
 using PostService.Application.DTOs.Request;
 using PostService.Application.UseCases.Projects.Interfaces;
-using System.Security.Claims;
 using Microsoft.IdentityModel.JsonWebTokens;
 using PostService.Application.UseCases.Likes.Interfaces;
 
@@ -19,12 +18,14 @@ namespace PostService.API.Controllers
         private readonly IUpdateProject updateProject;
         private readonly IDeleteProject deleteProject;
         private readonly IAddLike addLike;
+        private readonly IRemoveLike removeLike;
         public PostController(
             IPostServices _postServices,
             ICreateProject _createProject,
             IUpdateProject _updateProject,
             IDeleteProject _deleteProject,
-            IAddLike _addLike
+            IAddLike _addLike,
+            IRemoveLike _removeLike
             )
         {
             this.postServices = _postServices;
@@ -32,6 +33,7 @@ namespace PostService.API.Controllers
             this.updateProject = _updateProject;
             this.deleteProject = _deleteProject;
             this.addLike = _addLike;
+            this.removeLike = _removeLike;
         }
         [HttpGet]
         [Authorize(Roles = "Administrador")]
@@ -107,7 +109,7 @@ namespace PostService.API.Controllers
             await this.deleteProject.ExecuteAsync(Id);
             return Ok(new { message = "Postagem deletada com sucesso!" });
         }
-        [HttpPost("{Id:guid}/Like")]
+        [HttpPost("AddLike")]
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> AddLike([FromBody] LikeRequest likeRequest)
         {
@@ -115,7 +117,17 @@ namespace PostService.API.Controllers
             if(userId == null)
                 return Unauthorized();
             await this.addLike.ExecuteAsync(Guid.Parse(userId), likeRequest);
-            return Ok();
+            return Ok(new { message = "Curtida adicionada com sucesso!"});
+        }
+        [HttpPost("RemoveLike")]
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> RemoveLike([FromBody] LikeRequest likeRequest)
+        {
+            var userId = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+            if(userId == null)
+                return Unauthorized();
+            await this.removeLike.ExecuteAsync(Guid.Parse(userId), likeRequest);
+            return NoContent();
         }
     }
 }

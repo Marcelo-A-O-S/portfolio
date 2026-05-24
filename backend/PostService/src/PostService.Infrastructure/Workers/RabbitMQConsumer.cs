@@ -1,8 +1,6 @@
 using System.Text;
-using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-
 namespace PostService.Infrastructure.Workers
 {
     public class RabbitMQConsumer 

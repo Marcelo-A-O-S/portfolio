@@ -45,6 +45,7 @@ namespace PostService.Application.Extensions
             services.AddScoped<IUpdateProject, UpdateProject>();
             services.AddScoped<IDeleteProject, DeleteProject>();
             services.AddScoped<IAddLike, AddLike>();
+            services.AddScoped<IRemoveLike, RemoveLike>();
             return services;
         }
     }

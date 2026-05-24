@@ -17,7 +17,7 @@ namespace CommentService.Infrastructure.Extensions
             }
             services.AddDbContext<DBContext>(options =>
             {
-                options.UseOracle(connectionString);
+                options.UseNpgsql(connectionString);
             });
             return services;
         }

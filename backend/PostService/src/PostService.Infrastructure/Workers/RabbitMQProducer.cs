@@ -14,12 +14,9 @@ namespace PostService.Infrastructure.Workers
         public async Task Publish(string eventName, object data)
         {
             string exchangeName = $"{eventName}-exchange";
-            string queueName = $"{eventName}-queue";
             string routingKey = $"{eventName}-routing";
             await using var channel = await connection.CreateChannelAsync();
             await channel.ExchangeDeclareAsync(exchange: exchangeName, type: ExchangeType.Direct, durable: true);
-            var queue = await channel.QueueDeclareAsync(queue: queueName, durable: true, exclusive: false, autoDelete: false);
-            await channel.QueueBindAsync(queue: queueName, exchange: exchangeName, routingKey: routingKey);
             var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(data));
             var properties = new BasicProperties
             {
