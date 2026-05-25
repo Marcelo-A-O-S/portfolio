@@ -33,12 +33,14 @@ namespace PostService.API.Middleware
                 case NotFoundException:
                     statusCode = HttpStatusCode.NotFound;
                     break;
-
                 case ValidationException:
                     statusCode = HttpStatusCode.BadRequest;
                     break;
                 case UnauthorizedException:
                     statusCode = HttpStatusCode.Unauthorized;
+                    break;
+                case ForbiddenException:
+                    statusCode = HttpStatusCode.Forbidden;
                     break;
             }
             var response = new

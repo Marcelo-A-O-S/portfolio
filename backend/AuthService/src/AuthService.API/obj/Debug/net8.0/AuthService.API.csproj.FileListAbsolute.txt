@@ -141,3 +141,9 @@ c:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\n
 c:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\staticwebassets.build.json.cache
 c:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\staticwebassets.build.endpoints.json
 c:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\obj\Debug\net8.0\swae.build.ex.cache
+C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\bin\Debug\net8.0\Pipelines.Sockets.Unofficial.dll
+C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\bin\Debug\net8.0\Polly.dll
+C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\bin\Debug\net8.0\Polly.Core.dll
+C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\bin\Debug\net8.0\RabbitMQ.Client.dll
+C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\bin\Debug\net8.0\StackExchange.Redis.dll
+C:\Backup\Projetos\portfolio\backend\AuthService\src\AuthService.API\bin\Debug\net8.0\System.IO.Hashing.dll

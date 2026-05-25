@@ -1,25 +1,29 @@
+using AuthService.Application.Configurations;
 using AuthService.Application.DTOs.Request;
 using AuthService.Application.DTOs.Response;
 using AuthService.Application.Exceptions;
 using AuthService.Application.Interfaces;
 using AuthService.Application.UseCases.InternalUser.Interfaces;
 using AuthService.Application.Validations;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using System.Security.Claims;
 namespace AuthService.Application.UseCases.InternalUser
 {
     public class CreateToken : ICreateToken
     {
-        private readonly IConfiguration configuration;
         private readonly IJwtBearerServices jwtBearerServices;
+        private readonly InternalClientOptions options;
+        private readonly InternalJWTOptions jWTInternalOptions;
         public CreateToken(
-            IConfiguration _configuration,
-            IJwtBearerServices _jwtBearerServices
+            IJwtBearerServices _jwtBearerServices,
+            IOptions<InternalClientOptions> _options,
+            IOptions<InternalJWTOptions> _jWTInternalOptions
         )
         {
-            this.configuration = _configuration;
             this.jwtBearerServices = _jwtBearerServices;
+            this.options = _options.Value;
+            this.jWTInternalOptions = _jWTInternalOptions.Value;
         }
         public async Task<TokenResponse> ExecuteAsync(ServiceAuthRequest request)
         {
@@ -28,29 +32,35 @@ namespace AuthService.Application.UseCases.InternalUser
             return new TokenResponse
             {
                 AccessToken = token,
-                ExpireIn = 60
+                ExpireIn = (int)TimeSpan.FromMinutes(this.jWTInternalOptions.InternalExpirationMinutes).TotalSeconds
             };
         }
         private void ValidateRequest(ServiceAuthRequest request)
         {
-            var clientId = this.configuration.GetValue<string>("InternalClients:PostService:ClientId");
-            var clientSecret = this.configuration.GetValue<string>("InternalClients:PostService:ClientSecret");
-            if(string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
-                throw new ValidationException("Chaves de validação internas não configuradas");
             var validationError = ValidationHelper.Validate(request);
             if(validationError.Count > 0)
             {
                 var errors = string.Join(", ", validationError.Select(e => e.ErrorMessage));
                 throw new ValidationException($"Erro ao validar dados: {errors}");
             }
-            if(request.ClientId != clientId || request.ClientSecret != clientSecret)
-                throw new UnauthorizedException("Usuário não autorizado.");
+            var client = this.options.InternalClients.Values
+                .FirstOrDefault(c =>c.ClientId == request.ClientId && c.ClientSecret == request.ClientSecret);
+            if(client == null)
+                throw new UnauthorizedException("Cliente interno inválido.");
         }
         private async Task<string> GenerateToken(ServiceAuthRequest request)
         {
-            var claims = new List<Claim>();
-            claims.Add(new Claim("scope","users.read"));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Aud, request.ClientId));
+            var client = options.InternalClients.Values
+                .First(c => c.ClientId == request.ClientId && c.ClientSecret == request.ClientSecret);
+            var claims = new List<Claim>
+            {
+                new(JwtRegisteredClaimNames.Sub, client.ClientId),
+                new("client_type","internal")
+            };
+            foreach(var scope in client.Scopes)
+            {
+                claims.Add(new Claim("scope", scope));
+            }
             return await this.jwtBearerServices.GenerateInternalToken(claims);
         }
     }

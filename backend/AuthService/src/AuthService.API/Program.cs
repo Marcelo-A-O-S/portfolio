@@ -20,10 +20,11 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 });
 builder.Services.AddRateLimiteExtension();
 builder.Services.AddSwaggerConfig();
+builder.Services.AddPolicyAuthentications(builder.Configuration);
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddCorsConfig();
 builder.Services.AddInfrastructureExtension(builder.Configuration);
-builder.Services.AddApplicationExtension();
+builder.Services.AddApplicationExtension(builder.Configuration);
 var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.Services.ApplyMigrations();

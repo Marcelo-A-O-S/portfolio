@@ -1,5 +1,4 @@
 using Microsoft.OpenApi.Models;
-
 namespace PostService.API.Extensions
 {
     public static class SwaggerConfigExtension

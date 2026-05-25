@@ -1,0 +1,12 @@
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Domain\bin\Debug\net8.0\CommentService.Domain.deps.json
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Domain\bin\Debug\net8.0\CommentService.Domain.dll
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Domain\bin\Debug\net8.0\CommentService.Domain.pdb
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Domain\obj\Debug\net8.0\CommentService.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Domain\obj\Debug\net8.0\CommentService.Domain.AssemblyInfoInputs.cache
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Domain\obj\Debug\net8.0\CommentService.Domain.AssemblyInfo.cs
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Domain\obj\Debug\net8.0\CommentService.Domain.csproj.CoreCompileInputs.cache
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Domain\obj\Debug\net8.0\CommentService.Domain.sourcelink.json
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Domain\obj\Debug\net8.0\CommentService.Domain.dll
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Domain\obj\Debug\net8.0\refint\CommentService.Domain.dll
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Domain\obj\Debug\net8.0\CommentService.Domain.pdb
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Domain\obj\Debug\net8.0\ref\CommentService.Domain.dll

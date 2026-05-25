@@ -12,7 +12,7 @@ namespace PostService.Infrastructure.Extensions
             this IServiceCollection services, IConfiguration configuration
         )
         {
-            var connectionString = configuration.GetSection("Redis:ConnectionString")?.Value;
+            var connectionString = configuration.GetValue<string>("Redis:ConnectionString");
             if(string.IsNullOrEmpty(connectionString))
                 throw new Exception("Chave de conexão do redis não configurada.");
             services.AddSingleton<IConnectionMultiplexer>(sp =>

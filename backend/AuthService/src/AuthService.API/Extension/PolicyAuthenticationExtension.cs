@@ -4,14 +4,15 @@ namespace AuthService.API.Extension
     public static class PolicyAuthenticationExtension
     {
         public static IServiceCollection AddPolicyAuthentications(
-            IServiceCollection services
+            this IServiceCollection services, IConfiguration configuration
         )
         {
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("InternalService", policy =>
+                options.AddPolicy("UsersRead", policy =>
                 {
-                    policy.RequireClaim("scope","users.read");
+                    policy.RequireClaim("scope", "users.read");
+                    policy.RequireClaim("client_type", "internal");
                     policy.RequireClaim(JwtRegisteredClaimNames.Aud, "auth-internal");
                 });
             });

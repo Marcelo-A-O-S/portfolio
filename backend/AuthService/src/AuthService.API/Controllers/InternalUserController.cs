@@ -14,11 +14,13 @@ namespace AuthService.API.Controllers
         {
             this.existsByIdUser = _existsByIdUser;
         }
-        [Authorize(Policy="InternalService")]
+        [Authorize(AuthenticationSchemes="InternalJwt", Policy="UsersRead")]
         [HttpGet("internal/users/{Id}/exists")]
         public async Task<IActionResult> UserExists([FromRoute] Guid Id)
         {
             var exists = await existsByIdUser.ExecuteAsync(Id);
+            if(!exists)
+                return NotFound();
             return Ok(exists);
         }
     }

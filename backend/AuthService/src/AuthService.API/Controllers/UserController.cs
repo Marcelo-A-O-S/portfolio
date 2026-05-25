@@ -29,7 +29,7 @@ namespace AuthService.API.Controllers
             this.modifyRoleUser = _modifyRoleUser;
         }
         [HttpGet]
-        [Authorize(Roles = "Administrador,Client")]
+        [Authorize(AuthenticationSchemes="UserJwt", Roles = "Administrador,Client")]
         [EnableRateLimiting("read")]
         public async Task<IActionResult> List([FromQuery] int? page)
         {
@@ -45,7 +45,7 @@ namespace AuthService.API.Controllers
             return Ok(users);
         }
         [HttpGet("{Id}")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(AuthenticationSchemes="UserJwt", Roles = "Administrador")]
         [EnableRateLimiting("read")]
         public async Task<IActionResult> GetById([FromRoute] Guid Id)
         {
@@ -55,7 +55,7 @@ namespace AuthService.API.Controllers
             return Ok(user);
         }
         [HttpGet("GetByPagination")]
-        [Authorize(Roles = "Administrador,Client")]
+        [Authorize(AuthenticationSchemes="UserJwt", Roles = "Administrador,Client")]
         [EnableRateLimiting("pagination")]
         public async Task<IActionResult> GetByPagination(
             [FromQuery] int page,
@@ -67,7 +67,7 @@ namespace AuthService.API.Controllers
             return Ok(users);
         }
         [HttpPatch("{Id}/ModifyRole")]
-        [Authorize(Roles = "Administrador,Client")]
+        [Authorize(AuthenticationSchemes="UserJwt", Roles = "Administrador,Client")]
         [EnableRateLimiting("patch")]
         public async Task<IActionResult> ModifyRole([FromRoute] Guid Id, [FromBody] UpdateRoleRequest updateRoleRequest)
         {
@@ -80,7 +80,7 @@ namespace AuthService.API.Controllers
             return BadRequest(errors);
         }
         [HttpDelete("{Id}")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(AuthenticationSchemes="UserJwt", Roles = "Administrador")]
         [EnableRateLimiting("sensitive")]
         public async Task<IActionResult> DeleteUser([FromRoute] Guid Id)
         {
@@ -88,7 +88,7 @@ namespace AuthService.API.Controllers
             return Ok(new { message = "Usuário deletado com sucesso!" });
         }
         [HttpPatch("{Id}/BanUser")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(AuthenticationSchemes="UserJwt", Roles = "Administrador")]
         [EnableRateLimiting("sensitive")]
         public async Task<IActionResult> BanUser([FromRoute] Guid Id)
         {

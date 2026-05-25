@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using PostService.Application.Exceptions;
 using PostService.Application.Interfaces;
+using System.Net.Http.Json;
 namespace PostService.Infrastructure.Integrations
 {
     public class UserServicesClient : IUserServicesClient
@@ -23,14 +24,18 @@ namespace PostService.Infrastructure.Integrations
                 var token = await authClient.GetToken();
                 if (token == null)
                     throw new UnauthorizedException("Usuário não autorizado");
-                http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = await this.http.GetAsync($"/api/InternalUser/internal/users/{userId}/exists");
+                var request = new HttpRequestMessage(
+                    HttpMethod.Get,$"/api/InternalUser/internal/users/{userId}/exists");
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var response = await this.http.SendAsync(request);
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                     throw new UnauthorizedException("Token interno inválido");
                 if (response.StatusCode == HttpStatusCode.NotFound)
                     return false;
+                if (response.StatusCode == HttpStatusCode.Forbidden)
+                    throw new ForbiddenException("Permissões insuficientes");
                 response.EnsureSuccessStatusCode();
-                return true;
+                return await response.Content.ReadFromJsonAsync<bool>();
             }
             catch (HttpRequestException)
             {

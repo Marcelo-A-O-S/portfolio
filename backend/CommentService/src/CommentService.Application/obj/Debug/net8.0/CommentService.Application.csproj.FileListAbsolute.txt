@@ -1,0 +1,16 @@
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Application\bin\Debug\net8.0\CommentService.Application.deps.json
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Application\bin\Debug\net8.0\CommentService.Application.dll
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Application\bin\Debug\net8.0\CommentService.Application.pdb
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Application\bin\Debug\net8.0\CommentService.Domain.dll
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Application\bin\Debug\net8.0\CommentService.Domain.pdb
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Application\obj\Debug\net8.0\CommentService.Application.csproj.AssemblyReference.cache
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Application\obj\Debug\net8.0\CommentService.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Application\obj\Debug\net8.0\CommentService.Application.AssemblyInfoInputs.cache
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Application\obj\Debug\net8.0\CommentService.Application.AssemblyInfo.cs
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Application\obj\Debug\net8.0\CommentService.Application.csproj.CoreCompileInputs.cache
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Application\obj\Debug\net8.0\CommentService.Application.sourcelink.json
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Application\obj\Debug\net8.0\CommentS.B74150A4.Up2Date
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Application\obj\Debug\net8.0\CommentService.Application.dll
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Application\obj\Debug\net8.0\refint\CommentService.Application.dll
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Application\obj\Debug\net8.0\CommentService.Application.pdb
+C:\Backup\Projetos\portfolio\backend\CommentService\src\CommentService.Application\obj\Debug\net8.0\ref\CommentService.Application.dll

@@ -1,8 +1,11 @@
+using AuthService.Application.Configurations;
 using AuthService.Application.DTOs.Response;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
 using AuthService.Domain.Interfaces;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -13,20 +16,24 @@ namespace AuthService.Application.Services
 {
     public class JwtBearerServices : IJwtBearerServices
     {
-        private readonly IConfiguration configuration;
         private readonly IRefreshTokenRepository refreshTokenRepository;
         private readonly IUserRepository userRepository;
-        public JwtBearerServices(IConfiguration _configuration, IRefreshTokenRepository _refreshTokenRepository, IUserRepository _userRepository)
+        private readonly InternalJWTOptions jwtInternalOptions;
+        private readonly JwtBearerOptions jwtBearerOptions;
+        public JwtBearerServices(
+            IRefreshTokenRepository _refreshTokenRepository, 
+            IUserRepository _userRepository,
+            IOptions<InternalJWTOptions> _jwtInternalOptions,
+            IOptions<JwtBearerOptions> _jwtBearerOptions)
         {
-            this.configuration = _configuration;
             this.refreshTokenRepository = _refreshTokenRepository;
             this.userRepository = _userRepository;
+            this.jwtInternalOptions = _jwtInternalOptions.Value;
+            this.jwtBearerOptions = _jwtBearerOptions.Value;
         }
         public async Task<(string token, int expireIn)> GenerateAccessToken(User user)
         {
-            var Secret = this.configuration.GetSection("JWT:Secret").Value;
-            var IssuerSecret = this.configuration.GetSection("JWT:Issuer").Value;
-            if (string.IsNullOrEmpty(Secret) || string.IsNullOrEmpty(IssuerSecret))
+            if (string.IsNullOrEmpty(this.jwtBearerOptions.Secret) || string.IsNullOrEmpty(this.jwtBearerOptions.Issuer))
             {
                 throw new Exception("Chaves jwt não configuradas corretamente.");
             }
@@ -36,38 +43,35 @@ namespace AuthService.Application.Services
             claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
             claims.Add(new Claim("Status", user.Status.ToString()));
             claims.Add(new Claim(ClaimTypes.Role, user.Role.ToString()));
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Secret));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.jwtBearerOptions.Secret));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expirationMinutes = 1;
-            var expireIn = (int)TimeSpan.FromMinutes(expirationMinutes).TotalSeconds;
+            var expireIn = (int)TimeSpan.FromMinutes(this.jwtBearerOptions.ExpirationMinutes).TotalSeconds;
             var expirationDate = DateTime.UtcNow.AddSeconds(expireIn);
             var token = new JwtSecurityToken(
-                issuer: IssuerSecret,
+                issuer: this.jwtBearerOptions.Issuer,
                 claims: claims,
                 expires: expirationDate,
                 signingCredentials: credentials
             );
             return (new JwtSecurityTokenHandler().WriteToken(token), expireIn);
         }
-
         public async Task<string> GenerateInternalToken(List<Claim> claims)
         {
-            var Secret = this.configuration.GetSection("JWT:Secret").Value;
-            var IssuerSecret = this.configuration.GetSection("JWT:Issuer").Value;
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Secret));
+            if(this.jwtInternalOptions == null)
+                throw new Exception("Chaves jwt não configuradas corretamente.");
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.jwtInternalOptions.Secret));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expirationMinutes = 1;
-            var expireIn = (int)TimeSpan.FromMinutes(expirationMinutes).TotalSeconds;
+            var expireIn = (int)TimeSpan.FromMinutes(this.jwtInternalOptions.InternalExpirationMinutes).TotalSeconds;
             var expirationDate = DateTime.UtcNow.AddSeconds(expireIn);
             var token = new JwtSecurityToken(
-                issuer: IssuerSecret,
+                issuer: this.jwtInternalOptions.Issuer,
+                audience: "auth-internal",
                 claims: claims,
                 expires: expirationDate,
                 signingCredentials: credentials
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
         public async Task<(RefreshToken entity, string plainToken)> GenerateRefreshToken(Guid userId, string deviceId, string deviceName)
         {
             var existing = await this.refreshTokenRepository.FindBy(rt => rt.UserId == userId && rt.DeviceId == deviceId && rt.RevokedAt == null);
@@ -106,10 +110,6 @@ namespace AuthService.Application.Services
                 await this.refreshTokenRepository.Delete(token);
                 throw new Exception("Refresh token expirado. Gentileza realizar o login novamente.");
             }
-            Console.WriteLine($"Token Id: {token.Id}");
-            Console.WriteLine($"DeviceId: {deviceId}");
-            Console.WriteLine($"RefreshToken: {refreshToken}");
-            Console.WriteLine($"Token Hash: {token.TokenHash}");
             if (!BCrypt.Net.BCrypt.Verify(refreshToken, token.TokenHash))
             {
                 throw new Exception("Refresh token inválido.");
