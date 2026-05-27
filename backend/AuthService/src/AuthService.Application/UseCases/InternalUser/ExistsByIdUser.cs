@@ -1,5 +1,5 @@
 using AuthService.Application.Interfaces;
-using AuthService.Application.UseCases.Users.Interfaces;
+using AuthService.Application.UseCases.InternalUser.Interfaces;
 
 namespace AuthService.Application.UseCases.Users
 {

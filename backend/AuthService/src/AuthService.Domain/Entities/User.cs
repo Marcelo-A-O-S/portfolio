@@ -15,7 +15,7 @@ namespace AuthService.Domain.Entities
         public UserStatus Status { get; private set; }
         public User(string email, string name)
         {
-            this.Id = Guid.NewGuid();
+            this.Id = Guid.Empty;
             this.Email = email;
             this.Name = name;
             this.Role = Role.Client;

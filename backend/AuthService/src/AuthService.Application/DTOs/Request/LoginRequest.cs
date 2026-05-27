@@ -18,5 +18,7 @@ namespace AuthService.Application.DTOs.Request
         public string DeviceId  { get; set;}
         [Required( ErrorMessage = "O nome do despositivo é obrigatório.")]
         public string DeviceName { get; set;}
+        [Required( ErrorMessage = "Token de validação é obrigatório")]
+        public string ProviderToken { get; set; }
     }
 }

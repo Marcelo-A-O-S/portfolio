@@ -66,7 +66,6 @@ namespace AuthService.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("ProfileUrl")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Provider")
@@ -84,7 +83,13 @@ namespace AuthService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("VerifiedAccount")
+                        .HasColumnType("boolean");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ProviderId")
+                        .IsUnique();
 
                     b.HasIndex("UserId");
 
@@ -117,6 +122,9 @@ namespace AuthService.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });

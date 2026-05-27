@@ -46,8 +46,7 @@ namespace PostService.Infrastructure.Messaging.Consumers
                 this.logger.LogError($"Erro ao conectar ao RabbitMQ: {ex.Message}");
             }
         }
-        public override async Task StopAsync(
-        CancellationToken cancellationToken)
+        public override async Task StopAsync(CancellationToken cancellationToken)
         {
             if(connection != null)
                 await this.connection.CloseAsync();

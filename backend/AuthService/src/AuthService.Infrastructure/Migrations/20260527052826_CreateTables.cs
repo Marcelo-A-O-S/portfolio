@@ -58,9 +58,10 @@ namespace AuthService.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Username = table.Column<string>(type: "text", nullable: false),
-                    ProfileUrl = table.Column<string>(type: "text", nullable: false),
+                    ProfileUrl = table.Column<string>(type: "text", nullable: true),
                     ProviderId = table.Column<string>(type: "text", nullable: false),
-                    Provider = table.Column<string>(type: "text", nullable: false)
+                    Provider = table.Column<string>(type: "text", nullable: false),
+                    VerifiedAccount = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -79,9 +80,21 @@ namespace AuthService.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SocialAccounts_ProviderId",
+                table: "SocialAccounts",
+                column: "ProviderId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SocialAccounts_UserId",
                 table: "SocialAccounts",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Email",
+                table: "Users",
+                column: "Email",
+                unique: true);
         }
 
         /// <inheritdoc />

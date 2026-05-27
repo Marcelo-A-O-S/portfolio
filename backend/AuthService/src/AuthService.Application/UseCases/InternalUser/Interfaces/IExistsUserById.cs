@@ -1,4 +1,4 @@
-namespace AuthService.Application.UseCases.Users.Interfaces
+namespace AuthService.Application.UseCases.InternalUser.Interfaces
 {
     public interface IExistsByIdUser
     {

@@ -37,6 +37,9 @@ namespace AuthService.API.Middleware
                 case ValidationException:
                     statusCode = HttpStatusCode.BadRequest;
                     break;
+                case UnauthorizedException:
+                    statusCode = HttpStatusCode.Unauthorized;
+                    break;
             }
             var response = new
             {

@@ -1,4 +1,4 @@
-using AuthService.Application.UseCases.Users.Interfaces;
+using AuthService.Application.UseCases.InternalUser.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace AuthService.API.Controllers

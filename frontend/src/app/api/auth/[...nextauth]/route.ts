@@ -84,14 +84,15 @@ export const authOptions: AuthOptions = {
                     profileUrl: user.image,
                     provider: account.provider,
                     providerId: account.providerAccountId,
+                    providerToken: token.accessToken,
                     username: user.username,
                     deviceId,
                     deviceName
                 }
-                const data = await loginOAuth(loginRequest);
-                const expireDate = Date.now() + data.expireIn * 1000;
                 token.provider = account.provider;
                 token.username = user.username;
+                const data = await loginOAuth(loginRequest);
+                const expireDate = Date.now() + data.expireIn * 1000;
                 token.userId = data.userId;
                 token.accessToken = data.accessToken;
                 token.refreshTokenId = data.refreshTokenId;

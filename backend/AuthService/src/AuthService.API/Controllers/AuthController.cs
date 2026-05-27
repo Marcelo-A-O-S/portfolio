@@ -1,7 +1,6 @@
 using AuthService.Application.DTOs.Request;
-using AuthService.Application.DTOs.Response;
 using AuthService.Application.Interfaces;
-using AuthService.Domain.Entities;
+using AuthService.Application.UseCases.Auth.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 namespace AuthService.API.Controllers
@@ -10,20 +9,17 @@ namespace AuthService.API.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly IUserServices userServices;
+        private readonly ILogin login;
         private readonly IJwtBearerServices jwtBearerServices;
-        private readonly ISocialAccountServices socialAccountServices;
         private readonly IRefreshTokenServices refreshTokenServices;
         public AuthController(
-            IUserServices _userServices,
             IJwtBearerServices _jwtBearerServices,
-            ISocialAccountServices _socialAccountServices,
-            IRefreshTokenServices _refreshTokenServices)
+            IRefreshTokenServices _refreshTokenServices,
+            ILogin _login)
         {
-            this.userServices = _userServices;
             this.jwtBearerServices = _jwtBearerServices;
-            this.socialAccountServices = _socialAccountServices;
             this.refreshTokenServices = _refreshTokenServices;
+            this.login = _login;
         }
         [HttpPost("login")]
         [EnableRateLimiting("login")]
@@ -31,34 +27,8 @@ namespace AuthService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await this.userServices.FindBy(x => x.Email == loginRequest.Email);
-                if (user == null)
-                {
-                    user = new User(loginRequest.Email, loginRequest.Name);
-                    await this.userServices.Save(user);
-                }
-                var socialAccount = await this.socialAccountServices.GetByProviderId(loginRequest.ProviderId);
-                if (socialAccount == null)
-                {
-                    socialAccount = new SocialAccount(
-                        user.Id, loginRequest.Username,
-                        loginRequest.ProfileUrl,
-                        loginRequest.ProviderId,
-                        loginRequest.Provider
-                        );
-                    await this.socialAccountServices.Save(socialAccount);
-                }
-                var accessData = await this.jwtBearerServices.GenerateAccessToken(user);
-                var data = await this.jwtBearerServices.GenerateRefreshToken(user.Id, loginRequest.DeviceId, loginRequest.DeviceName);
-                return Ok(new AuthResponse
-                {
-                    UserId = user.Id,
-                    AccessToken = accessData.token,
-                    RefreshToken = data.plainToken,
-                    ExpireIn = accessData.expireIn,
-                    Role = user.Role.ToString(),
-                    RefreshTokenId = data.entity.Id
-                });
+                var authResponse = await this.login.ExecuteASync(loginRequest);
+                return Ok(authResponse);
             }
             var erros = ModelState.Values.Select(x => x.Errors);
             return BadRequest(erros);

@@ -13,6 +13,8 @@ namespace CommentService.Application.Extensions
             services.AddScoped<ICommentServices, CommentServices>();
             services.AddScoped<IAnswerServices, AnswerServices>();
             services.AddScoped<ILikeServices, LikeServices>();
+            services.AddScoped<IUserCacheServices, UserCacheServices>();
+            services.AddScoped<IPostCacheServices, PostCacheServices>();
             return services;
             
         }

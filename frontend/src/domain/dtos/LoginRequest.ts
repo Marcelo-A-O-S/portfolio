@@ -6,5 +6,6 @@ export type LoginRequest = {
     provider: string,
     providerId: string,
     deviceId: string,
-    deviceName: string
+    deviceName: string,
+    providerToken?: string
 }
