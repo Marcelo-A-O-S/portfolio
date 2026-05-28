@@ -18,6 +18,20 @@ namespace CommentService.Infrastructure.Repositories
             await this.context.SaveChangesAsync();
         }
 
+        public async Task DeleteById(Guid Id)
+        {
+            var entity = await this.context.Set<T>().FindAsync(Id);
+            this.context.Set<T>().Remove(entity);
+            await this.context.SaveChangesAsync();
+        }
+
+        public async Task<bool> Exists(Guid Id)
+        {
+            var entity = await this.context.Set<T>().FindAsync(Id);
+            if(entity == null)
+                return false;
+            return true;
+        }
         public async Task<T> FindBy(Expression<Func<T, bool>> predicate)
         {
             return await this.context.Set<T>().Where(predicate).FirstOrDefaultAsync();

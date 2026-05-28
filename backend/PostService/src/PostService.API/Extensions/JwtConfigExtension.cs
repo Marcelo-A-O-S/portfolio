@@ -12,7 +12,10 @@ namespace PostService.API.Extensions
         {
             var secret = configuration.GetSection("JWT:Secret").Value;
             var IssuerSecret = configuration.GetSection("JWT:Issuer").Value;
-            if(string.IsNullOrEmpty(secret) || string.IsNullOrEmpty(IssuerSecret))
+            var secretInternal = configuration.GetSection("InternalJWT:Secret").Value;
+            var IssuerSecretInternal = configuration.GetSection("InternalJWT:Issuer").Value;
+            if (string.IsNullOrEmpty(secret) || string.IsNullOrEmpty(IssuerSecret) ||
+                string.IsNullOrEmpty(secretInternal) || string.IsNullOrEmpty(IssuerSecretInternal))
             {
                 throw new InvalidOperationException("Chaves não configuradas corretamente.");
             }
@@ -20,7 +23,7 @@ namespace PostService.API.Extensions
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
+            }).AddJwtBearer("UserJwt",options =>
             {
                 options.RequireHttpsMetadata = false;
                 options.SaveToken = true;
@@ -31,6 +34,19 @@ namespace PostService.API.Extensions
                     ValidIssuer = IssuerSecret,
                     ValidateAudience = false,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
+                };
+            }).AddJwtBearer("InternalJwt",options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = true,
+                    ValidIssuer = IssuerSecretInternal,
+                    ValidateAudience = true,
+                    ValidAudience = "auth-internal",
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretInternal))
                 };
             });
             return services;

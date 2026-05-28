@@ -13,6 +13,6 @@ namespace PostService.Domain.Interfaces
         Task<T> GetById(Guid Id);
         Task<List<T>> List();
         Task<List<T>> List(int page = 1, int itemsPage = 10);
-        
+        Task<bool> Exists(Guid Id);
     }
 }

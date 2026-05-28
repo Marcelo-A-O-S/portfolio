@@ -6,9 +6,11 @@ namespace CommentService.Domain.Interfaces
         Task Save(T entity);
         Task Update(T entity);
         Task Delete(T entity);
+        Task DeleteById(Guid Id);
         Task<T> FindBy(Expression<Func<T, bool>> predicate);
         Task<T> GetById(Guid Id);
         Task<List<T>> List();
         Task<List<T>> List(int page = 1, int itemsPage = 10);
+        Task<bool> Exists(Guid Id);
     }
 }

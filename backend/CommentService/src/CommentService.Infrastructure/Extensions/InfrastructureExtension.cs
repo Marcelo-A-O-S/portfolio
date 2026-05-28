@@ -7,7 +7,10 @@ namespace CommentService.Infrastructure.Extensions
         public static IServiceCollection AddInfrastructureExtensions(
             this IServiceCollection services, IConfiguration configuration
         ){
+            services.AddIntegrations(configuration);
             services.AddRedis(configuration);
+            services.AddRabbitMQConnection(configuration);
+            services.AddDBContextExtension(configuration);
             services.AddDependencyInjectionExtension();
             return services;
         }

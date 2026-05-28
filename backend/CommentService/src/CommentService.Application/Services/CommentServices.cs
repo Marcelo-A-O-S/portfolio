@@ -17,6 +17,16 @@ namespace CommentService.Application.Services
             await this.commentRepository.Delete(entity);
         }
 
+        public async Task DeleteById(Guid Id)
+        {
+            await this.commentRepository.DeleteById(Id);
+        }
+
+        public async Task<bool> Exists(Guid Id)
+        {
+            return await this.commentRepository.Exists(Id);
+        }
+
         public async Task<Comment> FindBy(Expression<Func<Comment, bool>> predicate)
         {
             return await this.commentRepository.FindBy(predicate);

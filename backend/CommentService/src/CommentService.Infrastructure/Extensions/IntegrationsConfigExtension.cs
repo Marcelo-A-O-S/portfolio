@@ -12,7 +12,8 @@ namespace CommentService.Infrastructure.Extensions
         )
         {
             var authAddress = configuration.GetSection("Destinations:AuthAddress")?.Value;
-            if (string.IsNullOrEmpty(authAddress))
+            var postAddress = configuration.GetSection("Destinations:PostAddress")?.Value;
+            if (string.IsNullOrEmpty(authAddress) || string.IsNullOrEmpty(postAddress))
             {
                 throw new Exception("Endereços de integrações não configurados.");
             }
@@ -27,6 +28,14 @@ namespace CommentService.Infrastructure.Extensions
             services.AddHttpClient<IUserServicesClient, UserServicesClient>(client =>
             {
                 client.BaseAddress = new Uri(authAddress);
+                client.Timeout = TimeSpan.FromSeconds(3);
+            }).AddTransientHttpErrorPolicy(policy =>
+                policy.WaitAndRetryAsync(3,
+                    retryAttempt => TimeSpan.FromMilliseconds(
+                        200 * retryAttempt)));
+            services.AddHttpClient<IPostServicesClient, PostServicesClient>(client =>
+            {
+                client.BaseAddress = new Uri(postAddress);
                 client.Timeout = TimeSpan.FromSeconds(3);
             }).AddTransientHttpErrorPolicy(policy =>
                 policy.WaitAndRetryAsync(3,

@@ -1,7 +1,8 @@
 using CommentService.Application.Interfaces;
 using CommentService.Application.Services;
+using CommentService.Application.UseCases.Comments;
+using CommentService.Application.UseCases.Comments.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-
 namespace CommentService.Application.Extensions
 {
     public static class DependencyInjectionExtension
@@ -15,6 +16,9 @@ namespace CommentService.Application.Extensions
             services.AddScoped<ILikeServices, LikeServices>();
             services.AddScoped<IUserCacheServices, UserCacheServices>();
             services.AddScoped<IPostCacheServices, PostCacheServices>();
+
+            services.AddScoped<IAddComment, AddComment>();
+            services.AddScoped<IRemoveComment, RemoveComment>();
             return services;
             
         }

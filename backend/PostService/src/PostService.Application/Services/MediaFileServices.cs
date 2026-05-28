@@ -45,6 +45,12 @@ namespace PostService.Application.Services
                 throw new Exception("Erro ao deletar imagem.", ex);
             }
         }
+
+        public async Task<bool> Exists(Guid Id)
+        {
+            return await this.repository.Exists(Id);
+        }
+
         public async Task<MediaFile> FindBy(Expression<Func<MediaFile, bool>> predicate)
         {
             return await this.repository.FindBy(predicate);

@@ -4,8 +4,6 @@ using Npgsql;
 using PostService.Application.Exceptions;
 using PostService.Domain.Interfaces;
 using PostService.Infrastructure.Context;
-using PostService.Domain.Entities;
-
 namespace PostService.Infrastructure.Repositories
 {
     public class Generics<T> : IGenerics<T> where T : class
@@ -26,22 +24,25 @@ namespace PostService.Infrastructure.Repositories
             this.context.Set<T>().Remove(entity);
             await this.context.SaveChangesAsync();
         }
-
+        public async Task<bool> Exists(Guid Id)
+        {
+            var entity = await this.context.Set<T>().FindAsync(Id);
+            if(entity == null)
+                return false;
+            return true;
+        }
         public async Task<T> FindBy(Expression<Func<T, bool>> predicate)
         {
             return await this.context.Set<T>().Where(predicate).FirstOrDefaultAsync();
         }
-
         public async Task<T> GetById(Guid Id)
         {
             return await this.context.Set<T>().FindAsync(Id);
         }
-
         public async Task<List<T>> List()
         {
             return await this.context.Set<T>().ToListAsync();
         }
-
         public async Task<List<T>> List(int page = 1, int itemsPage = 10)
         {
             var query = this.context.Set<T>().AsNoTracking().AsQueryable();
@@ -67,7 +68,6 @@ namespace PostService.Infrastructure.Repositories
                 throw;
             }
         }
-
         public async Task Update(T entity)
         {
             this.context.Update(entity);

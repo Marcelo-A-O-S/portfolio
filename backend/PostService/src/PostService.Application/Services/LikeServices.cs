@@ -22,6 +22,11 @@ namespace PostService.Application.Services
             await this.likeRepository.DeleteById(Id);
         }
 
+        public async Task<bool> Exists(Guid Id)
+        {
+            return await this.likeRepository.Exists(Id);
+        }
+
         public async Task<Like> FindBy(Expression<Func<Like, bool>> predicate)
         {
             return await this.likeRepository.FindBy(predicate);
