@@ -19,6 +19,7 @@ namespace CommentService.Application.Extensions
 
             services.AddScoped<IAddComment, AddComment>();
             services.AddScoped<IRemoveComment, RemoveComment>();
+            services.AddScoped<IUpdateComment, UpdateComment>();
             return services;
             
         }

@@ -30,14 +30,14 @@ namespace CommentService.Application.UseCases.Comments
             this.commentServices = _commentServices;
             this.commentCacheServices = _commentCacheServices;
         }
-        public async Task ExecuteAsync(CommentRequest commentRequest)
+        public async Task ExecuteAsync(Guid authenticatedUserId, CommentRequest commentRequest)
         {
             ValidateRequest(commentRequest);
-            await ValidateUserExists(commentRequest.UserId);
+            await ValidateUserExists(authenticatedUserId);
             await ValidatePostExists(commentRequest.PostId);
-            var comment = new Comment(commentRequest.UserId, commentRequest.PostId, commentRequest.Content);
+            var comment = new Comment(authenticatedUserId, commentRequest.PostId, commentRequest.Content);
             await this.commentServices.Save(comment);
-            await this.commentCacheServices.AddCommentCache($"comment:{comment.Id}", comment.Id);
+            await this.commentCacheServices.AddCommentCache($"comment:exists:{comment.Id}", comment.Id);
         }
         private static void ValidateRequest(CommentRequest commentRequest)
         {
@@ -50,24 +50,24 @@ namespace CommentService.Application.UseCases.Comments
         }
         private async Task ValidatePostExists(Guid postId)
         {
-            var postCache = await this.postCacheServices.GetPostCache($"post:{postId}");
+            var postCache = await this.postCacheServices.GetPostCache($"post:exists:{postId}");
             if(postCache == null)
             {
                 var exists = await this.postServicesClient.PostExistsAsync(postId);
                 if (!exists)
                     throw new NotFoundException("Usuário não encontrado");
-                await this.postCacheServices.AddPostCache($"post:{postId}", postId);
+                await this.postCacheServices.AddPostCache($"post:exists:{postId}", postId);
             }
         }
         private async Task ValidateUserExists(Guid userId)
         {
-            var userCache = await this.userCacheServices.GetUserCache($"user:{userId}");
+            var userCache = await this.userCacheServices.GetUserCache($"user:exists:{userId}");
             if(userCache == null)
             {
                 var exists = await this.userServicesClient.UserExistsAsync(userId);
                 if (!exists)
                     throw new NotFoundException("Usuário não encontrado");
-                await this.userCacheServices.AddUserCache($"user:{userId}", userId);
+                await this.userCacheServices.AddUserCache($"user:exists:{userId}", userId);
             }
         }
     }

@@ -6,29 +6,29 @@ using CommentService.Application.Validations;
 using CommentService.Domain.Entities;
 namespace CommentService.Application.UseCases.Comments
 {
-    public class UpdateComment : IUpdateComment
+    public class UpdateReply : IUpdateReply
     {
         private readonly ICommentCacheServices commentCacheServices;
         private readonly ICommentServices commentServices;
-        private readonly IPostCacheServices postCacheServices;
-        private readonly IPostServicesClient postServicesClient;
         private readonly IUserCacheServices userCacheServices;
         private readonly IUserServicesClient userServicesClient;
-        public UpdateComment(
+        private readonly IPostCacheServices postCacheServices;
+        private readonly IPostServicesClient postServicesClient;
+        public UpdateReply(
             ICommentCacheServices _commentCacheServices,
             ICommentServices _commentServices,
-            IPostCacheServices _postCacheServices,
-            IPostServicesClient _postServicesClient,
             IUserCacheServices _userCacheServices,
-            IUserServicesClient _userServicesClient
+            IUserServicesClient _userServicesClient,
+            IPostCacheServices _postCacheServices,
+            IPostServicesClient _postServicesClient
         )
         {
             this.commentCacheServices = _commentCacheServices;
             this.commentServices = _commentServices;
-            this.postCacheServices = _postCacheServices;
-            this.postServicesClient = _postServicesClient;
             this.userCacheServices = _userCacheServices;
             this.userServicesClient = _userServicesClient;
+            this.postCacheServices = _postCacheServices;
+            this.postServicesClient = _postServicesClient;
         }
         public async Task ExecuteAsync(Guid authenticatedUserId, Guid commentId, CommentRequest commentRequest)
         {
@@ -37,20 +37,25 @@ namespace CommentService.Application.UseCases.Comments
             await ValidateUserExists(authenticatedUserId);
             await ValidateCommentExists(commentId);
             var comment = await GetComment(commentId);
-            if(comment.UserId != authenticatedUserId)
-                throw new ForbiddenException("Você não pode editar este comentário.");
             if(comment.PostId != commentRequest.PostId)
                 throw new ValidationException("Comentário não pertence ao post informado.");
-            comment.Update(commentRequest.Content);
-            await this.commentServices.Update(comment);
-            await this.commentCacheServices.AddCommentCache($"comment:exists:{comment.Id}", comment.Id);
+            var reply = await GetReply(commentRequest.Id!.Value);
+            if(reply.UserId != authenticatedUserId)
+                throw new ValidationException("Você não pode editar esta resposta.");
+            if(reply.ParentCommentId != commentRequest.ParentCommentId)
+                throw new ValidationException("Essa resposta não pertence ao comentário informado.");
+            reply.Update(commentRequest.Content);
+            await this.commentServices.Update(reply);
+            await this.commentCacheServices.AddCommentCache($"comment:reply:exists:{reply.Id}", reply.Id);
         }
-        private static void ValidateRequest(CommentRequest commentRequest)
+        private static void ValidateRequest(CommentRequest request)
         {
-            var validationError = ValidationHelper.Validate(commentRequest);
-            if (validationError.Count > 0)
+            if(request.Id == null)
+                throw new ValidationException("Identificador da resposta não informado.");
+            var validationError = ValidationHelper.Validate(request);
+            if(validationError.Count > 0)
             {
-                var errors = string.Join(", ", validationError.Select(e => e.ErrorMessage));
+                var errors = string.Join(", ",validationError.Select(e => e.ErrorMessage));
                 throw new ValidationException($"Erro ao validar dados: {errors}");
             }
         }
@@ -61,7 +66,7 @@ namespace CommentService.Application.UseCases.Comments
             {
                 var exists = await this.postServicesClient.PostExistsAsync(postId);
                 if (!exists)
-                    throw new NotFoundException("Usuário não encontrado");
+                    throw new NotFoundException("Post não encontrado");
                 await this.postCacheServices.AddPostCache($"post:exists:{postId}", postId);
             }
         }
@@ -93,6 +98,13 @@ namespace CommentService.Application.UseCases.Comments
             if(comment == null)
                 throw new NotFoundException("Comentário não encontrado");
             return comment;
-        } 
+        }
+        private async Task<Comment> GetReply(Guid replyId)
+        {
+            var reply = await commentServices.GetById(replyId);
+            if(reply == null)
+                throw new NotFoundException("Resposta não encontrado");
+            return reply;
+        }
     }
 }
