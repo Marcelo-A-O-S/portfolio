@@ -1,11 +1,11 @@
 using CommentService.Application.UseCases.Likes.Interfaces;
-using CommentService.Application.Exceptions;
 using CommentService.Application.Interfaces;
+using CommentService.Application.Exceptions;
 using CommentService.Domain.Entities;
 
 namespace CommentService.Application.UseCases.Likes
 {
-    public class AddLike : IAddLike
+    public class RemoveLike : IRemoveLike
     {
         private readonly IUserCacheServices userCacheServices;
         private readonly IUserServicesClient userServicesClient;
@@ -13,7 +13,7 @@ namespace CommentService.Application.UseCases.Likes
         private readonly ICommentServices commentServices;
         private readonly ILikeServices likeServices;
         private readonly ILikeCacheServices likeCacheServices;
-        public AddLike(
+        public RemoveLike(
             IUserCacheServices _userCacheServices,
             IUserServicesClient _userServicesClient,
             ICommentCacheServices _commentCacheServices,
@@ -29,13 +29,18 @@ namespace CommentService.Application.UseCases.Likes
             this.likeServices = _likeServices;
             this.likeCacheServices = _likeCacheServices;
         }
-        public async Task ExecuteAsync(Guid authenticatedUserId, Guid commentId)
+        public async Task ExecuteAsync(Guid authenticatedUserId, Guid likeId, Guid commentId)
         {
             await ValidateUserExists(authenticatedUserId);
             await ValidateCommentExists(commentId);
-            var like = new Like(commentId, authenticatedUserId);
-            await this.likeServices.Save(like);
-            await this.likeCacheServices.AddLikeCache($"like:exists:{like.Id}", like.Id);
+            await ValidateLikeExists(likeId);
+            var like = await GetLike(likeId);
+            if(like.UserId != authenticatedUserId)
+                throw new ValidationException("Você não tem permissão para remover essa curtida");
+            if(like.CommentId != commentId)
+                throw new ValidationException("A curtida não pertence a esse comentário");
+            await this.likeServices.DeleteById(likeId);
+            await this.likeCacheServices.RemoveLikeCache($"like:exists:{likeId}");
         }
         private async Task ValidateUserExists(Guid userId)
         {
@@ -58,6 +63,23 @@ namespace CommentService.Application.UseCases.Likes
                     throw new NotFoundException("Commentário não encontrado");
                 await this.commentCacheServices.AddCommentCache($"comment:exists:{commentId}", commentId);
             }
+        }
+        private async Task ValidateLikeExists(Guid likeId)
+        {
+            var existsCache = await this.likeCacheServices.GetLikeCache($"like:exists:{likeId}");
+            if(existsCache == null)
+            {
+                var exists = await this.likeServices.Exists(likeId);
+                if (!exists)
+                    throw new NotFoundException("Você não curtiu esse comentário");
+            }
+        }
+        private async Task<Like> GetLike(Guid likeId)
+        {
+            var like = await this.likeServices.GetById(likeId);
+            if(like == null)
+                throw new NotFoundException("Você não curtiu esse comentário");
+            return like;
         }
     }
 }
