@@ -9,6 +9,5 @@ namespace CommentService.Application.DTOs.Request
         public Guid PostId { get; set; }
         [Required]
         public string Content { get; set; }
-        public Guid? ParentCommentId { get; set; }
     }
 }

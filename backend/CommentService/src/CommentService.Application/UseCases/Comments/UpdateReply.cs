@@ -30,7 +30,7 @@ namespace CommentService.Application.UseCases.Comments
             this.postCacheServices = _postCacheServices;
             this.postServicesClient = _postServicesClient;
         }
-        public async Task ExecuteAsync(Guid authenticatedUserId, Guid commentId, CommentRequest commentRequest)
+        public async Task ExecuteAsync(Guid authenticatedUserId, Guid commentId, Guid replyId, CommentRequest commentRequest)
         {
             ValidateRequest(commentRequest);
             await ValidatePostExists(commentRequest.PostId);
@@ -39,10 +39,10 @@ namespace CommentService.Application.UseCases.Comments
             var comment = await GetComment(commentId);
             if(comment.PostId != commentRequest.PostId)
                 throw new ValidationException("Comentário não pertence ao post informado.");
-            var reply = await GetReply(commentRequest.Id!.Value);
+            var reply = await GetReply(replyId);
             if(reply.UserId != authenticatedUserId)
                 throw new ValidationException("Você não pode editar esta resposta.");
-            if(reply.ParentCommentId != commentRequest.ParentCommentId)
+            if(reply.ParentCommentId != commentId)
                 throw new ValidationException("Essa resposta não pertence ao comentário informado.");
             reply.Update(commentRequest.Content);
             await this.commentServices.Update(reply);
