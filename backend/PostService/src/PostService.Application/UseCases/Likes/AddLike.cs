@@ -37,7 +37,7 @@ namespace PostService.Application.UseCases.Likes
             {
                 var like = new Like(userId, likeRequest.PostId);
                 await this.likeServices.Save(like);
-                await this.likeCacheServices.AddLikeCache($"post:{like.PostId}:likes:user:{like.UserId}", true);
+                await this.likeCacheServices.AddLikeCache($"like:post:{like.PostId}:user:{like.UserId}", true);
             }
             catch (DuplicateException)
             {
@@ -75,14 +75,14 @@ namespace PostService.Application.UseCases.Likes
         }
         private async Task ValidateLikeExists(Guid userId, Guid postId)
         {
-            var existsCache = await this.likeCacheServices.GetLikeCache($"post:{postId}:likes:user:{userId}");
+            var existsCache = await this.likeCacheServices.GetLikeCache($"like:post:{postId}:user:{userId}");
             if (existsCache != null)
                 throw new ValidationException($"Você já curtiu esse projeto!");
             var exists = await this.likeServices
                 .FindBy(l => l.UserId == userId && l.PostId == postId);
             if (exists != null)
             {
-                await this.likeCacheServices.AddLikeCache($"post:{postId}:likes:user:{userId}", true);
+                await this.likeCacheServices.AddLikeCache($"like:post:{postId}:user:{userId}", true);
                 throw new ValidationException($"Você já curtiu esse projeto!");
             }
         }

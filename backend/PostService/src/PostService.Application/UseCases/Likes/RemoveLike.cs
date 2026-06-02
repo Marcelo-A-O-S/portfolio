@@ -28,7 +28,7 @@ namespace PostService.Application.UseCases.Likes
             await ValidatePostExists(likeRequest.PostId);
             var like = await GetLikeOrThrowAsync(userId, likeRequest.PostId);
             await this.likeServices.DeleteById(like.Id);
-            await this.likeCacheServices.RemoveLikeCache($"post:{likeRequest.PostId}:likes:user:{userId}");
+            await this.likeCacheServices.RemoveLikeCache($"like:post:{likeRequest.PostId}:user:{userId}");
         }
         private static void ValidateLikeRequest(LikeRequest likeRequest)
         {

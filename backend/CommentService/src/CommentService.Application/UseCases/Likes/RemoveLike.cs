@@ -29,18 +29,13 @@ namespace CommentService.Application.UseCases.Likes
             this.likeServices = _likeServices;
             this.likeCacheServices = _likeCacheServices;
         }
-        public async Task ExecuteAsync(Guid authenticatedUserId, Guid likeId, Guid commentId)
+        public async Task ExecuteAsync(Guid authenticatedUserId, Guid commentId)
         {
             await ValidateUserExists(authenticatedUserId);
             await ValidateCommentExists(commentId);
-            await ValidateLikeExists(likeId);
-            var like = await GetLike(likeId);
-            if(like.UserId != authenticatedUserId)
-                throw new ValidationException("Você não tem permissão para remover essa curtida");
-            if(like.CommentId != commentId)
-                throw new ValidationException("A curtida não pertence a esse comentário");
-            await this.likeServices.DeleteById(likeId);
-            await this.likeCacheServices.RemoveLikeCache($"like:exists:{likeId}");
+            var like = await GetLike(commentId, authenticatedUserId);
+            await this.likeServices.DeleteById(like.Id);
+            await this.likeCacheServices.RemoveLikeCache($"like:comment:{like.CommentId}:user:{like.UserId}");
         }
         private async Task ValidateUserExists(Guid userId)
         {
@@ -64,19 +59,10 @@ namespace CommentService.Application.UseCases.Likes
                 await this.commentCacheServices.AddCommentCache($"comment:exists:{commentId}", commentId);
             }
         }
-        private async Task ValidateLikeExists(Guid likeId)
+        private async Task<Like> GetLike(Guid commentId, Guid authenticatedUserId)
         {
-            var existsCache = await this.likeCacheServices.GetLikeCache($"like:exists:{likeId}");
-            if(existsCache == null)
-            {
-                var exists = await this.likeServices.Exists(likeId);
-                if (!exists)
-                    throw new NotFoundException("Você não curtiu esse comentário");
-            }
-        }
-        private async Task<Like> GetLike(Guid likeId)
-        {
-            var like = await this.likeServices.GetById(likeId);
+            var like = await this.likeServices.FindBy(
+                    l => l.CommentId == commentId && l.UserId == authenticatedUserId);
             if(like == null)
                 throw new NotFoundException("Você não curtiu esse comentário");
             return like;

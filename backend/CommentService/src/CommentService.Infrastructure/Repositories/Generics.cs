@@ -1,7 +1,9 @@
 using System.Linq.Expressions;
+using CommentService.Application.Exceptions;
 using CommentService.Domain.Interfaces;
 using CommentService.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace CommentService.Infrastructure.Repositories
 {
@@ -58,8 +60,20 @@ namespace CommentService.Infrastructure.Repositories
 
         public async Task Save(T entity)
         {
-            await this.context.Set<T>().AddAsync(entity);
-            await this.context.SaveChangesAsync();
+            try
+            {
+                await this.context.AddAsync(entity);
+                await this.context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is PostgresException postgresEx
+                    && postgresEx.SqlState == PostgresErrorCodes.UniqueViolation)
+                {
+                    throw new DuplicateException();
+                }
+                throw;
+            }
         }
 
         public async Task Update(T entity)

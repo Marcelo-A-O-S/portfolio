@@ -2,7 +2,6 @@ using System.Linq.Expressions;
 using CommentService.Application.Interfaces;
 using CommentService.Domain.Entities;
 using CommentService.Domain.Interfaces;
-
 namespace CommentService.Application.Services
 {
     public class CommentServices : ICommentServices
@@ -35,6 +34,11 @@ namespace CommentService.Application.Services
         public async Task<Comment> GetById(Guid Id)
         {
             return await this.commentRepository.GetById(Id);
+        }
+
+        public Task<List<Comment>> GetCommentsByPostId(Guid postId)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<List<Comment>> List()

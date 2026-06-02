@@ -33,9 +33,16 @@ namespace CommentService.Application.UseCases.Likes
         {
             await ValidateUserExists(authenticatedUserId);
             await ValidateCommentExists(commentId);
-            var like = new Like(commentId, authenticatedUserId);
-            await this.likeServices.Save(like);
-            await this.likeCacheServices.AddLikeCache($"like:exists:{like.Id}", like.Id);
+            try
+            {
+                var like = new Like(commentId, authenticatedUserId);
+                await this.likeServices.Save(like);
+                await this.likeCacheServices.AddLikeCache($"like:comment:{like.CommentId}:user:{like.UserId}", like.Id);
+            }
+            catch (DuplicateException)
+            {
+                throw new ValidationException("Você já curtiu esse comentário!");
+            }
         }
         private async Task ValidateUserExists(Guid userId)
         {
