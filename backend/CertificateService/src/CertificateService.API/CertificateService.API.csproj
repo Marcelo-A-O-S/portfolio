@@ -13,4 +13,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="8.1.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CertificateService.Application\CertificateService.Application.csproj" />
+    <ProjectReference Include="..\CertificateService.Infrastructure\CertificateService.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
-using PostService.API.Validations;
 using PostService.Application.Validations;
 using PostService.Domain.Enums;
 
