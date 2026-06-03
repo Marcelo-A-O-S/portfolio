@@ -3,6 +3,6 @@ namespace CertificateService.Application.UseCases.Certificates.Interfaces
 {
     public interface IRemoveCertificate
     {
-        Task ExecuteAsync(Guid certificateId, CertificateRequest certificateRequest);
+        Task ExecuteAsync(Guid certificateId);
     }
 }

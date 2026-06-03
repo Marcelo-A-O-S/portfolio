@@ -24,6 +24,11 @@ namespace CertificateService.Application.Services
             await this.mediaFilesRepository.Delete(entity);
         }
 
+        public async Task DeleteById(Guid Id)
+        {
+            await this.mediaFilesRepository.DeleteById(Id);
+        }
+
         public async Task DeleteImageAsync(MediaFile mediaFile)
         {
             var pathImage = Path.Combine(

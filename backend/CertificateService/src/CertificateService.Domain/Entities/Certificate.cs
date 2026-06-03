@@ -1,5 +1,6 @@
 using CertificateService.Domain.Enums;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Runtime.ConstrainedExecution;
 namespace CertificateService.Domain.Entities
 {
     public class Certificate
@@ -10,7 +11,7 @@ namespace CertificateService.Domain.Entities
         public string ImgUrl { get; private set; }
         public Guid? MediaFileId { get; private set; }
         public DateTime CreatedAt { get; private set;}
-        public DateTime UpdateAt { get; private set; }
+        public DateTime UpdatedAt { get; private set; }
         public DateTime IssueDate { get; private set; }
         public string? CredentialId { get; private set; }
         public string? VerificationUrl { get; private set; }
@@ -18,20 +19,53 @@ namespace CertificateService.Domain.Entities
         public int? WorkloadHours { get; private set; }
         public Status Status { get; private set;}
         public CertificateType CertificateType { get; private set; }
-        public ICollection<CertificatePost> Posts { get; private set; }
-        public Certificate(string title, string description, string institution, Status status)
+        public ICollection<CertificatePost>? Posts { get; private set; }
+        public Certificate(
+            string title, 
+            string description, 
+            string institution, 
+            Status status, 
+            CertificateType certificateType, 
+            DateTime issuerDate,
+            string? credentialId,
+            string? verificationUrl,
+            int? workLoadHours)
         {
             this.Title = title;
             this.Description = description;
             this.Institution = institution;
             this.Status = status;
+            this.CertificateType = certificateType;
+            this.IssueDate = issuerDate;
+            this.CredentialId = credentialId;
+            this.VerificationUrl = verificationUrl;
+            this.WorkloadHours = workLoadHours;
             this.CreatedAt = DateTime.UtcNow;
-            this.UpdateAt = DateTime.UtcNow;
+            this.UpdatedAt = DateTime.UtcNow;
         }
         public void AddImgUrl(string imgUrl, Guid mediaId)
         {
             this.ImgUrl = imgUrl;
             this.MediaFileId = mediaId;
+        }
+        public void Update(
+            string title, 
+            string description, 
+            string institution, 
+            Status status, 
+            CertificateType certificateType, 
+            DateTime issuerDate,
+            string? credentialId,
+            string? verificationUrl,
+            int? workLoadHours)
+        {
+            this.Title = title;
+            this.Description = description;
+            this.Institution = institution;
+            this.Status = status;
+            this.CertificateType = certificateType;
+            this.IssueDate = issuerDate;
+            this.UpdatedAt = DateTime.UtcNow;
         }
     }
 }

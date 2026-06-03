@@ -7,9 +7,9 @@ namespace CertificateService.Application.DTOs.Requests
     public class CertificateRequest
     {
         [Required( ErrorMessage = "O titulo para o certificado é obrigatório")]
-        public string Title { get; private set;}
+        public string Title { get; set;}
         [Required( ErrorMessage = "A descrição do certificado é obrigatório")]
-        public string Description { get; private set;}
+        public string Description { get; set;}
         [Required( ErrorMessage ="A imagem principal do projeto é obrigatório.")]
         public string? ImgUrl { get; set; }
         [MaxFileSize(2 * 1024 * 1024, ErrorMessage = "O tamanho maximo aceito de imagem é 2 MB.")]
@@ -26,7 +26,7 @@ namespace CertificateService.Application.DTOs.Requests
         [Required( ErrorMessage ="A tipo do certificado é obrigatório.")]
         public CertificateType  CertificateType { get; set; }
         [Required( ErrorMessage ="A data de emissão do certificado é obrigatório.")]
-        public DateTime IssueDate { get; private set; }
+        public DateTime IssueDate { get; set; }
         
     }
 }
