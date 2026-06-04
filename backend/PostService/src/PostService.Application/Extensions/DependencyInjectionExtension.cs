@@ -19,18 +19,19 @@ namespace PostService.Application.Extensions
             this IServiceCollection services
         )
         {
-            services.AddScoped<ICategoryServices, CategoryServices>();
             services.AddScoped<ILikeServices, LikeServices>();
             services.AddScoped<IPostServices, PostServices>();
-            services.AddScoped<IToolsServices, ToolsServices>();
+            services.AddScoped<IPostContentServices, PostContentServices>();
             services.AddScoped<ICategoryServices, CategoryServices>();
             services.AddScoped<ICategoryContentServices, CategoryContentServices>();
+            services.AddScoped<IToolsServices, ToolsServices>();
             services.AddScoped<IToolContentServices, ToolContentServices>();
-            services.AddScoped<IPostContentServices, PostContentServices>();
             services.AddScoped<ILanguageServices, LanguageServices>();
             services.AddScoped<IMediaFileServices, MediaFileServices>();
             services.AddScoped<IFileServices, FileServices>();
+
             services.AddScoped<IUserCacheServices, UserCacheServices>();
+            services.AddScoped<ILikeCacheServices, LikeCacheServices>();
 
             services.AddScoped<ICreateTool, CreateTool>();
             services.AddScoped<IUpdateTool, UpdateTool>();
