@@ -14,8 +14,8 @@ namespace PostService.API.Controllers
         {
             this.existsByIdProject = _existsByIdProject;
         }
+        [HttpGet("{Id}/exists")]
         [Authorize(AuthenticationSchemes ="InternalJwt", Policy="UsersRead")]
-        [HttpGet("internal/post/{Id}/exists")]
         public async Task<IActionResult> PostExists([FromRoute] Guid Id)
         {
             var exists = await existsByIdProject.ExecuteAsync(Id);

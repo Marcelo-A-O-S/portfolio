@@ -15,7 +15,7 @@ namespace AuthService.API.Controllers
         {
             this.createToken = _createToken;
         }
-        [HttpPost("internal/token")]
+        [HttpPost("token")]
         [EnableRateLimiting("internal-auth")]
         public async Task<IActionResult> GenerateToken(ServiceAuthRequest request)
         {

@@ -1,18 +1,19 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using AuthService.API.Extension;
 using AuthService.API.Middleware;
 using AuthService.Application.Extension;
 using AuthService.Infrastructure.Extensions;
 using Microsoft.OpenApi;
-
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
     });
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {

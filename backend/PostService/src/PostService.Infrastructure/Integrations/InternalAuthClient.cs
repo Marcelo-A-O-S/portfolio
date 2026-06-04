@@ -28,7 +28,7 @@ namespace PostService.Infrastructure.Integrations
                 return cached;
             if(string.IsNullOrEmpty(this.internalOptions.ClientId) || string.IsNullOrEmpty(this.internalOptions.ClientSecret))
                 throw new Exception("Chaves de validação internas não configuradas");
-            var response = await this.http.PostAsJsonAsync("/api/InternalAuth/internal/token",new
+            var response = await this.http.PostAsJsonAsync("/api/InternalAuth/token",new
             {
                 ClientId = this.internalOptions.ClientId,
                 ClientSecret= this.internalOptions.ClientSecret

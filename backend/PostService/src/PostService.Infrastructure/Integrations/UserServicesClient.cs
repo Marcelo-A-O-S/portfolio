@@ -25,7 +25,7 @@ namespace PostService.Infrastructure.Integrations
                 if (token == null)
                     throw new UnauthorizedException("Usuário não autorizado");
                 var request = new HttpRequestMessage(
-                    HttpMethod.Get,$"/api/InternalUser/internal/users/{userId}/exists");
+                    HttpMethod.Get,$"/api/InternalUser/{userId}/exists");
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = await this.http.SendAsync(request);
                 if (response.StatusCode == HttpStatusCode.Unauthorized)

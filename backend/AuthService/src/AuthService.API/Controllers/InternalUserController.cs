@@ -14,8 +14,8 @@ namespace AuthService.API.Controllers
         {
             this.existsByIdUser = _existsByIdUser;
         }
+        [HttpGet("{Id}/exists")]
         [Authorize(AuthenticationSchemes="InternalJwt", Policy="UsersRead")]
-        [HttpGet("internal/users/{Id}/exists")]
         public async Task<IActionResult> UserExists([FromRoute] Guid Id)
         {
             var exists = await existsByIdUser.ExecuteAsync(Id);
