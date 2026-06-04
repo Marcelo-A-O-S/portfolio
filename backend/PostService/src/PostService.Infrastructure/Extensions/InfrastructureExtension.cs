@@ -8,6 +8,7 @@ namespace PostService.Infrastructure.Extensions
             this IServiceCollection services, IConfiguration configuration
         )
         {
+            services.AddHostedExtension();
             services.AddIntegrations(configuration);
             services.AddRedis(configuration);
             services.AddRabbitMQConnection(configuration);

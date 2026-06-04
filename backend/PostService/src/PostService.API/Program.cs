@@ -19,6 +19,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 });
 builder.Services.AddRateLimiteExtension();
 builder.Services.AddSwaggerConfig();
+builder.Services.AddPolicyAuthentications(builder.Configuration);
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddCorsConfig();
 builder.Services.AddInfrastructureExtension(builder.Configuration);

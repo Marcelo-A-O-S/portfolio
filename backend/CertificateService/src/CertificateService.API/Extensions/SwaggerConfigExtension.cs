@@ -1,5 +1,4 @@
 using Microsoft.OpenApi.Models;
-
 namespace CertificateService.API.Extensions
 {
     public static class SwaggerConfigExtension
@@ -14,9 +13,9 @@ namespace CertificateService.API.Extensions
                 options.EnableAnnotations();
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "Post API",
+                    Title = "Certificate API",
                     Version = "v1",
-                    Description = "Api de gerenciamento de publicações de postagens envolvendo os projetos.",
+                    Description = "Api de gerenciamento de certificações envolvendo os projetos.",
                     Contact = new OpenApiContact
                     {
                         Name = "Marcelo Augusto de Oliveira Soares",
