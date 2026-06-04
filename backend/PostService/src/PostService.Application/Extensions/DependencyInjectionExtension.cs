@@ -11,6 +11,8 @@ using PostService.Application.UseCases.Projects.Interfaces;
 using PostService.Application.UseCases.Projects;
 using PostService.Application.UseCases.Likes.Interfaces;
 using PostService.Application.UseCases.Likes;
+using PostService.Application.UseCases.InternalProject.Interfaces;
+using PostService.Application.UseCases.InternalProject;
 namespace PostService.Application.Extensions
 {
     public static class DependencyInjectionExtension
@@ -47,6 +49,8 @@ namespace PostService.Application.Extensions
             services.AddScoped<IDeleteProject, DeleteProject>();
             services.AddScoped<IAddLike, AddLike>();
             services.AddScoped<IRemoveLike, RemoveLike>();
+            services.AddScoped<IExistsByIdProject, ExistsByIdProject>();
+            
             return services;
         }
     }
