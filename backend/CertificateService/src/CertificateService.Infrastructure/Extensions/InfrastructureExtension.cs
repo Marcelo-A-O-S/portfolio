@@ -8,6 +8,9 @@ namespace CertificateService.Infrastructure.Extensions
         public static IServiceCollection AddInfrastructureExtensions(
             this IServiceCollection services, IConfiguration configuration
         ){
+            services.AddIntegrations(configuration);
+            services.AddRedis(configuration);
+            services.AddRabbitMQConnection(configuration);
             services.AddDBContextExtension(configuration);
             services.AddDependencyInjectionExtensions();
             return services;
