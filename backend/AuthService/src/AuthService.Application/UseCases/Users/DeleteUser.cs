@@ -23,7 +23,7 @@ namespace AuthService.Application.UseCases.Users
         {
             var user = await GetUserByIdAsync(Id);
             await this.userServices.Delete(user);
-            await this.rabbitMQProducer.Publish("user-delete", new { UserId = Id });
+            await this.rabbitMQProducer.Publish("delete-user", new { UserId = Id });
         }
         private async Task<User> GetUserByIdAsync(Guid Id)
         {

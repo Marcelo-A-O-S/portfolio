@@ -12,6 +12,7 @@ namespace CommentService.Infrastructure.Extensions
             services.AddRabbitMQConnection(configuration);
             services.AddDBContextExtension(configuration);
             services.AddDependencyInjectionExtension();
+            services.AddHostedExtension();
             return services;
         }
     }

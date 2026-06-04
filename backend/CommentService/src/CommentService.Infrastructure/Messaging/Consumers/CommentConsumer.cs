@@ -1,33 +1,29 @@
-
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using PostService.Application.Interfaces;
-using PostService.Domain.Interfaces;
-using PostService.Infrastructure.Messaging.Events;
-using PostService.Infrastructure.Workers;
 using RabbitMQ.Client;
+using Microsoft.Extensions.DependencyInjection;
+using CommentService.Infrastructure.Workers;
 using System.Text.Json;
-namespace PostService.Infrastructure.Messaging.Consumers
+using CommentService.Infrastructure.Messaging.Events;
+using CommentService.Application.Interfaces;
+
+namespace CommentService.Infrastructure.Messaging.Consumers
 {
-    public class PostConsumer : BackgroundService
+    public class CommentConsumer : BackgroundService
     {
         private readonly IConnectionFactory factory;
         private readonly IServiceScopeFactory scopeFactory;
-        private readonly IRabbitMQProducer rabbitMQProducer;
-        private readonly ILogger<PostConsumer> logger;
+        private readonly ILogger<CommentConsumer> logger;
         private IConnection? connection;
         private RabbitMQConsumer? consumer;
-        public PostConsumer(
+        public CommentConsumer(
             IConnectionFactory _factory,
             IServiceScopeFactory _scopeFactory,
-            IRabbitMQProducer _rabbitMQProducer,
-            ILogger<PostConsumer> _logger
+            ILogger<CommentConsumer> _logger
         )
         {
             this.factory = _factory;
             this.scopeFactory = _scopeFactory;
-            this.rabbitMQProducer = _rabbitMQProducer;
             this.logger = _logger;
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -37,9 +33,10 @@ namespace PostService.Infrastructure.Messaging.Consumers
                 this.logger.LogInformation("Iniciando conexão com o RabbitMQ...");
                 this.connection = await this.factory.CreateConnectionAsync();
                 this.consumer = new RabbitMQConsumer(this.connection);
-                this.consumer.RegisterHandler("remove-user", async message => { await this.RemoveUserCache(message);});
+                this.consumer.RegisterHandler("delete-user", async message => { await this.RemoveUserCache(message);});
+                this.consumer.RegisterHandler("delete-post", async message =>{ await this.RemovePostCache(message);});
                 await consumer.Start();
-                this.logger.LogInformation("Consumer dos Projetos do RabbitMQ iniciado e aguardando mensagens...");
+                this.logger.LogInformation("Consumer dos Comentários do RabbitMQ iniciado e aguardando mensagens...");
             }catch(Exception ex)
             {
                 this.logger.LogError($"Erro ao conectar ao RabbitMQ: {ex.Message}");
@@ -58,7 +55,16 @@ namespace PostService.Infrastructure.Messaging.Consumers
                 return;
             using var scope = this.scopeFactory.CreateScope();
             var cache = scope.ServiceProvider.GetRequiredService<IUserCacheServices>();
-            await cache.RemoveUserCache($"user:exists:{payload.UserId}");
+            await cache.RemoveUserCache($"user:{payload.UserId}");
+        }
+        private async Task RemovePostCache(string message)
+        {
+            var payload = JsonSerializer.Deserialize<PostRemoveEvent>(message);
+            if(payload == null)
+                return;
+            using var scope = this.scopeFactory.CreateScope();
+            var cache = scope.ServiceProvider.GetRequiredService<IPostCacheServices>();
+            await cache.RemovePostCache($"user:{payload.PostId}");
         }
     }
 }
