@@ -1,44 +1,47 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using CertificateService.API.Extensions;
+using CertificateService.Application.Extensions;
+using CertificateService.Infrastructure.Extensions;
+using Microsoft.OpenApi;
+using CertificateService.API.Middleware;
+using Microsoft.AspNetCore.HttpOverrides;
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    });
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+   options.ForwardedHeaders = ForwardedHeaders.XForwardedFor; 
+});
+builder.Services.AddRateLimiteExtension();
+builder.Services.AddSwaggerConfig();
+builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddCorsConfig();
+builder.Services.AddInfrastructureExtensions(builder.Configuration);
+builder.Services.AddApplicationExtensions();
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
+app.Services.ApplyMigrations();
+app.UseCors("AllowAll");
+app.UseSwagger(options=>{
+    options.OpenApiVersion = OpenApiSpecVersion.OpenApi2_0;
+});
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseHttpsRedirection();
+app.UseForwardedHeaders();
+app.UseRateLimiter();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseMiddleware<ExceptionMiddleware>();
+app.MapControllers();
+app.Run("http://+:5004");
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-
-app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

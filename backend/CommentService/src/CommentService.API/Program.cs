@@ -25,7 +25,6 @@ builder.Services.AddInfrastructureExtensions(builder.Configuration);
 builder.Services.AddApplicationExtensions();
 var app = builder.Build();
 // Configure the HTTP request pipeline.
-
 app.Services.ApplyMigrations();
 app.UseCors("AllowAll");
 app.UseSwagger(options=>{

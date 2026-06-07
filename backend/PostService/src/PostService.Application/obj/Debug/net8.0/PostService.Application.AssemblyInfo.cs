@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PostService.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f4032208ea2eb28356981cb05c2bc17eed699d6c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8782cb4c4707b3f89c981c3a4b30c09191719c32")]
 [assembly: System.Reflection.AssemblyProductAttribute("PostService.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PostService.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
