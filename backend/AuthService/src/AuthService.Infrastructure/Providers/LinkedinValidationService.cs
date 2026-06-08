@@ -8,6 +8,10 @@ namespace AuthService.Infrastructure.Providers
     public class LinkedinValidationService : IProviderValidationService
     {
         private readonly HttpClient client;
+        private static readonly JsonSerializerOptions JsonOptions = new()
+        {
+            PropertyNameCaseInsensitive = true
+        };
         public LinkedinValidationService(
             HttpClient _client
         )
@@ -24,7 +28,7 @@ namespace AuthService.Infrastructure.Providers
             if (!response.IsSuccessStatusCode)
                 throw new UnauthorizedAccessException("Token do Linkedin inválido");
             var content = await response.Content.ReadAsStringAsync();
-            var user = JsonSerializer.Deserialize<LinkedinResponse>(content);
+            var user = JsonSerializer.Deserialize<LinkedinResponse>(content, JsonOptions);
             if(user == null)
                 throw new UnauthorizedAccessException("Resposta inválida do Linkedin");
             if(string.IsNullOrWhiteSpace(user.Email))

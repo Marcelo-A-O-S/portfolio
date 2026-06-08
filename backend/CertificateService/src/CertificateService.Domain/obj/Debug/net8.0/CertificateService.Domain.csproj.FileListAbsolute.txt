@@ -1,0 +1,12 @@
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Domain\bin\Debug\net8.0\CertificateService.Domain.deps.json
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Domain\bin\Debug\net8.0\CertificateService.Domain.dll
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Domain\bin\Debug\net8.0\CertificateService.Domain.pdb
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Domain\obj\Debug\net8.0\CertificateService.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Domain\obj\Debug\net8.0\CertificateService.Domain.AssemblyInfoInputs.cache
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Domain\obj\Debug\net8.0\CertificateService.Domain.AssemblyInfo.cs
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Domain\obj\Debug\net8.0\CertificateService.Domain.csproj.CoreCompileInputs.cache
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Domain\obj\Debug\net8.0\CertificateService.Domain.sourcelink.json
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Domain\obj\Debug\net8.0\CertificateService.Domain.dll
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Domain\obj\Debug\net8.0\refint\CertificateService.Domain.dll
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Domain\obj\Debug\net8.0\CertificateService.Domain.pdb
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Domain\obj\Debug\net8.0\ref\CertificateService.Domain.dll

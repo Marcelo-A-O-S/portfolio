@@ -7,7 +7,7 @@ namespace CommentService.Infrastructure.Context
     {
         public DBContext CreateDbContext(string[] args)
         {
-            var basePath = Path.Combine(Directory.GetCurrentDirectory(),"../PostService.API");
+            var basePath = Path.Combine(Directory.GetCurrentDirectory(),"../CommentService.API");
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(basePath)
                 .AddJsonFile("appsettings.json")

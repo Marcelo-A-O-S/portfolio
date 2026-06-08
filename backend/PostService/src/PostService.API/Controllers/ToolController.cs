@@ -26,14 +26,14 @@ namespace PostService.API.Controllers
             this.deleteTool = _deleteTool;
         }
         [HttpGet("GetTools")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> GetTools()
         {
             var tools = await this.toolsServices.GetTools();
             return Ok(tools);
         }
         [HttpGet]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> List([FromQuery] int? page)
         {
             var tools = new List<Tool>();
@@ -48,7 +48,7 @@ namespace PostService.API.Controllers
             return Ok(tools);
         }
         [HttpGet("{Id:guid}")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> GetById([FromRoute] Guid Id)
         {
             var tool = await this.toolsServices.GetById(Id);
@@ -57,7 +57,7 @@ namespace PostService.API.Controllers
             return Ok(tool);
         }
         [HttpGet("GetToolById/{Id}")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> GetToolById([FromRoute] Guid Id)
         {
             var tool = await this.toolsServices.GetToolById(Id);
@@ -66,7 +66,7 @@ namespace PostService.API.Controllers
             return Ok(tool);
         }
         [HttpGet("GetByPagination")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> GetByPagination(
             [FromQuery] int page,
             [FromQuery] string? search
@@ -76,7 +76,7 @@ namespace PostService.API.Controllers
             return Ok(result);
         }
         [HttpPost]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> CreateTool([FromForm] ToolRequest toolRequest)
         {
             if (ModelState.IsValid)
@@ -88,7 +88,7 @@ namespace PostService.API.Controllers
             return BadRequest(errors);
         }
         [HttpPut("{Id:guid}")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> UpdateTool([FromRoute] Guid Id, ToolRequest toolRequest)
         {
             if (ModelState.IsValid)
@@ -100,7 +100,7 @@ namespace PostService.API.Controllers
             return BadRequest(errors);
         }
         [HttpDelete("{Id:guid}")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> DeleteTool([FromRoute] Guid Id)
         {
             await this.deleteTool.ExecuteAsync(Id);

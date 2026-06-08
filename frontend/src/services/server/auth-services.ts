@@ -13,7 +13,11 @@ export const loginOAuth = async (loginRequest: LoginRequest) => {
         },
         body: JSON.stringify(loginRequest),
     });
-    if (!response.ok) throw new Error(`Èrror: ${response.status}`);
+    if (!response.ok){
+        const error = await response.json();
+        console.log("Erro de console:", error);
+        throw new Error(`Èrror: ${error}`);
+    }
     const data = await response.json();
     return data;
 }

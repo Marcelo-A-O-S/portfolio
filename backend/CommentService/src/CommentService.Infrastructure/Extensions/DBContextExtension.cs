@@ -10,7 +10,7 @@ namespace CommentService.Infrastructure.Extensions
             this IServiceCollection services, IConfiguration configuration
         )
         {
-            var connectionString = configuration.GetConnectionString("OracleConnection");
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
             if (string.IsNullOrEmpty(connectionString))
             {
                 throw new InvalidOperationException("ConnectionString não configurada.");

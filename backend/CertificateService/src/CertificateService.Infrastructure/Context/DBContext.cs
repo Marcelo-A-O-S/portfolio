@@ -14,6 +14,7 @@ namespace CertificateService.Infrastructure.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Certificate>().Property(c => c.Status).HasConversion<string>();
+            modelBuilder.Entity<Certificate>().Property(c => c.CertificateType).HasConversion<string>();
         }
     }
 }

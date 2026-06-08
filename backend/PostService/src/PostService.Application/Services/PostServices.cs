@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using PostService.Application.Interfaces;
 using PostService.Domain.Entities;
 using PostService.Domain.Interfaces;
-
+using PostService.Domain.Queries;
 namespace PostService.Application.Services
 {
     public class PostServices : IPostServices
@@ -37,7 +37,7 @@ namespace PostService.Application.Services
             return await this.postRepository.GetById(Id);
         }
 
-        public async Task<PaginatedResult<Post>> GetByPagination(int page, string? search)
+        public async Task<PaginatedResult<PostView>> GetByPagination(int page, string? search)
         {
             return await this.postRepository.GetByPagination(page, search);
         }
@@ -50,6 +50,11 @@ namespace PostService.Application.Services
         public async Task<Post> GetFullDataById(Guid Id)
         {
             return await this.postRepository.GetFullDataById(Id);
+        }
+
+        public async Task<int> GetLikesCountByPostId(Guid postId)
+        {
+            return await this.postRepository.GetLikesCountByPostId(postId);
         }
 
         public async Task<Post> GetPostById(Guid Id)
@@ -76,7 +81,6 @@ namespace PostService.Application.Services
         {
             await this.postRepository.Save(entity);
         }
-
         public async Task Update(Post entity)
         {
             await this.postRepository.Update(entity);

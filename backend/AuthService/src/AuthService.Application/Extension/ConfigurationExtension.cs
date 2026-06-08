@@ -12,6 +12,7 @@ namespace AuthService.Application.Extension
             services.Configure<InternalClientOptions>(configuration.GetSection("InternalClients"));
             services.Configure<JwtBearerOptions>(configuration.GetSection("JWT"));
             services.Configure<InternalJWTOptions>(configuration.GetSection("InternalJWT"));
+            services.Configure<ProviderOptions>(configuration.GetSection("ProviderOptions"));
             return services;
         }
     }

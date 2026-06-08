@@ -31,6 +31,9 @@ export default function CardProject({ languages, item }: CardProjectProps) {
             );
             return content;
         })
+    const handleLike = async() => {
+        
+    }
     return (
         <>
             <div className="bg-background border border-primary max-w-sm w-full max-h-[580px] h-full rounded-lg overflow-hidden shadow-sm
@@ -99,7 +102,7 @@ export default function CardProject({ languages, item }: CardProjectProps) {
                             <div className="flex">
                                 <button className="flex items-center space-x-1 p-2 rounded-full cursor-pointer">
                                     <Heart />
-                                    <span>15</span>
+                                    <span>{item.likes}</span>
                                 </button>
                                 <button className="flex items-center space-x-1 p-2 rounded-full cursor-pointer">
                                     <MessageCircle />

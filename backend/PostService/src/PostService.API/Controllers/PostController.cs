@@ -36,7 +36,7 @@ namespace PostService.API.Controllers
             this.removeLike = _removeLike;
         }
         [HttpGet]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> List([FromQuery] int? page)
         {
             var posts = new List<Post>();
@@ -51,7 +51,7 @@ namespace PostService.API.Controllers
             return Ok(posts);
         }
         [HttpGet("{Id:guid}")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> GetById([FromRoute] Guid Id)
         {
             var post = await this.postServices.GetById(Id);
@@ -60,7 +60,7 @@ namespace PostService.API.Controllers
             return Ok(post);
         }
         [HttpGet("GetPostById/{Id}")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> GetPostById([FromRoute] Guid Id)
         {
             var post = await this.postServices.GetPostById(Id);
@@ -69,7 +69,7 @@ namespace PostService.API.Controllers
             return Ok(post);
         }
         [HttpGet("GetByPagination")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> GetByPagination(
             [FromQuery] int page,
             [FromQuery] string? search
@@ -79,7 +79,7 @@ namespace PostService.API.Controllers
             return Ok(result);
         }
         [HttpPost]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> CreatePost([FromForm] PostRequest postRequest)
         {
             if (ModelState.IsValid)
@@ -91,7 +91,7 @@ namespace PostService.API.Controllers
             return BadRequest(errors);
         }
         [HttpPut("{Id:guid}")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> UpdatePost([FromRoute] Guid Id, PostRequest postRequest)
         {
             if (ModelState.IsValid)
@@ -103,14 +103,14 @@ namespace PostService.API.Controllers
             return BadRequest(errors);
         }
         [HttpDelete("{Id:guid}")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> DeletePost(Guid Id)
         {
             await this.deleteProject.ExecuteAsync(Id);
             return Ok(new { message = "Postagem deletada com sucesso!" });
         }
         [HttpPost("AddLike")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> AddLike([FromBody] LikeRequest likeRequest)
         {
             var userId = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
@@ -119,8 +119,8 @@ namespace PostService.API.Controllers
             await this.addLike.ExecuteAsync(Guid.Parse(userId), likeRequest);
             return Ok(new { message = "Curtida adicionada com sucesso!"});
         }
-        [HttpPost("RemoveLike")]
-        [Authorize(Roles = "Administrador")]
+        [HttpDelete("RemoveLike")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> RemoveLike([FromBody] LikeRequest likeRequest)
         {
             var userId = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;

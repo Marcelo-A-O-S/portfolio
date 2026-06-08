@@ -1,0 +1,16 @@
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Application\bin\Debug\net8.0\CertificateService.Application.deps.json
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Application\bin\Debug\net8.0\CertificateService.Application.dll
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Application\bin\Debug\net8.0\CertificateService.Application.pdb
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Application\bin\Debug\net8.0\CertificateService.Domain.dll
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Application\bin\Debug\net8.0\CertificateService.Domain.pdb
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Application\obj\Debug\net8.0\CertificateService.Application.csproj.AssemblyReference.cache
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Application\obj\Debug\net8.0\CertificateService.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Application\obj\Debug\net8.0\CertificateService.Application.AssemblyInfoInputs.cache
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Application\obj\Debug\net8.0\CertificateService.Application.AssemblyInfo.cs
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Application\obj\Debug\net8.0\CertificateService.Application.csproj.CoreCompileInputs.cache
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Application\obj\Debug\net8.0\CertificateService.Application.sourcelink.json
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Application\obj\Debug\net8.0\Certific.762DF7D0.Up2Date
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Application\obj\Debug\net8.0\CertificateService.Application.dll
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Application\obj\Debug\net8.0\refint\CertificateService.Application.dll
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Application\obj\Debug\net8.0\CertificateService.Application.pdb
+C:\Backup\Projetos\portfolio\backend\CertificateService\src\CertificateService.Application\obj\Debug\net8.0\ref\CertificateService.Application.dll

@@ -66,3 +66,7 @@ export const getPosts = async() =>{
     const response = await api.get(`/api/admin/post`);
     return response;
 } 
+export const AddLikePost = async() => {
+    const api = await apiClient();
+    
+}

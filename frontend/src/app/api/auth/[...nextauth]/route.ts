@@ -84,7 +84,7 @@ export const authOptions: AuthOptions = {
                     profileUrl: user.image,
                     provider: account.provider,
                     providerId: account.providerAccountId,
-                    providerToken: token.accessToken,
+                    providerToken: account.id_token ?? account.access_token,
                     username: user.username,
                     deviceId,
                     deviceName

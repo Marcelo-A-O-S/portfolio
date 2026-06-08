@@ -4,8 +4,8 @@ namespace AuthService.Application.DTOs.Request
 {
     public class LoginRequest
     {
-        [Required(ErrorMessage ="O campo email é obrigatório")]
         [EmailAddress]
+        [Required(ErrorMessage ="O campo email é obrigatório")]
         public string Email {get; set;}
         public string Name { get; set;}
         public string Username { get; set;}

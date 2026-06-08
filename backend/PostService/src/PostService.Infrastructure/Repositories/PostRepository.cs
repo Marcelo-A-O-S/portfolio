@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using PostService.Application.DTOs.Response;
 using PostService.Domain.Entities;
 using PostService.Domain.Interfaces;
+using PostService.Domain.Queries;
 using PostService.Infrastructure.Context;
 
 namespace PostService.Infrastructure.Repositories
@@ -12,7 +14,7 @@ namespace PostService.Infrastructure.Repositories
         {
             this.context = _context;
         }
-        public async Task<PaginatedResult<Post>> GetByPagination(int page, string? search, int itemsPage = 10)
+        public async Task<PaginatedResult<PostView>> GetByPagination(int page, string? search, int itemsPage = 10)
         {
             var query = this.context.Posts
                 .AsNoTracking()
@@ -30,7 +32,7 @@ namespace PostService.Infrastructure.Repositories
             }
             var totalItems = await query.CountAsync();
             var items = await query
-                .OrderByDescending(p=> p.CreatedAt)
+                .OrderByDescending(p => p.CreatedAt)
                 .Include(p => p.PostContents)
                     .ThenInclude(pt => pt.Language)
                 .Include(p => p.Categories)
@@ -41,8 +43,73 @@ namespace PostService.Infrastructure.Repositories
                         .ThenInclude(tl => tl.Language)
                 .Skip((page - 1) * itemsPage)
                 .Take(itemsPage)
+                .Select(p => new PostView
+                {
+                    Id = p.Id,
+                    ImgUrl = p.ImgUrl,
+                    Status = p.Status,
+                    CreatedAt = p.CreatedAt,
+                    UpdatedAt = p.UpdatedAt,
+                    PostContents = p.PostContents.Select(pc => new PostContentView
+                    {
+                        Id = pc.Id,
+                        Title = pc.Title,
+                        Description = pc.Description,
+                        Content = pc.Content,
+                        Slug = pc.Slug,
+                        ImagesUrls = pc.ImagesUrls,
+                        CreatedAt = pc.CreatedAt,
+                        Language = new LanguageView
+                        {
+                            Id = pc.Language.Id,
+                            Code = pc.Language.Code,
+                            Name = pc.Language.Name
+                        }
+                    }).ToList(),
+                    Likes = p.Likes.Count(),
+                    Tools = p.Tools.Select(t => new ToolView
+                    {
+                        Id = t.Id,
+                        ToolContents = t.ToolContents.Select(tc => new ToolContentView
+                        {
+                            Id = tc.Id,
+                            Name = tc.Name,
+                            Title = tc.Title,
+                            Description = tc.Description,
+                            Content = tc.Content,
+                            Slug = tc.Slug,
+                            ImagesUrls = tc.ImagesUrls,
+                            CreatedAt = tc.CreatedAt,
+                            Language = new LanguageView
+                            {
+                                Id = tc.Language.Id,
+                                Code = tc.Language.Code,
+                                Name = tc.Language.Name
+                            }
+                        }).ToList()
+                    }).ToList(),
+                    Categories = p.Categories.Select(c => new CategoryView
+                    {
+                        Id = c.Id,
+                        CategoryContents = c.CategoryContents.Select(cc => new CategoryContentView
+                        {
+                            Id = cc.Id,
+                            Name = cc.Name,
+                            Slug = cc.Slug,
+                            CreatedAt = cc.CreatedAt,
+                            UpdatedAt = cc.UpdateAt,
+                            Language = new LanguageView
+                            {
+                                Id = cc.Language.Id,
+                                Code = cc.Language.Code,
+                                Name = cc.Language.Name
+                            }
+                        }).ToList()
+                    }).ToList(),
+                })
+                
                 .ToListAsync();
-            return new PaginatedResult<Post>
+            return new PaginatedResult<PostView>
             {
                 Items = items,
                 TotalItems = totalItems,
@@ -50,7 +117,6 @@ namespace PostService.Infrastructure.Repositories
                 TotalPages = (int)Math.Ceiling(totalItems / (double)itemsPage)
             };
         }
-
         public async Task<Post> GetForUpdate(Guid Id)
         {
             return await context.Posts
@@ -60,7 +126,6 @@ namespace PostService.Infrastructure.Repositories
                 .Include(p => p.Tools)
                 .FirstOrDefaultAsync(t => t.Id == Id);
         }
-
         public async Task<Post> GetFullDataById(Guid Id)
         {
             return await context.Posts
@@ -70,10 +135,15 @@ namespace PostService.Infrastructure.Repositories
                 .Include(p => p.Tools)
                 .FirstOrDefaultAsync(t => t.Id == Id);
         }
-
+        public async Task<int> GetLikesCountByPostId(Guid postId)
+        {
+            return await this.context.Posts
+                .Where(p => p.Id == postId)
+                .CountAsync();
+        }
         public async Task<Post> GetPostById(Guid Id)
         {
-            var item  = await this.context.Posts
+            var item = await this.context.Posts
                 .AsNoTracking()
                 .AsSplitQuery()
                 .Where(t => t.Id == Id)
@@ -88,13 +158,12 @@ namespace PostService.Infrastructure.Repositories
                 .FirstOrDefaultAsync();
             return item;
         }
-
         public async Task<List<Post>> GetPosts()
         {
             return await this.context.Posts
                 .AsNoTracking()
                 .AsSplitQuery()
-                .OrderByDescending(p=> p.CreatedAt)
+                .OrderByDescending(p => p.CreatedAt)
                 .Include(p => p.PostContents)
                     .ThenInclude(pt => pt.Language)
                 .Include(p => p.Categories)

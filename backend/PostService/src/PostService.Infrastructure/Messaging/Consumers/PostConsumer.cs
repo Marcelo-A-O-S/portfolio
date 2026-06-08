@@ -37,7 +37,7 @@ namespace PostService.Infrastructure.Messaging.Consumers
                 this.logger.LogInformation("Iniciando conexão com o RabbitMQ...");
                 this.connection = await this.factory.CreateConnectionAsync();
                 this.consumer = new RabbitMQConsumer(this.connection);
-                this.consumer.RegisterHandler("remove-user", async message => { await this.RemoveUserCache(message);});
+                this.consumer.RegisterHandler("delete-user", async message => { await this.RemoveUserCache(message);});
                 await consumer.Start();
                 this.logger.LogInformation("Consumer dos Projetos do RabbitMQ iniciado e aguardando mensagens...");
             }catch(Exception ex)

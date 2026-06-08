@@ -21,6 +21,7 @@ namespace CertificateService.Application.Extensions
 
             services.AddScoped<ICertificateCacheServices, CertificateCacheServices>();
             services.AddScoped<ICertificatePostsCacheServices, CertificatePostCacheServices>();
+            services.AddScoped<IPostCacheServices, PostCacheServices>();
 
             services.AddScoped<IAddCertificate, AddCertificate>();
             services.AddScoped<IUpdateCertificate, UpdateCertificate>();

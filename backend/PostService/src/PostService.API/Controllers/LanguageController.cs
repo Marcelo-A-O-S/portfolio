@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using PostService.Application.DTOs.Request;
 using PostService.Application.Interfaces;
 using PostService.Application.UseCases.Languages.Interfaces;
@@ -27,8 +28,8 @@ namespace PostService.API.Controllers
             this.deleteLanguage = _deleteLanguage;
         }
         [HttpGet]
-        [Authorize( Roles = "Administrador")]
-        public async Task<IActionResult> List([FromQuery]int? page)
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
+        public async Task<IActionResult> List([FromQuery] int? page)
         {
             var languages = new List<Language>();
             if (page.HasValue)
@@ -42,7 +43,8 @@ namespace PostService.API.Controllers
             return Ok(languages);
         }
         [HttpGet("GetByPagination")]
-        [Authorize( Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
+        [EnableRateLimiting("pagination")]
         public async Task<IActionResult> GetByPagination(
             [FromQuery] int page,
             [FromQuery] string? search,
@@ -53,42 +55,42 @@ namespace PostService.API.Controllers
             return Ok(result);
         }
         [HttpGet("{Id:guid}")]
-        [Authorize( Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> GetById([FromRoute] Guid Id)
         {
             var language = await this.languageServices.GetById(Id);
             return Ok(language);
         }
         [HttpPost]
-        [Authorize( Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> CreateLanguage([FromBody] LanguageRequest languageRequest)
         {
             if (ModelState.IsValid)
             {
                 await this.createLanguage.ExecuteAsync(languageRequest);
-                return Ok(new { message = "Linguagem salva com sucesso. "});
+                return Ok(new { message = "Linguagem salva com sucesso. " });
             }
-            var errors = ModelState.Values.Select(e=> e.Errors);
+            var errors = ModelState.Values.Select(e => e.Errors);
             return BadRequest(errors);
         }
         [HttpPut("{Id:guid}")]
-        [Authorize( Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> UpdateLanguage([FromRoute] Guid Id, [FromBody] LanguageRequest languageRequest)
         {
             if (ModelState.IsValid)
             {
                 await this.updateLanguage.ExecuteAsync(Id, languageRequest);
-                return Ok(new { message = "Linguagem atualizada com sucesso."});
+                return Ok(new { message = "Linguagem atualizada com sucesso." });
             }
             var errors = ModelState.Values.Select(e => e.Errors);
             return BadRequest(errors);
         }
         [HttpDelete("{Id:guid}")]
-        [Authorize( Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> DeleteByRoute([FromRoute] Guid Id)
         {
             await this.deleteLanguage.ExecuteAsync(Id);
-            return Ok(new { message ="Linguagem deletada com sucesso."});
+            return Ok(new { message = "Linguagem deletada com sucesso." });
         }
     }
 }

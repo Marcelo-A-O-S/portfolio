@@ -1,13 +1,15 @@
 using PostService.Domain.Entities;
+using PostService.Domain.Queries;
 
 namespace PostService.Domain.Interfaces
 {
     public interface IPostRepository : IGenerics<Post>
     {
-        Task<PaginatedResult<Post>> GetByPagination(int page, string? search, int itemsPage = 10);
+        Task<PaginatedResult<PostView>> GetByPagination(int page, string? search, int itemsPage = 10);
         Task<Post> GetPostById(Guid Id);
         Task<Post> GetForUpdate(Guid Id);
         Task<List<Post>> GetPosts();
         Task<Post> GetFullDataById(Guid Id);
+        Task<int> GetLikesCountByPostId(Guid postId);
     }
 }

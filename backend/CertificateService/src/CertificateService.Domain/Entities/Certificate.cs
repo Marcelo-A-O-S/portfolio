@@ -12,11 +12,11 @@ namespace CertificateService.Domain.Entities
         public Guid? MediaFileId { get; private set; }
         public DateTime CreatedAt { get; private set;}
         public DateTime UpdatedAt { get; private set; }
-        public DateTime IssueDate { get; private set; }
+        public DateTime IssuerDate { get; private set; }
         public string? CredentialId { get; private set; }
         public string? VerificationUrl { get; private set; }
         public string Institution { get; private set;}
-        public int? WorkloadHours { get; private set; }
+        public int? WorkLoadHours { get; private set; }
         public Status Status { get; private set;}
         public CertificateType CertificateType { get; private set; }
         public ICollection<CertificatePost>? Posts { get; private set; }
@@ -36,10 +36,10 @@ namespace CertificateService.Domain.Entities
             this.Institution = institution;
             this.Status = status;
             this.CertificateType = certificateType;
-            this.IssueDate = issuerDate;
+            this.IssuerDate = issuerDate;
             this.CredentialId = credentialId;
             this.VerificationUrl = verificationUrl;
-            this.WorkloadHours = workLoadHours;
+            this.WorkLoadHours = workLoadHours;
             this.CreatedAt = DateTime.UtcNow;
             this.UpdatedAt = DateTime.UtcNow;
         }
@@ -64,8 +64,11 @@ namespace CertificateService.Domain.Entities
             this.Institution = institution;
             this.Status = status;
             this.CertificateType = certificateType;
-            this.IssueDate = issuerDate;
+            this.IssuerDate = issuerDate;
             this.UpdatedAt = DateTime.UtcNow;
+            this.CredentialId = credentialId;
+            this.VerificationUrl = verificationUrl;
+            this.WorkLoadHours = workLoadHours;
         }
     }
 }

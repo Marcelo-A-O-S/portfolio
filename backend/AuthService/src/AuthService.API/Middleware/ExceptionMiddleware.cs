@@ -33,7 +33,6 @@ namespace AuthService.API.Middleware
                 case NotFoundException:
                     statusCode = HttpStatusCode.NotFound;
                     break;
-
                 case ValidationException:
                     statusCode = HttpStatusCode.BadRequest;
                     break;

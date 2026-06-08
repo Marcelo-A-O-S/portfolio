@@ -78,6 +78,24 @@ namespace Gateway.API.Configuration
                     {
                         Path = "/media/{**catch-all}"
                     }
+                },
+                new RouteConfig
+                {
+                    RouteId = "commentRoute",
+                    ClusterId = "commentCluster",
+                    Match = new RouteMatch
+                    {
+                        Path = "/comment/{**catch-all}"
+                    }
+                },
+                new RouteConfig
+                {
+                    RouteId = "certificateRoute",
+                    ClusterId = "certificateCluster",
+                    Match = new RouteMatch
+                    {
+                        Path = "/certificate/{**catch-all}"
+                    }
                 }
             };
         }
@@ -87,7 +105,11 @@ namespace Gateway.API.Configuration
         {
             var authAddress = configuration.GetSection("Destinations:AuthAddress").Value;
             var postAddress = configuration.GetSection("Destinations:PostAddress").Value;
-            if (string.IsNullOrEmpty(authAddress) || string.IsNullOrEmpty(postAddress))
+            var commentAddress = configuration.GetSection("Destinations:CommentAddress").Value;
+            var certificateAddress = configuration.GetSection("Destinations:CertificateAddress").Value;
+            if (string.IsNullOrEmpty(authAddress) || string.IsNullOrEmpty(postAddress)
+            || string.IsNullOrEmpty(commentAddress) || string.IsNullOrEmpty(certificateAddress)
+            )
             {
                 throw new InvalidOperationException("Chaves de destino não configuradas corretamente.");
             }
@@ -110,6 +132,26 @@ namespace Gateway.API.Configuration
                     {
                         {
                             "postservice", new DestinationConfig { Address = postAddress}
+                        }
+                    }
+                },
+                new ClusterConfig
+                {
+                    ClusterId = "commentCluster",
+                    Destinations = new Dictionary<string, DestinationConfig>
+                    {
+                        {
+                            "commentservice", new DestinationConfig { Address = commentAddress}
+                        }
+                    }
+                },
+                new ClusterConfig
+                {
+                    ClusterId = "certificateCluster",
+                    Destinations = new Dictionary<string, DestinationConfig>
+                    {
+                        {
+                            "certificateservice", new DestinationConfig { Address = certificateAddress}
                         }
                     }
                 }

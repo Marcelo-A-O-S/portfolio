@@ -31,21 +31,21 @@ namespace PostService.API.Controllers
             this.deleteCategory = _deleteCategory;
         }
         [HttpGet("GetCategories")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> GetCategories()
         {
             var categories = await this.categoryServices.GetCategories();
             return Ok(categories);
         }
         [HttpGet("GetCategoriesByLanguage")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> GetCategoriesByLanguage([FromQuery] string language)
         {
             var categories = await this.categoryServices.GetCategoriesByLanguage(language);
             return Ok(categories);
         }
         [HttpGet]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> List([FromQuery] int? page)
         {
             var categories = new List<Category>();
@@ -60,7 +60,7 @@ namespace PostService.API.Controllers
             return Ok(categories);
         }
         [HttpGet("GetByPagination")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         [EnableRateLimiting("pagination")]
         public async Task<IActionResult> GetByPagination(
             [FromQuery] int page,
@@ -72,7 +72,7 @@ namespace PostService.API.Controllers
             return Ok(result);
         }
         [HttpGet("{Id:guid}")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         [EnableRateLimiting("read")]
         public async Task<IActionResult> GetById([FromRoute] Guid Id)
         {
@@ -82,7 +82,7 @@ namespace PostService.API.Controllers
             return Ok(category);
         }
         [HttpPost]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         [EnableRateLimiting("write")]
         public async Task<IActionResult> CreateCategory(CategoryRequest categoryRequest)
         {
@@ -95,7 +95,7 @@ namespace PostService.API.Controllers
             return BadRequest(errors);
         }
         [HttpPut("{Id:guid}")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         [EnableRateLimiting("write")]
         public async Task<IActionResult> UpdateCategory([FromRoute] Guid Id, CategoryRequest categoryRequest)
         {
@@ -108,7 +108,7 @@ namespace PostService.API.Controllers
             return BadRequest(errors);
         }
         [HttpDelete("{Id:guid}")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         [EnableRateLimiting("sensitive")]
         public async Task<IActionResult> DeleteCategory([FromRoute] Guid Id)
         {
