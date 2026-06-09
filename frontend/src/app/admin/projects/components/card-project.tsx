@@ -7,12 +7,18 @@ import Link from "next/link";
 import { useState } from "react";
 import ProjectActions from "./project-actions";
 import { Heart, MessageCircle } from "lucide-react";
+import { useAddLikePost } from "@/hooks/useAddLikePost";
+import { useRemoveLikePost } from "@/hooks/useRemoveLikePost";
 type CardProjectProps = {
     languages?: LanguageSchema[],
     item: PostSchema
 }
 export default function CardProject({ languages, item }: CardProjectProps) {
+    const { mutateAsync: addLike } = useAddLikePost();
+    const { mutateAsync: removeLike} = useRemoveLikePost();
     const [lang, setLang] = useState(languages?.[0]?.code);
+    const [likes, setLikes] = useState(item.likes ?? 0);
+    const [liked, setLiked] = useState(item.liked);
     const content = item.postContents.find(
         tc => tc.language?.code === lang
     );
@@ -31,8 +37,33 @@ export default function CardProject({ languages, item }: CardProjectProps) {
             );
             return content;
         })
-    const handleLike = async() => {
-        
+    const handleLike = async () => {
+        try {
+            if (liked) {
+                setLiked(false);
+                setLikes(prev => prev - 1);
+
+                await removeLike({
+                    postId: item.id!
+                });
+            } else {
+                setLiked(true);
+                setLikes(prev => prev + 1);
+
+                await addLike({
+                    postId: item.id!
+                });
+            }
+        }
+        catch {
+            if (liked) {
+                setLiked(true);
+                setLikes(prev => prev + 1);
+            } else {
+                setLiked(false);
+                setLikes(prev => prev - 1);
+            }
+        }
     }
     return (
         <>
@@ -70,7 +101,7 @@ export default function CardProject({ languages, item }: CardProjectProps) {
                             {content?.description}
                         </p>
                         <div className="flex flex-col">
-                            
+
                         </div>
                         <div className="flex flex-col">
                             <div className="flex flex-nowrap overflow-x-auto scrollbar-hide gap-2 py-1">
@@ -100,9 +131,13 @@ export default function CardProject({ languages, item }: CardProjectProps) {
                         </div>
                         <div className="flex items-center justify-between mt-4 text-primary text-xs sm:text-sm">
                             <div className="flex">
-                                <button className="flex items-center space-x-1 p-2 rounded-full cursor-pointer">
-                                    <Heart />
-                                    <span>{item.likes}</span>
+                                <button 
+                                onClick={handleLike}
+                                className="flex items-center space-x-1 p-2 rounded-full cursor-pointer">
+                                    <Heart 
+                                        className={liked ? "fill-current" : ""}
+                                    />
+                                    <span>{likes}</span>
                                 </button>
                                 <button className="flex items-center space-x-1 p-2 rounded-full cursor-pointer">
                                     <MessageCircle />

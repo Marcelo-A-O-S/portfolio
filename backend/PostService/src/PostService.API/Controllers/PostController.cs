@@ -6,6 +6,7 @@ using PostService.Application.DTOs.Request;
 using PostService.Application.UseCases.Projects.Interfaces;
 using Microsoft.IdentityModel.JsonWebTokens;
 using PostService.Application.UseCases.Likes.Interfaces;
+using System.Security.Claims;
 
 namespace PostService.API.Controllers
 {
@@ -69,13 +70,16 @@ namespace PostService.API.Controllers
             return Ok(post);
         }
         [HttpGet("GetByPagination")]
-        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
+        [Authorize(Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> GetByPagination(
             [FromQuery] int page,
             [FromQuery] string? search
         )
         {
-            var result = await this.postServices.GetByPagination(page, search);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if(userId == null)
+                return Unauthorized();
+            var result = await this.postServices.GetByPagination(Guid.Parse(userId), page, search);
             return Ok(result);
         }
         [HttpPost]
@@ -113,7 +117,7 @@ namespace PostService.API.Controllers
         [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> AddLike([FromBody] LikeRequest likeRequest)
         {
-            var userId = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if(userId == null)
                 return Unauthorized();
             await this.addLike.ExecuteAsync(Guid.Parse(userId), likeRequest);
@@ -123,7 +127,7 @@ namespace PostService.API.Controllers
         [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> RemoveLike([FromBody] LikeRequest likeRequest)
         {
-            var userId = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if(userId == null)
                 return Unauthorized();
             await this.removeLike.ExecuteAsync(Guid.Parse(userId), likeRequest);

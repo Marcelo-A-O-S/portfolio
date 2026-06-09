@@ -37,9 +37,9 @@ namespace PostService.Application.Services
             return await this.postRepository.GetById(Id);
         }
 
-        public async Task<PaginatedResult<PostView>> GetByPagination(int page, string? search)
+        public async Task<PaginatedResult<PostView>> GetByPagination(Guid authenticatedUserId, int page, string? search)
         {
-            return await this.postRepository.GetByPagination(page, search);
+            return await this.postRepository.GetByPagination(authenticatedUserId, page, search);
         }
 
         public async Task<Post> GetForUpdate(Guid Id)

@@ -17,7 +17,7 @@ export function useCreateProject(){
         },
         onError:(error)=>{
             console.log(error.response?.data);
-            toast.error(error.response?.data?.message ?? "Erro ao criar linguagem");
+            toast.error(error.response?.data?.message ?? "Erro ao criar projetp");
         }
     })
 }

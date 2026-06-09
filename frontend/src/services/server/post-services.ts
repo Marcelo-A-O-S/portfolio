@@ -1,6 +1,7 @@
 import { PostSchema } from "@/domain/schemas/PostSchema";
 import { apiServer } from "./api-server";
 import { PostsFilters } from "@/domain/schemas/PostsFilters";
+import { LikePostSchema } from "@/domain/schemas/LikePostSchema";
 
 export const addPostService = async(post: PostSchema) =>{
     const api = await apiServer();
@@ -59,5 +60,17 @@ export const getPostByIdService = async(id:string) =>{
 export const getPosts = async() =>{
     const api = await apiServer();
     const response = await api.get(`/api/Post/GetPosts`);
+    return response;
+}
+export const addLikePost = async(data : LikePostSchema) => {
+    const api = await apiServer();
+    const response = await api.post(`/api/Post/AddLike`,data);
+    return response;
+}
+export const removeLikePost = async(data: LikePostSchema) => {
+    const api = await apiServer();
+    const response = await api.delete(`/api/Post/RemoveLike`,{
+        data: data
+    })
     return response;
 }

@@ -1,10 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using PostService.Application.DTOs.Response;
 using PostService.Domain.Entities;
 using PostService.Domain.Interfaces;
 using PostService.Domain.Queries;
 using PostService.Infrastructure.Context;
-
 namespace PostService.Infrastructure.Repositories
 {
     public class PostRepository : Generics<Post>, IPostRepository
@@ -14,7 +12,7 @@ namespace PostService.Infrastructure.Repositories
         {
             this.context = _context;
         }
-        public async Task<PaginatedResult<PostView>> GetByPagination(int page, string? search, int itemsPage = 10)
+        public async Task<PaginatedResult<PostView>> GetByPagination(Guid authenticatedUserId, int page, string? search, int itemsPage = 10)
         {
             var query = this.context.Posts
                 .AsNoTracking()
@@ -67,6 +65,7 @@ namespace PostService.Infrastructure.Repositories
                         }
                     }).ToList(),
                     Likes = p.Likes.Count(),
+                    Liked = p.Likes.Any( l => l.UserId == authenticatedUserId),
                     Tools = p.Tools.Select(t => new ToolView
                     {
                         Id = t.Id,
@@ -107,7 +106,6 @@ namespace PostService.Infrastructure.Repositories
                         }).ToList()
                     }).ToList(),
                 })
-                
                 .ToListAsync();
             return new PaginatedResult<PostView>
             {

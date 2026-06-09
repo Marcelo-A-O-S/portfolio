@@ -7,6 +7,7 @@ namespace PostService.Domain.Queries
         public string ImgUrl { get; set; }
         public ICollection<CategoryView> Categories { get; set; }
         public int Likes { get; set; }
+        public bool Liked { get; set; } = false;
         public ICollection<ToolView> Tools { get; set; }
         public ICollection<PostContentView> PostContents { get; set; }
         public DateTime CreatedAt { get; set; }

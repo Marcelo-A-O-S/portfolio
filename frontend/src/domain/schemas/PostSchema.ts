@@ -17,6 +17,7 @@ export const postSchema = z.object({
     categories: z.array(categorySchema).min(1, "É obrigatório ter pelo menos uma categoria relacionada ao projeto."),
     tools: z.array(toolInPostSchema).min(1, "É obrigatório ter pelo menos uma ferramenta relacionada ao projeto."),
     status: PostStatusEnum,
-    likes: z.number().optional()
+    likes: z.number().default(0).optional(),
+    liked: z.boolean().default(false)
 })
 export type PostSchema = z.infer<typeof postSchema>
