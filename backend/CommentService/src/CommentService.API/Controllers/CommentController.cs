@@ -5,6 +5,7 @@ using CommentService.Application.DTOs.Request;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.AspNetCore.Authorization;
 using CommentService.Application.UseCases.Likes.Interfaces;
+using System.Security.Claims;
 
 namespace CommentService.API.Controllers
 {
@@ -46,7 +47,7 @@ namespace CommentService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var userId = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if(userId == null)
                     return Unauthorized(new { message = "Usuário não autorizado."});
                 await this.addComment.ExecuteAsync(Guid.Parse(userId), commentRequest);
@@ -61,7 +62,7 @@ namespace CommentService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var userId = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if(userId == null)
                     return Unauthorized(new { message = "Usuário não autorizado."});
                 await this.updateComment.ExecuteAsync(Guid.Parse(userId), Id, commentRequest);
@@ -74,7 +75,7 @@ namespace CommentService.API.Controllers
         [Authorize( Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> DeleteComment([FromRoute] Guid Id)
         {
-            var userId = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if(userId == null)
                 return Unauthorized(new { message = "Usuário não autorizado."});
             await this.removeComment.ExecuteAsync(Guid.Parse(userId), Id);
@@ -86,7 +87,7 @@ namespace CommentService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var userId = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if(userId == null)
                     return Unauthorized(new { message = "Usuário não autorizado."});
                 await this.addReply.ExecuteAsync(Guid.Parse(userId), Id, commentRequest);
@@ -101,7 +102,7 @@ namespace CommentService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var userId = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if(userId == null)
                     return Unauthorized(new { message = "Usuário não autorizado."});
                 await this.updateReply.ExecuteAsync(Guid.Parse(userId), commentId, replyId, commentRequest);
@@ -114,7 +115,7 @@ namespace CommentService.API.Controllers
         [Authorize( Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> DeleteReply([FromRoute] Guid commentId, [FromRoute] Guid replyId)
         {
-            var userId = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if(userId == null)
                 return Unauthorized(new { message = "Usuário não autorizado."});
             await this.removeReply.ExecuteAsync(Guid.Parse(userId), commentId, replyId);
@@ -124,7 +125,7 @@ namespace CommentService.API.Controllers
         [Authorize( Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> AddLike([FromRoute] Guid commentId)
         {
-            var userId = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if(userId == null)
                 return Unauthorized();
             await this.addLike.ExecuteAsync(Guid.Parse(userId), commentId);
@@ -134,7 +135,7 @@ namespace CommentService.API.Controllers
         [Authorize( Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> RemoveLike([FromRoute] Guid commentId)
         {
-            var userId = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if(userId == null)
                 return Unauthorized();
             await this.removeLike.ExecuteAsync(Guid.Parse(userId), commentId);
