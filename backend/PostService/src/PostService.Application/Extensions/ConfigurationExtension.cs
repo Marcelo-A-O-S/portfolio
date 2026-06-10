@@ -10,7 +10,7 @@ namespace PostService.Application.Extensions
             this IServiceCollection services, IConfiguration configuration
         )
         {
-            services.Configure<InternalClient>(configuration.GetSection("InternalClients:PostService"));
+            services.Configure<InternalClientOptions>(configuration.GetSection("InternalClientOptions"));
             return services;
         }
     }

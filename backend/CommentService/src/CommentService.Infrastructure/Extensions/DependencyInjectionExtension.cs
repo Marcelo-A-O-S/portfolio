@@ -11,11 +11,9 @@ namespace CommentService.Infrastructure.Extensions
             this IServiceCollection services
         ){
             services.AddScoped<IGenerics<Comment>, Generics<Comment>>();
-            services.AddScoped<IGenerics<Answer>, Generics<Answer>>();
             services.AddScoped<IGenerics<Like>, Generics<Like>>();
 
             services.AddScoped<ICommentRepository, CommentRepository>();
-            services.AddScoped<IAnswerRepository, AnswerRepository>();
             services.AddScoped<ILikeRepository, LikeRepository>();
             return services;
         } 

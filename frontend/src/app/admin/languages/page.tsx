@@ -33,7 +33,6 @@ export default function LanguagePage() {
         }
         router.push(`?${params.toString()}`)
     }, [debouncedSearch])
-    console.log(data);
     return (
         <>
             <main className="mx-auto flex min-h-screen inset-0 w-full max-w-[1440px] justify-center ">

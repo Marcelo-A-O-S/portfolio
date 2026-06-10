@@ -9,7 +9,7 @@ namespace AuthService.Application.Extension
             this IServiceCollection services, IConfiguration configuration
         )
         {
-            services.Configure<InternalClientOptions>(configuration.GetSection("InternalClients"));
+            services.Configure<InternalClientOptions>(configuration.GetSection("InternalClientOptions"));
             services.Configure<JwtBearerOptions>(configuration.GetSection("JWT"));
             services.Configure<InternalJWTOptions>(configuration.GetSection("InternalJWT"));
             services.Configure<ProviderOptions>(configuration.GetSection("ProviderOptions"));

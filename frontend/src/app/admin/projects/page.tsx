@@ -22,7 +22,7 @@ export default function ProjectPage() {
         page,
         search
     })
-    console.log("Projetos: ",projects);
+    // console.log("PROJECTS: ", projects);
     return (
         <>
             <main className="relative mx-auto flex min-h-screen inset-0 w-full max-w-[1440px] justify-center bg-white dark:bg-black ">
@@ -41,7 +41,6 @@ export default function ProjectPage() {
                         </div>
                     </div>
                     <div className="flex md:px-10 gap-2">
-
                     </div>
                     <div className="flex py-10 md:p-10">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-5">

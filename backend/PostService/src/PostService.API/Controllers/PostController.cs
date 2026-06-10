@@ -131,7 +131,7 @@ namespace PostService.API.Controllers
             if(userId == null)
                 return Unauthorized();
             await this.removeLike.ExecuteAsync(Guid.Parse(userId), likeRequest);
-            return NoContent();
+            return Ok(new { message = "Curtida removida com sucesso!"});
         }
     }
 }

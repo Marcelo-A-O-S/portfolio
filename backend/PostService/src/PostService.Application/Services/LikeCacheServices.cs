@@ -21,9 +21,9 @@ namespace PostService.Application.Services
             return await this.cacheServices.GetAsync(key);
         }
 
-        public Task RemoveLikeCache(string key)
+        public async Task RemoveLikeCache(string key)
         {
-            throw new NotImplementedException();
+            await this.cacheServices.RemoveAsync(key);
         }
     }
 }

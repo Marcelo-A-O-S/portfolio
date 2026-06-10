@@ -13,6 +13,12 @@ namespace CommentService.Infrastructure.Repositories
             this.context = _context;
         }
 
+        public async Task<List<Comment>> GetCommentsByPostIdsPage(List<Guid> postIds)
+        {
+            return await this.context.Comments
+                .Where(c => postIds.Contains(c.PostId))
+                .ToListAsync();
+        }
         public async Task<List<Comment>> GetCommentsByPostId(Guid postId)
         {
             return await this.context.Comments
@@ -21,6 +27,22 @@ namespace CommentService.Infrastructure.Repositories
                 .Where(c => c.PostId == postId)
                 .Include(c => c.ParentComment)
                 .ToListAsync();
+        }
+
+        public async Task<Dictionary<Guid, int>> GetQuantityCommentsByPostIdsPage(List<Guid> postIds)
+        {
+            return await this.context.Comments
+                .Where(c => postIds.Contains(c.PostId))
+                .GroupBy(c => c.PostId)
+                .Select(g => new
+                {
+                    PostId = g.Key,
+                    Count = g.Count()
+                })
+                .ToDictionaryAsync(
+                    x => x.PostId,
+                    x => x.Count
+                );     
         }
     }
 }

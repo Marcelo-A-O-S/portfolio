@@ -3,7 +3,6 @@ import { PostsFilters } from "@/domain/schemas/PostsFilters";
 import { PaginatedResult } from "@/domain/types/PaginatedResult";
 import { getPostsByPagination } from "@/services/client/post-services";
 import { useQuery } from "@tanstack/react-query";
-
 export function usePaginationProject(filters: PostsFilters){
     return useQuery<PaginatedResult<PostSchema>>({
         queryKey: ["project-pagination", filters],

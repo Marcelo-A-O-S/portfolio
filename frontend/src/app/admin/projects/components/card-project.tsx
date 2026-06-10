@@ -4,7 +4,7 @@ import { SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, Se
 import { LanguageSchema } from "@/domain/schemas/LanguageSchema"
 import { PostSchema } from "@/domain/schemas/PostSchema"
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProjectActions from "./project-actions";
 import { Heart, MessageCircle } from "lucide-react";
 import { useAddLikePost } from "@/hooks/useAddLikePost";
@@ -14,11 +14,10 @@ type CardProjectProps = {
     item: PostSchema
 }
 export default function CardProject({ languages, item }: CardProjectProps) {
-    const { mutateAsync: addLike } = useAddLikePost();
-    const { mutateAsync: removeLike} = useRemoveLikePost();
+    const { mutateAsync: addLike, isPending: isAdding } = useAddLikePost();
+    const { mutateAsync: removeLike, isPending: isRemoving } = useRemoveLikePost();
     const [lang, setLang] = useState(languages?.[0]?.code);
-    const [likes, setLikes] = useState(item.likes ?? 0);
-    const [liked, setLiked] = useState(item.liked);
+    const loading = isAdding || isRemoving;
     const content = item.postContents.find(
         tc => tc.language?.code === lang
     );
@@ -38,31 +37,14 @@ export default function CardProject({ languages, item }: CardProjectProps) {
             return content;
         })
     const handleLike = async () => {
-        try {
-            if (liked) {
-                setLiked(false);
-                setLikes(prev => prev - 1);
-
-                await removeLike({
-                    postId: item.id!
-                });
-            } else {
-                setLiked(true);
-                setLikes(prev => prev + 1);
-
-                await addLike({
-                    postId: item.id!
-                });
-            }
-        }
-        catch {
-            if (liked) {
-                setLiked(true);
-                setLikes(prev => prev + 1);
-            } else {
-                setLiked(false);
-                setLikes(prev => prev - 1);
-            }
+        if (item.liked) {
+            await removeLike({
+                postId: item.id!
+            });
+        } else {
+            await addLike({
+                postId: item.id!
+            });
         }
     }
     return (
@@ -131,13 +113,14 @@ export default function CardProject({ languages, item }: CardProjectProps) {
                         </div>
                         <div className="flex items-center justify-between mt-4 text-primary text-xs sm:text-sm">
                             <div className="flex">
-                                <button 
-                                onClick={handleLike}
-                                className="flex items-center space-x-1 p-2 rounded-full cursor-pointer">
-                                    <Heart 
-                                        className={liked ? "fill-current" : ""}
+                                <button
+                                    disabled={loading}
+                                    onClick={handleLike}
+                                    className="flex items-center space-x-1 p-2 rounded-full cursor-pointer">
+                                    <Heart
+                                        className={item.liked ? "fill-current" : ""}
                                     />
-                                    <span>{likes}</span>
+                                    <span>{item.likes}</span>
                                 </button>
                                 <button className="flex items-center space-x-1 p-2 rounded-full cursor-pointer">
                                     <MessageCircle />

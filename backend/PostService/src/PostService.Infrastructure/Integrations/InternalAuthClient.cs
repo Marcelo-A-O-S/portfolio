@@ -9,11 +9,11 @@ namespace PostService.Infrastructure.Integrations
     {
         private readonly HttpClient http;
         private readonly ICacheService cacheServices;
-        private readonly InternalClient internalOptions;
+        private readonly InternalClientOptions internalOptions;
         public InternalAuthClient(
             HttpClient _http,
             ICacheService _cacheServices,
-            IOptions<InternalClient> _internalOptions
+            IOptions<InternalClientOptions> _internalOptions
         )
         {
             this.http = _http;
@@ -21,17 +21,18 @@ namespace PostService.Infrastructure.Integrations
             this.internalOptions = _internalOptions.Value;
         }
         public async Task<string> GetToken()
-        {
+        {  
+            var client = this.internalOptions.InternalClients["PostService"];
             const string CACHE_KEY = "internal:postservice:token";
             string cached = await this.cacheServices.GetAsync(CACHE_KEY);
             if(!string.IsNullOrWhiteSpace(cached))
                 return cached;
-            if(string.IsNullOrEmpty(this.internalOptions.ClientId) || string.IsNullOrEmpty(this.internalOptions.ClientSecret))
+            if(string.IsNullOrEmpty(client.ClientId) || string.IsNullOrEmpty(client.ClientSecret))
                 throw new Exception("Chaves de validação internas não configuradas");
             var response = await this.http.PostAsJsonAsync("/api/InternalAuth/token",new
             {
-                ClientId = this.internalOptions.ClientId,
-                ClientSecret= this.internalOptions.ClientSecret
+                ClientId = client.ClientId,
+                ClientSecret= client.ClientSecret
             });
             response.EnsureSuccessStatusCode();
             var tokenResponse =  await response.Content.ReadFromJsonAsync<TokenResponse>();
