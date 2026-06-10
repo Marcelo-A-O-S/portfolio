@@ -1,21 +1,28 @@
-using System.Collections.Generic;
+using CommentService.Domain.Enums;
 namespace CommentService.Domain.Entities
 {
     public class Comment
     {
         public Guid Id { get; private set; }
         public Guid UserId { get; private set; }
-        public Guid PostId { get; private set; }
+        public Guid TargetId { get; private set; }
+        public CommentType Type { get; private set; }
         public string Content { get; private set; }
         public Guid? ParentCommentId { get; private set; }
         public Comment? ParentComment { get; private set; }
         public ICollection<Comment> Replies { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
-        public Comment(Guid userId, Guid postId, string content, Guid? parentCommentId = null)
+        public Comment(
+            Guid userId,
+            Guid targetId,
+            CommentType type,
+            string content,
+            Guid? parentCommentId = null)
         {
             this.UserId = userId;
-            this.PostId = postId;
+            this.TargetId = targetId;
+            this.Type = type;
             this.Content = content;
             this.ParentCommentId = parentCommentId;
             this.Replies = new List<Comment>();

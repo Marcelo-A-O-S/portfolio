@@ -4,6 +4,7 @@ using CommentService.Application.Interfaces;
 using CommentService.Application.UseCases.Comments.Interfaces;
 using CommentService.Application.Validations;
 using CommentService.Domain.Entities;
+using CommentService.Domain.Enums;
 namespace CommentService.Application.UseCases.Comments
 {
     public class UpdateReply : IUpdateReply
@@ -14,13 +15,19 @@ namespace CommentService.Application.UseCases.Comments
         private readonly IUserServicesClient userServicesClient;
         private readonly IPostCacheServices postCacheServices;
         private readonly IPostServicesClient postServicesClient;
+        private readonly IToolCacheServices toolCacheServices;
+        private readonly IToolServicesClient toolServicesClient;
+        private readonly IRabbitMQProducer rabbitMQProducer;
         public UpdateReply(
             ICommentCacheServices _commentCacheServices,
             ICommentServices _commentServices,
             IUserCacheServices _userCacheServices,
             IUserServicesClient _userServicesClient,
             IPostCacheServices _postCacheServices,
-            IPostServicesClient _postServicesClient
+            IPostServicesClient _postServicesClient,
+            IToolCacheServices _toolCacheServices,
+            IToolServicesClient _toolServicesClient,
+            IRabbitMQProducer _rabbitMQProducer
         )
         {
             this.commentCacheServices = _commentCacheServices;
@@ -29,16 +36,19 @@ namespace CommentService.Application.UseCases.Comments
             this.userServicesClient = _userServicesClient;
             this.postCacheServices = _postCacheServices;
             this.postServicesClient = _postServicesClient;
+            this.toolCacheServices = _toolCacheServices;
+            this.toolServicesClient = _toolServicesClient;
+            this.rabbitMQProducer = _rabbitMQProducer;
         }
         public async Task ExecuteAsync(Guid authenticatedUserId, Guid commentId, Guid replyId, CommentRequest commentRequest)
         {
             ValidateRequest(commentRequest);
-            await ValidatePostExists(commentRequest.PostId);
             await ValidateUserExists(authenticatedUserId);
+            await ValidatePostExists(commentRequest.TargetId);
             await ValidateCommentExists(commentId);
             var comment = await GetComment(commentId);
-            if(comment.PostId != commentRequest.PostId)
-                throw new ValidationException("Comentário não pertence ao post informado.");
+            if(comment.TargetId != commentRequest.TargetId)
+                throw new ValidationException("Comentário não pertence a publicação informada.");
             var reply = await GetReply(replyId);
             if(reply.UserId != authenticatedUserId)
                 throw new ValidationException("Você não pode editar esta resposta.");
@@ -59,6 +69,21 @@ namespace CommentService.Application.UseCases.Comments
                 throw new ValidationException($"Erro ao validar dados: {errors}");
             }
         }
+        private async Task ValidateUserExists(Guid userId)
+        {
+            var userCache = await this.userCacheServices.GetUserCache($"user:exists:{userId}");
+            if (userCache == null)
+            {
+                var exists = await this.userServicesClient.UserExistsAsync(userId);
+                if (!exists)
+                    throw new NotFoundException("Usuário não encontrado");
+                await this.userCacheServices.AddUserCache($"user:exists:{userId}", userId);
+            }
+        }
+        private async Task ValidateTargetExists(Guid target, CommentType type)
+        {
+            
+        }
         private async Task ValidatePostExists(Guid postId)
         {
             var postCache = await this.postCacheServices.GetPostCache($"post:exists:{postId}");
@@ -70,15 +95,15 @@ namespace CommentService.Application.UseCases.Comments
                 await this.postCacheServices.AddPostCache($"post:exists:{postId}", postId);
             }
         }
-        private async Task ValidateUserExists(Guid userId)
+        private async Task ValidateToolExists(Guid toolId)
         {
-            var userCache = await this.userCacheServices.GetUserCache($"user:exists:{userId}");
-            if (userCache == null)
+            var toolCache = await this.toolCacheServices.GetToolCache($"tool:exists:{toolId}");
+            if(toolCache == null)
             {
-                var exists = await this.userServicesClient.UserExistsAsync(userId);
-                if (!exists)
-                    throw new NotFoundException("Usuário não encontrado");
-                await this.userCacheServices.AddUserCache($"user:exists:{userId}", userId);
+                var exists = await this.toolServicesClient.ToolExistsAsync(toolId);
+                if(!exists)
+                    throw new NotFoundException("Ferramenta não encontrada");
+                await this.toolCacheServices.AddToolCache($"tool:exists:{toolId}", toolId);
             }
         }
         private async Task ValidateCommentExists(Guid commentId)

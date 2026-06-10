@@ -13,34 +13,34 @@ namespace CommentService.Infrastructure.Repositories
             this.context = _context;
         }
 
-        public async Task<List<Comment>> GetCommentsByPostIdsPage(List<Guid> postIds)
+        public async Task<List<Comment>> GetCommentsByTargeIdsPage(List<Guid> targetIds)
         {
             return await this.context.Comments
-                .Where(c => postIds.Contains(c.PostId))
+                .Where(c => targetIds.Contains(c.TargetId))
                 .ToListAsync();
         }
-        public async Task<List<Comment>> GetCommentsByPostId(Guid postId)
+        public async Task<List<Comment>> GetCommentsByTargetId(Guid targetId)
         {
             return await this.context.Comments
                 .AsSplitQuery()
                 .OrderByDescending(p=> p.CreatedAt)
-                .Where(c => c.PostId == postId)
+                .Where(c => c.TargetId == targetId)
                 .Include(c => c.ParentComment)
                 .ToListAsync();
         }
 
-        public async Task<Dictionary<Guid, int>> GetQuantityCommentsByPostIdsPage(List<Guid> postIds)
+        public async Task<Dictionary<Guid, int>> GetQuantityCommentsByTargeIdsPage(List<Guid> targetIds)
         {
             return await this.context.Comments
-                .Where(c => postIds.Contains(c.PostId))
-                .GroupBy(c => c.PostId)
+                .Where(c => targetIds.Contains(c.TargetId))
+                .GroupBy(c => c.TargetId)
                 .Select(g => new
                 {
-                    PostId = g.Key,
+                    TargetId = g.Key,
                     Count = g.Count()
                 })
                 .ToDictionaryAsync(
-                    x => x.PostId,
+                    x => x.TargetId,
                     x => x.Count
                 );     
         }

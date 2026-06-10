@@ -26,7 +26,7 @@ namespace CommentService.Infrastructure.Integrations
                 if (token == null)
                     throw new UnauthorizedException("Usuário não autorizado");
                 var request = new HttpRequestMessage(
-                    HttpMethod.Get,$"/api/InternalPost/internal/post/{postId}/exists");
+                    HttpMethod.Get,$"/api/InternalPost/{postId}/exists");
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = await this.http.SendAsync(request);
                 if (response.StatusCode == HttpStatusCode.Unauthorized)

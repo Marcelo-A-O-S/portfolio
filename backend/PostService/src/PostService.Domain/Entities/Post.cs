@@ -1,17 +1,11 @@
 using PostService.Domain.Enums;
 namespace PostService.Domain.Entities
 {
-    public class Post
+    public class Post : PostBase
     {
-        public Guid Id { get; private set; }
-        public string ImgUrl { get; private set; }
-        public ICollection<Category> Categories { get; private set; }
         public ICollection<Like> Likes { get; private set; }
         public ICollection<Tool> Tools { get; private set; }
         public ICollection<PostContent> PostContents { get; private set; }
-        public DateTime CreatedAt { get; private set; }
-        public DateTime? UpdatedAt { get; private set; }
-        public Status Status { get; private set; }
         public Post(Status status)
         {
             this.CreatedAt = DateTime.UtcNow;
@@ -23,27 +17,11 @@ namespace PostService.Domain.Entities
             this.ImgUrl = "";
             this.Status = status;
         }
-        public void Update(string imgUrl, Status status)
-        {
-            this.UpdatedAt = DateTime.UtcNow;
-            this.Status = status;
-            this.ImgUrl = imgUrl;
-        }
-        public void AddImgUrl(string imgUrl)
-        {
-            this.ImgUrl = imgUrl;
-        }
         public void AddTool(Tool tool)
         {
             if (this.Tools == null)
                 throw new Exception("Lista de ferramentas não inicializada.");
             this.Tools.Add(tool);
-        }
-        public void AddCategory(Category category)
-        {
-            if (this.Categories == null)
-                throw new Exception("Lista de categorias não inicializada.");
-            this.Categories.Add(category);
         }
         public void AddPostContent(PostContent postContent)
         {
@@ -61,17 +39,6 @@ namespace PostService.Domain.Entities
                 .ToList();
             foreach(var tool in toRemove)
                 this.Tools.Remove(tool);
-        }
-        public void ValidateCategories(IEnumerable<Guid> categoriesIds)
-        {
-            if(this.Categories == null)
-                throw new Exception("Lista de categorias não inicializada.");
-            var ids = categoriesIds.ToHashSet();
-            var toRemove = this.Categories
-                .Where(c=> !ids.Contains(c.Id))
-                .ToList();
-            foreach(var category in toRemove)
-                this.Categories.Remove(category);
         }
         public void ValidatePostContents(IEnumerable<Guid> postContentIds)
         {

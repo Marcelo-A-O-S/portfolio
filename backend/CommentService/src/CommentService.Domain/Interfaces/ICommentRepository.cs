@@ -4,8 +4,8 @@ namespace CommentService.Domain.Interfaces
 {
     public interface ICommentRepository : IGenerics<Comment>
     {
-        Task<List<Comment>> GetCommentsByPostId(Guid postId);
-        Task<List<Comment>> GetCommentsByPostIdsPage(List<Guid> postIds);
-        Task<Dictionary<Guid, int>> GetQuantityCommentsByPostIdsPage(List<Guid> postIds);
+        Task<List<Comment>> GetCommentsByTargetId(Guid targetId);
+        Task<List<Comment>> GetCommentsByTargeIdsPage(List<Guid> targetIds);
+        Task<Dictionary<Guid, int>> GetQuantityCommentsByTargeIdsPage(List<Guid> targetIds);
     }
 }

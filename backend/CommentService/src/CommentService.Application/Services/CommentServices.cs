@@ -36,9 +36,9 @@ namespace CommentService.Application.Services
             return await this.commentRepository.GetById(Id);
         }
 
-        public async Task<List<Comment>> GetCommentsByPostId(Guid postId)
+        public async Task<List<Comment>> GetCommentsByTargetId(Guid targetId)
         {
-            return await this.commentRepository.GetCommentsByPostId(postId);
+            return await this.commentRepository.GetCommentsByTargetId(targetId);
         }
 
         public async Task<List<Comment>> List()

@@ -13,6 +13,7 @@ namespace AuthService.Application.Extension
             services.Configure<JwtBearerOptions>(configuration.GetSection("JWT"));
             services.Configure<InternalJWTOptions>(configuration.GetSection("InternalJWT"));
             services.Configure<ProviderOptions>(configuration.GetSection("ProviderOptions"));
+            services.Configure<RedisOptions>(configuration.GetSection("Redis"));
             return services;
         }
     }

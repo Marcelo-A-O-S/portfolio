@@ -2,7 +2,6 @@ using CommentService.Application.UseCases.Likes.Interfaces;
 using CommentService.Application.Exceptions;
 using CommentService.Application.Interfaces;
 using CommentService.Domain.Entities;
-
 namespace CommentService.Application.UseCases.Likes
 {
     public class AddLike : IAddLike

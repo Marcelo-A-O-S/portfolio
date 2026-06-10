@@ -22,7 +22,7 @@ namespace PostService.Infrastructure.Integrations
         }
         public async Task<string> GetToken()
         {  
-            var client = this.internalOptions.InternalClients["PostService"];
+            var client = this.internalOptions.InternalClients["AuthService"];
             const string CACHE_KEY = "internal:postservice:token";
             string cached = await this.cacheServices.GetAsync(CACHE_KEY);
             if(!string.IsNullOrWhiteSpace(cached))

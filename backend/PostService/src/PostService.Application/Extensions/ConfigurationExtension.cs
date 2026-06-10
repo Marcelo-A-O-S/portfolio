@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using PostService.Application.Configurations;
-
 namespace PostService.Application.Extensions
 {
     public static class ConfigurationExtension

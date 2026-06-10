@@ -1,9 +1,10 @@
+using CommentService.Application.Interfaces;
 using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
 namespace CommentService.Infrastructure.Workers
 {
-    public class RabbitMQProducer
+    public class RabbitMQProducer : IRabbitMQProducer
     {
         private readonly IConnection connection;
         public RabbitMQProducer(IConnection _connection)
