@@ -1,4 +1,6 @@
 
+using Microsoft.Extensions.Options;
+using PostService.Application.Configurations;
 using PostService.Application.Interfaces;
 using StackExchange.Redis;
 
@@ -6,11 +8,15 @@ namespace PostService.Infrastructure.Cache
 {
     public class RedisCacheService : ICacheService
     {
-        private readonly string _prefix = "PostService:";
         private readonly IDatabase database;
-        public RedisCacheService(IConnectionMultiplexer _redis)
+        private readonly RedisOptions redisOptions;
+        public RedisCacheService(
+            IConnectionMultiplexer _redis,
+            IOptions<RedisOptions> _redisOptions
+            )
         {
             this.database = _redis.GetDatabase();
+            this.redisOptions = _redisOptions.Value;
         }
         public async Task<string?> GetAsync(string key)
             => await this.database.StringGetAsync(BuildKey(key));
@@ -18,8 +24,13 @@ namespace PostService.Infrastructure.Cache
         public async Task RemoveAsync(string key)
             => await this.database.KeyDeleteAsync(BuildKey(key));
 
-        public async Task SetAsync(string key, string value, TimeSpan ttl) 
+        public async Task SetAsync(string key, string value, TimeSpan ttl)
             => await this.database.StringSetAsync(BuildKey(key), value, ttl);
-        private string BuildKey(string key) => $"{_prefix}{key}";
+        private string BuildKey(string key)
+        {
+            if(string.IsNullOrEmpty(this.redisOptions.InstanceName))
+                throw new Exception("O nome da instância do redis não foi configurado.");
+            return $"{this.redisOptions.InstanceName}{key}";
+        }
     }
 }

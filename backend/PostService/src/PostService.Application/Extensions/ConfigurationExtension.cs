@@ -10,6 +10,7 @@ namespace PostService.Application.Extensions
         )
         {
             services.Configure<InternalClientOptions>(configuration.GetSection("InternalClientOptions"));
+            services.Configure<RedisOptions>(configuration.GetSection("Redis"));
             return services;
         }
     }

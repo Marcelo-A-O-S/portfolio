@@ -1,0 +1,124 @@
+using System.Linq.Expressions;
+using MediaService.Application.Interfaces;
+using MediaService.Domain.Entities;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
+using MediaService.Domain.Interfaces;
+using System.ComponentModel.DataAnnotations;
+namespace MediaService.Application.Services
+{
+    public class MediaFileServices : IMediaFileServices
+    {
+        private readonly IWebHostEnvironment environment;
+        private readonly IMediaFileRepository repository;
+        public MediaFileServices(IMediaFileRepository _repository, IWebHostEnvironment _environment)
+        {
+            this.repository = _repository;
+            this.environment = _environment;
+        }
+        public async Task Delete(MediaFile entity)
+        {
+            await this.repository.Delete(entity);
+        }
+
+        public async Task DeleteById(Guid Id)
+        {
+            await this.repository.DeleteById(Id);
+        }
+        public async Task DeleteImageAsync(MediaFile mediaFile)
+        {
+            var pathImage = Path.Combine(
+                this.environment.WebRootPath,
+                mediaFile.Path
+            );
+            try
+            {
+                if (File.Exists(pathImage))
+                {
+                    File.Delete(pathImage);
+                }
+                await this.Delete(mediaFile);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao deletar imagem.", ex);
+            }
+        }
+
+        public async Task<bool> Exists(Guid Id)
+        {
+            return await this.repository.Exists(Id);
+        }
+
+        public async Task<MediaFile> FindBy(Expression<Func<MediaFile, bool>> predicate)
+        {
+            return await this.repository.FindBy(predicate);
+        }
+
+        public async Task<MediaFile> GetById(Guid Id)
+        {
+            return await this.repository.GetById(Id);
+        }
+
+        public async Task<MediaFile> GetByPath(string path)
+        {
+            return await this.repository.GetByPath(path);
+        }
+
+        public async Task<List<MediaFile>> List()
+        {
+            return await this.repository.List();
+        }
+
+        public async Task<List<MediaFile>> List(int page)
+        {
+            return await this.repository.List(page);
+        }
+        public async Task Save(MediaFile entity)
+        {
+            await this.repository.Save(entity);
+        }
+
+        public async Task<MediaFile> SaveImageAsync(Guid ownerId, string owner, IFormFile file, string folder)
+        {
+            if (file == null)
+                throw new ValidationException("Arquivo não informado.");
+            if (file.Length == 0)
+                throw new ValidationException("Arquivo vazio.");
+            var uploadsFolder = Path.Combine(
+                this.environment.WebRootPath,
+                folder
+            );
+            if (!Directory.Exists(uploadsFolder))
+                Directory.CreateDirectory(uploadsFolder);
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+            var filePath = Path.Combine(uploadsFolder, fileName);
+            var relativePath = Path.Combine(folder, fileName).Replace("\\", "/");
+            try
+            {
+                using var stream = new FileStream(filePath, FileMode.Create);
+                await file.CopyToAsync(stream);
+                var media = new MediaFile(
+                    ownerId,
+                    owner,
+                    relativePath,
+                    file.ContentType,
+                    file.Length
+                );
+                media.MarkAsUploaded();
+                await this.repository.Save(media);
+                return media;
+            }catch(Exception ex)
+            {
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
+                throw new Exception("Erro ao salvar imagem.", ex);
+            }
+        }
+
+        public async Task Update(MediaFile entity)
+        {
+            await this.repository.Update(entity);
+        }
+    }
+}

@@ -1219,12 +1219,21 @@
       "MediaService.Application/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "MediaService.Domain": "1.0.0",
+          "Microsoft.Extensions.Configuration": "8.0.0",
+          "Microsoft.Extensions.Configuration.Abstractions": "8.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.2"
+        },
         "compile": {
           "bin/placeholder/MediaService.Application.dll": {}
         },
         "runtime": {
           "bin/placeholder/MediaService.Application.dll": {}
-        }
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
       },
       "MediaService.Domain/1.0.0": {
         "type": "project",
