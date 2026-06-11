@@ -32,8 +32,16 @@ namespace CommentService.Application.UseCases.Comments
             if(reply.ParentCommentId != commentId)
                 throw new ValidationException("Essa resposta não pertence ao comentário informado.");
             await this.commentServices.DeleteById(reply.Id);
-            await this.commentCacheServices.RemoveCommentCache($"comment:exists:{replyId}");
-            await this.rabbitMQProducer.Publish("ReplyDelete", new { CommentId = replyId});
+            var type = reply.Type.ToString();
+            await this.commentCacheServices.RemoveCommentCache($"comment:{type}:exists:{replyId}");
+            await this.rabbitMQProducer.Publish($"{type}ReplyDeleted",
+            new
+            {
+                CommentId = reply.Id,
+                TargetId = reply.TargetId,
+                Type = reply.Type,
+                UserId = reply.UserId
+            });
         }
         private async Task<Comment> GetReply(Guid replyId)
         {

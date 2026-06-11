@@ -64,7 +64,7 @@ namespace PostService.Infrastructure.Repositories
                             Name = pc.Language.Name
                         }
                     }).ToList(),
-                    Likes = p.Likes.Count(),
+                    Likes = p.LikeCount,
                     Liked = p.Likes.Any( l => l.UserId == authenticatedUserId),
                     Tools = p.Tools.Select(t => new ToolView
                     {

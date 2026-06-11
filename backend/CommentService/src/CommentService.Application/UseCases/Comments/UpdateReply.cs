@@ -42,8 +42,9 @@ namespace CommentService.Application.UseCases.Comments
                 throw new ValidationException("Essa resposta não pertence ao comentário informado.");
             reply.Update(commentRequest.Content);
             await this.commentServices.Update(reply);
-            await this.commentCacheServices.AddCommentCache($"comment:exists:{reply.Id}", reply.Id);
-            await this.rabbitMQProducer.Publish("ReplyUpdated", new { CommentId = comment.Id});
+            var type = reply.Type.ToString();
+            await this.commentCacheServices.AddCommentCache($"comment:{type}:exists:{reply.Id}", reply.Id);
+            
         }
         private static void ValidateRequest(CommentRequest request)
         {

@@ -84,7 +84,6 @@ namespace CommentService.Application.Validations
                     throw new ValidationException("Tipo de comentário inválido.");
             }
         }
-
         public async Task ValidateToolExists(Guid toolId)
         {
             var toolCache = await this.toolCacheServices.GetToolCache($"tool:exists:{toolId}");

@@ -4,7 +4,8 @@ using CommentService.Application.UseCases.Comments;
 using CommentService.Application.UseCases.Comments.Interfaces;
 using CommentService.Application.UseCases.Likes;
 using CommentService.Application.UseCases.Likes.Interfaces;
-using CommentService.Domain.Entities;
+using CommentService.Application.Validations;
+using CommentService.Application.Validations.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 namespace CommentService.Application.Extensions
 {
@@ -21,6 +22,10 @@ namespace CommentService.Application.Extensions
             services.AddScoped<IPostCacheServices, PostCacheServices>();
             services.AddScoped<ILikeCacheServices, LikeCacheServices>();
             services.AddScoped<ICommentCacheServices, CommentCacheServices>();
+            services.AddScoped<IToolCacheServices, ToolCacheServices>();
+
+            services.AddScoped<ICommentValidationService, CommentValidationService>();
+            services.AddScoped<ILikeValidationService, LikeValidationService>();
 
             services.AddScoped<IAddComment, AddComment>();
             services.AddScoped<IRemoveComment, RemoveComment>();

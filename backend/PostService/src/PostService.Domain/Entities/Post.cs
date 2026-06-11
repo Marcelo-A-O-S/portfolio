@@ -3,7 +3,6 @@ namespace PostService.Domain.Entities
 {
     public class Post : PostBase
     {
-        public ICollection<Like> Likes { get; private set; }
         public ICollection<Tool> Tools { get; private set; }
         public ICollection<PostContent> PostContents { get; private set; }
         public Post(Status status)
@@ -11,7 +10,6 @@ namespace PostService.Domain.Entities
             this.CreatedAt = DateTime.UtcNow;
             this.UpdatedAt = DateTime.UtcNow;
             this.Categories = new List<Category>();
-            this.Likes = new List<Like>();
             this.Tools = new List<Tool>();
             this.PostContents = new List<PostContent>();
             this.ImgUrl = "";

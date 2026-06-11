@@ -7,18 +7,24 @@ namespace AuthService.Infrastructure.Workers
 {
     public class RabbitMQProducer : IRabbitMQProducer
     {
-        private readonly IConnectionFactory factory;
-        public RabbitMQProducer(IConnectionFactory _factory)
+        private readonly IConnection connection;
+        public RabbitMQProducer(IConnection _connection)
         {
-            this.factory = _factory;
+            this.connection = _connection;
         }
         public async Task Publish(string eventName, object data)
         {
-            using var connection = await this.factory.CreateConnectionAsync();
-            using var channel = await connection.CreateChannelAsync();
-            await channel.ExchangeDeclareAsync(exchange: eventName, type: ExchangeType.Direct, durable: true);
+            string exchangeName = $"{eventName}.Exchange";
+            string routingKey = $"{eventName}.Routing";
+            await using var channel = await connection.CreateChannelAsync();
+            await channel.ExchangeDeclareAsync(exchange: exchangeName, type: ExchangeType.Direct, durable: true);
             var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(data));
-            await channel.BasicPublishAsync(exchange: eventName, routingKey: eventName, body: body);
+            var properties = new BasicProperties
+            {
+                Persistent = true,
+                ContentType = "application/json"
+            };
+            await channel.BasicPublishAsync(exchange: exchangeName, routingKey: routingKey, mandatory: false, basicProperties: properties, body: body);
         }
     }
 }

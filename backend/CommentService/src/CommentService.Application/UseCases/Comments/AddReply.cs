@@ -35,8 +35,16 @@ namespace CommentService.Application.UseCases.Comments
                 throw new ValidationException("Comentário não pertence ao post informado.");
             var reply = new Comment(authenticatedUserId, commentRequest.TargetId, commentRequest.Type, commentRequest.Content ,comment.Id);
             await this.commentServices.Save(reply);
-            await this.commentCacheServices.AddCommentCache($"comment:exists:{reply.Id}", reply.Id);
-            await this.rabbitMQProducer.Publish("ReplyCreated", new { CommentId = comment.Id});
+            var type = reply.Type.ToString();
+            await this.commentCacheServices.AddCommentCache($"comment:{type}:exists:{reply.Id}", reply.Id);
+            await this.rabbitMQProducer.Publish($"{type}ReplyCreated",
+            new
+            {
+                CommentId = comment.Id,
+                TargetId = comment.TargetId,
+                Type = comment.Type,
+                UserId = comment.UserId
+            });
         }
         private static void ValidateRequest(CommentRequest request)
         {

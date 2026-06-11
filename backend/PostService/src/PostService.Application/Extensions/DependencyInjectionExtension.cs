@@ -9,8 +9,6 @@ using PostService.Application.UseCases.Languages.Interfaces;
 using PostService.Application.UseCases.Languages;
 using PostService.Application.UseCases.Projects.Interfaces;
 using PostService.Application.UseCases.Projects;
-using PostService.Application.UseCases.Likes.Interfaces;
-using PostService.Application.UseCases.Likes;
 using PostService.Application.UseCases.InternalProject.Interfaces;
 using PostService.Application.UseCases.InternalProject;
 namespace PostService.Application.Extensions
@@ -21,7 +19,6 @@ namespace PostService.Application.Extensions
             this IServiceCollection services
         )
         {
-            services.AddScoped<ILikeServices, LikeServices>();
             services.AddScoped<IPostServices, PostServices>();
             services.AddScoped<IPostContentServices, PostContentServices>();
             services.AddScoped<ICategoryServices, CategoryServices>();
@@ -33,7 +30,6 @@ namespace PostService.Application.Extensions
             services.AddScoped<IFileServices, FileServices>();
 
             services.AddScoped<IUserCacheServices, UserCacheServices>();
-            services.AddScoped<ILikeCacheServices, LikeCacheServices>();
 
             services.AddScoped<ICreateTool, CreateTool>();
             services.AddScoped<IUpdateTool, UpdateTool>();
@@ -47,8 +43,6 @@ namespace PostService.Application.Extensions
             services.AddScoped<ICreateProject, CreateProject>();
             services.AddScoped<IUpdateProject, UpdateProject>();
             services.AddScoped<IDeleteProject, DeleteProject>();
-            services.AddScoped<IAddLike, AddLike>();
-            services.AddScoped<IRemoveLike, RemoveLike>();
             services.AddScoped<IExistsByIdProject, ExistsByIdProject>();
             
             return services;

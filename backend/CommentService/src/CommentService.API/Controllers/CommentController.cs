@@ -121,24 +121,24 @@ namespace CommentService.API.Controllers
             await this.removeReply.ExecuteAsync(Guid.Parse(userId), commentId, replyId);
             return Ok(new { message = "Comentário deletado com sucesso!"});
         }
-        [HttpPost("{commentId:guid}/Like")]
+        [HttpPost("Like")]
         [Authorize( Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
-        public async Task<IActionResult> AddLike([FromRoute] Guid commentId)
+        public async Task<IActionResult> AddLike([FromBody] LikeRequest likeRequest)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if(userId == null)
                 return Unauthorized();
-            await this.addLike.ExecuteAsync(Guid.Parse(userId), commentId);
+            await this.addLike.ExecuteAsync(Guid.Parse(userId), likeRequest);
             return Ok();
         }
-        [HttpDelete("{commentId:guid}/Like")]
+        [HttpDelete("Like")]
         [Authorize( Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
-        public async Task<IActionResult> RemoveLike([FromRoute] Guid commentId)
+        public async Task<IActionResult> RemoveLike([FromBody] LikeRequest likeRequest)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if(userId == null)
                 return Unauthorized();
-            await this.removeLike.ExecuteAsync(Guid.Parse(userId), commentId);
+            await this.removeLike.ExecuteAsync(Guid.Parse(userId), likeRequest);
             return Ok();
         }
     }

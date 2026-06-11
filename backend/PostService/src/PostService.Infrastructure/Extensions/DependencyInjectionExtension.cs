@@ -14,7 +14,6 @@ namespace PostService.Infrastructure.Extensions
         {
             services.AddScoped<IGenerics<Category>,Generics<Category>>();
             services.AddScoped<IGenerics<CategoryContent>, Generics<CategoryContent>>();
-            services.AddScoped<IGenerics<Like>, Generics<Like>>();
             services.AddScoped<IGenerics<Tool>, Generics<Tool>>();
             services.AddScoped<IGenerics<ToolContent>, Generics<ToolContent>>();
             services.AddScoped<IGenerics<Post>, Generics<Post>>();
@@ -24,7 +23,6 @@ namespace PostService.Infrastructure.Extensions
 
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ICategoryContentRepository, CategoryContentRepository>();
-            services.AddScoped<ILikeRepository, LikeRepository>();
             services.AddScoped<IPostRepository, PostRepository>();
             services.AddScoped<IPostContentRepository, PostContentRepository>();
             services.AddScoped<IToolsRepository, ToolsRepository>();

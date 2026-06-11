@@ -28,7 +28,7 @@ namespace PostService.Application.UseCases.Projects
             await ProcessPostContentImages(post, mediasToDelete);
             await postServices.DeleteById(post.Id);
             await DeleteMedias(mediasToDelete);
-            await this.rabbitMQProducer.Publish("delete-post", new { PostId = Id });
+            await this.rabbitMQProducer.Publish("PostDeleted", new { PostId = Id });
         }
         public async Task<Post> GetProjectById(Guid Id)
         {

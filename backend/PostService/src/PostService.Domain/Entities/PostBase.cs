@@ -1,4 +1,5 @@
 using PostService.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace PostService.Domain.Entities
 {
@@ -22,7 +23,7 @@ namespace PostService.Domain.Entities
         {
             this.ImgUrl = imgUrl;
         }
-        protected void AddCategory(Category category)
+        public void AddCategory(Category category)
         {
             if (this.Categories == null)
                 throw new Exception("Lista de categorias não inicializada.");
@@ -38,6 +39,26 @@ namespace PostService.Domain.Entities
                 .ToList();
             foreach(var category in toRemove)
                 this.Categories.Remove(category);
+        }
+        public void AddLike()
+        {
+            this.LikeCount++;
+        }
+        public void RemoveLike()
+        {
+            if(this.LikeCount == 0)
+                throw new ValidationException("Não é possivel realizar a remoção da curtida");
+            this.LikeCount--;
+        }
+        public void AddCommentCount()
+        {
+            this.CommentCount++;
+        }
+        public void RemoveCommentCount()
+        {
+            if(this.CommentCount == 0)
+                throw new ValidationException("Não é possivel realizar a remoção do comentário");
+            this.CommentCount--;
         }
     }
 }

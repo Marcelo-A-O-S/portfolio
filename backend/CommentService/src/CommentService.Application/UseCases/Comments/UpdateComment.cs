@@ -40,8 +40,9 @@ namespace CommentService.Application.UseCases.Comments
                 throw new ValidationException("Tipo de comentário inválido.");
             comment.Update(commentRequest.Content);
             await this.commentServices.Update(comment);
-            await this.commentCacheServices.AddCommentCache($"comment:exists:{comment.Id}", comment.Id);
-            await this.rabbitMQProducer.Publish("CommentUpdated", new { CommentId = comment.Id});
+            var type = comment.Type.ToString();
+            await this.commentCacheServices.AddCommentCache($"comment:{type}:exists:{comment.Id}", comment.Id);
+            
         }
         private static void ValidateRequest(CommentRequest commentRequest)
         {

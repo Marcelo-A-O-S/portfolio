@@ -30,8 +30,16 @@ namespace CommentService.Application.UseCases.Comments
             if(comment.UserId != authenticatedUserId)
                 throw new ForbiddenException("Você não pode editar este comentário.");
             await this.commentServices.DeleteById(commentId);
-            await this.commentCacheServices.RemoveCommentCache($"comment:exists:{commentId}");
-            await this.rabbitMQProducer.Publish("CommentDeleted", new { CommentId = commentId});
+            var type = comment.Type.ToString();
+            await this.commentCacheServices.RemoveCommentCache($"comment:{type}:exists:{commentId}");
+            await this.rabbitMQProducer.Publish($"{type}CommentDeleted",
+            new
+            {
+                CommentId = comment.Id,
+                TargetId = comment.TargetId,
+                Type = comment.Type,
+                UserId = comment.UserId
+            });
         }
         private async Task<Comment> GetComment(Guid commentId)
         {

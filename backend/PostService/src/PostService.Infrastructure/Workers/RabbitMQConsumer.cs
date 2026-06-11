@@ -22,9 +22,9 @@ namespace PostService.Infrastructure.Workers
             {
                 foreach (var eventName in this.handlers.Keys)
                 {
-                    string exchangeName = $"{eventName}-exchange";
-                    string queueName = $"{eventName}-queue";
-                    string routingKey = $"{eventName}-routing";
+                    string exchangeName = $"{eventName}.Exchange";
+                    string queueName = $"{eventName}.Queue";
+                    string routingKey = $"{eventName}.Routing";
                     var channel = await this.connection.CreateChannelAsync();
                     await channel.ExchangeDeclareAsync(exchange: exchangeName, type: ExchangeType.Direct, durable: true, autoDelete: false);
                     var queue = await channel.QueueDeclareAsync(queue: queueName, durable: true, exclusive: false, autoDelete: false);

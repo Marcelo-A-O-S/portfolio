@@ -33,8 +33,8 @@ namespace CommentService.Infrastructure.Messaging.Consumers
                 this.logger.LogInformation("Iniciando conexão com o RabbitMQ...");
                 this.connection = await this.factory.CreateConnectionAsync();
                 this.consumer = new RabbitMQConsumer(this.connection);
-                this.consumer.RegisterHandler("delete-user", async message => { await this.RemoveUserCache(message);});
-                this.consumer.RegisterHandler("delete-post", async message =>{ await this.RemovePostCache(message);});
+                this.consumer.RegisterHandler("UserDeleted", async message => { await this.RemoveUserCache(message);});
+                this.consumer.RegisterHandler("PostDeleted", async message =>{ await this.RemovePostCache(message);});
                 await consumer.Start();
                 this.logger.LogInformation("Consumer dos Comentários do RabbitMQ iniciado e aguardando mensagens...");
             }catch(Exception ex)
@@ -55,7 +55,7 @@ namespace CommentService.Infrastructure.Messaging.Consumers
                 return;
             using var scope = this.scopeFactory.CreateScope();
             var cache = scope.ServiceProvider.GetRequiredService<IUserCacheServices>();
-            await cache.RemoveUserCache($"user:{payload.UserId}");
+            await cache.RemoveUserCache($"user:exists:{payload.UserId}");
         }
         private async Task RemovePostCache(string message)
         {
@@ -64,7 +64,7 @@ namespace CommentService.Infrastructure.Messaging.Consumers
                 return;
             using var scope = this.scopeFactory.CreateScope();
             var cache = scope.ServiceProvider.GetRequiredService<IPostCacheServices>();
-            await cache.RemovePostCache($"post:{payload.PostId}");
+            await cache.RemovePostCache($"post:exists:{payload.PostId}");
         }
     }
 }

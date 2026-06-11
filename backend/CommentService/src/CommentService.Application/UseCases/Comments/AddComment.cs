@@ -32,17 +32,25 @@ namespace CommentService.Application.UseCases.Comments
             await this.commentValidationService.ValidateTargetExists(commentRequest.TargetId, commentRequest.Type);
             var comment = new Comment(authenticatedUserId, commentRequest.TargetId, commentRequest.Type, commentRequest.Content);
             await this.commentServices.Save(comment);
-            await this.commentCacheServices.AddCommentCache($"comment:exists:{comment.Id}", comment.Id);
-            await this.rabbitMQProducer.Publish("CommentCreated", new { CommentId = comment.Id});
+            var type = comment.Type.ToString();
+            await this.commentCacheServices.AddCommentCache($"comment:{type}:exists:{comment.Id}", comment.Id);
+            await this.rabbitMQProducer.Publish($"{type}CommentCreated",
+            new
+            {
+                CommentId = comment.Id,
+                TargetId = comment.TargetId,
+                Type = comment.Type,
+                UserId = comment.UserId
+            });
         }
         private static void ValidateRequest(CommentRequest commentRequest)
         {
             var validationError = ValidationHelper.Validate(commentRequest);
-            if(validationError.Count > 0)
+            if (validationError.Count > 0)
             {
-                var errors = string.Join(", ",validationError.Select(e => e.ErrorMessage));
+                var errors = string.Join(", ", validationError.Select(e => e.ErrorMessage));
                 throw new ValidationException($"Erro ao validar dados: {errors}");
             }
-        }   
+        }
     }
 }

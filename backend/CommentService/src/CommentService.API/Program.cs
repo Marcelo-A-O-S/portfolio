@@ -22,7 +22,7 @@ builder.Services.AddSwaggerConfig();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddCorsConfig();
 builder.Services.AddInfrastructureExtensions(builder.Configuration);
-builder.Services.AddApplicationExtensions();
+builder.Services.AddApplicationExtensions(builder.Configuration);
 var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.Services.ApplyMigrations();

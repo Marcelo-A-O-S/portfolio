@@ -13,8 +13,8 @@ namespace CommentService.Infrastructure.Workers
         }
         public async Task Publish(string eventName, object data)
         {
-            string exchangeName = $"{eventName}-exchange";
-            string routingKey = $"{eventName}-routing";
+            string exchangeName = $"{eventName}.Exchange";
+            string routingKey = $"{eventName}.Routing";
             await using var channel = await connection.CreateChannelAsync();
             await channel.ExchangeDeclareAsync(exchange: exchangeName, type: ExchangeType.Direct, durable: true);
             var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(data));

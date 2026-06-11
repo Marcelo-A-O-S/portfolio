@@ -13,7 +13,6 @@ namespace PostService.Infrastructure.Context
         public DbSet<ToolContent> ToolContents { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<CategoryContent> CategoriesContents { get; set; }
-        public DbSet<Like> Likes { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<PostContent> PostContents { get; set;}
         public DbSet<Language> Languages {get; set;}
@@ -26,7 +25,6 @@ namespace PostService.Infrastructure.Context
             modelBuilder.Entity<CategoryContent>().HasIndex(cc => cc.Slug);
             modelBuilder.Entity<Language>().HasIndex(lg => lg.Code);
             modelBuilder.Entity<MediaFile>().HasIndex(mf => mf.Path).IsUnique();
-            modelBuilder.Entity<Like>().HasIndex(l => new { l.PostId, l.UserId}).IsUnique();
         }
     }
 }
