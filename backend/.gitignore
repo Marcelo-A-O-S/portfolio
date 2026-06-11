@@ -55,3 +55,14 @@ PostService/src/PostService.API/PostService.API.csproj.lscache
 PostService/src/PostService.Application/PostService.Application.csproj.lscache
 PostService/src/PostService.Domain/PostService.Domain.csproj.lscache
 PostService/src/PostService.Infrastructure/PostService.Infrastructure.csproj.lscache
+
+MediaService/src/MediaService.API/bin
+MediaService/src/MediaService.API/appsettings.Development.json
+MediaService/src/MediaService.API/appsettings.json
+MediaService/src/MediaService.Application/bin
+MediaService/src/MediaService.Domain/bin
+MediaService/src/MediaService.Infrastructure/bin
+MediaService/src/MediaService.API/MediaService.API.csproj.lscache
+MediaService/src/MediaService.Application/MediaService.Application.csproj.lscache
+MediaService/src/MediaService.Domain/MediaService.Domain.csproj.lscache
+MediaService/src/MediaService.Infrastructure/MediaService.Infrastructure.csproj.lscache

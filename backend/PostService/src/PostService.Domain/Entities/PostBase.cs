@@ -13,13 +13,13 @@ namespace PostService.Domain.Entities
         public DateTime? UpdatedAt { get; protected set; }
         public Status Status { get; protected set; }
         public ICollection<Category> Categories { get; protected set; }
-        protected void Update(string imgUrl, Status status)
+        public void Update(string imgUrl, Status status)
         {
             this.UpdatedAt = DateTime.UtcNow;
             this.Status = status;
             this.ImgUrl = imgUrl;
         }
-        protected void AddImgUrl(string imgUrl)
+        public void AddImgUrl(string imgUrl)
         {
             this.ImgUrl = imgUrl;
         }
@@ -29,7 +29,7 @@ namespace PostService.Domain.Entities
                 throw new Exception("Lista de categorias não inicializada.");
             this.Categories.Add(category);
         }
-        protected void ValidateCategories(IEnumerable<Guid> categoriesIds)
+        public void ValidateCategories(IEnumerable<Guid> categoriesIds)
         {
             if(this.Categories == null)
                 throw new Exception("Lista de categorias não inicializada.");

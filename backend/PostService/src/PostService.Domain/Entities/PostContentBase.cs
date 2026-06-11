@@ -14,20 +14,20 @@ namespace PostService.Domain.Entities
         public DateTime CreatedAt { get; protected set; }
         public DateTime UpdatedAt { get; protected set; }
 
-        protected void SetImagesUrls(List<string> imagesUrls)
+        public void SetImagesUrls(List<string> imagesUrls)
         {
             if(this.ImagesUrls == null)
                 throw new Exception("Lista de imagens envolvendo o conteúdo não foi inicializada.");
             this.ImagesUrls = imagesUrls;
             this.UpdatedAt = DateTime.UtcNow;
         }
-        protected void AddImageUrl(string imageUrl)
+        public void AddImageUrl(string imageUrl)
         {
             if(this.ImagesUrls == null)
                 throw new Exception("Lista de imagens envolvendo o conteúdo  não foi inicializada.");
             this.ImagesUrls.Add(imageUrl);
         }
-        protected List<string> ValidateContentImages()
+        public List<string> ValidateContentImages()
         {
             if(this.ImagesUrls == null)
                 throw new Exception("Lista de imagens envolvendo o conteúdo  não foi inicializada.");
