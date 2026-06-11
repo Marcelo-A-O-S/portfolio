@@ -6,6 +6,7 @@ namespace MediaService.Application.DTOs.Requests
     public class MediaFileRequest
     {
         public Guid OwnerId { get; set; }
+        [OwnerType]
         public string OwnerType { get; set; } 
         [MaxFileSize(2 * 1024 * 1024, ErrorMessage = "O tamanho maximo aceito de imagem é 2 MB.")]
         [AllowedExtension(new[] { ".jpg", ".png", ".jpeg" })]

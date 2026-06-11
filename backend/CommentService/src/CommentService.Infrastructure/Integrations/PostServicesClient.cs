@@ -40,7 +40,7 @@ namespace CommentService.Infrastructure.Integrations
             }
             catch (HttpRequestException)
             {
-                throw new Exception("Serviço de usuários indisponivel");
+                throw new Exception("Serviço de postagens indisponivel");
             }
         }
     }

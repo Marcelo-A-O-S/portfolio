@@ -1,5 +1,4 @@
 using PostService.Application.Interfaces;
-
 namespace PostService.Application.Services
 {
     public class PostCacheServices : IPostCacheServices
@@ -15,12 +14,10 @@ namespace PostService.Application.Services
         {
             await this.cacheServices.SetAsync(key, postId.ToString(), TimeSpan.FromMinutes(10));
         }
-
         public async Task<string?> GetPostCache(string key)
         {
             return await this.cacheServices.GetAsync(key);
         }
-
         public async Task RemovePostCache(string key)
         {
             await this.cacheServices.RemoveAsync(key);

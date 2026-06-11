@@ -79,7 +79,7 @@ namespace MediaService.Application.Services
             await this.repository.Save(entity);
         }
 
-        public async Task<MediaFile> SaveImageAsync(Guid ownerId, string owner, IFormFile file, string folder)
+        public async Task<MediaFile> SaveImageAsync(Guid ownerId, string ownerType, IFormFile file, string folder)
         {
             if (file == null)
                 throw new ValidationException("Arquivo não informado.");
@@ -100,7 +100,7 @@ namespace MediaService.Application.Services
                 await file.CopyToAsync(stream);
                 var media = new MediaFile(
                     ownerId,
-                    owner,
+                    ownerType,
                     relativePath,
                     file.ContentType,
                     file.Length

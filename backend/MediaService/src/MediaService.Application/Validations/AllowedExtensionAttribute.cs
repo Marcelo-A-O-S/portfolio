@@ -8,7 +8,7 @@ namespace MediaService.Application.Validations
         {
             if(value is IFormFile file){
                 var extension = Path.GetExtension(file.FileName).ToLower();
-                if(!extensions.Contains(extension))
+                if(!extensions.Contains(extension, StringComparer.OrdinalIgnoreCase))
                     return new ValidationResult("Extensão inválida");
             }
             return ValidationResult.Success;
