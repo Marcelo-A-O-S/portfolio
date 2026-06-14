@@ -5,7 +5,7 @@ using PostService.Infrastructure.Messaging.Events;
 using PostService.Infrastructure.Messaging.Handlers.Interfaces;
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
-
+using PostService.Domain.Entities;
 namespace PostService.Infrastructure.Messaging.Handlers
 {
     public class LikeProjectionHandler : ILikeProjectionHandler
@@ -50,63 +50,75 @@ namespace PostService.Infrastructure.Messaging.Handlers
                     break;
             }
         }
-        private async Task<IPostServices> GetPostServices()
-        {
-            using var scope = this.scopeFactory.CreateScope();
-            return scope.ServiceProvider.GetRequiredService<IPostServices>();
-        }
-        private async Task<IToolsServices> GetToolServices()
-        {
-            using var scope = this.scopeFactory.CreateScope();
-            return scope.ServiceProvider.GetRequiredService<IToolsServices>();
-        }
         private async Task AddPostLikeCount(LikedEvent payload)
         {
-            var postServices = await GetPostServices();
+            using var scope = this.scopeFactory.CreateScope();
+            var postServices = scope.ServiceProvider.GetRequiredService<IPostServices>();
+            var likeProjectionServices = scope.ServiceProvider.GetRequiredService<ILikeProjectionServices>();
             var post = await postServices.GetById(payload.TargetId);
             if (post == null)
             {
                 this.logger.LogWarning("Evento recebido para post inexistente. PostId: {PostId}", payload.TargetId);
                 return;
             }
-            post.AddLike();
-            await postServices.Update(post);
+            var likeProjection = new LikeProjection(payload.TargetId, payload.UserId);
+            await likeProjectionServices.Save(likeProjection);
+            await postServices.IncrementLikeCount(post.Id);
         }
         private async Task RemovePostLikeCount(LikedEvent payload)
         {
-            var postServices = await GetPostServices();
+            using var scope = this.scopeFactory.CreateScope();
+            var postServices = scope.ServiceProvider.GetRequiredService<IPostServices>();
+            var likeProjectionServices = scope.ServiceProvider.GetRequiredService<ILikeProjectionServices>();
             var post = await postServices.GetById(payload.TargetId);
             if (post == null)
             {
                 this.logger.LogWarning("Evento recebido para post inexistente. PostId: {PostId}", payload.TargetId);
                 return;
             }
-            post.RemoveLike();
-            await postServices.Update(post);
+            var likeProjection = await likeProjectionServices.FindBy(lp => lp.TargetId == payload.TargetId && lp.UserId == payload.UserId);
+            if(likeProjection == null)
+            {
+                this.logger.LogWarning("Evento recebido para Like inexistente. PostId: {PostId}", payload.TargetId);
+                return;
+            }
+            await likeProjectionServices.Delete(likeProjection);
+            await postServices.DecrementLikeCount(post.Id);
         }
         private async Task AddToolLikeCount(LikedEvent payload)
         {
-            var toolsServices = await GetToolServices();
+            using var scope = this.scopeFactory.CreateScope();
+            var likeProjectionServices = scope.ServiceProvider.GetRequiredService<ILikeProjectionServices>();
+            var toolsServices = scope.ServiceProvider.GetRequiredService<IToolsServices>();
             var tool = await toolsServices.GetById(payload.TargetId);
             if(tool == null)
             {
                 logger.LogWarning("Evento recebido para ferramenta inexistente. ToolId: {ToolId}", payload.TargetId);
                 return;
             }
-            tool.AddLike();
-            await toolsServices.Update(tool);
+            var likeProjection = new LikeProjection(payload.TargetId, payload.UserId);
+            await likeProjectionServices.Save(likeProjection);
+            await toolsServices.IncrementLikeCount(tool.Id);
         }
         private async Task RemoveToolLikeCount(LikedEvent payload)
         {
-            var toolsServices = await GetToolServices();
+            using var scope = this.scopeFactory.CreateScope();
+            var likeProjectionServices = scope.ServiceProvider.GetRequiredService<ILikeProjectionServices>();
+            var toolsServices = scope.ServiceProvider.GetRequiredService<IToolsServices>();
             var tool = await toolsServices.GetById(payload.TargetId);
             if(tool == null)
             {
                 logger.LogWarning("Evento recebido para ferramenta inexistente. ToolId: {ToolId}", payload.TargetId);
                 return;
             }
-            tool.RemoveLike();
-            await toolsServices.Update(tool);
+            var likeProjection = await likeProjectionServices.FindBy(lp => lp.TargetId == payload.TargetId && lp.UserId == payload.UserId);
+            if(likeProjection == null)
+            {
+                this.logger.LogWarning("Evento recebido para Like inexistente. PostId: {PostId}", payload.TargetId);
+                return;
+            }
+            await likeProjectionServices.Delete(likeProjection);
+            await toolsServices.DecrementLikeCount(tool.Id);
         }
     }
 }

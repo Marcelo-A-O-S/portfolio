@@ -19,7 +19,6 @@ namespace PostService.Infrastructure.Extensions
             services.AddScoped<IGenerics<Post>, Generics<Post>>();
             services.AddScoped<IGenerics<PostContent>, Generics<PostContent>>();
             services.AddScoped<IGenerics<Language>, Generics<Language>>();
-            services.AddScoped<IGenerics<MediaFile>, Generics<MediaFile>>();
 
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ICategoryContentRepository, CategoryContentRepository>();
@@ -28,7 +27,6 @@ namespace PostService.Infrastructure.Extensions
             services.AddScoped<IToolsRepository, ToolsRepository>();
             services.AddScoped<IToolContentRepository, ToolContentRepository>();
             services.AddScoped<ILanguageRepository, LanguageRepository>();
-            services.AddScoped<IMediaFileRepository, MediaFileRepository>();
             
             services.AddSingleton<IRabbitMQProducer, RabbitMQProducer>();
             return services;

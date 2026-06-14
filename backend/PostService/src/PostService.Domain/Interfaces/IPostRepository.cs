@@ -11,5 +11,10 @@ namespace PostService.Domain.Interfaces
         Task<List<Post>> GetPosts();
         Task<Post> GetFullDataById(Guid Id);
         Task<int> GetLikesCountByPostId(Guid postId);
+        Task IncrementLikeCount(Guid postId);
+        Task IncrementCommentCount(Guid postId);
+        Task DecrementLikeCount(Guid postId);
+        Task DecrementCommentCount(Guid postId);
+        
     }
 }

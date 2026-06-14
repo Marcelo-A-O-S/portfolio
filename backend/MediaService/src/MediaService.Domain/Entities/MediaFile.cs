@@ -4,7 +4,7 @@ namespace MediaService.Domain.Entities
     public class MediaFile
     {
         public Guid Id { get; private set;}
-        public Guid OwnerId { get; private set; }
+        public Guid? OwnerId { get; private set; }
         public string OwnerType { get; private set; }
         public string Path { get; private set; }
         public string MimeType { get; private set; }
@@ -13,7 +13,7 @@ namespace MediaService.Domain.Entities
         public DateTime? UpdatedAt { get; private set; }
         public Status Status { get; private set; }
         public MediaFile(
-            Guid ownerId,
+            Guid? ownerId,
             string ownerType,
             string path, 
             string mimeType, 
@@ -26,6 +26,11 @@ namespace MediaService.Domain.Entities
             this.Size = size;
             this.CreatedAt = DateTime.UtcNow;
             this.Status = Status.Pending;
+        }
+        public void AssignOwner(Guid ownerId)
+        {
+            this.OwnerId = ownerId;
+            this.UpdatedAt = DateTime.UtcNow;
         }
         public void Commit()
         {

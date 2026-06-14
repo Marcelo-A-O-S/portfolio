@@ -3,8 +3,7 @@ using Microsoft.Extensions.Options;
 using PostService.Application.Configurations;
 using PostService.Application.Interfaces;
 using StackExchange.Redis;
-
-namespace PostService.Infrastructure.Cache
+namespace PostService.Infrastructure.Caching
 {
     public class RedisCacheService : ICacheService
     {

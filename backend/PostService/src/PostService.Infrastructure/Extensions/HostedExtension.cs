@@ -1,7 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using PostService.Infrastructure.Jobs;
 using PostService.Infrastructure.Messaging.Consumers;
-
 namespace PostService.Infrastructure.Extensions
 {
     public static class HostedExtension
@@ -11,7 +9,6 @@ namespace PostService.Infrastructure.Extensions
         )
         {
             services.AddHostedService<PostConsumer>();
-            services.AddHostedService<CleanupMediaJob>();
             return services;
         }
     }

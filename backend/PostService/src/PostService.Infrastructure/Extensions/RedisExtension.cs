@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PostService.Application.Interfaces;
-using PostService.Infrastructure.Cache;
+using PostService.Infrastructure.Caching;
 using StackExchange.Redis;
 
 namespace PostService.Infrastructure.Extensions

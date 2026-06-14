@@ -12,6 +12,7 @@ namespace PostService.Application.Services
         {
             this.toolsRepository = _toolsRepository;
         }
+
         public async Task Delete(Tool entity)
         {
             await this.toolsRepository.Delete(entity);
@@ -60,6 +61,25 @@ namespace PostService.Application.Services
         public async Task<List<Tool>> GetTools()
         {
             return await this.toolsRepository.GetTools();
+        }
+
+        public async Task IncrementCommentCount(Guid Id)
+        {
+            await this.toolsRepository.IncrementCommentCount(Id);
+        }
+
+        public async Task IncrementLikeCount(Guid Id)
+        {
+            await this.toolsRepository.IncrementLikeCount(Id);
+        }
+        public async Task DecrementCommentCount(Guid Id)
+        {
+            await this.toolsRepository.DecrementCommentCount(Id);
+        }
+
+        public async Task DecrementLikeCount(Guid Id)
+        {
+            await this.toolsRepository.DecrementLikeCount(Id);
         }
 
         public async Task<List<Tool>> List()

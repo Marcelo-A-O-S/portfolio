@@ -4,8 +4,9 @@ namespace MediaService.Application.Interfaces
 {
     public interface IMediaFileServices : IServices<MediaFile>
     {
-        Task<MediaFile> SaveImageAsync(Guid ownerId, string ownerType, IFormFile file, string folder);
+        Task<MediaFile> SaveImageAsync(Guid? ownerId, string ownerType, IFormFile file, string folder);
         Task DeleteImageAsync(MediaFile mediaFile);
         Task<MediaFile> GetByPath(string path);
+        Task<List<MediaFile>> ListExpiredUncommittedMediaAsync();
     }
 }

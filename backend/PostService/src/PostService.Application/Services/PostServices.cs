@@ -12,6 +12,7 @@ namespace PostService.Application.Services
         {
             this.postRepository = _postRepository;
         }
+
         public async Task Delete(Post entity)
         {
             await this.postRepository.Delete(entity);
@@ -65,6 +66,25 @@ namespace PostService.Application.Services
         public async Task<List<Post>> GetPosts()
         {
             return await this.postRepository.GetPosts();
+        }
+
+        public async Task IncrementCommentCount(Guid postId)
+        {
+            await this.postRepository.IncrementCommentCount(postId);
+        }
+
+        public async Task IncrementLikeCount(Guid postId)
+        {
+            await this.postRepository.IncrementLikeCount(postId);
+        }
+        public async Task DecrementCommentCount(Guid postId)
+        {
+            await this.postRepository.DecrementCommentCount(postId);
+        }
+
+        public async Task DecrementLikeCount(Guid postId)
+        {
+            await this.postRepository.DecrementLikeCount(postId);
         }
 
         public async Task<List<Post>> List()

@@ -1,7 +1,7 @@
-using Microsoft.Extensions.Logging;
-using MediaService.Domain.Interfaces;
-using Microsoft.Extensions.Hosting;
+using MediaService.Application.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 namespace MediaService.Infrastructure.Jobs
 {
     public class CleanupMediaJob : BackgroundService
@@ -24,8 +24,20 @@ namespace MediaService.Infrastructure.Jobs
                 {
                     this.logger.LogInformation("Iniciando limpeza de imagens não utilizadas...");
                     using var scope = this.serviceProvider.CreateScope();
-                    var cleanupMedia = scope.ServiceProvider.GetRequiredService<IMediaFileRepository>();
-                    await cleanupMedia.DeleteExpiredPendingMediaAsync();
+                    var mediaFileServices = scope.ServiceProvider.GetRequiredService<IMediaFileServices>();
+                    var medias = await mediaFileServices.ListExpiredUncommittedMediaAsync();
+                    this.logger.LogInformation("Foram encontradas {Count} mídias expiradas.", medias.Count);
+                    foreach (var media in medias)
+                    {
+                        try
+                        {
+                            await mediaFileServices.DeleteImageAsync(media);
+                        }
+                        catch (Exception ex)
+                        {
+                            this.logger.LogError(ex, "Erro ao remover mídia {MediaId}", media.Id);
+                        }
+                    }
                     this.logger.LogInformation("Limpeza de imagens não utilizadas realizada com sucesso!");
                 }
                 catch (Exception ex)

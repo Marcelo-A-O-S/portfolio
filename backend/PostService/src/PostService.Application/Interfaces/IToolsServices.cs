@@ -8,5 +8,9 @@ namespace PostService.Application.Interfaces
         Task<Tool> GetForUpdate(Guid Id);
         Task<List<Tool>> GetTools();
         Task<Tool> GetFullDataById(Guid Id);
+        Task IncrementLikeCount(Guid Id);
+        Task IncrementCommentCount(Guid Id);
+        Task DecrementLikeCount(Guid Id);
+        Task DecrementCommentCount(Guid Id);
     }
 }

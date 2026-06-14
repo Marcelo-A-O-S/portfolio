@@ -74,12 +74,18 @@ namespace MediaService.Application.Services
         {
             return await this.repository.List(page);
         }
+
+        public async Task<List<MediaFile>> ListExpiredUncommittedMediaAsync()
+        {
+            return await this.repository.ListExpiredUncommittedMediaAsync();
+        }
+
         public async Task Save(MediaFile entity)
         {
             await this.repository.Save(entity);
         }
 
-        public async Task<MediaFile> SaveImageAsync(Guid ownerId, string ownerType, IFormFile file, string folder)
+        public async Task<MediaFile> SaveImageAsync(Guid? ownerId, string ownerType, IFormFile file, string folder)
         {
             if (file == null)
                 throw new ValidationException("Arquivo não informado.");

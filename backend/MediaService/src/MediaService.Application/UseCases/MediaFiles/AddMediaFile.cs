@@ -10,20 +10,16 @@ namespace MediaService.Application.UseCases.MediaFiles
 {
     public class AddMediaFile : IAddMediaFile
     {
-        private readonly IMediaValidationServices mediaValidationServices;
         private readonly IMediaFileServices mediaFileServices;
         public AddMediaFile(
-            IMediaValidationServices _mediaValidationServices,
             IMediaFileServices _mediaFileServices
         )
         {
-            this.mediaValidationServices = _mediaValidationServices;
             this.mediaFileServices = _mediaFileServices;
         }
         public async Task<MediaFileResponse> ExecuteAsync(MediaFileRequest mediaFileRequest)
         {
             ValidateRequest(mediaFileRequest);
-            await this.mediaValidationServices.ValidateOwnerExists(mediaFileRequest.OwnerId, mediaFileRequest.OwnerType);
             var folder = FolderResolver.Resolve(
                 mediaFileRequest.OwnerType
             );

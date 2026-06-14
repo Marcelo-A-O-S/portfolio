@@ -12,15 +12,13 @@ namespace MediaService.Infrastructure.Repositories
         {
             this.context = _context;
         }
-        public async Task DeleteExpiredPendingMediaAsync()
+        public async Task<List<MediaFile>> ListExpiredUncommittedMediaAsync()
         {
-            var now = DateTime.UtcNow;
             var limitDate = DateTime.UtcNow.AddDays(-3);
             var mediasNoCommit = await this.context.MediaFiles
-                .Where(mf => mf.Status == Status.Pending && mf.CreatedAt <= limitDate)
+                .Where(mf => mf.Status == Status.Uploaded && mf.OwnerId == null && mf.CreatedAt <= limitDate)
                 .ToListAsync();
-            this.context.RemoveRange(mediasNoCommit);
-            await this.context.SaveChangesAsync();
+            return mediasNoCommit;
         }
 
         public async Task<MediaFile> GetByPath(string path)

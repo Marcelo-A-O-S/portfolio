@@ -12,6 +12,7 @@ namespace PostService.Infrastructure.Repositories
         {
             this.context = _context;
         }
+
         public async Task<PaginatedResult<PostView>> GetByPagination(Guid authenticatedUserId, int page, string? search, int itemsPage = 10)
         {
             var query = this.context.Posts
@@ -65,7 +66,9 @@ namespace PostService.Infrastructure.Repositories
                         }
                     }).ToList(),
                     Likes = p.LikeCount,
-                    Liked = p.Likes.Any( l => l.UserId == authenticatedUserId),
+                    Liked = this.context.LikeProjections.Any(lp =>
+                                lp.TargetId == p.Id &&
+                                lp.UserId == authenticatedUserId),
                     Tools = p.Tools.Select(t => new ToolView
                     {
                         Id = t.Id,
@@ -171,6 +174,53 @@ namespace PostService.Infrastructure.Repositories
                     .ThenInclude(t => t.ToolContents)
                         .ThenInclude(tl => tl.Language)
                 .ToListAsync();
+        }
+
+        public async Task IncrementCommentCount(Guid postId)
+        {
+            await this.context.Posts
+                .Where(p => p.Id == postId)
+                .ExecuteUpdateAsync(setters => 
+                    setters.SetProperty(
+                        p => p.CommentCount,
+                        p => p.CommentCount + 1
+                    )
+                );
+        }
+
+        public async Task IncrementLikeCount(Guid postId)
+        {
+            await this.context.Posts
+                .Where(p => p.Id == postId)
+                .ExecuteUpdateAsync(setters => 
+                    setters.SetProperty(
+                        p => p.LikeCount,
+                        p => p.LikeCount + 1
+                    )
+                );
+        }
+        public async Task DecrementCommentCount(Guid postId)
+        {
+            await this.context.Posts
+                .Where(p => p.Id == postId)
+                .ExecuteUpdateAsync(setters => 
+                    setters.SetProperty(
+                        p => p.CommentCount,
+                        p => p.CommentCount - 1
+                    )
+                );
+        }
+
+        public async Task DecrementLikeCount(Guid postId)
+        {
+            await this.context.Posts
+                .Where(p => p.Id == postId)
+                .ExecuteUpdateAsync(setters => 
+                    setters.SetProperty(
+                        p => p.LikeCount,
+                        p => p.LikeCount - 1
+                    )
+                );
         }
     }
 }

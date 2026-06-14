@@ -12,6 +12,7 @@ namespace PostService.Infrastructure.Repositories
         {
             this.context = _context;
         }
+
         public async Task<PaginatedResult<Tool>> GetByPagination(int page, string? search, int itemsPage = 10)
         {
             var query = this.context.Tools
@@ -91,6 +92,53 @@ namespace PostService.Infrastructure.Repositories
                     .ThenInclude(c => c.CategoryContents)
                         .ThenInclude(cc => cc.Language)
                 .ToListAsync();
+        }
+
+        public async Task IncrementCommentCount(Guid Id)
+        {
+            await this.context.Tools
+                .Where(p => p.Id == Id)
+                .ExecuteUpdateAsync(setters => 
+                    setters.SetProperty(
+                        p => p.CommentCount,
+                        p => p.CommentCount + 1
+                    )
+                );
+        }
+
+        public async Task IncrementLikeCount(Guid Id)
+        {
+            await this.context.Tools
+                .Where(p => p.Id == Id)
+                .ExecuteUpdateAsync(setters => 
+                    setters.SetProperty(
+                        p => p.LikeCount,
+                        p => p.LikeCount + 1
+                    )
+                );
+        }
+        public async Task DecrementCommentCount(Guid Id)
+        {
+            await this.context.Tools
+                .Where(p => p.Id == Id)
+                .ExecuteUpdateAsync(setters => 
+                    setters.SetProperty(
+                        p => p.CommentCount,
+                        p => p.CommentCount - 1
+                    )
+                );
+        }
+
+        public async Task DecrementLikeCount(Guid Id)
+        {
+            await this.context.Tools
+                .Where(p => p.Id == Id)
+                .ExecuteUpdateAsync(setters => 
+                    setters.SetProperty(
+                        p => p.LikeCount,
+                        p => p.LikeCount - 1
+                    )
+                );
         }
     }
 }

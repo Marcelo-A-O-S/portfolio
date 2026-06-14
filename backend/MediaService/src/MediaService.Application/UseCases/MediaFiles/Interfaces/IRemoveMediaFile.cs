@@ -2,6 +2,6 @@ namespace MediaService.Application.UseCases.MediaFiles.Interfaces
 {
     public interface IRemoveMediaFile
     {
-        Task ExecuteAsync();
+        Task ExecuteAsync(Guid mediaFileId);
     }
 }
