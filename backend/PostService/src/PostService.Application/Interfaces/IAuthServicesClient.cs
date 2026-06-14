@@ -1,6 +1,6 @@
 namespace PostService.Application.Interfaces
 {
-    public interface IInternalAuthClient
+    public interface IAuthServicesClient
     {
         Task<string> GetToken();
     }

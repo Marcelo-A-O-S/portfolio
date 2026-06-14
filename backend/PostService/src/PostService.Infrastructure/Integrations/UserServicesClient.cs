@@ -8,10 +8,10 @@ namespace PostService.Infrastructure.Integrations
     public class UserServicesClient : IUserServicesClient
     {
         private readonly HttpClient http;
-        private readonly IInternalAuthClient authClient;
+        private readonly IAuthServicesClient authClient;
         public UserServicesClient(
             HttpClient _http,
-            IInternalAuthClient _authClient
+            IAuthServicesClient _authClient
         )
         {
             this.http = _http;

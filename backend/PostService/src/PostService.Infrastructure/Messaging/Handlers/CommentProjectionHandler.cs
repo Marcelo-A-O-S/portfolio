@@ -5,6 +5,7 @@ using PostService.Application.Interfaces;
 using System.Text.Json;
 using PostService.Infrastructure.Messaging.Events;
 using PostService.Domain.Enums;
+using PostService.Domain.Entities;
 namespace PostService.Infrastructure.Messaging.Handlers
 {
     public class CommentProjectionHandler : ICommentProjectionHandler
@@ -49,63 +50,75 @@ namespace PostService.Infrastructure.Messaging.Handlers
                     break;
             }
         }
-        private async Task<IPostServices> GetPostServices()
-        {
-            using var scope = this.scopeFactory.CreateScope();
-            return scope.ServiceProvider.GetRequiredService<IPostServices>();
-        }
-        private async Task<IToolsServices> GetToolServices()
-        {
-            using var scope = this.scopeFactory.CreateScope();
-            return scope.ServiceProvider.GetRequiredService<IToolsServices>();
-        }
         private async Task AddPostCommentCount(CommentEvent payload)
         {
-            var postServices = await GetPostServices();
+            using var scope = this.scopeFactory.CreateScope();
+            var likeProjectionServices = scope.ServiceProvider.GetRequiredService<ILikeProjectionServices>();
+            var postServices = scope.ServiceProvider.GetRequiredService<IPostServices>();
             var post = await postServices.GetById(payload.TargetId);
             if (post == null)
             {
                 this.logger.LogWarning("Evento recebido para post inexistente. PostId: {PostId}", payload.TargetId);
                 return;
             }
-            post.AddCommentCount();
-            await postServices.Update(post);
+            var likeProjection = new LikeProjection(payload.TargetId, payload.UserId);
+            await likeProjectionServices.Save(likeProjection);
+            await postServices.IncrementCommentCount(post.Id);
         }
         private async Task RemovePosCommentCount(CommentEvent payload)
         {
-            var postServices = await GetPostServices();
+            using var scope = this.scopeFactory.CreateScope();
+            var likeProjectionServices = scope.ServiceProvider.GetRequiredService<ILikeProjectionServices>();
+            var postServices = scope.ServiceProvider.GetRequiredService<IPostServices>();
             var post = await postServices.GetById(payload.TargetId);
             if (post == null)
             {
                 this.logger.LogWarning("Evento recebido para post inexistente. PostId: {PostId}", payload.TargetId);
                 return;
             }
-            post.RemoveCommentCount();
-            await postServices.Update(post);
+            var likeProjection = await likeProjectionServices.FindBy(pl => pl.TargetId == payload.TargetId && pl.UserId == payload.UserId);
+            if (likeProjection == null)
+            {
+                this.logger.LogWarning("Evento recebido para post inexistente. PostId: {PostId}", payload.TargetId);
+                return;
+            }
+            await likeProjectionServices.Delete(likeProjection);
+            await postServices.DecrementCommentCount(post.Id);
         }
         private async Task AddToolCommentCount(CommentEvent payload)
         {
-            var toolsServices = await GetToolServices();
+            using var scope = this.scopeFactory.CreateScope();
+            var likeProjectionServices = scope.ServiceProvider.GetRequiredService<ILikeProjectionServices>();
+            var toolsServices = scope.ServiceProvider.GetRequiredService<IToolsServices>();
             var tool = await toolsServices.GetById(payload.TargetId);
             if(tool == null)
             {
                 logger.LogWarning("Evento recebido para ferramenta inexistente. ToolId: {ToolId}", payload.TargetId);
                 return;
             }
-            tool.AddCommentCount();
-            await toolsServices.Update(tool);
+            var likeProjection = new LikeProjection(payload.TargetId, payload.UserId);
+            await likeProjectionServices.Save(likeProjection);
+            await toolsServices.IncrementCommentCount(tool.Id);
         }
         private async Task RemoveToolCommentCount(CommentEvent payload)
         {
-            var toolsServices = await GetToolServices();
+            using var scope = this.scopeFactory.CreateScope();
+            var likeProjectionServices = scope.ServiceProvider.GetRequiredService<ILikeProjectionServices>();
+            var toolsServices = scope.ServiceProvider.GetRequiredService<IToolsServices>();
             var tool = await toolsServices.GetById(payload.TargetId);
             if(tool == null)
             {
                 logger.LogWarning("Evento recebido para ferramenta inexistente. ToolId: {ToolId}", payload.TargetId);
                 return;
             }
-            tool.RemoveCommentCount();
-            await toolsServices.Update(tool);
+            var likeProjection = await likeProjectionServices.FindBy(pl => pl.TargetId == payload.TargetId && pl.UserId == payload.UserId);
+            if (likeProjection == null)
+            {
+                this.logger.LogWarning("Evento recebido para post inexistente. PostId: {PostId}", payload.TargetId);
+                return;
+            }
+            await likeProjectionServices.Delete(likeProjection);
+            await toolsServices.DecrementCommentCount(tool.Id);
         }
     }
 }

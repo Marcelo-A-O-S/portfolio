@@ -5,12 +5,12 @@ using PostService.Application.Configurations;
 using Microsoft.Extensions.Options;
 namespace PostService.Infrastructure.Integrations
 {
-    public class InternalAuthClient : IInternalAuthClient
+    public class AuthServicesClient : IAuthServicesClient
     {
         private readonly HttpClient http;
         private readonly ICacheService cacheServices;
         private readonly InternalClientOptions internalOptions;
-        public InternalAuthClient(
+        public AuthServicesClient(
             HttpClient _http,
             ICacheService _cacheServices,
             IOptions<InternalClientOptions> _internalOptions
