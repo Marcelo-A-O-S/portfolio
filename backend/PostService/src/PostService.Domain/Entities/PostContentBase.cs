@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 namespace PostService.Domain.Entities
 {
     public abstract class PostContentBase
@@ -9,32 +8,32 @@ namespace PostService.Domain.Entities
         public string Title { get; protected set; }
         public string Description { get; protected set; }
         public string Content { get; protected set; }
-        public List<string> ImagesUrls { get; protected set; }
+        public ICollection<MediaProjection> Images { get; protected set; }
         public string Slug { get; protected set; }
         public DateTime CreatedAt { get; protected set; }
         public DateTime UpdatedAt { get; protected set; }
 
-        public void SetImagesUrls(List<string> imagesUrls)
+        public void SetImagesUrls(List<MediaProjection> imagesUrls)
         {
-            if(this.ImagesUrls == null)
+            if(this.Images == null)
                 throw new Exception("Lista de imagens envolvendo o conteúdo não foi inicializada.");
-            this.ImagesUrls = imagesUrls;
+            this.Images = imagesUrls;
             this.UpdatedAt = DateTime.UtcNow;
         }
-        public void AddImageUrl(string imageUrl)
+        public void AddImageUrl(MediaProjection imageUrl)
         {
-            if(this.ImagesUrls == null)
+            if(this.Images == null)
                 throw new Exception("Lista de imagens envolvendo o conteúdo  não foi inicializada.");
-            this.ImagesUrls.Add(imageUrl);
+            this.Images.Add(imageUrl);
         }
-        public List<string> ValidateContentImages()
+        public List<MediaProjection> ValidateContentImages()
         {
-            if(this.ImagesUrls == null)
+            if(this.Images == null)
                 throw new Exception("Lista de imagens envolvendo o conteúdo  não foi inicializada.");
             if(string.IsNullOrEmpty(this.Content))
                 throw new Exception("O conteúdo da ferramenta não pode ser vazio.");
-            return this.ImagesUrls
-                .Where(x => !this.Content.Contains(x))
+            return this.Images
+                .Where(x => !this.Content.Contains(x.Url))
                 .ToList();
         }
     }

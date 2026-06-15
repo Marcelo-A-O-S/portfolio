@@ -1,5 +1,4 @@
-using PostService.Domain.Entities;
-namespace PostService.Application.Interfaces
+namespace PostService.Application.Caching.User
 {
     public interface IUserCacheServices
     {

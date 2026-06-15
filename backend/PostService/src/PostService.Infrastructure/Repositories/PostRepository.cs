@@ -45,7 +45,7 @@ namespace PostService.Infrastructure.Repositories
                 .Select(p => new PostView
                 {
                     Id = p.Id,
-                    ImgUrl = p.ImgUrl,
+                    // ImgUrl = p.ImgUrl,
                     Status = p.Status,
                     CreatedAt = p.CreatedAt,
                     UpdatedAt = p.UpdatedAt,
@@ -56,7 +56,7 @@ namespace PostService.Infrastructure.Repositories
                         Description = pc.Description,
                         Content = pc.Content,
                         Slug = pc.Slug,
-                        ImagesUrls = pc.ImagesUrls,
+                        // ImagesUrls = pc.ImagesUrls,
                         CreatedAt = pc.CreatedAt,
                         Language = new LanguageView
                         {
@@ -80,7 +80,7 @@ namespace PostService.Infrastructure.Repositories
                             Description = tc.Description,
                             Content = tc.Content,
                             Slug = tc.Slug,
-                            ImagesUrls = tc.ImagesUrls,
+                            // ImagesUrls = tc.ImagesUrls,
                             CreatedAt = tc.CreatedAt,
                             Language = new LanguageView
                             {

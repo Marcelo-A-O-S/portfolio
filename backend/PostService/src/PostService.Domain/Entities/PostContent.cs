@@ -13,7 +13,7 @@ namespace PostService.Domain.Entities
             this.Title = title;
             this.Description = description;
             this.Content = content;
-            this.ImagesUrls = new List<string>();
+            this.Images = new List<MediaProjection>();
             this.Slug = slug;
             this.CreatedAt = DateTime.UtcNow;
             this.UpdatedAt = DateTime.UtcNow;

@@ -6,22 +6,24 @@ namespace PostService.Domain.Entities
     public abstract class PostBase
     {
         public Guid Id { get; protected set; }
-        public string ImgUrl { get; protected set;}
+        public Guid MediaProjectionId { get; protected set; }
+        public MediaProjection MediaProjection { get; protected set; }
         public int LikeCount { get; protected set; }
         public int CommentCount { get; protected set; }
         public DateTime CreatedAt { get; protected set; }
         public DateTime? UpdatedAt { get; protected set; }
         public Status Status { get; protected set; }
         public ICollection<Category> Categories { get; protected set; }
-        public void Update(string imgUrl, Status status)
+        public void Update(Guid mediaProjectId, Status status)
         {
             this.UpdatedAt = DateTime.UtcNow;
             this.Status = status;
-            this.ImgUrl = imgUrl;
+            this.MediaProjectionId = mediaProjectId;
         }
-        public void AddImgUrl(string imgUrl)
+        public void SetThumbnail(Guid mediaProjectId)
         {
-            this.ImgUrl = imgUrl;
+            this.MediaProjectionId = mediaProjectId;
+            this.UpdatedAt = DateTime.UtcNow;
         }
         public void AddCategory(Category category)
         {
@@ -43,22 +45,26 @@ namespace PostService.Domain.Entities
         public void AddLike()
         {
             this.LikeCount++;
+            this.UpdatedAt = DateTime.UtcNow;
         }
         public void RemoveLike()
         {
             if(this.LikeCount == 0)
                 throw new ValidationException("Não é possivel realizar a remoção da curtida");
             this.LikeCount--;
+            this.UpdatedAt = DateTime.UtcNow;
         }
         public void AddCommentCount()
         {
             this.CommentCount++;
+            this.UpdatedAt = DateTime.UtcNow;
         }
         public void RemoveCommentCount()
         {
             if(this.CommentCount == 0)
                 throw new ValidationException("Não é possivel realizar a remoção do comentário");
             this.CommentCount--;
+            this.UpdatedAt = DateTime.UtcNow;
         }
     }
 }

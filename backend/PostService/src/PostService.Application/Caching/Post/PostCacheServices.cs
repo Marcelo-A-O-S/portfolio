@@ -1,5 +1,5 @@
 using PostService.Application.Interfaces;
-namespace PostService.Application.Services
+namespace PostService.Application.Caching.Post
 {
     public class PostCacheServices : IPostCacheServices
     {

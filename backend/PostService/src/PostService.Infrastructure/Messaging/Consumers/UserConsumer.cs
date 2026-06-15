@@ -5,8 +5,7 @@ using PostService.Infrastructure.Workers;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using System.Text.Json;
-using PostService.Application.Interfaces;
-
+using PostService.Application.Caching.User;
 namespace PostService.Infrastructure.Messaging.Consumers
 {
     public class UserConsumer : BackgroundService

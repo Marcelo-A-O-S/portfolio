@@ -7,24 +7,24 @@ namespace PostService.Application.UseCases.Tools
 {
     public class DeleteTool : IDeleteTool
     {
-        private readonly IMediaFileServices mediaFileServices;
+        private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly IToolsServices toolsServices;
         public DeleteTool(
-            IMediaFileServices _mediaFileServices,
+            IMediaProjectionServices _mediaProjectionServices,
             IToolsServices _toolsServices
         )
         {
-            this.mediaFileServices = _mediaFileServices;
+            this.mediaProjectionServices = _mediaProjectionServices;
             this.toolsServices = _toolsServices;
         }
         public async Task ExecuteAsync(Guid Id)
         {
-            var tool = await GetTool(Id);
-            var mediasToDelete = new List<MediaFile>();
-            await ProcessToolImage(tool, mediasToDelete);
-            await ProcessToolContents(tool,mediasToDelete);
-            await this.toolsServices.DeleteById(tool.Id);
-            await DeleteMedias(mediasToDelete);
+            // var tool = await GetTool(Id);
+            // var mediasToDelete = new List<MediaFile>();
+            // await ProcessToolImage(tool, mediasToDelete);
+            // await ProcessToolContents(tool,mediasToDelete);
+            // await this.toolsServices.DeleteById(tool.Id);
+            // await DeleteMedias(mediasToDelete);
         }
         private async Task<Tool> GetTool(Guid Id)
         {
@@ -33,31 +33,31 @@ namespace PostService.Application.UseCases.Tools
                 throw new NotFoundException("Ferramenta não encontrada.");
             return tool;
         }
-        private async Task ProcessToolImage(Tool tool, List<MediaFile> mediasToDelete)
-        {
-            var mediaImgUrl = await this.mediaFileServices.GetByPath(tool.ImgUrl);
-            if (mediaImgUrl != null)
-                mediasToDelete.Add(mediaImgUrl);
-        }
-        private async Task ProcessToolContents(Tool tool, List<MediaFile> mediasToDelete)
-        {
-            foreach (var toolContent in tool.ToolContents)
-            {
-                foreach (var imagePath in toolContent.ImagesUrls)
-                {
-                    var mediaImageContent = await this.mediaFileServices.GetByPath(imagePath);
-                    if (mediaImageContent != null)
-                        if(!mediasToDelete.Any(md => md.Id == mediaImageContent.Id))
-                            mediasToDelete.Add(mediaImageContent);
-                }
-            }
-        }
-        private async Task DeleteMedias(List<MediaFile> mediasToDelete)
-        {
-            foreach (var media in mediasToDelete)
-            {
-                await this.mediaFileServices.DeleteImageAsync(media);
-            }
-        }
+        // private async Task ProcessToolImage(Tool tool, List<MediaFile> mediasToDelete)
+        // {
+        //     var mediaImgUrl = await this.mediaFileServices.GetByPath(tool.ImgUrl);
+        //     if (mediaImgUrl != null)
+        //         mediasToDelete.Add(mediaImgUrl);
+        // }
+        // private async Task ProcessToolContents(Tool tool, List<MediaFile> mediasToDelete)
+        // {
+        //     foreach (var toolContent in tool.ToolContents)
+        //     {
+        //         foreach (var imagePath in toolContent.ImagesUrls)
+        //         {
+        //             var mediaImageContent = await this.mediaFileServices.GetByPath(imagePath);
+        //             if (mediaImageContent != null)
+        //                 if(!mediasToDelete.Any(md => md.Id == mediaImageContent.Id))
+        //                     mediasToDelete.Add(mediaImageContent);
+        //         }
+        //     }
+        // }
+        // private async Task DeleteMedias(List<MediaFile> mediasToDelete)
+        // {
+        //     foreach (var media in mediasToDelete)
+        //     {
+        //         await this.mediaFileServices.DeleteImageAsync(media);
+        //     }
+        // }
     }
 }

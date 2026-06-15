@@ -107,8 +107,10 @@ namespace Gateway.API.Configuration
             var postAddress = configuration.GetSection("Destinations:PostAddress").Value;
             var commentAddress = configuration.GetSection("Destinations:CommentAddress").Value;
             var certificateAddress = configuration.GetSection("Destinations:CertificateAddress").Value;
+            var mediaAddress = configuration.GetSection("Destinations:CertificateAddress").Value;
             if (string.IsNullOrEmpty(authAddress) || string.IsNullOrEmpty(postAddress)
             || string.IsNullOrEmpty(commentAddress) || string.IsNullOrEmpty(certificateAddress)
+            || string.IsNullOrEmpty(mediaAddress)
             )
             {
                 throw new InvalidOperationException("Chaves de destino não configuradas corretamente.");
@@ -152,6 +154,16 @@ namespace Gateway.API.Configuration
                     {
                         {
                             "certificateservice", new DestinationConfig { Address = certificateAddress}
+                        }
+                    }
+                },
+                new ClusterConfig
+                {
+                    ClusterId = "mediaCluster",
+                    Destinations = new Dictionary<string, DestinationConfig>
+                    {
+                        {
+                            "mediaservice", new DestinationConfig { Address = mediaAddress}
                         }
                     }
                 }

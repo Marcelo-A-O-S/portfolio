@@ -11,6 +11,7 @@ using PostService.Application.UseCases.Projects.Interfaces;
 using PostService.Application.UseCases.Projects;
 using PostService.Application.UseCases.InternalProject.Interfaces;
 using PostService.Application.UseCases.InternalProject;
+using PostService.Application.Caching.User;
 namespace PostService.Application.Extensions
 {
     public static class DependencyInjectionExtension

@@ -9,6 +9,8 @@ namespace PostService.Infrastructure.Extensions
         )
         {
             services.AddHostedService<PostConsumer>();
+            services.AddHostedService<ToolConsumer>();
+            services.AddHostedService<UserConsumer>();
             return services;
         }
     }

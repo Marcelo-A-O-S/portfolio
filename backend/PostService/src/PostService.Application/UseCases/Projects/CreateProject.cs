@@ -14,7 +14,7 @@ namespace PostService.Application.UseCases.Projects
         private readonly ICategoryServices categoryServices;
         private readonly IToolsServices toolsServices;
         private readonly IPostContentServices postContentServices;
-        private readonly IMediaFileServices mediaFileServices;
+        private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly IPostServices postServices;
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
@@ -24,34 +24,34 @@ namespace PostService.Application.UseCases.Projects
             ICategoryServices _categoryServices,
             IToolsServices _toolsServices,
             IPostContentServices _postContentServices,
-            IMediaFileServices _mediaFileServices,
+            IMediaProjectionServices _mediaProjectionServices,
             IPostServices _postServices
         )
         {
             this.categoryServices = _categoryServices;
             this.toolsServices = _toolsServices;
             this.postContentServices = _postContentServices;
-            this.mediaFileServices = _mediaFileServices;
+            this.mediaProjectionServices = _mediaProjectionServices;
             this.postServices = _postServices;
         }
         public async Task ExecuteAsync(PostRequest postRequest)
         {
-            ValidatePostRequest(postRequest);
-            var tools = DeserializeTools(postRequest.Tools);
-            var categories = DeserializeCategories(postRequest.Categories);
-            var postContents = DeserializePostContents(postRequest.PostContents);
-            var post = new Post(postRequest.Status);
-            var mediasToCommit = new List<MediaFile>();
-            var mediasToDelete = new List<MediaFile>();
-            await ProcessPostContents(post, postContents, mediasToCommit, mediasToDelete);
-            await ProcessCategories(post, categories);
-            await ProcessTools(post, tools);
-            var media = await mediaFileServices.SaveImageAsync(postRequest.ImgFile!, "media/posts");
-            post.AddImgUrl(media!.Path);
-            mediasToCommit.Add(media);
-            await this.postServices.Save(post);
-            await CommitMedias(mediasToCommit);
-            await DeleteMedias(mediasToDelete);
+            // ValidatePostRequest(postRequest);
+            // var tools = DeserializeTools(postRequest.Tools);
+            // var categories = DeserializeCategories(postRequest.Categories);
+            // var postContents = DeserializePostContents(postRequest.PostContents);
+            // var post = new Post(postRequest.Status);
+            // var mediasToCommit = new List<MediaFile>();
+            // var mediasToDelete = new List<MediaFile>();
+            // await ProcessPostContents(post, postContents, mediasToCommit, mediasToDelete);
+            // await ProcessCategories(post, categories);
+            // await ProcessTools(post, tools);
+            // var media = await mediaFileServices.SaveImageAsync(postRequest.ImgFile!, "media/posts");
+            // post.AddImgUrl(media!.Path);
+            // mediasToCommit.Add(media);
+            // await this.postServices.Save(post);
+            // await CommitMedias(mediasToCommit);
+            // await DeleteMedias(mediasToDelete);
         }
         private static void ValidatePostRequest(PostRequest postRequest)
         {
@@ -119,55 +119,55 @@ namespace PostService.Application.UseCases.Projects
                 post.AddTool(tool);
             }
         }
-        private async Task ProcessPostContents(Post post, List<PostContentDeserialize> postContents, List<MediaFile> mediasToCommit, List<MediaFile> mediasToDelete)
-        {
-            foreach (var item in postContents)
-            {
-                var validationError = ValidationHelper.Validate(item);
-                if (validationError.Count > 0)
-                {
-                    var errors = string.Join(", ", validationError.Select(e => e.ErrorMessage));
-                    throw new ValidationException($"Erro ao validar dados: {errors}");
-                }
-                var postContent = await this.postContentServices.FindBy(pc => pc.Slug == item.Slug && pc.LanguageId == item.LanguageId);
-                if (postContent != null)
-                    throw new ValidationException("Erro ao validar dados");
-                postContent = new PostContent(post.Id, item.LanguageId, item.Title, item.Description, item.Content, item.Slug);
-                var toRemoveImages = item.ImagesUrls.Where(image => !item.Content.Contains(image)).ToList();
-                foreach (var removeImageUrl in toRemoveImages)
-                {
-                    var mediaFileContent = await this.mediaFileServices.GetByPath(removeImageUrl);
-                    if (mediaFileContent != null)
-                        if (!mediasToDelete.Any(m => m.Id == mediaFileContent.Id))
-                            mediasToDelete.Add(mediaFileContent);
-                    item.ImagesUrls.Remove(removeImageUrl);
-                }
-                foreach (var addImageUrl in item.ImagesUrls)
-                {
-                    var mediaFileContent = await this.mediaFileServices.GetByPath(addImageUrl);
-                    if (mediaFileContent != null)
-                    {
-                        if (!mediasToCommit.Any(m => m.Id == mediaFileContent.Id))
-                            mediasToCommit.Add(mediaFileContent);
-                    }
-                }
-                post.AddPostContent(postContent);
-            }
-        }
-        private async Task CommitMedias(List<MediaFile> mediasToCommit)
-        {
-            foreach (var media in mediasToCommit)
-            {
-                media.Commit();
-                await this.mediaFileServices.Update(media);
-            }
-        }
-        private async Task DeleteMedias(List<MediaFile> mediasToDelete)
-        {
-            foreach (var mediaDelete in mediasToDelete)
-            {
-                await this.mediaFileServices.DeleteImageAsync(mediaDelete);
-            }
-        }
+        // private async Task ProcessPostContents(Post post, List<PostContentDeserialize> postContents, List<MediaFile> mediasToCommit, List<MediaFile> mediasToDelete)
+        // {
+        //     foreach (var item in postContents)
+        //     {
+        //         var validationError = ValidationHelper.Validate(item);
+        //         if (validationError.Count > 0)
+        //         {
+        //             var errors = string.Join(", ", validationError.Select(e => e.ErrorMessage));
+        //             throw new ValidationException($"Erro ao validar dados: {errors}");
+        //         }
+        //         var postContent = await this.postContentServices.FindBy(pc => pc.Slug == item.Slug && pc.LanguageId == item.LanguageId);
+        //         if (postContent != null)
+        //             throw new ValidationException("Erro ao validar dados");
+        //         postContent = new PostContent(post.Id, item.LanguageId, item.Title, item.Description, item.Content, item.Slug);
+        //         var toRemoveImages = item.ImagesUrls.Where(image => !item.Content.Contains(image)).ToList();
+        //         foreach (var removeImageUrl in toRemoveImages)
+        //         {
+        //             var mediaFileContent = await this.mediaFileServices.GetByPath(removeImageUrl);
+        //             if (mediaFileContent != null)
+        //                 if (!mediasToDelete.Any(m => m.Id == mediaFileContent.Id))
+        //                     mediasToDelete.Add(mediaFileContent);
+        //             item.ImagesUrls.Remove(removeImageUrl);
+        //         }
+        //         foreach (var addImageUrl in item.ImagesUrls)
+        //         {
+        //             var mediaFileContent = await this.mediaFileServices.GetByPath(addImageUrl);
+        //             if (mediaFileContent != null)
+        //             {
+        //                 if (!mediasToCommit.Any(m => m.Id == mediaFileContent.Id))
+        //                     mediasToCommit.Add(mediaFileContent);
+        //             }
+        //         }
+        //         post.AddPostContent(postContent);
+        //     }
+        // }
+        // private async Task CommitMedias(List<MediaFile> mediasToCommit)
+        // {
+        //     foreach (var media in mediasToCommit)
+        //     {
+        //         media.Commit();
+        //         await this.mediaFileServices.Update(media);
+        //     }
+        // }
+        // private async Task DeleteMedias(List<MediaFile> mediasToDelete)
+        // {
+        //     foreach (var mediaDelete in mediasToDelete)
+        //     {
+        //         await this.mediaFileServices.DeleteImageAsync(mediaDelete);
+        //     }
+        // }
     }
 }

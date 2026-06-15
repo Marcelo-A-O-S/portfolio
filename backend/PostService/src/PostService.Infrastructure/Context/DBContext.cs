@@ -8,6 +8,7 @@ namespace PostService.Infrastructure.Context
         {
 
         }
+        public DbSet<MediaProjection> MediaProjections { get; set; }
         public DbSet<LikeProjection> LikeProjections { get; set; }
         public DbSet<Tool> Tools { get; set; }
         public DbSet<ToolContent> ToolContents { get; set; }
@@ -25,6 +26,7 @@ namespace PostService.Infrastructure.Context
             modelBuilder.Entity<CategoryContent>().HasIndex(cc => cc.Slug);
             modelBuilder.Entity<Language>().HasIndex(lg => lg.Code);
             modelBuilder.Entity<LikeProjection>().HasIndex(lp => new { lp.TargetId, lp.UserId}).IsUnique();
+            modelBuilder.Entity<MediaProjection>().HasIndex(mp => new { mp.OwnerId, mp.Url }).IsUnique();
         }
     }
 }

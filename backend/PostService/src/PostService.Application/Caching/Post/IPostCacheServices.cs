@@ -1,4 +1,4 @@
-namespace PostService.Application.Interfaces
+namespace PostService.Application.Caching.Post
 {
     public interface IPostCacheServices
     {

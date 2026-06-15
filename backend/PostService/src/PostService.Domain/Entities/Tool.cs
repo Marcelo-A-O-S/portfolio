@@ -7,13 +7,13 @@ namespace PostService.Domain.Entities
         [JsonIgnore]
         public ICollection<Post> Posts { get; private set; }
         public ICollection<ToolContent> ToolContents { get; private set;} 
-        public Tool( Status status)
+        public Tool(Guid mediaProjectId, Status status)
         {
             this.CreatedAt = DateTime.UtcNow;
             this.Posts = new List<Post>();
             this.ToolContents = new List<ToolContent>();
             this.Categories = new List<Category>();
-            this.ImgUrl = "";
+            this.MediaProjectionId = mediaProjectId;
             this.Status = status;
         }
         public void AddToolContent(ToolContent toolContent)
