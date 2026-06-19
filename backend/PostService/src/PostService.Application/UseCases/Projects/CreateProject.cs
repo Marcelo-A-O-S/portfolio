@@ -34,8 +34,9 @@ namespace PostService.Application.UseCases.Projects
             this.mediaProjectionServices = _mediaProjectionServices;
             this.postServices = _postServices;
         }
-        public async Task ExecuteAsync(PostRequest postRequest)
+        public async Task ExecuteAsync(PostRequest request)
         {
+            ValidateRequest(request);
             // ValidatePostRequest(postRequest);
             // var tools = DeserializeTools(postRequest.Tools);
             // var categories = DeserializeCategories(postRequest.Categories);
@@ -53,35 +54,14 @@ namespace PostService.Application.UseCases.Projects
             // await CommitMedias(mediasToCommit);
             // await DeleteMedias(mediasToDelete);
         }
-        private static void ValidatePostRequest(PostRequest postRequest)
+        private static void ValidateRequest(PostRequest request)
         {
-            var validationError = ValidationHelper.Validate(postRequest);
+            var validationError = ValidationHelper.Validate(request);
             if (validationError.Count > 0)
             {
                 var errors = string.Join(", ", validationError.Select(e => e.ErrorMessage));
                 throw new ValidationException($"Erro ao validar dados: {errors}");
             }
-        }
-        private static List<ToolDeserialize> DeserializeTools(string jsonTools)
-        {
-            var toolsRequest = JsonSerializer.Deserialize<List<ToolDeserialize>>(jsonTools, JsonOptions);
-            if (toolsRequest is null || toolsRequest.Count == 0)
-                throw new ValidationException("Não é possivel salvar um projeto sem suas ferramentas relacionadas");
-            return toolsRequest;
-        }
-        private static List<CategoryDeserialize> DeserializeCategories(string jsonCategories)
-        {
-            var categoriesRequest = JsonSerializer.Deserialize<List<CategoryDeserialize>>(jsonCategories, JsonOptions);
-            if (categoriesRequest is null || categoriesRequest.Count == 0)
-                throw new ValidationException("Não é possivel salvar um projeto sem suas categorias relacionadas.");
-            return categoriesRequest;
-        }
-        private static List<PostContentDeserialize> DeserializePostContents(string jsonPostContents)
-        {
-            var postContentRequests = JsonSerializer.Deserialize<List<PostContentDeserialize>>(jsonPostContents, JsonOptions);
-            if (postContentRequests is null || postContentRequests.Count == 0)
-                throw new ValidationException("Não é possivel salvar um projeto sem seu conteudo relacionadas.");
-            return postContentRequests;
         }
         private async Task ProcessCategories(Post post, List<CategoryDeserialize> categoriesRequest)
         {

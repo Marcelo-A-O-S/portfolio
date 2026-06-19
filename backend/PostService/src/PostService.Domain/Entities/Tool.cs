@@ -21,6 +21,12 @@ namespace PostService.Domain.Entities
                 throw new Exception("Lista de conteudo não inicializada.");
             this.ToolContents.Add(toolContent);
         }
+        public void RemoveToolContent(ToolContent toolContent)
+        {
+            if(this.ToolContents == null)
+                throw new Exception("Lista de conteudo não inicializada.");
+            this.ToolContents.Remove(toolContent);
+        }
         public void ValidateToolContents(IEnumerable<Guid> toolContentIds)
         {
             if(this.ToolContents == null)

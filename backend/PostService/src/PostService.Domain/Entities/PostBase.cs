@@ -31,6 +31,12 @@ namespace PostService.Domain.Entities
                 throw new Exception("Lista de categorias não inicializada.");
             this.Categories.Add(category);
         }
+        public void RemoveCategory(Category category)
+        {
+            if (this.Categories == null)
+                throw new Exception("Lista de categorias não inicializada.");
+            this.Categories.Remove(category);
+        }
         public void ValidateCategories(IEnumerable<Guid> categoriesIds)
         {
             if(this.Categories == null)

@@ -104,7 +104,7 @@ namespace PostService.Application.UseCases.Tools
                         }
                         if (!toolContent.Images.Any(image => image.MediaId == media.MediaId))
                         {
-                            toolContent.AddImageUrl(media);
+                            toolContent.AddImage(media);
                         }
                     }
                     else
@@ -115,7 +115,7 @@ namespace PostService.Application.UseCases.Tools
                         }
                         if (!toolContent.Images.Any(image => image.MediaId == mediaContent.MediaId))
                         {
-                            toolContent.AddImageUrl(mediaContent);
+                            toolContent.AddImage(mediaContent);
                         }
                     }
                 }

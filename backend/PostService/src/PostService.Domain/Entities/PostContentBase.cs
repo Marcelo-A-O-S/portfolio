@@ -13,18 +13,24 @@ namespace PostService.Domain.Entities
         public DateTime CreatedAt { get; protected set; }
         public DateTime UpdatedAt { get; protected set; }
 
-        public void SetImagesUrls(List<MediaProjection> imagesUrls)
+        public void SetImages(List<MediaProjection> images)
         {
             if(this.Images == null)
                 throw new Exception("Lista de imagens envolvendo o conteúdo não foi inicializada.");
-            this.Images = imagesUrls;
+            this.Images = images;
             this.UpdatedAt = DateTime.UtcNow;
         }
-        public void AddImageUrl(MediaProjection imageUrl)
+        public void AddImage(MediaProjection image)
         {
             if(this.Images == null)
                 throw new Exception("Lista de imagens envolvendo o conteúdo  não foi inicializada.");
-            this.Images.Add(imageUrl);
+            this.Images.Add(image);
+        }
+        public void RemoveImage(MediaProjection image)
+        {
+            if(this.Images == null)
+                throw new Exception("Lista de imagens envolvendo o conteúdo  não foi inicializada.");
+            this.Images.Remove(image);
         }
         public List<MediaProjection> ValidateContentImages()
         {
