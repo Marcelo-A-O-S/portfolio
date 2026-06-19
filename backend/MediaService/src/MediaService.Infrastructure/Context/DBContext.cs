@@ -7,11 +7,11 @@ namespace MediaService.Infrastructure.Context
         public DBContext(DbContextOptions<DBContext> options) : base(options)
         {
         }
-        public DbSet<MediaFile> MediaFiles { get; set; }
+        public DbSet<Media> Medias { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<MediaFile>().HasIndex(mf => mf.Path).IsUnique();
-            modelBuilder.Entity<MediaFile>().Property(mf => mf.Status).HasConversion<string>();
+            modelBuilder.Entity<Media>().HasIndex(mf => mf.Path).IsUnique();
+            modelBuilder.Entity<Media>().Property(mf => mf.Status).HasConversion<string>();
         }
     }
 }

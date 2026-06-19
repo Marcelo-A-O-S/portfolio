@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-
 namespace PostService.Infrastructure.Context
 {
     public class DBContextFactory : IDesignTimeDbContextFactory<DBContext>

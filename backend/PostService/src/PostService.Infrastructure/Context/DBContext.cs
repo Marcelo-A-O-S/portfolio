@@ -25,8 +25,8 @@ namespace PostService.Infrastructure.Context
             modelBuilder.Entity<ToolContent>().HasIndex(tc => tc.Slug);
             modelBuilder.Entity<CategoryContent>().HasIndex(cc => cc.Slug);
             modelBuilder.Entity<Language>().HasIndex(lg => lg.Code);
-            modelBuilder.Entity<LikeProjection>().HasIndex(lp => new { lp.TargetId, lp.UserId}).IsUnique();
-            modelBuilder.Entity<MediaProjection>().HasIndex(mp => new { mp.OwnerId, mp.Url }).IsUnique();
+            modelBuilder.Entity<LikeProjection>().HasIndex(lp => new { lp.TargetId, lp.UserId }).IsUnique();
+            modelBuilder.Entity<MediaProjection>().HasIndex(mp => new { mp.Url, mp.MediaId }).IsUnique();
         }
     }
 }

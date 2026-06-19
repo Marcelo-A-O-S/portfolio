@@ -20,6 +20,6 @@ namespace PostService.Application.DTOs.Request
         [Required( ErrorMessage = "A lista de conteúdo é obrigatória.")]
         public string PostContents {get; set; }
         [Required ( ErrorMessage = "O Status do conteúdo é obrigatório.")]
-        public Status Status { get; private set; }
+        public Status Status { get; set; }
     }
 }

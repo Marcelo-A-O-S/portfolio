@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -40,49 +39,16 @@ namespace PostService.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MediaFiles",
+                name: "LikeProjections",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Path = table.Column<string>(type: "text", nullable: false),
-                    MimeType = table.Column<string>(type: "text", nullable: false),
-                    Size = table.Column<long>(type: "bigint", nullable: false),
-                    IsCommitted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CommittedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    TargetId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MediaFiles", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Posts",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ImgUrl = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Status = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Posts", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Tools",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ImgUrl = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Status = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tools", x => x.Id);
+                    table.PrimaryKey("PK_LikeProjections", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -130,63 +96,6 @@ namespace PostService.Infrastructure.Migrations
                         principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CategoryPost_Posts_PostsId",
-                        column: x => x.PostsId,
-                        principalTable: "Posts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Likes",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Likes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Likes_Posts_PostId",
-                        column: x => x.PostId,
-                        principalTable: "Posts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PostContents",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
-                    LanguageId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Title = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
-                    Content = table.Column<string>(type: "text", nullable: false),
-                    ImagesUrls = table.Column<List<string>>(type: "text[]", nullable: false),
-                    Slug = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PostContents", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PostContents_Languages_LanguageId",
-                        column: x => x.LanguageId,
-                        principalTable: "Languages",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PostContents_Posts_PostId",
-                        column: x => x.PostId,
-                        principalTable: "Posts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -205,10 +114,96 @@ namespace PostService.Infrastructure.Migrations
                         principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MediaProjections",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    MediaId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Url = table.Column<string>(type: "text", nullable: false),
+                    PostContentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ToolContentId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MediaProjections", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Posts",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    MediaProjectionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    LikeCount = table.Column<int>(type: "integer", nullable: false),
+                    CommentCount = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Status = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Posts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CategoryTool_Tools_ToolsId",
-                        column: x => x.ToolsId,
-                        principalTable: "Tools",
+                        name: "FK_Posts_MediaProjections_MediaProjectionId",
+                        column: x => x.MediaProjectionId,
+                        principalTable: "MediaProjections",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tools",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    MediaProjectionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    LikeCount = table.Column<int>(type: "integer", nullable: false),
+                    CommentCount = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Status = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tools", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Tools_MediaProjections_MediaProjectionId",
+                        column: x => x.MediaProjectionId,
+                        principalTable: "MediaProjections",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PostContents",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    LanguageId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: false),
+                    Slug = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostContents", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PostContents_Languages_LanguageId",
+                        column: x => x.LanguageId,
+                        principalTable: "Languages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PostContents_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -243,12 +238,11 @@ namespace PostService.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ToolId = table.Column<Guid>(type: "uuid", nullable: false),
-                    LanguageId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
+                    LanguageId = table.Column<Guid>(type: "uuid", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    Content = table.Column<string>(type: "text", nullable: true),
-                    ImagesUrls = table.Column<List<string>>(type: "text[]", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: false),
                     Slug = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
@@ -301,14 +295,25 @@ namespace PostService.Infrastructure.Migrations
                 column: "Code");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Likes_PostId",
-                table: "Likes",
-                column: "PostId");
+                name: "IX_LikeProjections_TargetId_UserId",
+                table: "LikeProjections",
+                columns: new[] { "TargetId", "UserId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_MediaFiles_Path",
-                table: "MediaFiles",
-                column: "Path",
+                name: "IX_MediaProjections_PostContentId",
+                table: "MediaProjections",
+                column: "PostContentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MediaProjections_ToolContentId",
+                table: "MediaProjections",
+                column: "ToolContentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MediaProjections_Url_MediaId",
+                table: "MediaProjections",
+                columns: new[] { "Url", "MediaId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -325,6 +330,11 @@ namespace PostService.Infrastructure.Migrations
                 name: "IX_PostContents_Slug",
                 table: "PostContents",
                 column: "Slug");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_MediaProjectionId",
+                table: "Posts",
+                column: "MediaProjectionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PostTool_ToolsId",
@@ -345,11 +355,62 @@ namespace PostService.Infrastructure.Migrations
                 name: "IX_ToolContents_ToolId",
                 table: "ToolContents",
                 column: "ToolId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tools_MediaProjectionId",
+                table: "Tools",
+                column: "MediaProjectionId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_CategoryPost_Posts_PostsId",
+                table: "CategoryPost",
+                column: "PostsId",
+                principalTable: "Posts",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_CategoryTool_Tools_ToolsId",
+                table: "CategoryTool",
+                column: "ToolsId",
+                principalTable: "Tools",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_MediaProjections_PostContents_PostContentId",
+                table: "MediaProjections",
+                column: "PostContentId",
+                principalTable: "PostContents",
+                principalColumn: "Id");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_MediaProjections_ToolContents_ToolContentId",
+                table: "MediaProjections",
+                column: "ToolContentId",
+                principalTable: "ToolContents",
+                principalColumn: "Id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_PostContents_Languages_LanguageId",
+                table: "PostContents");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_ToolContents_Languages_LanguageId",
+                table: "ToolContents");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_PostContents_Posts_PostId",
+                table: "PostContents");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_ToolContents_Tools_ToolId",
+                table: "ToolContents");
+
             migrationBuilder.DropTable(
                 name: "CategoriesContents");
 
@@ -360,31 +421,31 @@ namespace PostService.Infrastructure.Migrations
                 name: "CategoryTool");
 
             migrationBuilder.DropTable(
-                name: "Likes");
-
-            migrationBuilder.DropTable(
-                name: "MediaFiles");
-
-            migrationBuilder.DropTable(
-                name: "PostContents");
+                name: "LikeProjections");
 
             migrationBuilder.DropTable(
                 name: "PostTool");
 
             migrationBuilder.DropTable(
-                name: "ToolContents");
-
-            migrationBuilder.DropTable(
                 name: "Categories");
-
-            migrationBuilder.DropTable(
-                name: "Posts");
 
             migrationBuilder.DropTable(
                 name: "Languages");
 
             migrationBuilder.DropTable(
+                name: "Posts");
+
+            migrationBuilder.DropTable(
                 name: "Tools");
+
+            migrationBuilder.DropTable(
+                name: "MediaProjections");
+
+            migrationBuilder.DropTable(
+                name: "PostContents");
+
+            migrationBuilder.DropTable(
+                name: "ToolContents");
         }
     }
 }

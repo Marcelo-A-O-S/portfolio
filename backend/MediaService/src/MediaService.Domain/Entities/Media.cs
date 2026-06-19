@@ -1,7 +1,7 @@
 using MediaService.Domain.Enums;
 namespace MediaService.Domain.Entities
 {
-    public class MediaFile
+    public class Media
     {
         public Guid Id { get; private set;}
         public Guid? OwnerId { get; private set; }
@@ -12,7 +12,7 @@ namespace MediaService.Domain.Entities
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
         public Status Status { get; private set; }
-        public MediaFile(
+        public Media(
             Guid? ownerId,
             string ownerType,
             string path, 

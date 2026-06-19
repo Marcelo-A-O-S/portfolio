@@ -45,7 +45,7 @@ namespace Gateway.API.Configuration
                 },
                 new RouteConfig
                 {
-                    RouteId = "Category",
+                    RouteId = "categoryRoute",
                     ClusterId = "postCluster",
                     Match = new RouteMatch
                     {
@@ -54,7 +54,7 @@ namespace Gateway.API.Configuration
                 },
                 new RouteConfig
                 {
-                    RouteId = "Language",
+                    RouteId = "languageRoute",
                     ClusterId = "postCluster",
                     Match = new RouteMatch
                     {
@@ -73,10 +73,19 @@ namespace Gateway.API.Configuration
                 new RouteConfig
                 {
                     RouteId = "mediaRoute",
-                    ClusterId = "postCluster",
+                    ClusterId = "mediaCluster",
                     Match = new RouteMatch
                     {
-                        Path = "/media/{**catch-all}"
+                        Path = "/api/media/{**catch-all}"
+                    }
+                },
+                new RouteConfig
+                {
+                    RouteId = "archivesRoute",
+                    ClusterId = "mediaCluster",
+                    Match = new RouteMatch
+                    {
+                        Path = "/archives/{**catch-all}"
                     }
                 },
                 new RouteConfig
@@ -85,7 +94,7 @@ namespace Gateway.API.Configuration
                     ClusterId = "commentCluster",
                     Match = new RouteMatch
                     {
-                        Path = "/comment/{**catch-all}"
+                        Path = "/api/comment/{**catch-all}"
                     }
                 },
                 new RouteConfig
@@ -94,7 +103,7 @@ namespace Gateway.API.Configuration
                     ClusterId = "certificateCluster",
                     Match = new RouteMatch
                     {
-                        Path = "/certificate/{**catch-all}"
+                        Path = "/api/certificate/{**catch-all}"
                     }
                 }
             };
@@ -107,7 +116,7 @@ namespace Gateway.API.Configuration
             var postAddress = configuration.GetSection("Destinations:PostAddress").Value;
             var commentAddress = configuration.GetSection("Destinations:CommentAddress").Value;
             var certificateAddress = configuration.GetSection("Destinations:CertificateAddress").Value;
-            var mediaAddress = configuration.GetSection("Destinations:CertificateAddress").Value;
+            var mediaAddress = configuration.GetSection("Destinations:MediaAddress").Value;
             if (string.IsNullOrEmpty(authAddress) || string.IsNullOrEmpty(postAddress)
             || string.IsNullOrEmpty(commentAddress) || string.IsNullOrEmpty(certificateAddress)
             || string.IsNullOrEmpty(mediaAddress)

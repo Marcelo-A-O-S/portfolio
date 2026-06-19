@@ -28,9 +28,9 @@ namespace MediaService.Infrastructure.Messaging.Handlers
                 return;
             }
             using var scope = this.scopeFactory.CreateScope();
-            var mediaFileServices = scope.ServiceProvider.GetRequiredService<IMediaFileServices>();
+            var mediaFileServices = scope.ServiceProvider.GetRequiredService<IMediaServices>();
             var mediaValidationServices = scope.ServiceProvider.GetRequiredService<IMediaValidationServices>();
-            var media = await mediaFileServices.FindBy(m => m.Id == payload.MediaFileId && m.OwnerType == payload.OwnerType);
+            var media = await mediaFileServices.FindBy(m => m.Id == payload.MediaId && m.OwnerType == payload.OwnerType);
             if(media == null)
             {
                 this.logger.LogError("Midia não encontrada.");
@@ -46,7 +46,7 @@ namespace MediaService.Infrastructure.Messaging.Handlers
             }
             catch(Exception ex)
             {
-                logger.LogError(ex,"Erro ao processar evento de commit da mídia {MediaId}", payload.MediaFileId);
+                logger.LogError(ex,"Erro ao processar evento de commit da mídia {MediaId}", payload.MediaId);
             }
         }
 
@@ -59,11 +59,11 @@ namespace MediaService.Infrastructure.Messaging.Handlers
                 return;
             }
             using var scope = this.scopeFactory.CreateScope();
-            var mediaFileServices = scope.ServiceProvider.GetRequiredService<IMediaFileServices>();
-            var media = await mediaFileServices.FindBy(m => m.Id == payload.MediaFileId && m.OwnerType == payload.OwnerType);
+            var mediaFileServices = scope.ServiceProvider.GetRequiredService<IMediaServices>();
+            var media = await mediaFileServices.FindBy(m => m.Id == payload.MediaId && m.OwnerType == payload.OwnerType);
             if(media == null)
             {
-                this.logger.LogWarning("Mídia não encontrada. MediaId: {MediaId}", payload.MediaFileId);
+                this.logger.LogWarning("Mídia não encontrada. MediaId: {MediaId}", payload.MediaId);
                 return;
             }
             await mediaFileServices.DeleteImageAsync(media);

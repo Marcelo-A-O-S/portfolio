@@ -39,6 +39,11 @@ namespace PostService.Application.Services
             return await this.mediaProjectionRepository.GetById(Id);
         }
 
+        public async Task<MediaProjection> GetByUrl(string url)
+        {
+            return await this.mediaProjectionRepository.GetByUrl(url);
+        }
+
         public async Task<List<MediaProjection>> List()
         {
             return await this.mediaProjectionRepository.List();

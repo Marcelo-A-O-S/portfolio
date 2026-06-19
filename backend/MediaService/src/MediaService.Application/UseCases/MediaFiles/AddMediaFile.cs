@@ -4,15 +4,14 @@ using MediaService.Application.Exceptions;
 using MediaService.Application.Interfaces;
 using MediaService.Application.UseCases.MediaFiles.Interfaces;
 using MediaService.Application.Validations;
-using MediaService.Application.Validators.Interfaces;
 using MediaService.Application.Constants;
 namespace MediaService.Application.UseCases.MediaFiles
 {
     public class AddMediaFile : IAddMediaFile
     {
-        private readonly IMediaFileServices mediaFileServices;
+        private readonly IMediaServices mediaFileServices;
         public AddMediaFile(
-            IMediaFileServices _mediaFileServices
+            IMediaServices _mediaFileServices
         )
         {
             this.mediaFileServices = _mediaFileServices;
@@ -32,7 +31,8 @@ namespace MediaService.Application.UseCases.MediaFiles
             return new MediaFileResponse
             {
                 Id = media.Id,
-                Path = media.Path
+                Url = media.Path,
+                OwnerType = media.OwnerType
             };
         }
         private static void ValidateRequest(MediaFileRequest mediaFileRequest)

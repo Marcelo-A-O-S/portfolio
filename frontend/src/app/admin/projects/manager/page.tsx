@@ -20,9 +20,10 @@ import { ToolSchema } from "@/domain/schemas/ToolSchema";
 import { useTools } from "@/hooks/useTools";
 import { ImageIcon } from "lucide-react";
 import { useGetByIdPost } from "@/hooks/useGetByIdPost";
-import { addImageMarkDown } from "@/services/client/image-client";
 import { useCreateProject } from "@/hooks/useCreateProject";
 import { useUpdateProject } from "@/hooks/useUpdateProject";
+import { addMediaService } from "@/services/client/media-services";
+import { MediaSchema } from "@/domain/schemas/MediaSchema";
 export default function ProjectCreate() {
     const searchParams = useSearchParams();
     const postId = searchParams.get("postId") || undefined;
@@ -38,7 +39,6 @@ export default function ProjectCreate() {
     const { control, handleSubmit, formState: { errors: errorsPost }, watch, reset, getValues, setValue } = useForm<PostSchema>({
         resolver: zodResolver(postSchema),
         defaultValues: {
-            imgUrl: '',
             status: "DRAFT",
             postContents: [{
                 content: '',
@@ -71,12 +71,12 @@ export default function ProjectCreate() {
     const categoriesWatch = watch("categories");
     const toolsWatch = watch("tools");
     const onSubmit = async (data: PostSchema) => {
-        console.log("Atualizando Projeto: ",data);
-        if (post) {
-            await updateProject({ id: post.id, data: data });
-        } else {
-            await createProject(data);
-        }
+        console.log("Atualizando Projeto: ", data);
+        // if (post) {
+        //     await updateProject({ id: post.id, data: data });
+        // } else {
+        //     await createProject(data);
+        // }
     }
     const addTool = (data: ToolSchema) => {
         const exists = toolsWatch.some(
@@ -99,27 +99,48 @@ export default function ProjectCreate() {
         const textarea = e.currentTarget;
         const start = textarea.selectionStart;
         const end = textarea.selectionEnd;
-        const response = await addImageMarkDown(file);
+        const response = await addMediaService({
+            file: file,
+            ownerType: "Post"
+        });
         if (response.status !== 200 && response.status !== 201) {
             toast.error(`Erro ao adicionar imagem: ${response.data.message}`);
             return;
         }
         const url = response.data.url;
+        const mediaId = response.data.id;
         const urlMarkdown = `\n![image](${url})\n`
         const newValue = field.value.substring(0, start) + urlMarkdown + field.value.substring(end);
         field.onChange(newValue);
-        const currentImages = getValues(`postContents.${index}.imagesUrls`) ?? [];
-        setValue(`postContents.${index}.imagesUrls`, [...currentImages, url]);
-        const imagesUpdated = getValues(`postContents.${index}.imagesUrls`);
+        const currentImages = getValues(`postContents.${index}.images`) ?? [];
+        const media: MediaSchema = {
+            url: url,
+            id: mediaId
+        };
+        setValue(`postContents.${index}.images`, [...currentImages, media]);
+        const imagesUpdated = getValues(`postContents.${index}.images`);
         console.log(imagesUpdated);
     }
-    const handleImage = async (e: React.ChangeEvent<HTMLInputElement>, field: ControllerRenderProps<PostSchema, `imgFile`>) => {
+    const handleImage = async (e: React.ChangeEvent<HTMLInputElement>, field: ControllerRenderProps<PostSchema, `media.url`>) => {
         const file = e.target.files?.[0];
         if (!file) return;
+        const response = await addMediaService({
+            file: file,
+            ownerType: "Post"
+        });
+        if (response.status !== 200 && response.status !== 201) {
+            toast.error(`Erro ao adicionar imagem: ${response.data.message}`);
+            return;
+        }
+        const url = response.data.url;
+        const mediaId = response.data.id;
+        const media: MediaSchema = {
+            url: url,
+            id: mediaId
+        };
+        setValue("media", media);
         field.onChange(file);
-        setValue("imgFile", file);
-        setValue("imgUrl", file.name);
-        setPostPreview(URL.createObjectURL(file));
+        setPostPreview(`${process.env.NEXT_PUBLIC_FILES_URL}/${media.url}`);
     }
     return (
         <>
@@ -259,7 +280,7 @@ export default function ProjectCreate() {
                                     </div>
                                     <div className="py-2">
                                         <Controller
-                                            name={`imgFile`}
+                                            name={`media.url`}
                                             control={control}
                                             render={({ field }) => (
                                                 <div className="grid gap-2">
@@ -271,7 +292,7 @@ export default function ProjectCreate() {
                                                             className="cursor-pointer"
                                                         />
                                                     </div>
-                                                    {errorsPost.imgUrl && <span className="text-wrap text-red-600 text-sm">{errorsPost.imgUrl.message}</span>}
+                                                    {errorsPost.media && <span className="text-wrap text-red-600 text-sm">{errorsPost.media.message}</span>}
                                                 </div>
                                             )}
                                         />

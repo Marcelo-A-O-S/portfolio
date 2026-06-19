@@ -8,6 +8,8 @@ using PostService.Application.Interfaces;
 using PostService.Application.UseCases.Tools.Interfaces;
 using PostService.Application.Validations;
 using PostService.Domain.Entities;
+using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace PostService.Application.UseCases.Tools
 {
@@ -30,25 +32,17 @@ namespace PostService.Application.UseCases.Tools
             this.mediaProjectionServices = _mediaProjectionServices;
             this.categoryServices = _categoryServices;
         }
-        public async Task ExecuteAsync(Guid Id, ToolRequest toolRequest)
+        public async Task ExecuteAsync(Guid Id, ToolRequest request)
         {
-            // ValidateToolRequest(toolRequest);
-            // var toolContents = DeserializeToolContents(toolRequest.ToolContents);
-            // var categories = DeserializeCategories(toolRequest.Categories);
-            // var mediasToCommit = new List<MediaFile>();
-            // var mediasToDelete = new List<MediaFile>();
-            // var tool = await GetTool(Id);
-            // await ProcessToolContents(tool, toolContents, mediasToCommit, mediasToDelete);
-            // await ProcessCategories(tool, categories);
-            // await UpdateImage(tool, toolRequest.ImgFile, mediasToCommit, mediasToDelete);
-            // await this.toolsServices.Update(tool);
-            // await CommitMedias(mediasToCommit);
-            // await DeleteMedias(mediasToDelete);
+            ValidateRequest(request);
+            var tool = await GetTool(Id);
+            var mediasToCommit = new List<MediaProjection>();
+            var mediasToDelete = new List<MediaProjection>();
+            await ProcessToolContents(tool, request.ToolContents, mediasToCommit, mediasToDelete);
+
         }
-        private static void ValidateToolRequest(ToolRequest toolRequest)
+        private static void ValidateRequest(ToolRequest toolRequest)
         {
-            if (toolRequest.ImgUrl == null)
-                throw new ValidationException("Endereço de imagem obrigatório.");
             var validationError = ValidationHelper.Validate(toolRequest);
             if (validationError.Count > 0)
             {
@@ -56,26 +50,104 @@ namespace PostService.Application.UseCases.Tools
                 throw new ValidationException($"Erro ao validar dados: {errors}");
             }
         }
-        private static List<ToolContentDeserialize> DeserializeToolContents(string jsonToolContents)
-        {
-            var toolContentRequest = JsonSerializer.Deserialize<List<ToolContentDeserialize>>(jsonToolContents, JsonOptions);
-            if (toolContentRequest is null || toolContentRequest.Count == 0)
-                throw new ValidationException("Não é possivel salvar uma ferramenta sem seu conteudo relacionado.");
-            return toolContentRequest;
-        }
-        private static List<CategoryRequest> DeserializeCategories(string jsonCategories)
-        {
-            var categoriesRequest = JsonSerializer.Deserialize<List<CategoryRequest>>(jsonCategories, JsonOptions);
-            if (categoriesRequest is null || categoriesRequest.Count == 0)
-                throw new ValidationException("Não é possivel salvar uma ferramenta sem suas categorias relacionadas.");
-            return categoriesRequest;
-        }
         private async Task<Tool> GetTool(Guid Id)
         {
             var tool = await this.toolsServices.GetForUpdate(Id);
             if (tool == null)
                 throw new NotFoundException("Ferramenta não encontrada.");
             return tool;
+        }
+        private async Task ProcessToolContents(Tool tool, List<ToolContentRequest> toolContentRequests, List<MediaProjection> mediasToCommit, List<MediaProjection> mediasToDelete)
+        {
+            var requestToolContentIds = toolContentRequests
+                .Where(c => c.Id.HasValue)
+                .Select(c => c.Id!.Value);
+            var removedContents = tool.ToolContents
+                .Where(tc => !requestToolContentIds.Contains(tc.Id));
+            tool.ValidateToolContents(requestToolContentIds);
+            foreach (var item in removedContents)
+            {
+                foreach (var removeImage in item.Images)
+                {
+                    var image = await this.mediaProjectionServices.FindBy(img => img.MediaId == removeImage.MediaId && img.Id == removeImage.Id);
+                    if(image != null)
+                    {
+                        mediasToDelete.Add(image);
+                    }
+                }
+            }
+            foreach (var item in toolContentRequests)
+            {
+                var validationError = ValidationHelper.Validate(item);
+                if (validationError.Count > 0)
+                    throw new ValidationException($"Erro ao validar dados: {validationError}");
+                if (item.Id.HasValue)
+                {
+                    var toolContent = tool.ToolContents.FirstOrDefault(tc => tc.Id == item.Id.Value);
+                    if (toolContent == null)
+                        throw new NotFoundException("Conteúdo da ferramenta não encontrada.");
+                    toolContent.Update(item.LanguageId, item.Name, item.Title, item.Description, item.Content, item.Slug);
+                    var toRemoveImages = item.Images.Where(image => !item.Content.Contains(image.Url)).ToList();
+                    foreach (var removeImage in toRemoveImages)
+                    {
+                        var mediaContent = await this.mediaProjectionServices.GetByUrl(removeImage.Url);
+                        if (mediaContent != null)
+                        {
+                            if (!mediasToDelete.Any(m => m.MediaId == mediaContent.MediaId))
+                            {
+                                mediasToDelete.Add(mediaContent);
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            var media = new MediaProjection(removeImage.Id, removeImage.Url);
+                            if (!mediasToDelete.Any(m => m.MediaId == media.MediaId))
+                            {
+                                mediasToDelete.Add(media);
+                                continue;
+                            }
+                        }
+                    }
+                    var toAddImages = item.Images.Where(image => item.Content.Contains(image.Url)).ToList();
+                    foreach (var addImage in toAddImages)
+                    {
+                        var mediaContent = await this.mediaProjectionServices.GetByUrl(addImage.Url);
+                        if (mediaContent == null)
+                        {
+                            var media = new MediaProjection(addImage.Id, addImage.Url);
+                            await this.mediaProjectionServices.Save(media);
+                            if (!mediasToCommit.Any(m => m.MediaId == media.MediaId))
+                            {
+                                mediasToCommit.Add(media);
+                            }
+                            if (!toolContent.Images.Any(image => image.MediaId == media.MediaId))
+                            {
+                                toolContent.AddImageUrl(media);
+                            }
+                        }
+                        else
+                        {
+                            if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
+                            {
+                                mediasToCommit.Add(mediaContent);
+                            }
+                            if (!toolContent.Images.Any(image => image.MediaId == mediaContent.MediaId))
+                            {
+                                toolContent.AddImageUrl(mediaContent);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    var toolContent = new ToolContent(tool.Id, item.LanguageId, item.Name, item.Title, item.Description, item.Content, item.Slug);
+                }
+            }
+        }
+        private async Task ProcessToolContentImages()
+        {
+            
         }
         // private async Task ProcessToolContents(Tool tool, List<ToolContentDeserialize> toolContentRequests, List<MediaFile> mediasToCommit, List<MediaFile> mediasToDelete)
         // {
@@ -138,24 +210,24 @@ namespace PostService.Application.UseCases.Tools
         //         }
         //     }
         // }
-        private async Task ProcessCategories(Tool tool, List<CategoryRequest> categoryRequests)
-        {
-            var requestCategoryIds = categoryRequests
-                    .Where(c => c.Id.HasValue)
-                    .Select(c => c.Id!.Value);
-            tool.ValidateCategories(requestCategoryIds);
-            foreach (var item in categoryRequests)
-            {
-                if (item.Id is not Guid categoryId)
-                    throw new ValidationException("Não é possível atualizar uma categoria sem seu identificador");
-                var exists = tool.Categories.Any(c => c.Id == categoryId);
-                if (exists) continue;
-                var category = await this.categoryServices.GetById(categoryId);
-                if (category == null)
-                    throw new NotFoundException("Conteúdo da categoria não encontrada.");
-                tool.AddCategory(category);
-            }
-        }
+        // private async Task ProcessCategories(Tool tool, List<CategoryRequest> categoryRequests)
+        // {
+        //     var requestCategoryIds = categoryRequests
+        //             .Where(c => c.Id.HasValue)
+        //             .Select(c => c.Id!.Value);
+        //     tool.ValidateCategories(requestCategoryIds);
+        //     foreach (var item in categoryRequests)
+        //     {
+        //         if (item.Id is not Guid categoryId)
+        //             throw new ValidationException("Não é possível atualizar uma categoria sem seu identificador");
+        //         var exists = tool.Categories.Any(c => c.Id == categoryId);
+        //         if (exists) continue;
+        //         var category = await this.categoryServices.GetById(categoryId);
+        //         if (category == null)
+        //             throw new NotFoundException("Conteúdo da categoria não encontrada.");
+        //         tool.AddCategory(category);
+        //     }
+        // }
         // private async Task UpdateImage(Tool tool, IFormFile? imgFile, List<MediaFile> mediasToCommit, List<MediaFile> mediasToDelete)
         // {
         //     if (imgFile != null)

@@ -16,11 +16,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { CategorySchema } from "@/domain/schemas/CategorySchema";
 import { useUpdateTool } from "@/hooks/useUpdateTool";
 import { useCreateTool } from "@/hooks/useCreateTool";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Image as ImageIcon } from 'lucide-react';
 import { useGetByIdTool } from "@/hooks/useGetByIdTool";
-import { addImageMarkDown } from "@/services/client/image-client";
 import { toast } from "sonner";
+
+import { MediaSchema } from "@/domain/schemas/MediaSchema";
+import { addMediaService } from "@/services/client/media-services";
 export default function ToolCreatePage() {
     const searchParams = useSearchParams();
     const toolId = searchParams.get("toolId") || undefined;
@@ -41,10 +43,12 @@ export default function ToolCreatePage() {
                     description: "",
                     name: "",
                     slug: "",
-                    languageId: "",
                     title: ""
                 }
             ],
+            liked: false,
+            likes: 0,
+            comments: 0
         }
     });
     useEffect(() => {
@@ -66,11 +70,11 @@ export default function ToolCreatePage() {
     const categoriesWatch = watch("categories");
     const onSubmit = async (data: ToolSchema) => {
         console.log("Atualizando objeto:", data);
-        if (tool) {
-            await updateTool({ id: tool.id, data: data });
-        } else {
-            await createTool(data);
-        }
+        // if (tool) {
+        //     await updateTool({ id: tool.id, data: data });
+        // } else {
+        //     await createTool(data);
+        // }
     }
     const addCategory = (data: CategorySchema) => {
         const exists = categoriesWatch.some(
@@ -86,27 +90,54 @@ export default function ToolCreatePage() {
         const textarea = e.currentTarget;
         const start = textarea.selectionStart;
         const end = textarea.selectionEnd;
-        const response = await addImageMarkDown(file);
+        const response = await addMediaService({
+            file:file,
+            ownerType: "Tool"
+        });
         if (response.status !== 200 && response.status !== 201) {
+            console.log(response.data);
             toast.error(`Erro ao adicionar imagem: ${response.data.message}`);
             return;
         }
         const url = response.data.url;
+        const mediaId = response.data.id;
+        const ownerType = response.data.ownerType;
         const urlMarkdown = `\n![image](${url})\n`
         const newValue = field.value.substring(0, start) + urlMarkdown + field.value.substring(end);
         field.onChange(newValue);
-        const currentImages = getValues(`toolContents.${index}.imagesUrls`) ?? [];
-        setValue(`toolContents.${index}.imagesUrls`, [...currentImages, url]);
-        const imagesUpdated = getValues(`toolContents.${index}.imagesUrls`);
+        const currentImages = getValues(`toolContents.${index}.images`) ?? [];
+        const media : MediaSchema = {
+            url: url,
+            id: mediaId,
+            ownerType: ownerType
+        };
+        setValue(`toolContents.${index}.images`, [...currentImages, media]);
+        const imagesUpdated = getValues(`toolContents.${index}.images`);
         console.log(imagesUpdated);
     }
-    const handleImage = async (e: React.ChangeEvent<HTMLInputElement>, field: ControllerRenderProps<ToolSchema, `imgFile`>) => {
+    const handleImage = async (e: React.ChangeEvent<HTMLInputElement>, field: ControllerRenderProps<ToolSchema, `media.file`>) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        field.onChange(file);
-        setValue("imgFile", file);
-        setValue("imgUrl", file.name);
-        setToolPreview(URL.createObjectURL(file));
+        const response = await addMediaService({
+            file:file,
+            ownerType: "Tool"
+        });
+        if (response.status !== 200 && response.status !== 201) {
+            console.log(response.data);
+            toast.error(`Erro ao adicionar imagem: ${response.data.message}`);
+            return;
+        }
+        const url = response.data.url;
+        const mediaId = response.data.id;
+        const ownerType = response.data.ownerType;
+        const media : MediaSchema = {
+            url: url,
+            id: mediaId,
+            ownerType: ownerType,
+            file: file
+        };
+        setValue("media", media);
+        setToolPreview(`${process.env.NEXT_PUBLIC_FILES_URL}/${media.url}`);
     }
     return (
         <>
@@ -148,7 +179,7 @@ export default function ToolCreatePage() {
                                 onClick={() =>
                                     append({
                                         languageId: "",
-                                        title:"",
+                                        title: "",
                                         name: "",
                                         slug: "",
                                         content: "",
@@ -158,7 +189,11 @@ export default function ToolCreatePage() {
                         </div>
                     </div>
                     <div className="flex md:p-10">
-                        <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col gap-2 ">
+                        <form onSubmit={handleSubmit(onSubmit,
+                                (errors) => {
+                                    console.log("Erros RHF:");
+                                    console.dir(errors, { depth: null });
+                                })} className="flex-1 flex flex-col gap-2 ">
                             <Card className="">
                                 <CardHeader className="flex flex-col md:flex-row md:items-center justify-between">
                                     <CardTitle>Write Tool</CardTitle>
@@ -219,7 +254,7 @@ export default function ToolCreatePage() {
                                     </div>
                                     <div className="py-2">
                                         <Controller
-                                            name={`imgFile`}
+                                            name={`media.file`}
                                             control={control}
                                             render={({ field }) => (
                                                 <div className="grid gap-2">
@@ -231,7 +266,7 @@ export default function ToolCreatePage() {
                                                             className="cursor-pointer"
                                                         />
                                                     </div>
-                                                    {errorsTool.imgUrl && <span className="text-wrap text-red-600 text-sm">{errorsTool.imgUrl.message}</span>}
+                                                    {errorsTool.media?.file && <span className="text-wrap text-red-600 text-sm">{errorsTool.media?.file?.message}</span>}
                                                 </div>
                                             )}
                                         />
@@ -269,7 +304,7 @@ export default function ToolCreatePage() {
                                         <div key={item.id} className="w-full max-h-full h-[550px] flex flex-col overflow-hidden">
                                             <div className="flex flex-col gap-6 flex-1 min-h-0 border-t pb-3 py-3">
                                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-2">
-                                                   
+
                                                     <Controller
                                                         name={`toolContents.${index}.name`}
                                                         control={control}
@@ -333,22 +368,22 @@ export default function ToolCreatePage() {
                                                         )}
                                                     />
                                                 </div>
-                                                 <Controller
-                                                        name={`toolContents.${index}.title`}
-                                                        control={control}
-                                                        render={({ field }) => (
-                                                            <Field className="grid gap-2">
-                                                                <div className="flex flex-col gap-2">
-                                                                    <Label htmlFor="name">Title</Label>
-                                                                    <Input
-                                                                        {...field}
-                                                                        placeholder="Informe o titulo..."
-                                                                    />
-                                                                    {errorsTool.toolContents?.[index]?.title && <span className="text-wrap text-red-600 text-sm">{errorsTool.toolContents[index]?.title?.message}</span>}
-                                                                </div>
-                                                            </Field>
-                                                        )}
-                                                    />
+                                                <Controller
+                                                    name={`toolContents.${index}.title`}
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                        <Field className="grid gap-2">
+                                                            <div className="flex flex-col gap-2">
+                                                                <Label htmlFor="name">Title</Label>
+                                                                <Input
+                                                                    {...field}
+                                                                    placeholder="Informe o titulo..."
+                                                                />
+                                                                {errorsTool.toolContents?.[index]?.title && <span className="text-wrap text-red-600 text-sm">{errorsTool.toolContents[index]?.title?.message}</span>}
+                                                            </div>
+                                                        </Field>
+                                                    )}
+                                                />
                                                 <Controller
                                                     name={`toolContents.${index}.description`}
                                                     control={control}

@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using PostService.Domain.Entities;
 using PostService.Domain.Interfaces;
+using PostService.Infrastructure.Messaging.Handlers.Interfaces;
+using PostService.Infrastructure.Messaging.Handlers;
 using PostService.Infrastructure.Repositories;
 using PostService.Infrastructure.Workers;
 
@@ -19,6 +21,7 @@ namespace PostService.Infrastructure.Extensions
             services.AddScoped<IGenerics<Post>, Generics<Post>>();
             services.AddScoped<IGenerics<PostContent>, Generics<PostContent>>();
             services.AddScoped<IGenerics<Language>, Generics<Language>>();
+            services.AddScoped<IGenerics<MediaProjection>, Generics<MediaProjection>>();
 
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ICategoryContentRepository, CategoryContentRepository>();
@@ -27,8 +30,12 @@ namespace PostService.Infrastructure.Extensions
             services.AddScoped<IToolsRepository, ToolsRepository>();
             services.AddScoped<IToolContentRepository, ToolContentRepository>();
             services.AddScoped<ILanguageRepository, LanguageRepository>();
+            services.AddScoped<IMediaProjectionRepository, MediaProjectionRepository>();
             
             services.AddSingleton<IRabbitMQProducer, RabbitMQProducer>();
+
+            services.AddSingleton<ICommentProjectionHandler, CommentProjectionHandler>();
+            services.AddSingleton<ILikeProjectionHandler, LikeProjectionHandler>();
             return services;
         }
     }

@@ -1,0 +1,16 @@
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Application\bin\Debug\net8.0\MediaService.Application.deps.json
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Application\bin\Debug\net8.0\MediaService.Application.dll
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Application\bin\Debug\net8.0\MediaService.Application.pdb
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Application\bin\Debug\net8.0\MediaService.Domain.dll
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Application\bin\Debug\net8.0\MediaService.Domain.pdb
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Application\obj\Debug\net8.0\MediaService.Application.csproj.AssemblyReference.cache
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Application\obj\Debug\net8.0\MediaService.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Application\obj\Debug\net8.0\MediaService.Application.AssemblyInfoInputs.cache
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Application\obj\Debug\net8.0\MediaService.Application.AssemblyInfo.cs
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Application\obj\Debug\net8.0\MediaService.Application.csproj.CoreCompileInputs.cache
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Application\obj\Debug\net8.0\MediaService.Application.sourcelink.json
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Application\obj\Debug\net8.0\MediaSer.A9FE97E8.Up2Date
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Application\obj\Debug\net8.0\MediaService.Application.dll
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Application\obj\Debug\net8.0\refint\MediaService.Application.dll
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Application\obj\Debug\net8.0\MediaService.Application.pdb
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Application\obj\Debug\net8.0\ref\MediaService.Application.dll

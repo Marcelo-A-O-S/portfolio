@@ -1,0 +1,12 @@
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Domain\bin\Debug\net8.0\MediaService.Domain.deps.json
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Domain\bin\Debug\net8.0\MediaService.Domain.dll
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Domain\bin\Debug\net8.0\MediaService.Domain.pdb
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Domain\obj\Debug\net8.0\MediaService.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Domain\obj\Debug\net8.0\MediaService.Domain.AssemblyInfoInputs.cache
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Domain\obj\Debug\net8.0\MediaService.Domain.AssemblyInfo.cs
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Domain\obj\Debug\net8.0\MediaService.Domain.csproj.CoreCompileInputs.cache
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Domain\obj\Debug\net8.0\MediaService.Domain.sourcelink.json
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Domain\obj\Debug\net8.0\MediaService.Domain.dll
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Domain\obj\Debug\net8.0\refint\MediaService.Domain.dll
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Domain\obj\Debug\net8.0\MediaService.Domain.pdb
+C:\Backup\Projetos\portfolio\backend\MediaService\src\MediaService.Domain\obj\Debug\net8.0\ref\MediaService.Domain.dll

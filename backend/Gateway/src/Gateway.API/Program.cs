@@ -21,6 +21,7 @@ app.UseSwaggerUI(options =>
     options.SwaggerEndpoint("http://localhost:5002/swagger/v1/swagger.json","Post API");
     options.SwaggerEndpoint("http://localhost:5003/swagger/v1/swagger.json","Comment API");
     options.SwaggerEndpoint("http://localhost:5004/swagger/v1/swagger.json","Certificate API");
+    options.SwaggerEndpoint("http://localhost:5005/swagger/v1/swagger.json","Media API");
 });
 app.UseHttpsRedirection();
 app.UseRouting();

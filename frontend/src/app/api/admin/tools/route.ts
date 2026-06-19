@@ -19,7 +19,8 @@ export async function POST(request: NextRequest) {
             toolContents: JSON.parse(formData.get("toolContents") as string)
         };
         const result = await toolSchema.safeParseAsync(parsedData);
-        if(result.error){
+        if(!result.success){
+            console.log(`Erro ao validar dados: ${result.error.message}`)
             return NextResponse.json({
                 message: `Erro ao validar dados: ${result.error.message}`
             },{
@@ -30,6 +31,7 @@ export async function POST(request: NextRequest) {
         console.log("Ferramenta: ",tool);
         const response = await addToolService(tool);
         if (response.status !== 200 && response.status !== 201) {
+            console.log(`Erro: ${response.data.message}`)
             return NextResponse.json({
                 message: response.data.message
             }, {

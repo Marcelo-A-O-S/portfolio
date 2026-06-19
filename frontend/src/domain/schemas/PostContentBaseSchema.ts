@@ -1,6 +1,6 @@
 import z from "zod";
 import { languageSchema } from "./LanguageSchema";
-
+import { mediaSchema } from "./MediaSchema";
 export const postContentBaseSchema = z.object({
     id: z.uuid().optional(),
     title: z.string().min(2).max(50).nonempty("O titulo é obrigatório."),
@@ -8,5 +8,6 @@ export const postContentBaseSchema = z.object({
     content: z.string().nonempty("O conteúdo é obrigatório."),
     slug: z.string().nonempty("O slug é obrigatório."),
     languageId: z.uuid("Idioma inválido.").optional(),
-    language: languageSchema.optional()
+    language: languageSchema.optional(),
+    images: z.array(mediaSchema).optional()
 })

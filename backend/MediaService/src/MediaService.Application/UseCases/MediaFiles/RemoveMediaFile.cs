@@ -8,9 +8,9 @@ namespace MediaService.Application.UseCases.MediaFiles
 {
     public class RemoveMediaFile : IRemoveMediaFile
     {
-        private readonly IMediaFileServices mediaFileServices;
+        private readonly IMediaServices mediaFileServices;
         public RemoveMediaFile(
-            IMediaFileServices _mediaFileServices
+            IMediaServices _mediaFileServices
         )
         {
             this.mediaFileServices = _mediaFileServices;
@@ -20,7 +20,7 @@ namespace MediaService.Application.UseCases.MediaFiles
             var mediaFile = await GetMediaFile(mediaFileId);
             await this.mediaFileServices.DeleteById(mediaFile.Id);
         }
-        private async Task<MediaFile> GetMediaFile(Guid mediaFileId)
+        private async Task<Media> GetMediaFile(Guid mediaFileId)
         {
             var media = await this.mediaFileServices.GetById(mediaFileId);
             if(media == null)

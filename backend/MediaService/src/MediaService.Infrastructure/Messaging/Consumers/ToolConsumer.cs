@@ -30,7 +30,7 @@ namespace MediaService.Infrastructure.Messaging.Consumers
                 this.logger.LogInformation("Iniciando conexão com o RabbitMQ...");
                 this.connection = await this.factory.CreateConnectionAsync();
                 this.consumer = new RabbitMQConsumer(this.connection);
-                this.consumer.RegisterHandler("ToolMediaCommited", async message => { await this.mediaFileProjectionHandler.HandleMediaCommit(message); });
+                this.consumer.RegisterHandler("ToolMediaAttached", async message => { await this.mediaFileProjectionHandler.HandleMediaCommit(message); });
                 this.consumer.RegisterHandler("ToolMediaDeleted", async message => { await this.mediaFileProjectionHandler.HandleMediaDelete(message);});
                 await consumer.Start();
                 this.logger.LogInformation("Consumer das Ferramentas do serviço de Midia do RabbitMQ iniciado e aguardando mensagens...");

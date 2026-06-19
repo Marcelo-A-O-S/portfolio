@@ -7,16 +7,16 @@ using MediaService.Domain.Interfaces;
 using System.ComponentModel.DataAnnotations;
 namespace MediaService.Application.Services
 {
-    public class MediaFileServices : IMediaFileServices
+    public class MediaServices : IMediaServices
     {
         private readonly IWebHostEnvironment environment;
-        private readonly IMediaFileRepository repository;
-        public MediaFileServices(IMediaFileRepository _repository, IWebHostEnvironment _environment)
+        private readonly IMediaRepository repository;
+        public MediaServices(IMediaRepository _repository, IWebHostEnvironment _environment)
         {
             this.repository = _repository;
             this.environment = _environment;
         }
-        public async Task Delete(MediaFile entity)
+        public async Task Delete(Media entity)
         {
             await this.repository.Delete(entity);
         }
@@ -25,7 +25,7 @@ namespace MediaService.Application.Services
         {
             await this.repository.DeleteById(Id);
         }
-        public async Task DeleteImageAsync(MediaFile mediaFile)
+        public async Task DeleteImageAsync(Media mediaFile)
         {
             var pathImage = Path.Combine(
                 this.environment.WebRootPath,
@@ -50,42 +50,42 @@ namespace MediaService.Application.Services
             return await this.repository.Exists(Id);
         }
 
-        public async Task<MediaFile> FindBy(Expression<Func<MediaFile, bool>> predicate)
+        public async Task<Media> FindBy(Expression<Func<Media, bool>> predicate)
         {
             return await this.repository.FindBy(predicate);
         }
 
-        public async Task<MediaFile> GetById(Guid Id)
+        public async Task<Media> GetById(Guid Id)
         {
             return await this.repository.GetById(Id);
         }
 
-        public async Task<MediaFile> GetByPath(string path)
+        public async Task<Media> GetByPath(string path)
         {
             return await this.repository.GetByPath(path);
         }
 
-        public async Task<List<MediaFile>> List()
+        public async Task<List<Media>> List()
         {
             return await this.repository.List();
         }
 
-        public async Task<List<MediaFile>> List(int page)
+        public async Task<List<Media>> List(int page)
         {
             return await this.repository.List(page);
         }
 
-        public async Task<List<MediaFile>> ListExpiredUncommittedMediaAsync()
+        public async Task<List<Media>> ListExpiredUncommittedMediaAsync()
         {
             return await this.repository.ListExpiredUncommittedMediaAsync();
         }
 
-        public async Task Save(MediaFile entity)
+        public async Task Save(Media entity)
         {
             await this.repository.Save(entity);
         }
 
-        public async Task<MediaFile> SaveImageAsync(Guid? ownerId, string ownerType, IFormFile file, string folder)
+        public async Task<Media> SaveImageAsync(Guid? ownerId, string ownerType, IFormFile file, string folder)
         {
             if (file == null)
                 throw new ValidationException("Arquivo não informado.");
@@ -93,18 +93,19 @@ namespace MediaService.Application.Services
                 throw new ValidationException("Arquivo vazio.");
             var uploadsFolder = Path.Combine(
                 this.environment.WebRootPath,
+                "archives",
                 folder
             );
             if (!Directory.Exists(uploadsFolder))
                 Directory.CreateDirectory(uploadsFolder);
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
             var filePath = Path.Combine(uploadsFolder, fileName);
-            var relativePath = Path.Combine(folder, fileName).Replace("\\", "/");
+            var relativePath = Path.Combine("archives",folder,fileName).Replace("\\", "/");
             try
             {
                 using var stream = new FileStream(filePath, FileMode.Create);
                 await file.CopyToAsync(stream);
-                var media = new MediaFile(
+                var media = new Media(
                     ownerId,
                     ownerType,
                     relativePath,
@@ -122,7 +123,7 @@ namespace MediaService.Application.Services
             }
         }
 
-        public async Task Update(MediaFile entity)
+        public async Task Update(Media entity)
         {
             await this.repository.Update(entity);
         }

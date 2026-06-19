@@ -5,14 +5,14 @@ namespace PostService.Domain.Entities
     {
         public ICollection<Tool> Tools { get; private set; }
         public ICollection<PostContent> PostContents { get; private set; }
-        public Post(Guid mediaProjectId, Status status)
+        public Post(Guid mediaProjectionId, Status status)
         {
             this.CreatedAt = DateTime.UtcNow;
             this.UpdatedAt = DateTime.UtcNow;
             this.Categories = new List<Category>();
             this.Tools = new List<Tool>();
             this.PostContents = new List<PostContent>();
-            this.MediaProjectionId = mediaProjectId;
+            this.MediaProjectionId = mediaProjectionId;
             this.Status = status;
         }
         public void AddTool(Tool tool)

@@ -1,22 +1,7 @@
-using System.ComponentModel.DataAnnotations;
-using PostService.Application.Validations;
-using PostService.Domain.Enums;
-using Microsoft.AspNetCore.Http;
 namespace PostService.Application.DTOs.Request
 {
-    public class ToolRequest
+    public class ToolRequest : BaseRequest
     {
-        public string? ImgUrl { get; set; }
-
-        [MaxFileSize(2 * 1024 * 1024, ErrorMessage = "O tamanho maximo aceito de imagem é 2 MB.")]
-        [AllowedExtension(new[] { ".jpg", ".png", ".jpeg" })]
-        [ValidationImage]
-        public IFormFile? ImgFile { get; set; }
-        [Required]
-        public Status Status { get; set; }
-        [Required]
-        public string Categories { get; set; }
-        [Required]
-        public string ToolContents { get; set; }
+        public List<ToolContentRequest> ToolContents { get; set; }
     }
 }

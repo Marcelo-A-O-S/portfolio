@@ -12,6 +12,7 @@ using PostService.Application.UseCases.Projects;
 using PostService.Application.UseCases.InternalProject.Interfaces;
 using PostService.Application.UseCases.InternalProject;
 using PostService.Application.Caching.User;
+using PostService.Application.Caching.Post;
 namespace PostService.Application.Extensions
 {
     public static class DependencyInjectionExtension
@@ -27,8 +28,10 @@ namespace PostService.Application.Extensions
             services.AddScoped<IToolsServices, ToolsServices>();
             services.AddScoped<IToolContentServices, ToolContentServices>();
             services.AddScoped<ILanguageServices, LanguageServices>();
+            services.AddScoped<IMediaProjectionServices, MediaProjectionServices>();
 
             services.AddScoped<IUserCacheServices, UserCacheServices>();
+            services.AddScoped<IPostCacheServices, PostCacheServices>();
 
             services.AddScoped<ICreateTool, CreateTool>();
             services.AddScoped<IUpdateTool, UpdateTool>();

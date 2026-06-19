@@ -24,7 +24,7 @@ namespace MediaService.Infrastructure.Jobs
                 {
                     this.logger.LogInformation("Iniciando limpeza de imagens não utilizadas...");
                     using var scope = this.serviceProvider.CreateScope();
-                    var mediaFileServices = scope.ServiceProvider.GetRequiredService<IMediaFileServices>();
+                    var mediaFileServices = scope.ServiceProvider.GetRequiredService<IMediaServices>();
                     var medias = await mediaFileServices.ListExpiredUncommittedMediaAsync();
                     this.logger.LogInformation("Foram encontradas {Count} mídias expiradas.", medias.Count);
                     foreach (var media in medias)
