@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MediaService.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+af67910a005cef12840096dc3dc97c77bb0836eb")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6cca32661100f190883521d3baa76c90fcce1df3")]
 [assembly: System.Reflection.AssemblyProductAttribute("MediaService.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MediaService.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

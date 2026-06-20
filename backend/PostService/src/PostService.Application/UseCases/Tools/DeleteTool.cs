@@ -3,7 +3,6 @@ using PostService.Application.Interfaces;
 using PostService.Application.UseCases.Tools.Interfaces;
 using PostService.Domain.Entities;
 using PostService.Domain.Interfaces;
-
 namespace PostService.Application.UseCases.Tools
 {
     public class DeleteTool : IDeleteTool

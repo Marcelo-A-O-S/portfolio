@@ -7,6 +7,7 @@ using PostService.Application.UseCases.Projects.Interfaces;
 using PostService.Application.Validations;
 using PostService.Domain.Entities;
 using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 
 namespace PostService.Application.UseCases.Projects
 {
@@ -32,51 +33,25 @@ namespace PostService.Application.UseCases.Projects
             this.toolsServices = _toolsServices;
             this.mediaProjectionServices = _mediaProjectionServices;
         }
-        public async Task ExecuteAsync(Guid Id, PostRequest postRequest)
+        public async Task ExecuteAsync(Guid Id, PostRequest request)
         {
-            // ValidatePostRequest(postRequest);
-            // var tools = DeserializeTools(postRequest.Tools);
-            // var categories = DeserializeCategories(postRequest.Categories);
-            // var postContents = DeserializePostContents(postRequest.PostContents);
-            // var mediasToCommit = new List<MediaFile>();
-            // var mediasToDelete = new List<MediaFile>();
-            // var post = await GetPostById(Id);
-            // await ProcessCategories(post, categories);
-            // await ProcessTools(post, tools);
+            ValidateRequest(request);
+            var post = await GetPostById(Id);
+            var mediasToCommit = new List<MediaProjection>();
+            var mediasToDelete = new List<MediaProjection>();
+            await ProcessCategories(post, request.Categories);
+            await ProcessTools(post, request.Tools);
             // await ProcessPostContents(post, postContents, mediasToCommit, mediasToDelete);
             // await UpdateImage(post, postRequest.ImgFile, mediasToCommit, mediasToDelete);
             // await this.postServices.Update(post);
             // await CommitMedias(mediasToCommit);
             // await DeleteMedias(mediasToDelete);
         }
-        private static void ValidatePostRequest(PostRequest postRequest)
+        private static void ValidateRequest(PostRequest request)
         {
-            if (postRequest.ImgUrl == null)
-                throw new ValidationException("Endereço de imagem obrigatório.");
-            var validationError = ValidationHelper.Validate(postRequest);
+            var validationError = ValidationHelper.Validate(request);
             if (validationError.Count > 0)
                 throw new ValidationException($"Erro ao validar dados: {validationError}");
-        }
-        private static List<ToolDeserialize> DeserializeTools(string jsonTools)
-        {
-            var toolsRequest = JsonSerializer.Deserialize<List<ToolDeserialize>>(jsonTools, JsonOptions);
-            if (toolsRequest is null || toolsRequest.Count == 0)
-                throw new ValidationException("Não é possivel salvar um projeto sem suas ferramentas relacionadas");
-            return toolsRequest;
-        }
-        private static List<CategoryDeserialize> DeserializeCategories(string jsonCategories)
-        {
-            var categoriesRequest = JsonSerializer.Deserialize<List<CategoryDeserialize>>(jsonCategories, JsonOptions);
-            if (categoriesRequest is null || categoriesRequest.Count == 0)
-                throw new ValidationException("Não é possivel salvar um projeto sem suas categorias relacionadas.");
-            return categoriesRequest;
-        }
-        private static List<PostContentDeserialize> DeserializePostContents(string jsonPostContents)
-        {
-            var postContentRequests = JsonSerializer.Deserialize<List<PostContentDeserialize>>(jsonPostContents, JsonOptions);
-            if (postContentRequests is null || postContentRequests.Count == 0)
-                throw new ValidationException("Não é possivel salvar um projeto sem seu conteudo relacionadas.");
-            return postContentRequests;
         }
         private async Task<Post> GetPostById(Guid Id)
         {
@@ -85,7 +60,7 @@ namespace PostService.Application.UseCases.Projects
                 throw new NotFoundException("Projeto não encontrado.");
             return post;
         }
-        private async Task ProcessCategories(Post post, List<CategoryDeserialize> categoriesRequest)
+        private async Task ProcessCategories(Post post, List<CategoryRequest> categoriesRequest)
         {
             var requestCategoryIds = categoriesRequest
                     .Where(c => c.Id.HasValue)
@@ -103,7 +78,7 @@ namespace PostService.Application.UseCases.Projects
                 post.AddCategory(category);
             }
         }
-        private async Task ProcessTools(Post post, List<ToolDeserialize> toolsRequest)
+        private async Task ProcessTools(Post post, List<ToolRequest> toolsRequest)
         {
             var requestToolIds = toolsRequest
                 .Where(pc => pc.Id.HasValue)
@@ -119,6 +94,98 @@ namespace PostService.Application.UseCases.Projects
                 if (tool == null)
                     throw new NotFoundException("A ferramenta não foi encontrada.");
                 post.AddTool(tool);
+            }
+        }
+        private async Task ProcessPostContents(Post post, List<PostContentRequest> postContentRequests, List<MediaProjection> mediasToCommit, List<MediaProjection> mediasToDelete)
+        {
+            var requestPostContentIds = postContentRequests
+                .Where(pc => pc.Id.HasValue)
+                .Select(pc => pc.Id!.Value);
+            var removedContents = post.PostContents
+                .Where(pc => !requestPostContentIds.Contains(pc.Id));
+            post.ValidatePostContents(requestPostContentIds);  
+            foreach(var item in removedContents)
+            {
+                foreach (var removeImage in item.Images)
+                {
+                    var image = await this.mediaProjectionServices.FindBy(img => img.MediaId == removeImage.MediaId && img.Id == removeImage.Id);
+                    if(image != null)
+                    {
+                        mediasToDelete.Add(image);
+                    }
+                }
+                post.RemovePostContent(item);
+            }
+            foreach(var item in postContentRequests)
+            {
+                var validationError = ValidationHelper.Validate(item);
+                if (validationError.Count > 0)
+                    throw new ValidationException($"Erro ao validar dados: {validationError}");
+                if (item.Id.HasValue)
+                {
+                    var postContent = post.PostContents.FirstOrDefault(tc => tc.Id == item.Id.Value);
+                    if (postContent == null)
+                        throw new NotFoundException("Conteúdo da ferramenta não encontrada.");
+                    postContent.Update(item.LanguageId, item.Title, item.Description, item.Content, item.Slug);
+                    await ProcessPostContentImages(postContent, item, mediasToCommit, mediasToDelete);
+                }
+                else
+                {
+                    
+                }
+            }
+        }
+        private async Task ProcessPostContentImages(PostContent postContent, PostContentRequest item , List<MediaProjection> mediasToCommit, List<MediaProjection> mediasToDelete)
+        {
+            var toRemoveImages = postContent.Images.Where(media => !item.Content.Contains(media.Url)).ToList();
+            foreach(var removeImage in toRemoveImages)
+            {
+                var mediaContent = await this.mediaProjectionServices.GetByUrl(removeImage.Url);
+                if(mediaContent != null)
+                {
+                    if (!mediasToDelete.Any(m => m.MediaId == mediaContent.MediaId))
+                    {
+                        mediasToDelete.Add(mediaContent);
+                    }
+                }
+                else
+                {
+                    var media = new MediaProjection(removeImage.Id, removeImage.Url);
+                    if (!mediasToDelete.Any(m => m.MediaId == media.MediaId))
+                    {
+                        mediasToDelete.Add(media);
+                    }
+                }
+                postContent.RemoveImage(removeImage);
+            }
+            var toAddImages = item.Images.Where(image => item.Content.Contains(image.Url)).ToList();
+            foreach(var addImage in toAddImages)
+            {
+                var mediaContent = await this.mediaProjectionServices.GetByUrl(addImage.Url);
+                if (mediaContent == null)
+                {
+                    var media = new MediaProjection(addImage.Id, addImage.Url);
+                    await this.mediaProjectionServices.Save(media);
+                    if (!mediasToCommit.Any(m => m.MediaId == media.MediaId))
+                    {
+                        mediasToCommit.Add(media);
+                    }
+                    if (!postContent.Images.Any(image => image.MediaId == media.MediaId))
+                    {
+                        postContent.AddImage(media);
+                    }
+                }
+                else
+                {
+                    if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
+                    {
+                        mediasToCommit.Add(mediaContent);
+                    }
+                    if (!postContent.Images.Any(image => image.MediaId == mediaContent.MediaId))
+                    {
+                        postContent.AddImage(mediaContent);
+                    }
+                }
             }
         }
         // private async Task ProcessPostContents(Post post, List<PostContentDeserialize> postContents, List<MediaFile> mediasToCommit, List<MediaFile> mediasToDelete)

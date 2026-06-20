@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-using System.Collections.Generic;
-using System.Text.Json;
-using PostService.Application.DTOs.Deserialize;
 using PostService.Application.DTOs.Request;
 using PostService.Application.Exceptions;
 using PostService.Application.Interfaces;

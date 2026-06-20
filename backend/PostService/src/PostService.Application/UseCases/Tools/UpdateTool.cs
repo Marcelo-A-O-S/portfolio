@@ -1,4 +1,3 @@
-using System.Text.Json;
 using PostService.Application.DTOs.Request;
 using PostService.Application.Exceptions;
 using PostService.Application.Interfaces;
@@ -6,7 +5,6 @@ using PostService.Application.UseCases.Tools.Interfaces;
 using PostService.Application.Validations;
 using PostService.Domain.Entities;
 using PostService.Domain.Interfaces;
-
 namespace PostService.Application.UseCases.Tools
 {
     public class UpdateTool : IUpdateTool
