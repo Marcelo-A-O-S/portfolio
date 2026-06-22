@@ -1,6 +1,7 @@
 import z from "zod";
 export const mediaSchema = z.object({
-    id: z.uuid(),
+    id: z.uuid().optional(),
+    mediaId: z.uuid(),
     url: z.string(),
     ownerType: z.string(),
     file: z.instanceof(File)

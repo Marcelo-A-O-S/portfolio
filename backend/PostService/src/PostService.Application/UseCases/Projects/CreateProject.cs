@@ -40,7 +40,7 @@ namespace PostService.Application.UseCases.Projects
             await ProcessPostContents(post, request.PostContents, mediasToCommit, mediasToDelete);
             await ProcessCategories(post, request.Categories);
             await ProcessTools(post, request.Tools);
-            await ProcessTumbnail(post, request.Media);
+            await ProcessTumbnail(post, request.Media, mediasToCommit);
             await this.postServices.Save(post);
             await CommitMedias(post.Id, mediasToCommit);
             await DeleteMedias(mediasToDelete);
@@ -115,7 +115,7 @@ namespace PostService.Application.UseCases.Projects
                     }
                     else
                     {
-                        var media = new MediaProjection(removeImage.Id, removeImage.Url);
+                        var media = new MediaProjection(removeImage.MediaId, removeImage.Url);
                         if (!mediasToDelete.Any(m => m.MediaId == media.MediaId))
                         {
                             mediasToDelete.Add(media);
@@ -129,7 +129,7 @@ namespace PostService.Application.UseCases.Projects
                     var mediaContent = await this.mediaProjectionServices.GetByUrl(addImage.Url);
                     if (mediaContent == null)
                     {
-                        var media = new MediaProjection(addImage.Id, addImage.Url);
+                        var media = new MediaProjection(addImage.MediaId, addImage.Url);
                         await this.mediaProjectionServices.Save(media);
                         if (!mediasToCommit.Any(m => m.MediaId == media.MediaId))
                         {
@@ -155,7 +155,7 @@ namespace PostService.Application.UseCases.Projects
                 post.AddPostContent(postContent);
             }
         }
-        private async Task ProcessTumbnail(Post post, MediaRequest mediaRequest)
+        private async Task ProcessTumbnail(Post post, MediaRequest mediaRequest, List<MediaProjection> mediasToCommit)
         {
             var validationError = ValidationHelper.Validate(mediaRequest);
             if (validationError.Count > 0)
@@ -169,7 +169,7 @@ namespace PostService.Application.UseCases.Projects
                 post.SetThumbnail(mediaContent.Id);
                 return;
             }
-            mediaContent = new MediaProjection(mediaRequest.Id, mediaRequest.Url);
+            mediaContent = new MediaProjection(mediaRequest.MediaId, mediaRequest.Url);
             await this.mediaProjectionServices.Save(mediaContent);
             post.SetThumbnail(mediaContent.Id);
         }

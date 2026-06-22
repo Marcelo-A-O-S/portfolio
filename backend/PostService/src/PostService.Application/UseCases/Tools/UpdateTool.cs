@@ -110,7 +110,7 @@ namespace PostService.Application.UseCases.Tools
                 }
                 else
                 {
-                    var media = new MediaProjection(removeImage.Id, removeImage.Url);
+                    var media = new MediaProjection(removeImage.MediaId, removeImage.Url);
                     if (!mediasToDelete.Any(m => m.MediaId == media.MediaId))
                     {
                         mediasToDelete.Add(media);
@@ -124,7 +124,7 @@ namespace PostService.Application.UseCases.Tools
                 var mediaContent = await this.mediaProjectionServices.GetByUrl(addImage.Url);
                 if (mediaContent == null)
                 {
-                    var media = new MediaProjection(addImage.Id, addImage.Url);
+                    var media = new MediaProjection(addImage.MediaId, addImage.Url);
                     await this.mediaProjectionServices.Save(media);
                     if (!mediasToCommit.Any(m => m.MediaId == media.MediaId))
                     {
@@ -180,7 +180,7 @@ namespace PostService.Application.UseCases.Tools
                 tool.SetThumbnail(mediaContent.Id);
                 return;
             }
-            mediaContent = new MediaProjection(mediaRequest.Id, mediaRequest.Url);
+            mediaContent = new MediaProjection(mediaRequest.MediaId, mediaRequest.Url);
             await this.mediaProjectionServices.Save(mediaContent);
             tool.SetThumbnail(mediaContent.Id);
         }

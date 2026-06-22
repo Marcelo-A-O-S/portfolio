@@ -6,7 +6,7 @@ import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ Id: string }> }) {
-    const allowed = await validateUserByRequest(request, ["Administrador", "Client"]);
+    const allowed = await validateUserByRequest(request, ["Administrador"]);
     if (!allowed) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -24,21 +24,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 }
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ Id: string }> }) {
     try {
-        const allowed = await validateUserByRequest(request, ["Administrador", "Client"]);
+        const allowed = await validateUserByRequest(request, ["Administrador"]);
         if (!allowed) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
         const { Id } = await params;
-        const formData = await request.formData();
-        const parsedData = {
-            imgUrl: formData.get("imgUrl") || undefined,
-            imgFile: formData.get("imgFile") || undefined,
-            status: formData.get("status"),
-            categories: JSON.parse(formData.get("categories") as string),
-            toolContents: JSON.parse(formData.get("toolContents") as string)
-        };
-        console.log(parsedData);
-        const result = await toolSchema.safeParseAsync(parsedData);
+        const data = await request.json();
+        const result = await toolSchema.safeParseAsync(data);
         if (result.error) {
             return NextResponse.json({
                 message: `Erro ao validar dados: ${result.error.message}`
@@ -72,7 +64,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
 }
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ Id: string }> }) {
-    const allowed = await validateUserByRequest(request, ["Administrador", "Client"]);
+    const allowed = await validateUserByRequest(request, ["Administrador"]);
     if (!allowed) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

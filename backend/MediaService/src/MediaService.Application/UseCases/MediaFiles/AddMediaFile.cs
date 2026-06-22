@@ -30,7 +30,7 @@ namespace MediaService.Application.UseCases.MediaFiles
             );
             return new MediaFileResponse
             {
-                Id = media.Id,
+                MediaId = media.Id,
                 Url = media.Path,
                 OwnerType = media.OwnerType
             };

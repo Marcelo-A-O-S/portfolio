@@ -108,7 +108,7 @@ export default function ToolCreatePage() {
         const currentImages = getValues(`toolContents.${index}.images`) ?? [];
         const media : MediaSchema = {
             url: url,
-            id: mediaId,
+            mediaId: mediaId,
             ownerType: ownerType
         };
         setValue(`toolContents.${index}.images`, [...currentImages, media]);
@@ -132,7 +132,7 @@ export default function ToolCreatePage() {
         const ownerType = response.data.ownerType;
         const media : MediaSchema = {
             url: url,
-            id: mediaId,
+            mediaId: mediaId,
             ownerType: ownerType,
             file: file
         };

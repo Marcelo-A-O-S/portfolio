@@ -109,13 +109,15 @@ export default function ProjectCreate() {
         }
         const url = response.data.url;
         const mediaId = response.data.id;
+        const ownerType = response.data.ownerType;
         const urlMarkdown = `\n![image](${url})\n`
         const newValue = field.value.substring(0, start) + urlMarkdown + field.value.substring(end);
         field.onChange(newValue);
         const currentImages = getValues(`postContents.${index}.images`) ?? [];
         const media: MediaSchema = {
             url: url,
-            id: mediaId
+            mediaId: mediaId,
+            ownerType: ownerType
         };
         setValue(`postContents.${index}.images`, [...currentImages, media]);
         const imagesUpdated = getValues(`postContents.${index}.images`);
@@ -134,9 +136,12 @@ export default function ProjectCreate() {
         }
         const url = response.data.url;
         const mediaId = response.data.id;
+        const ownerType = response.data.ownerType;
         const media: MediaSchema = {
             url: url,
-            id: mediaId
+            mediaId: mediaId,
+            ownerType: ownerType,
+            file: file
         };
         setValue("media", media);
         field.onChange(file);

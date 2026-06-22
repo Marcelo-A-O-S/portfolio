@@ -10,15 +10,8 @@ export async function POST(request: NextRequest) {
         const allowed = await validateUserByRequest(request, ["Administrador"]);
         if (!allowed)
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-        const formData = await request.formData();
-        const parsedData = {
-            imgUrl: formData.get("imgUrl"),
-            imgFile: formData.get("imgFile"),
-            status: formData.get("status"),
-            categories: JSON.parse(formData.get("categories") as string),
-            toolContents: JSON.parse(formData.get("toolContents") as string)
-        };
-        const result = await toolSchema.safeParseAsync(parsedData);
+        const data = await request.json();
+        const result = await toolSchema.safeParseAsync(data);
         if(!result.success){
             console.log(`Erro ao validar dados: ${result.error.message}`)
             return NextResponse.json({
@@ -28,7 +21,6 @@ export async function POST(request: NextRequest) {
             })
         }
         const tool = result.data;
-        console.log("Ferramenta: ",tool);
         const response = await addToolService(tool);
         if (response.status !== 200 && response.status !== 201) {
             console.log(`Erro: ${response.data.message}`)

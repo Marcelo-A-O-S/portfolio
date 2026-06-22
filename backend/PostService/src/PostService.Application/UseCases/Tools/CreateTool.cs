@@ -5,6 +5,8 @@ using PostService.Application.UseCases.Tools.Interfaces;
 using PostService.Application.Validations;
 using PostService.Domain.Entities;
 using PostService.Domain.Interfaces;
+using System.Collections.Generic;
+using System.Collections.Generic;
 namespace PostService.Application.UseCases.Tools
 {
     public class CreateTool : ICreateTool
@@ -36,7 +38,7 @@ namespace PostService.Application.UseCases.Tools
             var tool = new Tool(request.Status);
             await ProcessToolContents(tool, request.ToolContents, mediasToCommit, mediasToDelete);
             await ProcessCategories(tool, request.Categories);
-            await ProcessTumbnail(tool, request.Media);
+            await ProcessTumbnail(tool, request.Media, mediasToCommit);
             await this.toolsServices.Save(tool);
             await CommitMedias(tool.Id, mediasToCommit);
             await DeleteMedias(mediasToDelete);
@@ -78,7 +80,7 @@ namespace PostService.Application.UseCases.Tools
                     }
                     else
                     {
-                        var media = new MediaProjection(removeImage.Id, removeImage.Url);
+                        var media = new MediaProjection(removeImage.MediaId, removeImage.Url);
                         if (!mediasToDelete.Any(m => m.MediaId == media.MediaId))
                         {
                             mediasToDelete.Add(media);
@@ -92,7 +94,7 @@ namespace PostService.Application.UseCases.Tools
                     var mediaContent = await this.mediaProjectionServices.GetByUrl(addImage.Url);
                     if (mediaContent == null)
                     {
-                        var media = new MediaProjection(addImage.Id, addImage.Url);
+                        var media = new MediaProjection(addImage.MediaId, addImage.Url);
                         await this.mediaProjectionServices.Save(media);
                         if (!mediasToCommit.Any(m => m.MediaId == media.MediaId))
                         {
@@ -136,7 +138,7 @@ namespace PostService.Application.UseCases.Tools
                 tool.AddCategory(category);
             }
         }
-        private async Task ProcessTumbnail(Tool tool, MediaRequest mediaRequest)
+        private async Task ProcessTumbnail(Tool tool, MediaRequest mediaRequest, List<MediaProjection> mediasToCommit)
         {
             var validationError = ValidationHelper.Validate(mediaRequest);
             if (validationError.Count > 0)
@@ -147,11 +149,13 @@ namespace PostService.Application.UseCases.Tools
             var mediaContent = await this.mediaProjectionServices.GetByUrl(mediaRequest.Url);
             if(mediaContent != null)
             {
+                mediasToCommit.Add(mediaContent);
                 tool.SetThumbnail(mediaContent.Id);
                 return;
             }
-            mediaContent = new MediaProjection(mediaRequest.Id, mediaRequest.Url);
+            mediaContent = new MediaProjection(mediaRequest.MediaId, mediaRequest.Url);
             await this.mediaProjectionServices.Save(mediaContent);
+            mediasToCommit.Add(mediaContent);
             tool.SetThumbnail(mediaContent.Id);
         }
         private async Task CommitMedias(Guid toolId, List<MediaProjection> mediasToCommit)

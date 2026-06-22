@@ -4,34 +4,12 @@ import { ToolFilters } from "@/domain/schemas/ToolFilters";
 
 export const addToolService = async(tool: ToolSchema) =>{
     const api = await apiClient();
-    const formData = new FormData();
-    formData.append("imgUrl", tool.imgUrl);
-    if(tool.imgFile)
-        formData.append("imgFile", tool.imgFile);
-    formData.append("status", tool.status);
-    formData.append("categories", JSON.stringify(tool.categories));
-    formData.append("toolContents", JSON.stringify(tool.toolContents));
-    const response = await api.post("/api/admin/tools",formData,{
-        headers: {
-            "Content-Type":"multipart/form-data"
-        }
-    });
+    const response = await api.post("/api/admin/tools",tool);
     return response;
 }
 export const updateToolService = async(id:string, tool: ToolSchema) =>{
     const api = await apiClient();
-    const formData = new FormData();
-    formData.append("imgUrl", tool.imgUrl);
-    if(tool.imgFile)
-        formData.append("imgFile", tool.imgFile);
-    formData.append("status", tool.status);
-    formData.append("categories", JSON.stringify(tool.categories));
-    formData.append("toolContents", JSON.stringify(tool.toolContents));
-    const response = await api.put(`/api/admin/tools/${id}`,formData,{
-        headers: {
-            "Content-Type":"multipart/form-data"
-        }
-    });
+    const response = await api.put(`/api/admin/tools/${id}`,tool);
     return response;
 }
 export const deleteToolByRouteService = async(id:string) =>{
