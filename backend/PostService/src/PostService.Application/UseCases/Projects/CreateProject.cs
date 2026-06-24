@@ -164,16 +164,24 @@ namespace PostService.Application.UseCases.Projects
                 throw new ValidationException($"Erro ao validar dados: {errors}");
             }
             var mediaContent = await this.mediaProjectionServices.GetByUrl(mediaRequest.Url);
-            if(mediaContent != null)
+            if (mediaContent != null)
             {
+                if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
+                {
+                    mediasToCommit.Add(mediaContent);
+                }
                 post.SetThumbnail(mediaContent.Id);
                 return;
             }
             mediaContent = new MediaProjection(mediaRequest.MediaId, mediaRequest.Url);
             await this.mediaProjectionServices.Save(mediaContent);
+            if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
+            {
+                mediasToCommit.Add(mediaContent);
+            }
             post.SetThumbnail(mediaContent.Id);
         }
-        private async Task CommitMedias(Guid postId,List<MediaProjection> mediasToCommit)
+        private async Task CommitMedias(Guid postId, List<MediaProjection> mediasToCommit)
         {
             foreach (var media in mediasToCommit)
             {
@@ -189,11 +197,11 @@ namespace PostService.Application.UseCases.Projects
         {
             foreach (var media in mediasToDelete)
             {
-                if(media.Id != Guid.Empty)
+                if (media.Id != Guid.Empty)
                 {
                     await this.mediaProjectionServices.Delete(media);
                 }
-                await this.rabbitMQProducer.Publish("PostMediaDeleted",new
+                await this.rabbitMQProducer.Publish("PostMediaDeleted", new
                 {
                     MediaId = media.MediaId,
                     OwnerType = "Post"

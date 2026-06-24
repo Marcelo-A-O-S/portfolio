@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Collections.Generic;
 using PostService.Application.DTOs.Request;
 using PostService.Application.Exceptions;
 using PostService.Application.Interfaces;
@@ -5,8 +7,6 @@ using PostService.Application.UseCases.Tools.Interfaces;
 using PostService.Application.Validations;
 using PostService.Domain.Entities;
 using PostService.Domain.Interfaces;
-using System.Collections.Generic;
-using System.Collections.Generic;
 namespace PostService.Application.UseCases.Tools
 {
     public class CreateTool : ICreateTool
@@ -147,15 +147,21 @@ namespace PostService.Application.UseCases.Tools
                 throw new ValidationException($"Erro ao validar dados: {errors}");
             }
             var mediaContent = await this.mediaProjectionServices.GetByUrl(mediaRequest.Url);
-            if(mediaContent != null)
+            if (mediaContent != null)
             {
-                mediasToCommit.Add(mediaContent);
+                if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
+                {
+                    mediasToCommit.Add(mediaContent);
+                }
                 tool.SetThumbnail(mediaContent.Id);
                 return;
             }
             mediaContent = new MediaProjection(mediaRequest.MediaId, mediaRequest.Url);
             await this.mediaProjectionServices.Save(mediaContent);
-            mediasToCommit.Add(mediaContent);
+            if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
+            {
+                mediasToCommit.Add(mediaContent);
+            }
             tool.SetThumbnail(mediaContent.Id);
         }
         private async Task CommitMedias(Guid toolId, List<MediaProjection> mediasToCommit)
@@ -174,11 +180,11 @@ namespace PostService.Application.UseCases.Tools
         {
             foreach (var media in mediasToDelete)
             {
-                if(media.Id != Guid.Empty)
+                if (media.Id != Guid.Empty)
                 {
                     await this.mediaProjectionServices.Delete(media);
                 }
-                await this.rabbitMQProducer.Publish("ToolMediaDeleted",new
+                await this.rabbitMQProducer.Publish("ToolMediaDeleted", new
                 {
                     MediaId = media.MediaId,
                     OwnerType = "Tool"

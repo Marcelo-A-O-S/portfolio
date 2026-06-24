@@ -42,7 +42,7 @@ namespace PostService.Application.UseCases.Projects
             await ProcessCategories(post, request.Categories);
             await ProcessTools(post, request.Tools);
             await ProcessPostContents(post, request.PostContents, mediasToCommit, mediasToDelete);
-            await ProcessTumbnail(post, request.Media, mediasToCommit);
+            await ProcessTumbnail(post, request.Media, mediasToCommit, mediasToDelete);
             await this.postServices.Update(post);
             await CommitMedias(Id,mediasToCommit);
             await DeleteMedias(mediasToDelete);
@@ -189,7 +189,7 @@ namespace PostService.Application.UseCases.Projects
                 }
             }
         }
-        private async Task ProcessTumbnail(Post post, MediaRequest mediaRequest, List<MediaProjection> mediasToCommit)
+        private async Task ProcessTumbnail(Post post, MediaRequest mediaRequest, List<MediaProjection> mediasToCommit, List<MediaProjection> mediasToDelete)
         {
             var validationError = ValidationHelper.Validate(mediaRequest);
             if (validationError.Count > 0)
@@ -197,16 +197,28 @@ namespace PostService.Application.UseCases.Projects
                 var errors = string.Join(", ", validationError.Select(e => e.ErrorMessage));
                 throw new ValidationException($"Erro ao validar dados: {errors}");
             }
+            if (post.MediaProjectionId == mediaRequest.Id)
+                return;
+            if (!mediasToDelete.Any(m => m.MediaId == post.MediaProjection.MediaId))
+            {
+                mediasToDelete.Add(post.MediaProjection);
+            }
             var mediaContent = await this.mediaProjectionServices.GetByUrl(mediaRequest.Url);
             if(mediaContent != null)
             {
-                mediasToCommit.Add(mediaContent);
+                if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
+                {
+                    mediasToCommit.Add(mediaContent);
+                }
                 post.SetThumbnail(mediaContent.Id);
                 return;
             }
             mediaContent = new MediaProjection(mediaRequest.MediaId, mediaRequest.Url);
             await this.mediaProjectionServices.Save(mediaContent);
-            mediasToCommit.Add(mediaContent);
+            if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
+            {
+                mediasToCommit.Add(mediaContent);
+            }
             post.SetThumbnail(mediaContent.Id);
         }
         private async Task CommitMedias(Guid postId, List<MediaProjection> mediasToCommit)
