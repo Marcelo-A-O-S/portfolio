@@ -7,12 +7,17 @@ import { Heart, MessageCircle } from "lucide-react"
 import { useState } from "react"
 import ToolActions from "./tool-actions"
 import Link from "next/link"
+import { useAddLikePost } from "@/hooks/useAddLikePost"
+import { useRemoveLikePost } from "@/hooks/useRemoveLikePost"
 type CardToolProps = {
     languages?: LanguageSchema[]
     item: ToolSchema
 }
 export default function CardTool({ languages, item }: CardToolProps) {
+    const { mutateAsync: addLike, isPending: isAdding } = useAddLikePost();
+    const { mutateAsync: removeLike, isPending: isRemoving } = useRemoveLikePost();
     const [lang, setLang] = useState(languages?.[0]?.code);
+    const loading = isAdding || isRemoving;
     const content = item.toolContents.find(
         tc => tc.language?.code === lang
     );
@@ -23,6 +28,10 @@ export default function CardTool({ languages, item }: CardToolProps) {
             );
             return content;
         })
+    const handleLike = async () => {
+
+    }
+    console.log("Objeto: ", item);
     return (
         <div className="bg-background border border-primary max-w-sm w-full max-h-[450px] h-full rounded-lg overflow-hidden shadow-sm
             hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col">
@@ -64,24 +73,29 @@ export default function CardTool({ languages, item }: CardToolProps) {
 
                     </div>
                     <div className="mt-3 rounded-xl border tweet-border overflow-hidden">
-                        <img src={`${process.env.NEXT_PUBLIC_FILES_URL}/${item.imgUrl}`}
+                        <img src={`${process.env.NEXT_PUBLIC_FILES_URL}/${item.media?.url}`}
                             alt="" className="w-full object-cover aspect-video border border-primary" />
                     </div>
                     <div className="flex items-center justify-between mt-4 text-primary text-xs sm:text-sm">
                         <div className="flex">
-                            {/* <button className="flex items-center space-x-1 p-2 rounded-full">
-                                <Heart />
-                                <span>15</span>
+                            <button
+                                disabled={loading}
+                                onClick={handleLike}
+                                className="flex items-center space-x-1 p-2 rounded-full cursor-pointer">
+                                <Heart
+                                    className={item.liked ? "fill-current" : ""}
+                                />
+                                <span>{item.likes}</span>
                             </button>
-                            <button className="flex items-center space-x-1 p-2 rounded-full">
+                            <button className="flex items-center space-x-1 p-2 rounded-full cursor-pointer">
                                 <MessageCircle />
-                                <span>15</span>
-                            </button> */}
+                                <span>{item.comments}</span>
+                            </button>
                         </div>
                         <div>
                             <ToolActions tool={item} />
                         </div>
-                        
+
                     </div>
                     <Link className={buttonVariants({ variant: "default" }) + ` w-full`} href={`/admin/tools/${item.id}/${lang}`}>View Tool</Link>
                 </div>

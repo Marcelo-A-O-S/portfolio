@@ -12,7 +12,7 @@ using PostService.Infrastructure.Context;
 namespace PostService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20260617010247_CreateTables")]
+    [Migration("20260625010151_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />

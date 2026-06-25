@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CertificateService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20260607042517_CreateTables")]
+    [Migration("20260625010430_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />

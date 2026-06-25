@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using PostService.Application.Interfaces;
 using PostService.Domain.Entities;
 using PostService.Domain.Interfaces;
-
+using PostService.Domain.Queries;
 namespace PostService.Application.Services
 {
     public class ToolsServices : IToolsServices
@@ -38,9 +38,9 @@ namespace PostService.Application.Services
             return await this.toolsRepository.GetById(Id);
         }
 
-        public async Task<PaginatedResult<Tool>> GetByPagination(int page, string? search)
+        public async Task<PaginatedResult<ToolView>> GetByPagination(Guid? authenticatedUserId, int page, string? search)
         {
-            return await this.toolsRepository.GetByPagination(page,search);
+            return await this.toolsRepository.GetByPagination(authenticatedUserId, page, search);
         }
 
         public async Task<Tool> GetForUpdate(Guid Id)

@@ -98,7 +98,7 @@ export default function CardProject({ languages, item }: CardProjectProps) {
                             </div>
                         </div>
                         <div className="relative mt-3 rounded-xl  border tweet-border overflow-hidden">
-                            <img src={`${process.env.NEXT_PUBLIC_FILES_URL}/${item.imgUrl}`}
+                            <img src={`${process.env.NEXT_PUBLIC_FILES_URL}/${item.media?.url}`}
                                 alt="" className="w-full object-cover aspect-video relative" />
                             <div className="absolute bottom-2 left-2 flex gap-2 overflow-hidden line-clamp-1 h-5">
                                 {tools.slice(0, 3).map((tc, index) => (

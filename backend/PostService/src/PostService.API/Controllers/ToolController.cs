@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PostService.Application.DTOs.Request;
@@ -72,12 +73,13 @@ namespace PostService.API.Controllers
             [FromQuery] string? search
         )
         {
-            var result = await this.toolsServices.GetByPagination(page, search);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var result = await this.toolsServices.GetByPagination(Guid.Parse(userId), page, search);
             return Ok(result);
         }
         [HttpPost]
         [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
-        public async Task<IActionResult> CreateTool([FromForm] ToolRequest toolRequest)
+        public async Task<IActionResult> CreateTool(ToolRequest toolRequest)
         {
             if (ModelState.IsValid)
             {

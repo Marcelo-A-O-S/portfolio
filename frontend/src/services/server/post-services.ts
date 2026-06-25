@@ -5,36 +5,12 @@ import { LikePostSchema } from "@/domain/schemas/LikePostSchema";
 
 export const addPostService = async(post: PostSchema) =>{
     const api = await apiServer();
-    const formData = new FormData();
-    formData.append("imgUrl",post.imgUrl);
-    if(post.imgFile)
-        formData.append("imgFile",post.imgFile);
-    formData.append("status", post.status);
-    formData.append("categories", JSON.stringify(post.categories));
-    formData.append("postContents", JSON.stringify(post.postContents));
-    formData.append("tools", JSON.stringify(post.tools));
-    const response = await api.post("/api/Post", formData, {
-        headers: {
-            "Content-Type":"multipart/form-data"
-        }
-    });
+    const response = await api.post("/api/Post", post);
     return response;
 }
 export const updatePostService = async(id: string, post: PostSchema)=>{
     const api = await apiServer();
-    const formData = new FormData();
-    formData.append("imgUrl",post.imgUrl);
-    if(post.imgFile)
-        formData.append("imgFile",post.imgFile);
-    formData.append("status", post.status);
-    formData.append("categories", JSON.stringify(post.categories));
-    formData.append("postContents", JSON.stringify(post.postContents));
-    formData.append("tools", JSON.stringify(post.tools));
-    const response = await api.put(`/api/Post/${id}`,formData,{
-        headers: {
-            "Content-Type":"multipart/form-data"
-        }
-    });
+    const response = await api.put(`/api/Post/${id}`,post);
     return response;
 }
 export const deletePostByRouteService = async(id:string) =>{

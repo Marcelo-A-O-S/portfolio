@@ -69,12 +69,12 @@ export default function ToolCreatePage() {
     })
     const categoriesWatch = watch("categories");
     const onSubmit = async (data: ToolSchema) => {
-        console.log("Atualizando objeto:", data);
-        // if (tool) {
-        //     await updateTool({ id: tool.id, data: data });
-        // } else {
-        //     await createTool(data);
-        // }
+        console.log("Dados do objeto: ",data)
+        if (tool) {
+            await updateTool({ id: tool.id, data: data });
+        } else {
+            await createTool(data);
+        }
     }
     const addCategory = (data: CategorySchema) => {
         const exists = categoriesWatch.some(
@@ -100,7 +100,7 @@ export default function ToolCreatePage() {
             return;
         }
         const url = response.data.url;
-        const mediaId = response.data.id;
+        const mediaId = response.data.mediaId;
         const ownerType = response.data.ownerType;
         const urlMarkdown = `\n![image](${url})\n`
         const newValue = field.value.substring(0, start) + urlMarkdown + field.value.substring(end);
@@ -128,14 +128,14 @@ export default function ToolCreatePage() {
             return;
         }
         const url = response.data.url;
-        const mediaId = response.data.id;
+        const mediaId = response.data.mediaId;
         const ownerType = response.data.ownerType;
         const media : MediaSchema = {
             url: url,
             mediaId: mediaId,
-            ownerType: ownerType,
-            file: file
+            ownerType: ownerType
         };
+        setValue("mediaId", mediaId);
         setValue("media", media);
         setToolPreview(`${process.env.NEXT_PUBLIC_FILES_URL}/${media.url}`);
     }

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MediaService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20260617023447_CreateTables")]
+    [Migration("20260625010707_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />

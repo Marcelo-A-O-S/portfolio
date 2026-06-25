@@ -13,7 +13,7 @@ namespace PostService.Infrastructure.Repositories
             this.context = _context;
         }
 
-        public async Task<PaginatedResult<PostView>> GetByPagination(Guid authenticatedUserId, int page, string? search, int itemsPage = 10)
+        public async Task<PaginatedResult<PostView>> GetByPagination(Guid? authenticatedUserId, int page, string? search, int itemsPage = 10)
         {
             var query = this.context.Posts
                 .AsNoTracking()
@@ -45,10 +45,20 @@ namespace PostService.Infrastructure.Repositories
                 .Select(p => new PostView
                 {
                     Id = p.Id,
-                    // ImgUrl = p.ImgUrl,
+                    Media = new MediaView
+                    {
+                        Id = p.MediaProjectionId,
+                        MediaId = p.MediaProjection.MediaId,
+                        Url = p.MediaProjection.Url
+                    },
                     Status = p.Status,
                     CreatedAt = p.CreatedAt,
                     UpdatedAt = p.UpdatedAt,
+                    Likes = p.LikeCount,
+                    Comments = p.CommentCount,
+                    Liked = this.context.LikeProjections.Any(lp =>
+                                lp.TargetId == p.Id &&
+                                lp.UserId == authenticatedUserId),
                     PostContents = p.PostContents.Select(pc => new PostContentView
                     {
                         Id = pc.Id,
@@ -56,7 +66,12 @@ namespace PostService.Infrastructure.Repositories
                         Description = pc.Description,
                         Content = pc.Content,
                         Slug = pc.Slug,
-                        // ImagesUrls = pc.ImagesUrls,
+                        Images = pc.Images.Select(img => new MediaView
+                        {
+                            Id = img.Id,
+                            MediaId = img.MediaId,
+                            Url = img.Url
+                        }).ToList(),
                         CreatedAt = pc.CreatedAt,
                         Language = new LanguageView
                         {
@@ -65,10 +80,6 @@ namespace PostService.Infrastructure.Repositories
                             Name = pc.Language.Name
                         }
                     }).ToList(),
-                    Likes = p.LikeCount,
-                    Liked = this.context.LikeProjections.Any(lp =>
-                                lp.TargetId == p.Id &&
-                                lp.UserId == authenticatedUserId),
                     Tools = p.Tools.Select(t => new ToolView
                     {
                         Id = t.Id,
@@ -80,7 +91,12 @@ namespace PostService.Infrastructure.Repositories
                             Description = tc.Description,
                             Content = tc.Content,
                             Slug = tc.Slug,
-                            // ImagesUrls = tc.ImagesUrls,
+                            Images = tc.Images.Select(img => new MediaView
+                            {
+                                Id = img.Id,
+                                MediaId = img.MediaId,
+                                Url = img.Url
+                            }).ToList(),
                             CreatedAt = tc.CreatedAt,
                             Language = new LanguageView
                             {

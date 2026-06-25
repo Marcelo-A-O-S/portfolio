@@ -1,9 +1,10 @@
 using PostService.Domain.Entities;
+using PostService.Domain.Queries;
 namespace PostService.Domain.Interfaces
 {
     public interface IToolsRepository : IGenerics<Tool>
     {
-        Task<PaginatedResult<Tool>> GetByPagination(int page, string? search, int itemsPage = 10);
+        Task<PaginatedResult<ToolView>> GetByPagination(Guid? authenticatedUserId, int page, string? search, int itemsPage = 10);
         Task<Tool> GetToolById(Guid Id);
         Task<Tool> GetForUpdate(Guid Id);
         Task<List<Tool>> GetTools();
