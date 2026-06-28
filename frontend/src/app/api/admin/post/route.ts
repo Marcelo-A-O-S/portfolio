@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
             });
         }
         const post = result.data;
+        console.log("Salvando postagem...")
         const response = await addPostService(post);
         if (response.status !== 200 && response.status !== 201) {
             return NextResponse.json({
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest) {
             })
         }
         return NextResponse.json({
-            message: "Post salvo com sucesso"
+            message: "Postagem salva com sucesso"
         })
     } catch (error) {
         if (axios.isAxiosError<ApiErrorResponse>(error)) {

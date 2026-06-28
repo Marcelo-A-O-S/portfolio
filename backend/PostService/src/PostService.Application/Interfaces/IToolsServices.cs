@@ -5,9 +5,9 @@ namespace PostService.Application.Interfaces
     public interface IToolsServices : IServices<Tool>
     {
         Task<PaginatedResult<ToolView>> GetByPagination(Guid? authenticatedUserId, int page, string? search);
-        Task<Tool> GetToolById(Guid Id);
+        Task<ToolView> GetToolById(Guid? authenticatedUserId, Guid Id);
         Task<Tool> GetForUpdate(Guid Id);
-        Task<List<Tool>> GetTools();
+        Task<List<ToolView>> GetTools();
         Task<Tool> GetFullDataById(Guid Id);
         Task IncrementLikeCount(Guid Id);
         Task IncrementCommentCount(Guid Id);

@@ -1,8 +1,6 @@
 using CommentService.Application.UseCases.Comments.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using CommentService.Application.DTOs.Request;
-using CommentService.Application.DTOs.Request;
-using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.AspNetCore.Authorization;
 using CommentService.Application.UseCases.Likes.Interfaces;
 using System.Security.Claims;

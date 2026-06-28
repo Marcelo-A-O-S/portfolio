@@ -3,7 +3,6 @@ using PostService.Domain.Entities;
 using PostService.Domain.Interfaces;
 using PostService.Domain.Queries;
 using PostService.Infrastructure.Context;
-
 namespace PostService.Infrastructure.Repositories
 {
     public class ToolsRepository : Generics<Tool>, IToolsRepository
@@ -124,7 +123,7 @@ namespace PostService.Infrastructure.Repositories
                 .FirstOrDefaultAsync(t => t.Id == Id);
         }
 
-        public async Task<Tool> GetToolById(Guid Id)
+        public async Task<ToolView> GetToolById(Guid? authenticatedUserId, Guid Id)
         {
             var item = await this.context.Tools
                 .AsNoTracking()
@@ -135,11 +134,69 @@ namespace PostService.Infrastructure.Repositories
                 .Include(t => t.Categories)
                     .ThenInclude(c => c.CategoryContents)
                         .ThenInclude(cc => cc.Language)
+                .Select(t => new ToolView
+                {
+                    Id = t.Id,
+                    Media = new MediaView
+                    {
+                        Id = t.MediaProjectionId,
+                        MediaId = t.MediaProjection.MediaId,
+                        Url = t.MediaProjection.Url
+                    },
+                    Status = t.Status,
+                    CreatedAt = t.CreatedAt,
+                    UpdatedAt = t.UpdatedAt,
+                    Likes = t.LikeCount,
+                    Comments = t.CommentCount,
+                    Liked = this.context.LikeProjections.Any(lp =>
+                                lp.TargetId == t.Id &&
+                                lp.UserId == authenticatedUserId),
+                    Categories = t.Categories.Select(c => new CategoryView
+                    {
+                        Id = c.Id,
+                        CategoryContents = c.CategoryContents.Select(cc => new CategoryContentView
+                        {
+                            Id = cc.Id,
+                            Name = cc.Name,
+                            Slug = cc.Slug,
+                            CreatedAt = cc.CreatedAt,
+                            UpdatedAt = cc.UpdateAt,
+                            Language = new LanguageView
+                            {
+                                Id = cc.Language.Id,
+                                Code = cc.Language.Code,
+                                Name = cc.Language.Name
+                            }
+                        }).ToList()
+                    }).ToList(),
+                    ToolContents = t.ToolContents.Select(tc => new ToolContentView
+                    {
+                        Id = tc.Id,
+                        Name = tc.Name,
+                        Slug = tc.Slug,
+                        Title = tc.Title,
+                        CreatedAt = tc.CreatedAt,
+                        Content = tc.Content,
+                        Description = tc.Description,
+                        Images = tc.Images.Select(img => new MediaView
+                        {
+                            Id = img.Id,
+                            MediaId = img.MediaId,
+                            Url = img.Url
+                        }).ToList(),
+                        Language = new LanguageView
+                        {
+                            Id = tc.Language.Id,
+                            Code = tc.Language.Code,
+                            Name = tc.Language.Name
+                        }
+                    }).ToList(),
+                })
                 .FirstOrDefaultAsync();
             return item;
         }
 
-        public async Task<List<Tool>> GetTools()
+        public async Task<List<ToolView>> GetTools()
         {
             return await this.context.Tools
                 .AsNoTracking()
@@ -150,6 +207,59 @@ namespace PostService.Infrastructure.Repositories
                 .Include(t => t.Categories)
                     .ThenInclude(c => c.CategoryContents)
                         .ThenInclude(cc => cc.Language)
+                .Select(t => new ToolView
+                {
+                    Id = t.Id,
+                    Media = new MediaView
+                    {
+                        Id = t.MediaProjectionId,
+                        MediaId = t.MediaProjection.MediaId,
+                        Url = t.MediaProjection.Url
+                    },
+                    Status = t.Status,
+                    CreatedAt = t.CreatedAt,
+                    UpdatedAt = t.UpdatedAt,
+                    Categories = t.Categories.Select(c => new CategoryView
+                    {
+                        Id = c.Id,
+                        CategoryContents = c.CategoryContents.Select(cc => new CategoryContentView
+                        {
+                            Id = cc.Id,
+                            Name = cc.Name,
+                            Slug = cc.Slug,
+                            CreatedAt = cc.CreatedAt,
+                            UpdatedAt = cc.UpdateAt,
+                            Language = new LanguageView
+                            {
+                                Id = cc.Language.Id,
+                                Code = cc.Language.Code,
+                                Name = cc.Language.Name
+                            }
+                        }).ToList()
+                    }).ToList(),
+                    ToolContents = t.ToolContents.Select(tc => new ToolContentView
+                    {
+                        Id = tc.Id,
+                        Name = tc.Name,
+                        Slug = tc.Slug,
+                        Title = tc.Title,
+                        CreatedAt = tc.CreatedAt,
+                        Content = tc.Content,
+                        Description = tc.Description,
+                        Images = tc.Images.Select(img => new MediaView
+                        {
+                            Id = img.Id,
+                            MediaId = img.MediaId,
+                            Url = img.Url
+                        }).ToList(),
+                        Language = new LanguageView
+                        {
+                            Id = tc.Language.Id,
+                            Code = tc.Language.Code,
+                            Name = tc.Language.Name
+                        }
+                    }).ToList(),
+                })
                 .ToListAsync();
         }
 

@@ -4,7 +4,9 @@ import { postContentSchema } from "./PostContentSchema";
 import { postBaseSchema } from "./PostBaseSchema";
 export const PostStatusEnum = z.enum(["DRAFT", "PUBLISH"])
 export const toolInPostSchema = toolSchema.omit({
-    categories: true
+    liked: true,
+    comments: true,
+    likes: true
 });
 export const postSchema = postBaseSchema.extend({
     postContents: z.array(postContentSchema).min(1, "É obrigatório ter pelo menos um conteudo relacionado ao projeto."),

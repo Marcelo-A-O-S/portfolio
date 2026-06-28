@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Mvc;
-using PostService.Application.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-using PostService.Domain.Entities;
-using PostService.Application.DTOs.Request;
-using PostService.Application.UseCases.Projects.Interfaces;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using PostService.Application.DTOs.Request;
+using PostService.Application.Interfaces;
+using PostService.Application.UseCases.Projects.Interfaces;
+using PostService.Domain.Entities;
 namespace PostService.API.Controllers
 {
     [ApiController]
@@ -55,7 +55,8 @@ namespace PostService.API.Controllers
         [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> GetPostById([FromRoute] Guid Id)
         {
-            var post = await this.postServices.GetPostById(Id);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var post = await this.postServices.GetPostById(Guid.Parse(userId), Id);
             if (post == null)
                 return NotFound();
             return Ok(post);
@@ -68,14 +69,14 @@ namespace PostService.API.Controllers
         )
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if(userId == null)
+            if (userId == null)
                 return Unauthorized();
             var result = await this.postServices.GetByPagination(Guid.Parse(userId), page, search);
             return Ok(result);
         }
         [HttpPost]
         [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
-        public async Task<IActionResult> CreatePost([FromForm] PostRequest postRequest)
+        public async Task<IActionResult> CreatePost(PostRequest postRequest)
         {
             if (ModelState.IsValid)
             {

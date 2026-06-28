@@ -53,12 +53,12 @@ namespace PostService.Application.Services
             return await this.toolsRepository.GetFullDataById(Id);
         }
 
-        public async Task<Tool> GetToolById(Guid Id)
+        public async Task<ToolView> GetToolById(Guid? authenticatedUserId, Guid Id)
         {
-            return await this.toolsRepository.GetToolById(Id);
+            return await this.toolsRepository.GetToolById(authenticatedUserId, Id);
         }
 
-        public async Task<List<Tool>> GetTools()
+        public async Task<List<ToolView>> GetTools()
         {
             return await this.toolsRepository.GetTools();
         }

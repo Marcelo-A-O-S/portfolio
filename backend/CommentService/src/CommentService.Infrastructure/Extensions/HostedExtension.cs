@@ -9,6 +9,8 @@ namespace CommentService.Infrastructure.Extensions
         )
         {
             services.AddHostedService<CommentConsumer>();
+            services.AddHostedService<PostConsumer>();
+            services.AddHostedService<UserConsumer>();
             return services;
         }
     }

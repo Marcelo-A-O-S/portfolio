@@ -45,16 +45,18 @@ export default function ProjectCreate() {
                 description: '',
                 title: '',
                 slug: '',
-            }]
+            }],
+            liked: false,
+            likes: 0,
+            comments: 0
         }
     });
     useEffect(() => {
         if (!post) return;
         reset({
-            ...post,
-            imgFile: undefined
+            ...post
         })
-        setPostPreview(`${process.env.NEXT_PUBLIC_FILES_URL}/${post.imgUrl}`);
+        setPostPreview(`${process.env.NEXT_PUBLIC_FILES_URL}/${post.media?.url}`);
     }, [post, reset]);
     const { fields: fieldPostContents, append } = useFieldArray({
         control,
@@ -72,11 +74,11 @@ export default function ProjectCreate() {
     const toolsWatch = watch("tools");
     const onSubmit = async (data: PostSchema) => {
         console.log("Atualizando Projeto: ", data);
-        // if (post) {
-        //     await updateProject({ id: post.id, data: data });
-        // } else {
-        //     await createProject(data);
-        // }
+        if (post) {
+            await updateProject({ id: post.id, data: data });
+        } else {
+            await createProject(data);
+        }
     }
     const addTool = (data: ToolSchema) => {
         const exists = toolsWatch.some(
@@ -108,7 +110,7 @@ export default function ProjectCreate() {
             return;
         }
         const url = response.data.url;
-        const mediaId = response.data.id;
+        const mediaId = response.data.mediaId;
         const ownerType = response.data.ownerType;
         const urlMarkdown = `\n![image](${url})\n`
         const newValue = field.value.substring(0, start) + urlMarkdown + field.value.substring(end);
@@ -135,16 +137,15 @@ export default function ProjectCreate() {
             return;
         }
         const url = response.data.url;
-        const mediaId = response.data.id;
+        const mediaId = response.data.mediaId;
         const ownerType = response.data.ownerType;
         const media: MediaSchema = {
             url: url,
             mediaId: mediaId,
-            ownerType: ownerType,
-            file: file
+            ownerType: ownerType
         };
+        setValue("mediaId", mediaId);
         setValue("media", media);
-        field.onChange(file);
         setPostPreview(`${process.env.NEXT_PUBLIC_FILES_URL}/${media.url}`);
     }
     return (
@@ -224,7 +225,11 @@ export default function ProjectCreate() {
                         </div>
                     </div>
                     <div className="flex md:p-10">
-                        <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col gap-2 min-h-0">
+                        <form onSubmit={handleSubmit(onSubmit,
+                                (errors) => {
+                                    console.log("Erros RHF:");
+                                    console.dir(errors, { depth: null });
+                                })} className="flex-1 flex flex-col gap-2 min-h-0">
                             <Card className="">
                                 <CardHeader className="flex flex-col md:flex-row md:items-center justify-between">
                                     <CardTitle>Write Project</CardTitle>

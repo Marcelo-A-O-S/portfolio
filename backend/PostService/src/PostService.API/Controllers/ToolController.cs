@@ -61,7 +61,8 @@ namespace PostService.API.Controllers
         [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> GetToolById([FromRoute] Guid Id)
         {
-            var tool = await this.toolsServices.GetToolById(Id);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var tool = await this.toolsServices.GetToolById(Guid.Parse(userId), Id);
             if (tool == null)
                 return NotFound();
             return Ok(tool);

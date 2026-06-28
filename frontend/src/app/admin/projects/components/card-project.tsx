@@ -124,7 +124,7 @@ export default function CardProject({ languages, item }: CardProjectProps) {
                                 </button>
                                 <button className="flex items-center space-x-1 p-2 rounded-full cursor-pointer">
                                     <MessageCircle />
-                                    <span>15</span>
+                                    <span>{item.comments}</span>
                                 </button>
                             </div>
                             <div>

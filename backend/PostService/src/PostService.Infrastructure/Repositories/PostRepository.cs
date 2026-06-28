@@ -158,7 +158,7 @@ namespace PostService.Infrastructure.Repositories
                 .Where(p => p.Id == postId)
                 .CountAsync();
         }
-        public async Task<Post> GetPostById(Guid Id)
+        public async Task<PostView> GetPostById(Guid? authenticatedUserId, Guid Id)
         {
             var item = await this.context.Posts
                 .AsNoTracking()
@@ -172,6 +172,113 @@ namespace PostService.Infrastructure.Repositories
                 .Include(p => p.Tools)
                     .ThenInclude(t => t.ToolContents)
                         .ThenInclude(tl => tl.Language)
+                .Select(p => new PostView
+                {
+                    Id = p.Id,
+                    Media = new MediaView
+                    {
+                        Id = p.MediaProjectionId,
+                        MediaId = p.MediaProjection.MediaId,
+                        Url = p.MediaProjection.Url
+                    },
+                    Status = p.Status,
+                    CreatedAt = p.CreatedAt,
+                    UpdatedAt = p.UpdatedAt,
+                    Likes = p.LikeCount,
+                    Comments = p.CommentCount,
+                    Liked = this.context.LikeProjections.Any(lp =>
+                                lp.TargetId == p.Id &&
+                                lp.UserId == authenticatedUserId),
+                    PostContents = p.PostContents.Select(pc => new PostContentView
+                    {
+                        Id = pc.Id,
+                        Title = pc.Title,
+                        Description = pc.Description,
+                        Content = pc.Content,
+                        Slug = pc.Slug,
+                        Images = pc.Images.Select(img => new MediaView
+                        {
+                            Id = img.Id,
+                            MediaId = img.MediaId,
+                            Url = img.Url
+                        }).ToList(),
+                        CreatedAt = pc.CreatedAt,
+                        Language = new LanguageView
+                        {
+                            Id = pc.Language.Id,
+                            Code = pc.Language.Code,
+                            Name = pc.Language.Name
+                        }
+                    }).ToList(),
+                    Tools = p.Tools.Select(t => new ToolView
+                    {
+                        Id = t.Id,
+                        Media = new MediaView
+                        {
+                            Id = p.MediaProjectionId,
+                            MediaId = p.MediaProjection.MediaId,
+                            Url = p.MediaProjection.Url
+                        },
+                        Categories = t.Categories.Select(c => new CategoryView
+                        {
+                            Id = c.Id,
+                            CategoryContents = c.CategoryContents.Select(cc => new CategoryContentView
+                            {
+                                Id = cc.Id,
+                                Name = cc.Name,
+                                Slug = cc.Slug,
+                                CreatedAt = cc.CreatedAt,
+                                UpdatedAt = cc.UpdateAt,
+                                Language = new LanguageView
+                                {
+                                    Id = cc.Language.Id,
+                                    Code = cc.Language.Code,
+                                    Name = cc.Language.Name
+                                }
+                            }).ToList()
+                        }).ToList(),
+                        ToolContents = t.ToolContents.Select(tc => new ToolContentView
+                        {
+                            Id = tc.Id,
+                            Name = tc.Name,
+                            Title = tc.Title,
+                            Description = tc.Description,
+                            Content = tc.Content,
+                            Slug = tc.Slug,
+                            Images = tc.Images.Select(img => new MediaView
+                            {
+                                Id = img.Id,
+                                MediaId = img.MediaId,
+                                Url = img.Url
+                            }).ToList(),
+                            CreatedAt = tc.CreatedAt,
+                            Language = new LanguageView
+                            {
+                                Id = tc.Language.Id,
+                                Code = tc.Language.Code,
+                                Name = tc.Language.Name
+                            }
+                        }).ToList()
+                    }).ToList(),
+                    Categories = p.Categories.Select(c => new CategoryView
+                    {
+                        Id = c.Id,
+                        CategoryContents = c.CategoryContents.Select(cc => new CategoryContentView
+                        {
+                            Id = cc.Id,
+                            Name = cc.Name,
+                            Slug = cc.Slug,
+                            CreatedAt = cc.CreatedAt,
+                            UpdatedAt = cc.UpdateAt,
+                            Language = new LanguageView
+                            {
+                                Id = cc.Language.Id,
+                                Code = cc.Language.Code,
+                                Name = cc.Language.Name
+                            }
+                        }).ToList()
+                    }).ToList(),
+                })
                 .FirstOrDefaultAsync();
             return item;
         }

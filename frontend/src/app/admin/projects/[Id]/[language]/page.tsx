@@ -75,7 +75,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             title: content.title,
             description: content.description,
             images: [{
-                url: `${hostBackend}/${post.imgUrl}`,
+                url: `${hostBackend}/${post.media?.url}`,
                 alt: content.title
             }],
             type: "article"
@@ -154,7 +154,7 @@ export default async function PageById({ params }: Props) {
 
                             </div>
                             <div>
-                                <img src={`${hostBackend}/${post.imgUrl}`} alt={postContent.title} className="object-cover w-full" />
+                                <img src={`${hostBackend}/${post.media?.url}`} alt={postContent.title} className="object-cover w-full" />
                             </div>
                             <div dangerouslySetInnerHTML={{ __html: result }} />
                         </div>

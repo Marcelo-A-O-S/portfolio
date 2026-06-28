@@ -40,7 +40,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<ExceptionMiddleware>();
 app.MapControllers();
-app.UseStaticFiles();
 app.Run("http://+:5002");
 
 

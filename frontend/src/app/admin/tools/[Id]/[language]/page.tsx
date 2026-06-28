@@ -25,6 +25,7 @@ async function getToolOrThrow(id: string) {
     if (response.status !== 200) {
         notFound();
     }
+    console.log("Retorno: ",response.data);
     const result = await toolSchema.safeParseAsync(response.data);
     if (result.error) {
         console.log(`Error ao validar: ${result.error.message}`);
@@ -51,7 +52,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         .filter((c): c is string => Boolean(c));
     const keywords = [...categories, content.name, content.title, content.slug]
     return {
-        title: content.name,
+        title: content.title,
         description: content.description,
         authors: [{
             name: 'Marcelo Augusto de Oliveira Soares', url: 'https://github.com/Marcelo-A-O-S'
@@ -65,8 +66,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             title: content.title,
             description: content.description,
             images: [{
-                url: `${hostBackend}/${tool.imgUrl}`,
-                alt: content.name
+                url: `${hostBackend}/${tool.media?.url}`,
+                alt: content.title
             }],
             type: "article"
         },
@@ -122,7 +123,7 @@ export default async function PageById({ params }: Props) {
                                 ))}
                             </div>
                             <div>
-                                <img src={`${hostBackend}/${tool.imgUrl}`} alt={toolContent.name} className="object-cover w-full"/>
+                                <img src={`${hostBackend}/${tool.media?.url}`} alt={toolContent.name} className="object-cover w-full"/>
                             </div>
                             <div dangerouslySetInnerHTML={{ __html: result }} />
                         </div>

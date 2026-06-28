@@ -3,7 +3,7 @@ export const mediaSchema = z.object({
     id: z.uuid().optional(),
     mediaId: z.uuid(),
     url: z.string(),
-    ownerType: z.string(),
+    ownerType: z.string().optional(),
     file: z.instanceof(File)
         .refine((file) => file.size <= 2_000_000, "Max 2 MB")
         .refine((file) => ["image/jpeg", "image/png", "image/webp"].includes(file.type), "Formato inválido")

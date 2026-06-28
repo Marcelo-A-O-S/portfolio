@@ -101,6 +101,9 @@ namespace PostService.Application.UseCases.Projects
                     throw new ValidationException($"Erro ao validar dados: {errors}");
                 }
                 var postContent = await this.postContentServices.FindBy(pc => pc.Slug == item.Slug && pc.LanguageId == item.LanguageId);
+                if (postContent != null)
+                    throw new ValidationException("Erro ao validar dados!");
+                postContent = new PostContent(post.Id,item.LanguageId,item.Title, item.Description,item.Content, item.Slug);
                 var toRemoveImages = item.Images.Where(image => !item.Content.Contains(image.Url)).ToList();
                 foreach (var removeImage in toRemoveImages)
                 {

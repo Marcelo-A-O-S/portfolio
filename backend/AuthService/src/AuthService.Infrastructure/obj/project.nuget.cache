@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Ghm2yCKiaHc=",
+  "dgSpecHash": "ejWM5mH1SoA=",
   "success": true,
-  "projectFilePath": "c:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj",
+  "projectFilePath": "C:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Infrastructure\\AuthService.Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\marce\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\marce\\.nuget\\packages\\google.apis\\1.74.0\\google.apis.1.74.0.nupkg.sha512",

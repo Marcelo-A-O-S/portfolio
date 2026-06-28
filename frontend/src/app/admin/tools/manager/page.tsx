@@ -54,10 +54,9 @@ export default function ToolCreatePage() {
     useEffect(() => {
         if (!tool) return;
         reset({
-            ...tool,
-            imgFile: undefined
+            ...tool
         })
-        setToolPreview(`${process.env.NEXT_PUBLIC_FILES_URL}/${tool.imgUrl}`);
+        setToolPreview(`${process.env.NEXT_PUBLIC_FILES_URL}/${tool.media?.url}`);
     }, [tool, reset]);
     const { fields: fieldToolContents, append, remove: removeTool } = useFieldArray({
         control,

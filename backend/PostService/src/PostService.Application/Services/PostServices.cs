@@ -58,9 +58,9 @@ namespace PostService.Application.Services
             return await this.postRepository.GetLikesCountByPostId(postId);
         }
 
-        public async Task<Post> GetPostById(Guid Id)
+        public async Task<PostView> GetPostById(Guid? authenticatedUserId, Guid Id)
         {
-            return await this.postRepository.GetPostById(Id);
+            return await this.postRepository.GetPostById(authenticatedUserId, Id);
         }
 
         public async Task<List<Post>> GetPosts()
