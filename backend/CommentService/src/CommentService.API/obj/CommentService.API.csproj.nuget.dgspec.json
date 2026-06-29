@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\CommentService.API.csproj": {}
+    "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\CommentService.API.csproj": {}
   },
   "projects": {
-    "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\CommentService.API.csproj": {
+    "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\CommentService.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\CommentService.API.csproj",
+        "projectUniqueName": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\CommentService.API.csproj",
         "projectName": "CommentService.API",
-        "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\CommentService.API.csproj",
+        "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\CommentService.API.csproj",
         "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-        "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\obj\\",
+        "outputPath": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -26,11 +26,11 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Application\\CommentService.Application.csproj": {
-                "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Application\\CommentService.Application.csproj"
+              "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Application\\CommentService.Application.csproj": {
+                "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Application\\CommentService.Application.csproj"
               },
-              "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Infrastructure\\CommentService.Infrastructure.csproj": {
-                "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Infrastructure\\CommentService.Infrastructure.csproj"
+              "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Infrastructure\\CommentService.Infrastructure.csproj": {
+                "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Infrastructure\\CommentService.Infrastructure.csproj"
               }
             }
           }
@@ -109,14 +109,14 @@
         }
       }
     },
-    "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Application\\CommentService.Application.csproj": {
+    "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Application\\CommentService.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Application\\CommentService.Application.csproj",
+        "projectUniqueName": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Application\\CommentService.Application.csproj",
         "projectName": "CommentService.Application",
-        "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Application\\CommentService.Application.csproj",
+        "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Application\\CommentService.Application.csproj",
         "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-        "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Application\\obj\\",
+        "outputPath": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Application\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -131,8 +131,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj": {
-                "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj"
+              "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj": {
+                "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj"
               }
             }
           }
@@ -203,14 +203,14 @@
         }
       }
     },
-    "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj": {
+    "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj",
+        "projectUniqueName": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj",
         "projectName": "CommentService.Domain",
-        "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj",
+        "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj",
         "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-        "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\obj\\",
+        "outputPath": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -276,14 +276,14 @@
         }
       }
     },
-    "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Infrastructure\\CommentService.Infrastructure.csproj": {
+    "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Infrastructure\\CommentService.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Infrastructure\\CommentService.Infrastructure.csproj",
+        "projectUniqueName": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Infrastructure\\CommentService.Infrastructure.csproj",
         "projectName": "CommentService.Infrastructure",
-        "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Infrastructure\\CommentService.Infrastructure.csproj",
+        "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Infrastructure\\CommentService.Infrastructure.csproj",
         "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-        "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Infrastructure\\obj\\",
+        "outputPath": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -298,11 +298,11 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Application\\CommentService.Application.csproj": {
-                "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Application\\CommentService.Application.csproj"
+              "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Application\\CommentService.Application.csproj": {
+                "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Application\\CommentService.Application.csproj"
               },
-              "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj": {
-                "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj"
+              "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj": {
+                "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj"
               }
             }
           }

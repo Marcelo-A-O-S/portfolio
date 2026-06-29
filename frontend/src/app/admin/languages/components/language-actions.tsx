@@ -1,5 +1,5 @@
 import { LanguageSchema } from "@/domain/schemas/LanguageSchema"
-import { useDeleteLanguage } from "@/hooks/useDeleteLanguage";
+import { useDeleteLanguage } from "@/hooks/Language/useDeleteLanguage";
 import FormLanguage from "./form-language";
 import { Button } from "@/components/ui/button";
 import { DropdownMenuTrigger, DropdownMenuContent, DropdownMenuGroup, DropdownMenuSeparator, DropdownMenuItem, DropdownMenu } from "@/components/ui/dropdown-menu";

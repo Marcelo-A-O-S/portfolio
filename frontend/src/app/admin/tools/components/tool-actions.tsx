@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { ToolSchema } from "@/domain/schemas/ToolSchema"
-import { useDeleteTool } from "@/hooks/useDeleteTool"
+import { useDeleteTool } from "@/hooks/Tool/useDeleteTool"
 import { MoreHorizontal } from "lucide-react"
 import Link from "next/link"
 

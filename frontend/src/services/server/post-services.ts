@@ -2,50 +2,55 @@ import { PostSchema } from "@/domain/schemas/PostSchema";
 import { apiServer } from "./api-server";
 import { PostsFilters } from "@/domain/schemas/PostsFilters";
 import { LikePostSchema } from "@/domain/schemas/LikePostSchema";
+import { LikeSchema } from "@/domain/schemas/LikeSchema";
 
-export const addPostService = async(post: PostSchema) =>{
+export const addPostService = async (post: PostSchema) => {
     const api = await apiServer();
     const response = await api.post("/api/Post", post);
     return response;
 }
-export const updatePostService = async(id: string, post: PostSchema)=>{
+export const updatePostService = async (id: string, post: PostSchema) => {
     const api = await apiServer();
-    const response = await api.put(`/api/Post/${id}`,post);
+    const response = await api.put(`/api/Post/${id}`, post);
     return response;
 }
-export const deletePostByRouteService = async(id:string) =>{
+export const deletePostByRouteService = async (id: string) => {
     const api = await apiServer();
     const response = await api.delete(`/api/Post/${id}`);
     return response;
 }
-export const getPostsByPagination = async(filters: PostsFilters)=>{
+export const getPostsByPagination = async (filters: PostsFilters) => {
     const api = await apiServer();
     const params = new URLSearchParams();
     params.append(`page`, filters.page.toString());
-    if(filters.search){
-        params.append("search",filters.search)
+    if (filters.search) {
+        params.append("search", filters.search)
     }
     const response = await api.get(`/api/Post/GetByPagination?${params}`);
     return response;
 }
-export const getPostByIdService = async(id:string) =>{
+export const getPostByIdService = async (id: string) => {
     const api = await apiServer();
     const response = await api.get(`/api/Post/GetPostById/${id}`);
     return response;
 }
-export const getPosts = async() =>{
+export const getPosts = async () => {
     const api = await apiServer();
     const response = await api.get(`/api/Post/GetPosts`);
     return response;
 }
-export const addLikePost = async(data : LikePostSchema) => {
+export const addLikePost = async (data: LikeSchema) => {
     const api = await apiServer();
-    const response = await api.post(`/api/Post/AddLike`,data);
+    if (data.type != "Post")
+        throw new Error("Só é possivel dar curtidas em postagens de projetos.");
+    const response = await api.post(`/api/Like`, data);
     return response;
 }
-export const removeLikePost = async(data: LikePostSchema) => {
+export const removeLikePost = async (data: LikeSchema) => {
     const api = await apiServer();
-    const response = await api.delete(`/api/Post/RemoveLike`,{
+    if (data.type != "Post")
+        throw new Error("Só é possivel dar curtidas em postagens de projetos.");
+    const response = await api.delete(`/api/Like`, {
         data: data
     })
     return response;

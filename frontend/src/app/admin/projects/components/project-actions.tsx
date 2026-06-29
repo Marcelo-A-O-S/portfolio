@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { DropdownMenuTrigger, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenu } from "@/components/ui/dropdown-menu";
 import { PostSchema } from "@/domain/schemas/PostSchema"
-import { useDeleteProject } from "@/hooks/useDeleteProject"
+import { useDeleteProject } from "@/hooks/Post/useDeleteProject"
 import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 

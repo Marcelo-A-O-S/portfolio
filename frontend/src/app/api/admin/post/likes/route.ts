@@ -1,4 +1,5 @@
 import { likePostSchema } from "@/domain/schemas/LikePostSchema";
+import { likeSchema } from "@/domain/schemas/LikeSchema";
 import { ApiErrorResponse } from "@/domain/types/ApiErrorResponse";
 import { validateUserByRequest } from "@/services/server/auth-services";
 import { addLikePost, removeLikePost } from "@/services/server/post-services";
@@ -10,7 +11,7 @@ export async function POST(request: NextRequest) {
         if (!allowed)
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         const data = await request.json();
-        const result = await likePostSchema.safeParseAsync(data);
+        const result = await likeSchema.safeParseAsync(data);
         if (!result.success) {
             return NextResponse.json({
                 message: `Erro ao validar dados: ${result.error.message}`
@@ -57,7 +58,7 @@ export async function DELETE(request: NextRequest) {
         if (!allowed)
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         const data = await request.json();
-        const result = await likePostSchema.safeParseAsync(data);
+        const result = await likeSchema.safeParseAsync(data);
         if (!result.success) {
             return NextResponse.json({
                 message: `Erro ao validar dados: ${result.error.message}`

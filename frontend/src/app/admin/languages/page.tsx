@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { getLanguageColumns } from "./components/language-columns";
 import { useDebounce } from "@/hooks/useDebounce";
-import useGetLanguages from "@/hooks/useGetLanguage";
+import useGetLanguages from "@/hooks/Language/useGetLanguage";
 import { DataTable } from "@/components/data-table";
 import { Skeleton } from "@/components/ui/skeleton";
 import FormLanguage from "./components/form-language";

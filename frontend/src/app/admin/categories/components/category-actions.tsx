@@ -4,7 +4,7 @@ import Link from "next/link"
 import { Button } from "../../../../components/ui/button"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator } from "../../../../components/ui/dropdown-menu"
 import { CategorySchema } from "@/domain/schemas/CategorySchema"
-import { useDeleteCategory } from "@/hooks/useDeleteCategory"
+import { useDeleteCategory } from "@/hooks/Category/useDeleteCategory"
 import FormCategory from "./form-category"
 interface CategoryActionsProps {
     category: CategorySchema

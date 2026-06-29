@@ -1,8 +1,8 @@
 "use client";
 import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useLanguages } from "@/hooks/useLanguages";
-import { usePaginationTool } from "@/hooks/usePaginationTool";
+import { useLanguages } from "@/hooks/Language/useLanguages";
+import { usePaginationTool } from "@/hooks/Tool/usePaginationTool";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "G2TopThsV1o=",
+  "dgSpecHash": "e6/H/fPb5ys=",
   "success": true,
-  "projectFilePath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj",
+  "projectFilePath": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\marce\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.25\\microsoft.netcore.app.ref.8.0.25.nupkg.sha512",
     "C:\\Users\\marce\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.25\\microsoft.windowsdesktop.app.ref.8.0.25.nupkg.sha512",

@@ -7,8 +7,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import ProjectActions from "./project-actions";
 import { Heart, MessageCircle } from "lucide-react";
-import { useAddLikePost } from "@/hooks/useAddLikePost";
-import { useRemoveLikePost } from "@/hooks/useRemoveLikePost";
+import { useAddLikePost } from "@/hooks/Post/useAddLikePost";
+import { useRemoveLikePost } from "@/hooks/Post/useRemoveLikePost";
 type CardProjectProps = {
     languages?: LanguageSchema[],
     item: PostSchema
@@ -37,13 +37,15 @@ export default function CardProject({ languages, item }: CardProjectProps) {
             return content;
         })
     const handleLike = async () => {
-        if (item.liked) {
+        if(item.liked){
             await removeLike({
-                postId: item.id!
+                targetId: item.id!,
+                type: "Post"
             });
-        } else {
+        }else{
             await addLike({
-                postId: item.id!
+                targetId: item.id!,
+                type: "Post"
             });
         }
     }

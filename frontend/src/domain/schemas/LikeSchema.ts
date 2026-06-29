@@ -1,9 +1,9 @@
 import z from "zod";
-const LikeType = z.enum(["Post", "Comment", "Tool", "Blog"])
-const likeSchema = z.object({
+export const likeTypeSchema = z.enum(["Post", "Comment", "Tool", "Blog"])
+export const likeSchema = z.object({
     id: z.uuid().optional(),
-    userId: z.uuid(),
     targetId: z.uuid(),
-    type: LikeType
+    type: likeTypeSchema
 })
 export type LikeSchema = z.infer<typeof likeSchema>;
+export type LikeTypeSchema = z.infer<typeof likeTypeSchema>;

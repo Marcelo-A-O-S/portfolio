@@ -7,15 +7,15 @@ import { Heart, MessageCircle } from "lucide-react"
 import { useState } from "react"
 import ToolActions from "./tool-actions"
 import Link from "next/link"
-import { useAddLikePost } from "@/hooks/useAddLikePost"
-import { useRemoveLikePost } from "@/hooks/useRemoveLikePost"
+import { useAddLikeTool } from "@/hooks/Tool/useAddLikeTool"
+import { useRemoveLikeTool } from "@/hooks/Tool/useRemoveLikeTool"
 type CardToolProps = {
     languages?: LanguageSchema[]
     item: ToolSchema
 }
 export default function CardTool({ languages, item }: CardToolProps) {
-    const { mutateAsync: addLike, isPending: isAdding } = useAddLikePost();
-    const { mutateAsync: removeLike, isPending: isRemoving } = useRemoveLikePost();
+    const { mutateAsync: addLike, isPending: isAdding } = useAddLikeTool();
+    const { mutateAsync: removeLike, isPending: isRemoving } = useRemoveLikeTool();
     const [lang, setLang] = useState(languages?.[0]?.code);
     const loading = isAdding || isRemoving;
     const content = item.toolContents.find(
@@ -29,9 +29,18 @@ export default function CardTool({ languages, item }: CardToolProps) {
             return content;
         })
     const handleLike = async () => {
-
+        if(item.liked){
+            await removeLike({
+                targetId: item.id!,
+                type: "Tool"
+            });
+        }else{
+            await addLike({
+                targetId: item.id!,
+                type: "Tool"
+            });
+        }
     }
-    console.log("Objeto: ", item);
     return (
         <div className="bg-background border border-primary max-w-sm w-full max-h-[450px] h-full rounded-lg overflow-hidden shadow-sm
             hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col">

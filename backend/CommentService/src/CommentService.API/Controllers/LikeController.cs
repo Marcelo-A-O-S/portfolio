@@ -20,6 +20,7 @@ namespace CommentService.API.Controllers
             this.addLike = _addLike;
             this.removeLike = _removeLike;
         }
+        [HttpPost]
         [Authorize( Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> AddLike([FromBody] LikeRequest likeRequest)
         {
@@ -29,6 +30,7 @@ namespace CommentService.API.Controllers
             await this.addLike.ExecuteAsync(Guid.Parse(userId), likeRequest);
             return Ok();
         }
+        [HttpDelete]
         [Authorize( Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> RemoveLike([FromBody] LikeRequest likeRequest)
         {

@@ -7,9 +7,9 @@ import { Heart, MessageCircle } from 'lucide-react';
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { useLanguages } from "@/hooks/useLanguages";
+import { useLanguages } from "@/hooks/Language/useLanguages";
 import { useSession } from "next-auth/react";
-import { usePaginationProject } from "@/hooks/usePaginationProject";
+import { usePaginationProject } from "@/hooks/Post/usePaginationProject";
 import CardProject from "./components/card-project";
 export default function ProjectPage() {
     const { data: session } = useSession();

@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import FormCategory from "./components/form-category";
-import { useGetCategories } from "@/hooks/useGetCategories";
+import { useGetCategories } from "@/hooks/Category/useGetCategories";
 import { getCategoryColumns } from "./components/category-columns";
 import { DataTable } from "@/components/data-table";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -13,7 +13,7 @@ import { createPageURL, generatePagination, updateFilter } from "@/lib/utils";
 import { toast } from "sonner";
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationEllipsis, PaginationLink, PaginationNext } from "@/components/ui/pagination";
 import { SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem, Select } from "@/components/ui/select";
-import { useLanguages } from "@/hooks/useLanguages";
+import { useLanguages } from "@/hooks/Language/useLanguages";
 export default function ToolsPage() {
     const { data: session } = useSession();
     const router = useRouter();

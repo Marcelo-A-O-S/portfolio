@@ -1,14 +1,15 @@
 import { LikePostSchema } from "@/domain/schemas/LikePostSchema";
+import { LikeSchema } from "@/domain/schemas/LikeSchema";
 import { ApiResponse } from "@/domain/types/ApiResponse";
-import { removeLikePost } from "@/services/client/post-services";
+import { addLikePost } from "@/services/client/post-services";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
-export function useRemoveLikePost() {
+export function useAddLikePost() {
     const queryClient = useQueryClient();
-    return useMutation<AxiosResponse<ApiResponse>, AxiosError<ApiResponse>, LikePostSchema>({
-        mutationFn: removeLikePost,
-        onSuccess: (response) => {
-            console.log("INVALIDANDO QUERY - Removendo curtida");
+    return useMutation<AxiosResponse<ApiResponse>, AxiosError<ApiResponse>, LikeSchema>({
+        mutationFn: addLikePost,
+        onSuccess: (response) =>{
+            console.log("INVALIDANDO QUERY - Curtindo postagem");
             queryClient.invalidateQueries({
                 queryKey: ["project-pagination"]
             })

@@ -1,6 +1,7 @@
 import { ToolSchema } from "@/domain/schemas/ToolSchema";
 import { apiClient } from "./api-client";
 import { ToolFilters } from "@/domain/schemas/ToolFilters";
+import { LikeSchema } from "@/domain/schemas/LikeSchema";
 
 export const addToolService = async(tool: ToolSchema) =>{
     const api = await apiClient();
@@ -35,5 +36,19 @@ export const getToolByIdService = async(id:string) =>{
 export const getTools = async()=>{
     const api = await apiClient();
     const response = await api.get(`/api/admin/tools`);
+    return response;
+}
+export const addToolLike = async (data: LikeSchema) => {
+    const api = await apiClient();
+    if (data.type != "Tool")
+        throw new Error("Só é possivel dar curtidas em postagens de ferramentas.");
+    const response = await api.post(`/api/Like`, data);
+    return response;
+}
+export const removeToolLike = async (data: LikeSchema) => {
+    const api = await apiClient();
+    if (data.type != "Tool")
+        throw new Error("Só é possivel dar curtidas em postagens de ferramentas.");
+    const response = await api.post(`/api/Like`, data);
     return response;
 }

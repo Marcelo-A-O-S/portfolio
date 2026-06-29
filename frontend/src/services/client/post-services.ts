@@ -2,6 +2,7 @@ import { PostSchema } from "@/domain/schemas/PostSchema";
 import { apiClient } from "./api-client";
 import { PostsFilters } from "@/domain/schemas/PostsFilters";
 import { LikePostSchema } from "@/domain/schemas/LikePostSchema";
+import { LikeSchema } from "@/domain/schemas/LikeSchema";
 export const addPostService = async (post: PostSchema) => {
     const api = await apiClient();
     const response = await api.post("/api/admin/post", post);
@@ -43,13 +44,17 @@ export const getPosts = async () => {
     const response = await api.get(`/api/admin/post`);
     return response;
 }
-export const addLikePost = async (data: LikePostSchema) => {
+export const addLikePost = async (data: LikeSchema) => {
     const api = await apiClient();
+    if (data.type != "Post")
+        throw new Error("Só é possivel dar curtidas em postagens de projetos.");
     const response = await api.post(`/api/admin/post/likes`, data);
     return response;
 }
-export const removeLikePost = async (data: LikePostSchema) => {
+export const removeLikePost = async (data: LikeSchema) => {
     const api = await apiClient();
+    if (data.type != "Post")
+        throw new Error("Só é possivel dar curtidas em postagens de projetos.");
     const response = await api.delete(`/api/admin/post/likes`, {
         data: data
     })
