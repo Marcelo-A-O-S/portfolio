@@ -17,7 +17,7 @@ namespace CommentService.Infrastructure.Extensions
             {
                 throw new Exception("Endereços de integrações não configurados.");
             }
-            services.AddHttpClient<IInternalAuthClient, InternalAuthClient>(client =>
+            services.AddHttpClient<IAuthServicesClient, AuthServicesClient>(client =>
             {
                 client.BaseAddress = new Uri(authAddress);
                 client.Timeout = TimeSpan.FromSeconds(3);

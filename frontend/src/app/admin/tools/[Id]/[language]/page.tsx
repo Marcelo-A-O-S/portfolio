@@ -16,6 +16,7 @@ import OnThisPage from "../../components/on-this-page";
 import rehypePrettyCode from "rehype-pretty-code";
 import { transformerCopyButton } from '@rehype-pretty/transformers'
 import { rehypePrefixImageHost } from "@/lib/utils";
+import { Heart, MessageCircle } from "lucide-react";
 const hostBackend = process.env.BACKEND_SERVER!;
 type Props = {
     params: Promise<{ Id: string, language: string }>
@@ -25,7 +26,7 @@ async function getToolOrThrow(id: string) {
     if (response.status !== 200) {
         notFound();
     }
-    console.log("Retorno: ",response.data);
+    console.log("Retorno: ", response.data);
     const result = await toolSchema.safeParseAsync(response.data);
     if (result.error) {
         console.log(`Error ao validar: ${result.error.message}`);
@@ -123,9 +124,24 @@ export default async function PageById({ params }: Props) {
                                 ))}
                             </div>
                             <div>
-                                <img src={`${hostBackend}/${tool.media?.url}`} alt={toolContent.name} className="object-cover w-full"/>
+                                <img src={`${hostBackend}/${tool.media?.url}`} alt={toolContent.name} className="object-cover w-full" />
                             </div>
                             <div dangerouslySetInnerHTML={{ __html: result }} />
+                            <div className="flex items-center justify-between mt-4 text-primary text-xs sm:text-sm">
+                                <div className="flex">
+                                    <button
+                                        className="flex items-center space-x-1 p-2 rounded-full cursor-pointer">
+                                        <Heart
+                                            className={tool.liked ? "fill-current" : ""}
+                                        />
+                                        <span>{tool.likes}</span>
+                                    </button>
+                                    <button className="flex items-center space-x-1 p-2 rounded-full cursor-pointer">
+                                        <MessageCircle />
+                                        <span>{tool.comments}</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         <div className="hidden md:block md:w-full lg:w-[50%]">
                             <OnThisPage htmlContent={result} />

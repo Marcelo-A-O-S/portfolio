@@ -2,7 +2,7 @@ using CommentService.Application.DTOs.Request;
 using CommentService.Application.Exceptions;
 using CommentService.Application.Interfaces;
 using CommentService.Application.UseCases.Likes.Interfaces;
-using CommentService.Application.Validations.Interfaces;
+using CommentService.Application.Validators.Interfaces;
 using CommentService.Domain.Entities;
 namespace CommentService.Application.UseCases.Likes
 {

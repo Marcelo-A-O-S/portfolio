@@ -8,9 +8,9 @@ namespace CommentService.Infrastructure.Integrations
     public class UserServicesClient : IUserServicesClient
     {
         private readonly HttpClient http;
-        private readonly IInternalAuthClient authClient;
+        private readonly IAuthServicesClient authClient;
         public UserServicesClient(
-            IInternalAuthClient _authClient,
+            IAuthServicesClient _authClient,
             HttpClient _http
         )
         {

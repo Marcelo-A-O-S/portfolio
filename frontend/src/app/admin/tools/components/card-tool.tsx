@@ -104,7 +104,6 @@ export default function CardTool({ languages, item }: CardToolProps) {
                         <div>
                             <ToolActions tool={item} />
                         </div>
-
                     </div>
                     <Link className={buttonVariants({ variant: "default" }) + ` w-full`} href={`/admin/tools/${item.id}/${lang}`}>View Tool</Link>
                 </div>

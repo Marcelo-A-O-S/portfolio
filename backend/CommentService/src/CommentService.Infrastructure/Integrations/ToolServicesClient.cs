@@ -9,10 +9,10 @@ namespace CommentService.Infrastructure.Integrations
     public class ToolServicesClient : IToolServicesClient
     {
         private readonly HttpClient http;
-        private readonly IInternalAuthClient authClient;
+        private readonly IAuthServicesClient authClient;
         public ToolServicesClient(
             HttpClient _http,
-            IInternalAuthClient _authClient
+            IAuthServicesClient _authClient
         )
         {
             this.authClient = _authClient;

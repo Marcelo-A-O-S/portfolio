@@ -99,6 +99,15 @@ namespace Gateway.API.Configuration
                 },
                 new RouteConfig
                 {
+                    RouteId = "likeRoute",
+                    ClusterId = "commentCluster",
+                    Match = new RouteMatch
+                    {
+                        Path = "/api/like/{**catch-all}"
+                    }
+                },
+                new RouteConfig
+                {
                     RouteId = "certificateRoute",
                     ClusterId = "certificateCluster",
                     Match = new RouteMatch

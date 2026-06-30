@@ -62,8 +62,10 @@ namespace PostService.Infrastructure.Messaging.Handlers
                 return;
             }
             var likeProjection = new LikeProjection(payload.TargetId, payload.UserId);
+            this.logger.LogInformation("Adicionando a curtida na postagem... PostId: {PostId}", payload.TargetId);
             await likeProjectionServices.Save(likeProjection);
             await postServices.IncrementLikeCount(post.Id);
+            this.logger.LogInformation("Curtida adicionada a postagem com sucesso. PostId: {PostId}", payload.TargetId);
         }
         private async Task RemovePostLikeCount(LikedEvent payload)
         {
@@ -82,8 +84,10 @@ namespace PostService.Infrastructure.Messaging.Handlers
                 this.logger.LogWarning("Evento recebido para Like inexistente. PostId: {PostId}", payload.TargetId);
                 return;
             }
+            this.logger.LogInformation("Removendo a curtida da postagem... PostId: {PostId}", payload.TargetId);
             await likeProjectionServices.Delete(likeProjection);
             await postServices.DecrementLikeCount(post.Id);
+            this.logger.LogInformation("Curtida removida da postagem com sucesso. PostId: {PostId}", payload.TargetId);
         }
         private async Task AddToolLikeCount(LikedEvent payload)
         {
@@ -97,8 +101,10 @@ namespace PostService.Infrastructure.Messaging.Handlers
                 return;
             }
             var likeProjection = new LikeProjection(payload.TargetId, payload.UserId);
+            this.logger.LogInformation("Adicionando a curtida a ferramenta... ToolId: {ToolId}", payload.TargetId);
             await likeProjectionServices.Save(likeProjection);
             await toolsServices.IncrementLikeCount(tool.Id);
+            this.logger.LogInformation("Curtida adicionada a ferramenta com sucesso. ToolId: {ToolId}", payload.TargetId);
         }
         private async Task RemoveToolLikeCount(LikedEvent payload)
         {
@@ -117,8 +123,10 @@ namespace PostService.Infrastructure.Messaging.Handlers
                 this.logger.LogWarning("Evento recebido para Like inexistente. PostId: {PostId}", payload.TargetId);
                 return;
             }
+            this.logger.LogInformation("Removendo a curtida da ferramenta... ToolId: {ToolId}", payload.TargetId);
             await likeProjectionServices.Delete(likeProjection);
             await toolsServices.DecrementLikeCount(tool.Id);
+            this.logger.LogInformation("Curtida removida da ferramenta com sucesso. ToolId: {ToolId}", payload.TargetId);
         }
     }
 }

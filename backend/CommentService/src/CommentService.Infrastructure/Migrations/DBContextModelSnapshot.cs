@@ -22,32 +22,6 @@ namespace CommentService.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("CommentService.Domain.Entities.Answer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("AnswerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CommentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AnswerId");
-
-                    b.ToTable("Answers");
-                });
-
             modelBuilder.Entity("CommentService.Domain.Entities.Comment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -64,8 +38,12 @@ namespace CommentService.Infrastructure.Migrations
                     b.Property<Guid?>("ParentCommentId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("PostId")
+                    b.Property<Guid>("TargetId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -77,6 +55,9 @@ namespace CommentService.Infrastructure.Migrations
 
                     b.HasIndex("ParentCommentId");
 
+                    b.HasIndex("Type", "TargetId")
+                        .IsUnique();
+
                     b.ToTable("Comments");
                 });
 
@@ -86,30 +67,25 @@ namespace CommentService.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CommentId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("TargetId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CommentId");
-
-                    b.HasIndex("UserId", "CommentId")
+                    b.HasIndex("UserId", "Type", "TargetId")
                         .IsUnique();
 
                     b.ToTable("Likes");
-                });
-
-            modelBuilder.Entity("CommentService.Domain.Entities.Answer", b =>
-                {
-                    b.HasOne("CommentService.Domain.Entities.Answer", null)
-                        .WithMany("Answers")
-                        .HasForeignKey("AnswerId");
                 });
 
             modelBuilder.Entity("CommentService.Domain.Entities.Comment", b =>
@@ -120,22 +96,6 @@ namespace CommentService.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ParentComment");
-                });
-
-            modelBuilder.Entity("CommentService.Domain.Entities.Like", b =>
-                {
-                    b.HasOne("CommentService.Domain.Entities.Comment", "Comment")
-                        .WithMany()
-                        .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Comment");
-                });
-
-            modelBuilder.Entity("CommentService.Domain.Entities.Answer", b =>
-                {
-                    b.Navigation("Answers");
                 });
 
             modelBuilder.Entity("CommentService.Domain.Entities.Comment", b =>

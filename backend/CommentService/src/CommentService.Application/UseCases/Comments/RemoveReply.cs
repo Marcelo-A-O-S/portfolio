@@ -2,7 +2,7 @@ using CommentService.Application.Interfaces;
 using CommentService.Application.UseCases.Comments.Interfaces;
 using CommentService.Application.Exceptions;
 using CommentService.Domain.Entities;
-using CommentService.Application.Validations.Interfaces;
+using CommentService.Application.Validators.Interfaces;
 namespace CommentService.Application.UseCases.Comments
 {
     public class RemoveReply : IRemoveReply

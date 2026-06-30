@@ -4,8 +4,8 @@ using CommentService.Application.UseCases.Comments;
 using CommentService.Application.UseCases.Comments.Interfaces;
 using CommentService.Application.UseCases.Likes;
 using CommentService.Application.UseCases.Likes.Interfaces;
-using CommentService.Application.Validations;
-using CommentService.Application.Validations.Interfaces;
+using CommentService.Application.Validators.Interfaces;
+using CommentService.Application.Validators;
 using Microsoft.Extensions.DependencyInjection;
 namespace CommentService.Application.Extensions
 {

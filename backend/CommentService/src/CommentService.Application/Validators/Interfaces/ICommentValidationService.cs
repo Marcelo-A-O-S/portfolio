@@ -1,5 +1,5 @@
 using CommentService.Domain.Enums;
-namespace CommentService.Application.Validations.Interfaces
+namespace CommentService.Application.Validators.Interfaces
 {
     public interface ICommentValidationService
     {

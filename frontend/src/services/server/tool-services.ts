@@ -49,6 +49,8 @@ export const removeToolLike = async (data: LikeSchema) => {
     const api = await apiServer();
     if (data.type != "Tool")
         throw new Error("Só é possivel dar curtidas em postagens de ferramentas.");
-    const response = await api.post(`/api/Like`, data);
+    const response = await api.delete(`/api/Like`, {
+        data: data
+    });
     return response;
 }

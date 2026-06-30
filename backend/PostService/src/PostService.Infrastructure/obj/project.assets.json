@@ -3163,8 +3163,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "c:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Application\\PostService.Application.csproj": {
-              "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Application\\PostService.Application.csproj"
+            "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Application\\PostService.Application.csproj": {
+              "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Application\\PostService.Application.csproj"
             },
             "c:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\PostService.Domain.csproj": {
               "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\PostService.Domain.csproj"

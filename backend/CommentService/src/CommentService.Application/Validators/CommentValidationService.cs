@@ -1,9 +1,9 @@
-using CommentService.Application.Validations.Interfaces;
 using CommentService.Application.Interfaces;
 using CommentService.Application.Exceptions;
+using CommentService.Application.Validators.Interfaces;
 using CommentService.Domain.Enums;
 
-namespace CommentService.Application.Validations
+namespace CommentService.Application.Validators
 {
     public class CommentValidationService : ICommentValidationService
     {

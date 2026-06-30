@@ -1,9 +1,9 @@
-using CommentService.Application.Validations.Interfaces;
 using CommentService.Domain.Enums;
 using CommentService.Application.Exceptions;
 using CommentService.Application.Interfaces;
+using CommentService.Application.Validators.Interfaces;
 
-namespace CommentService.Application.Validations
+namespace CommentService.Application.Validators
 {
     public class LikeValidationService : ILikeValidationService
     {

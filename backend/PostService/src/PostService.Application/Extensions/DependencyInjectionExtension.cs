@@ -13,6 +13,8 @@ using PostService.Application.UseCases.InternalProject.Interfaces;
 using PostService.Application.UseCases.InternalProject;
 using PostService.Application.Caching.User;
 using PostService.Application.Caching.Post;
+using PostService.Application.UseCases.InternalTool.Interfaces;
+using PostService.Application.UseCases.InternalTool;
 namespace PostService.Application.Extensions
 {
     public static class DependencyInjectionExtension
@@ -33,15 +35,16 @@ namespace PostService.Application.Extensions
             services.AddScoped<IUserCacheServices, UserCacheServices>();
             services.AddScoped<IPostCacheServices, PostCacheServices>();
 
-            services.AddScoped<ICreateTool, CreateTool>();
-            services.AddScoped<IUpdateTool, UpdateTool>();
-            services.AddScoped<IDeleteTool, DeleteTool>();
-            services.AddScoped<ICreateCategory, CreateCategory>();
-            services.AddScoped<IUpdateCategory, UpdateCategory>();
-            services.AddScoped<IDeleteCategory, DeleteCategory>();
             services.AddScoped<ICreateLanguage, CreateLanguage>();
             services.AddScoped<IUpdateLanguage, UpdateLanguage>();
             services.AddScoped<IDeleteLanguage, DeleteLanguage>();
+            services.AddScoped<ICreateCategory, CreateCategory>();
+            services.AddScoped<IUpdateCategory, UpdateCategory>();
+            services.AddScoped<IDeleteCategory, DeleteCategory>();
+            services.AddScoped<ICreateTool, CreateTool>();
+            services.AddScoped<IUpdateTool, UpdateTool>();
+            services.AddScoped<IDeleteTool, DeleteTool>();
+            services.AddScoped<IExistsByIdTool, ExistsByIdTool>();
             services.AddScoped<ICreateProject, CreateProject>();
             services.AddScoped<IUpdateProject, UpdateProject>();
             services.AddScoped<IDeleteProject, DeleteProject>();

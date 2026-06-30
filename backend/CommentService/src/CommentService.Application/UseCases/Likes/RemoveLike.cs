@@ -1,9 +1,9 @@
 using CommentService.Application.UseCases.Likes.Interfaces;
 using CommentService.Application.Interfaces;
 using CommentService.Application.Exceptions;
-using CommentService.Application.Validations.Interfaces;
 using CommentService.Domain.Entities;
 using CommentService.Application.DTOs.Request;
+using CommentService.Application.Validators.Interfaces;
 namespace CommentService.Application.UseCases.Likes
 {
     public class RemoveLike : IRemoveLike
