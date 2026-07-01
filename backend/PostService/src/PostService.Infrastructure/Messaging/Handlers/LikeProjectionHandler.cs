@@ -120,7 +120,7 @@ namespace PostService.Infrastructure.Messaging.Handlers
             var likeProjection = await likeProjectionServices.FindBy(lp => lp.TargetId == payload.TargetId && lp.UserId == payload.UserId);
             if(likeProjection == null)
             {
-                this.logger.LogWarning("Evento recebido para Like inexistente. PostId: {PostId}", payload.TargetId);
+                this.logger.LogWarning("Evento recebido para Like inexistente. ToolId: {ToolId}", payload.TargetId);
                 return;
             }
             this.logger.LogInformation("Removendo a curtida da ferramenta... ToolId: {ToolId}", payload.TargetId);

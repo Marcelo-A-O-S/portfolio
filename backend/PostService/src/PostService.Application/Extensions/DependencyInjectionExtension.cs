@@ -31,6 +31,7 @@ namespace PostService.Application.Extensions
             services.AddScoped<IToolContentServices, ToolContentServices>();
             services.AddScoped<ILanguageServices, LanguageServices>();
             services.AddScoped<IMediaProjectionServices, MediaProjectionServices>();
+            services.AddScoped<ILikeProjectionServices, LikeProjectionServices>();
 
             services.AddScoped<IUserCacheServices, UserCacheServices>();
             services.AddScoped<IPostCacheServices, PostCacheServices>();

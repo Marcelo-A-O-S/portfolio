@@ -17,6 +17,9 @@ import rehypePrettyCode from "rehype-pretty-code";
 import { transformerCopyButton } from '@rehype-pretty/transformers'
 import { rehypePrefixImageHost } from "@/lib/utils";
 import { Heart, MessageCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { InputGroup, InputGroupTextarea } from "@/components/ui/input-group";
 const hostBackend = process.env.BACKEND_SERVER!;
 type Props = {
     params: Promise<{ Id: string, language: string }>
@@ -141,6 +144,24 @@ export default async function PageById({ params }: Props) {
                                         <span>{tool.comments}</span>
                                     </button>
                                 </div>
+                            </div>
+                            <div>
+                                <form className="flex-1 flex flex-col gap-2">
+                                    <Field className="flex flex-col flex-1 min-h-0">
+                                        <InputGroup className="flex-1 min-h-0 items-stretch">
+                                            <InputGroupTextarea
+                                                placeholder="Escreva um comentário..."
+                                                className="flex-1 resize-none overflow-y-auto text-sm leading-relaxed"
+                                            />
+                                        </InputGroup>
+                                    </Field>
+                                    <div className="flex justify-end">
+                                        <Button type="submit"
+                                            className="cursor-pointer">
+                                            Post comment
+                                        </Button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                         <div className="hidden md:block md:w-full lg:w-[50%]">

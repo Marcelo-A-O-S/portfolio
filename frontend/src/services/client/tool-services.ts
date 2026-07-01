@@ -2,6 +2,7 @@ import { ToolSchema } from "@/domain/schemas/ToolSchema";
 import { apiClient } from "./api-client";
 import { ToolFilters } from "@/domain/schemas/ToolFilters";
 import { LikeSchema } from "@/domain/schemas/LikeSchema";
+import { CommentSchema } from "@/domain/schemas/CommentSchema";
 
 export const addToolService = async(tool: ToolSchema) =>{
     const api = await apiClient();
@@ -50,6 +51,22 @@ export const removeToolLike = async (data: LikeSchema) => {
     if (data.type != "Tool")
         throw new Error("Só é possivel dar curtidas em postagens de ferramentas.");
     const response = await api.delete(`/api/admin/tools/likes`, {
+        data: data
+    });
+    return response;
+}
+export const addToolComment = async(data: CommentSchema) =>{
+    const api = await apiClient();
+    if(data.type != "Tool")
+        throw new Error("Só é possivel comentar em uma postagem de ferramenta")
+    const response = await api.post(`/api/admin/tools/comments`,data);
+    return response;
+}
+export const removeToolComment = async(data: CommentSchema) =>{
+    const api = await apiClient();
+    if(data.type != "Tool")
+        throw new Error("Só é possivel comentar em uma postagem de ferramenta")
+    const response = await api.delete(`/api/admin/tools/comments`,{
         data: data
     });
     return response;

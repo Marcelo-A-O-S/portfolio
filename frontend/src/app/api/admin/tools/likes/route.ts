@@ -29,7 +29,7 @@ export async function POST(request: NextRequest){
                 status: response.status
             });
         }
-        return NextResponse.json({ message: "Ferramenta salva com sucesso!" })
+        return NextResponse.json({ message: "Curtida adicionada com sucesso!" })
     }catch(error){
         if (axios.isAxiosError<ApiErrorResponse>(error)) {
             console.log(error.response?.data);
@@ -68,7 +68,7 @@ export async function DELETE(request: NextRequest){
                 status: response.status
             });
         }
-        return NextResponse.json({ message: "Ferramenta salva com sucesso!" })
+        return NextResponse.json({ message: "Curtida removida com sucesso" })
     }catch(error){
         if (axios.isAxiosError<ApiErrorResponse>(error)) {
             console.log(error.response?.data);

@@ -1,5 +1,6 @@
 using CommentService.Domain.Entities;
-using System.Collections.Generic;
+using CommentService.Domain.Enums;
+using CommentService.Domain.Queries;
 namespace CommentService.Domain.Interfaces
 {
     public interface ICommentRepository : IGenerics<Comment>
@@ -7,5 +8,6 @@ namespace CommentService.Domain.Interfaces
         Task<List<Comment>> GetCommentsByTargetId(Guid targetId);
         Task<List<Comment>> GetCommentsByTargeIdsPage(List<Guid> targetIds);
         Task<Dictionary<Guid, int>> GetQuantityCommentsByTargeIdsPage(List<Guid> targetIds);
+        Task<PaginatedResult<CommentView>> GetCommentsPaginationByTargetAndType(Guid? authenticatedUserId, Guid targetId, CommentType type,int page, int itemsPage = 10);
     }
 }

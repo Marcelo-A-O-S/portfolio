@@ -20,7 +20,6 @@ import { useSearchParams } from "next/navigation";
 import { Image as ImageIcon } from 'lucide-react';
 import { useGetByIdTool } from "@/hooks/Tool/useGetByIdTool";
 import { toast } from "sonner";
-
 import { MediaSchema } from "@/domain/schemas/MediaSchema";
 import { addMediaService } from "@/services/client/media-services";
 export default function ToolCreatePage() {
