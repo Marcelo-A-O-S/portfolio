@@ -18,6 +18,7 @@ declare module "next-auth/jwt" {
         userId?: string;
         username?: string;
         provider?:string;
+        providerId?:string;
         expireIn?:number;
         role?:string;
         accessToken?:string;

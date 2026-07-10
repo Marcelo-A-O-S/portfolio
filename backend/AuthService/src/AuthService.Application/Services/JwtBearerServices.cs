@@ -1,3 +1,7 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using AuthService.Application.Configurations;
 using AuthService.Application.DTOs.Response;
 using AuthService.Application.Interfaces;
@@ -5,10 +9,6 @@ using AuthService.Domain.Entities;
 using AuthService.Domain.Interfaces;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 namespace AuthService.Application.Services
 {
     public class JwtBearerServices : IJwtBearerServices
@@ -18,7 +18,7 @@ namespace AuthService.Application.Services
         private readonly InternalJWTOptions jwtInternalOptions;
         private readonly JwtBearerOptions jwtBearerOptions;
         public JwtBearerServices(
-            IRefreshTokenRepository _refreshTokenRepository, 
+            IRefreshTokenRepository _refreshTokenRepository,
             IUserRepository _userRepository,
             IOptions<InternalJWTOptions> _jwtInternalOptions,
             IOptions<JwtBearerOptions> _jwtBearerOptions)
@@ -28,7 +28,7 @@ namespace AuthService.Application.Services
             this.jwtInternalOptions = _jwtInternalOptions.Value;
             this.jwtBearerOptions = _jwtBearerOptions.Value;
         }
-        public async Task<(string token, int expireIn)> GenerateAccessToken(User user)
+        public async Task<(string token, int expireIn)> GenerateAccessToken(User user, string providerId)
         {
             if (string.IsNullOrEmpty(this.jwtBearerOptions.Secret) || string.IsNullOrEmpty(this.jwtBearerOptions.Issuer))
             {
@@ -38,6 +38,7 @@ namespace AuthService.Application.Services
             claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()));
             claims.Add(new Claim(JwtRegisteredClaimNames.Name, user.Name));
             claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
+            claims.Add(new Claim("ProviderId", providerId));
             claims.Add(new Claim("Status", user.Status.ToString()));
             claims.Add(new Claim(ClaimTypes.Role, user.Role.ToString()));
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.jwtBearerOptions.Secret));
@@ -54,7 +55,7 @@ namespace AuthService.Application.Services
         }
         public async Task<string> GenerateInternalToken(List<Claim> claims)
         {
-            if(this.jwtInternalOptions == null)
+            if (this.jwtInternalOptions == null)
                 throw new Exception("Chaves jwt não configuradas corretamente.");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.jwtInternalOptions.Secret));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -90,7 +91,7 @@ namespace AuthService.Application.Services
             await this.refreshTokenRepository.Save(entity);
             return (entity, plainToken);
         }
-        public async Task<AuthResponse> RefreshAsync(Guid refreshTokenId, Guid userId, string refreshToken, string deviceId, string deviceName)
+        public async Task<AuthResponse> RefreshAsync(Guid refreshTokenId, Guid userId, string providerId, string refreshToken, string deviceId, string deviceName)
         {
             var user = await this.userRepository.GetById(userId);
             if (user == null)
@@ -116,7 +117,7 @@ namespace AuthService.Application.Services
                 throw new Exception("Refresh token reutilizado.");
             }
             var newRefresh = await this.GenerateRefreshToken(userId, deviceId, deviceName);
-            var newAccessToken = await this.GenerateAccessToken(token.User);
+            var newAccessToken = await this.GenerateAccessToken(token.User, providerId);
             return new AuthResponse
             {
                 UserId = userId,

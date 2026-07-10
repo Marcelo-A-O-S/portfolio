@@ -56,6 +56,19 @@ namespace AuthService.Infrastructure.Repositories
             };
         }
 
+        public async Task<User> GetFullById(Guid id)
+        {
+            var query =  this.context.Users
+                .AsNoTracking()
+                .AsSplitQuery()
+                .AsQueryable();
+            var item = await query
+                .Where(u => u.Id == id)
+                .Include(u => u.SocialAccounts)
+                .FirstOrDefaultAsync();
+            return item;
+        }
+
         public async Task<User> GetUserByEmail(string email)
         {
             return await this.context.Users.Where(u => u.Email == email).FirstOrDefaultAsync();

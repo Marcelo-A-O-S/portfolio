@@ -89,6 +89,7 @@ export const authOptions: AuthOptions = {
                     deviceId,
                     deviceName
                 }
+                token.providerId = account.providerAccountId;
                 token.provider = account.provider;
                 token.username = user.username;
                 const data = await loginOAuth(loginRequest);
@@ -113,7 +114,7 @@ export const authOptions: AuthOptions = {
                     maxAge: 60 * 60 * 24 * 7
                 });
             }
-            if (token.expireIn && token.userId && token.refreshTokenId) {
+            if (token.expireIn && token.userId && token.refreshTokenId && token.providerId) {
                 const buffer = 35 * 1000;
                 if (token.expireIn - buffer <= Date.now()) {
                     const cookieStore = await cookies();
@@ -121,7 +122,7 @@ export const authOptions: AuthOptions = {
                     const refreshToken = cookieStore.get("RefreshToken")?.value;
                     if (deviceId && refreshToken) {
                         const deviceName = await buildDeviceName();
-                        const response = await refreshAsync(token.refreshTokenId, token.userId, refreshToken, deviceId, deviceName)
+                        const response = await refreshAsync(token.refreshTokenId, token.userId, token.providerId, refreshToken, deviceId, deviceName)
                         console.log("Status: ", response.status);
                         if (response.status == 200 || response.status == 201) {
                             const data = await response.json();

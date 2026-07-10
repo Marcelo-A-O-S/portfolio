@@ -5,7 +5,6 @@ using PostService.Infrastructure.Messaging.Handlers.Interfaces;
 using PostService.Infrastructure.Messaging.Handlers;
 using PostService.Infrastructure.Repositories;
 using PostService.Infrastructure.Workers;
-
 namespace PostService.Infrastructure.Extensions
 {
     public static class DependencyInjectionExtension

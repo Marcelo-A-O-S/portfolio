@@ -1,5 +1,5 @@
 import { toolSchema } from "@/domain/schemas/ToolSchema";
-import { getToolByIdService } from "@/services/server/tool-services"
+import { getToolByIdService, getToolCommentsByPagination } from "@/services/server/tool-services"
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
@@ -17,9 +17,7 @@ import rehypePrettyCode from "rehype-pretty-code";
 import { transformerCopyButton } from '@rehype-pretty/transformers'
 import { rehypePrefixImageHost } from "@/lib/utils";
 import { Heart, MessageCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Field } from "@/components/ui/field";
-import { InputGroup, InputGroupTextarea } from "@/components/ui/input-group";
+import ToolComments from "../../components/tool-comments";
 const hostBackend = process.env.BACKEND_SERVER!;
 type Props = {
     params: Promise<{ Id: string, language: string }>
@@ -29,10 +27,8 @@ async function getToolOrThrow(id: string) {
     if (response.status !== 200) {
         notFound();
     }
-    console.log("Retorno: ", response.data);
     const result = await toolSchema.safeParseAsync(response.data);
     if (result.error) {
-        console.log(`Error ao validar: ${result.error.message}`);
         notFound();
     }
     return result.data;
@@ -96,40 +92,58 @@ export default async function PageById({ params }: Props) {
             return categoryContent?.name;
         })
         .filter((c): c is string => Boolean(c));
-    const result = (await unified()
-        .use(remarkParse)
-        .use(remarkGfm)
-        .use(remarkRehype, { allowDangerousHtml: true })
-        .use(rehypePrettyCode, {
-            theme: "tokyo-night",
-            transformers: [
-                transformerCopyButton({
-                    visibility: 'always',
-                    feedbackDuration: 3_000,
-                }),
-            ],
-        })
-        .use(rehypePrefixImageHost(hostBackend))
-        .use(rehypeSlug)
-        .use(rehypeAutolinkHeadings)
-        .use(rehypeStringify)
-        .process(toolContent.content)).toString()
+    const [renderedContent, commentsResponse] = await Promise.all([
+        unified()
+            .use(remarkParse)
+            .use(remarkGfm)
+            .use(remarkRehype, { allowDangerousHtml: true })
+            .use(rehypePrettyCode, {
+                theme: "tokyo-night",
+                transformers: [
+                    transformerCopyButton({
+                        visibility: 'always',
+                        feedbackDuration: 3_000,
+                    }),
+                ],
+            })
+            .use(rehypePrefixImageHost(hostBackend))
+            .use(rehypeSlug)
+            .use(rehypeAutolinkHeadings)
+            .use(rehypeStringify)
+            .process(toolContent.content)
+            .then((r) => r.toString()),
+        getToolCommentsByPagination({ targetId: Id, type: "Tool", page: 1 })
+    ])
+    const currentUser = session?.user
+        ? { id: session.user.email ?? "", name: session.user.name ?? "Usuário" }
+        : null;
     return (
         <>
-            <main className="relative mx-auto flex min-h-screen inset-0 w-screen max-w-[1440px] justify-center bg-white dark:bg-black ">
+            <main className="mx-auto flex min-h-screen w-screen max-w-[1440px] justify-center  ">
                 <MaxWidthWrapper className="prose prose-neutral dark:prose-invert px-10 py-20">
                     <div className="flex px-12 gap-8">
-                        <div className="">
-                            <h1 className="text-5xl font-bold">{toolContent.title}</h1>
-                            <div className="flex">
-                                {categories.map((name, index) => (
-                                    <Badge key={index} variant="secondary">{name}</Badge>
-                                ))}
-                            </div>
+                        <article className="prose prose-neutral dark:prose-invert max-w-none">
+                            <h1 className="text-4xl font-bold sm:text-5xl">{toolContent.title}</h1>
+                            {categories.length > 0 && (
+                                <div className="flex flex-wrap gap-2 not-prose my-4">
+                                    {categories.map((name) => (
+                                        <Badge key={name} variant="secondary">
+                                            {name}
+                                        </Badge>
+                                    ))}
+                                </div>
+                            )}
                             <div>
-                                <img src={`${hostBackend}/${tool.media?.url}`} alt={toolContent.name} className="object-cover w-full" />
+                                {tool.media?.url && (
+                                    <img
+                                        src={`${hostBackend}/${tool.media.url}`}
+                                        alt={toolContent.description ?? toolContent.title}
+                                        loading="eager"
+                                        className="w-full rounded-lg object-cover"
+                                    />
+                                )}
                             </div>
-                            <div dangerouslySetInnerHTML={{ __html: result }} />
+                            <div dangerouslySetInnerHTML={{ __html: renderedContent }} />
                             <div className="flex items-center justify-between mt-4 text-primary text-xs sm:text-sm">
                                 <div className="flex">
                                     <button
@@ -146,26 +160,14 @@ export default async function PageById({ params }: Props) {
                                 </div>
                             </div>
                             <div>
-                                <form className="flex-1 flex flex-col gap-2">
-                                    <Field className="flex flex-col flex-1 min-h-0">
-                                        <InputGroup className="flex-1 min-h-0 items-stretch">
-                                            <InputGroupTextarea
-                                                placeholder="Escreva um comentário..."
-                                                className="flex-1 resize-none overflow-y-auto text-sm leading-relaxed"
-                                            />
-                                        </InputGroup>
-                                    </Field>
-                                    <div className="flex justify-end">
-                                        <Button type="submit"
-                                            className="cursor-pointer">
-                                            Post comment
-                                        </Button>
-                                    </div>
-                                </form>
+                                <ToolComments
+                                    toolId={Id}
+                                    initialItems={commentsResponse.data.items}
+                                />
                             </div>
-                        </div>
+                        </article>
                         <div className="hidden md:block md:w-full lg:w-[50%]">
-                            <OnThisPage htmlContent={result} />
+                            <OnThisPage htmlContent={renderedContent} />
                         </div>
                     </div>
                 </MaxWidthWrapper>

@@ -12,6 +12,7 @@ namespace AuthService.Application.DTOs.Request
         public string RefreshToken {get; set;}
         [Required( ErrorMessage = "O identificador gerado para o dispositivo é obrigatório.")]
         public string DeviceId { get; set; }
+        public string ProviderId { get; set; }
         public string DeviceName { get; set; }
     }
 }

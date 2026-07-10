@@ -1,5 +1,3 @@
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace AuthService.Domain.Entities
 {
     public class RefreshToken

@@ -34,7 +34,7 @@ namespace AuthService.Application.UseCases.Auth
             await SaveUser(user);
             var socialAccount = await GetOrCreateSocial(user, loginRequest, providerData);
             await SaveSocial(socialAccount);
-            var accessData = await this.jwtBearerServices.GenerateAccessToken(user);
+            var accessData = await this.jwtBearerServices.GenerateAccessToken(user, socialAccount.ProviderId);
             var data = await this.jwtBearerServices.GenerateRefreshToken(user.Id, loginRequest.DeviceId, loginRequest.DeviceName);
             return new AuthResponse
             {

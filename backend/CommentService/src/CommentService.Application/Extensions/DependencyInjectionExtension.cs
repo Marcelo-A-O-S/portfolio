@@ -17,6 +17,7 @@ namespace CommentService.Application.Extensions
         {
             services.AddScoped<ICommentServices, CommentServices>();
             services.AddScoped<ILikeServices, LikeServices>();
+            services.AddScoped<ICommentProjectionServices, CommentProjectionServices>();
 
             services.AddScoped<IUserCacheServices, UserCacheServices>();
             services.AddScoped<IPostCacheServices, PostCacheServices>();

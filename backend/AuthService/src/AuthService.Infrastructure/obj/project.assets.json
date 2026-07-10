@@ -3483,11 +3483,11 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "c:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Application\\AuthService.Application.csproj": {
-              "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Application\\AuthService.Application.csproj"
+            "C:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Application\\AuthService.Application.csproj": {
+              "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Application\\AuthService.Application.csproj"
             },
-            "c:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Domain\\AuthService.Domain.csproj": {
-              "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Domain\\AuthService.Domain.csproj"
+            "C:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Domain\\AuthService.Domain.csproj": {
+              "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\AuthService\\src\\AuthService.Domain\\AuthService.Domain.csproj"
             }
           }
         }

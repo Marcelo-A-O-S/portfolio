@@ -23,47 +23,57 @@ namespace CommentService.Infrastructure.Repositories
         public async Task<PaginatedResult<CommentView>> GetCommentsPaginationByTargetAndType(
             Guid? authenticatedUserId, Guid targetId, CommentType type, int page, int itemsPage = 10)
         {
-            var query = this.context.Comments
+            var query = context.Comments
                 .AsNoTracking()
-                .AsSplitQuery()
-                .AsQueryable();
-            query = query
-                .Where(c => c.TargetId == targetId && c.Type == type);
-            var totalItems = await query.CountAsync();
-            var items = await query
-                .OrderByDescending(c=> c.CreatedAt)
-                .Include(c => c.ParentComment)
-                .Include(c => c.Replies)
+                .Where(c =>
+                    c.TargetId == targetId &&
+                    c.Type == type);
+            var totalItems = await query.CountAsync(c => c.ParentCommentId == null);
+            var roots = await query
+                .Where(c => c.ParentCommentId == null)
+                .OrderByDescending(c => c.CreatedAt)
                 .Skip((page - 1) * itemsPage)
                 .Take(itemsPage)
+                .ToListAsync();
+            var replies = await query
+                .Where(c => c.ParentCommentId != null)
+                .ToListAsync();
+            var all = roots
+                .Concat(replies)
                 .Select(c => new CommentView
                 {
                     Id = c.Id,
+                    ParentCommentId = c.ParentCommentId,
+                    TargetId = c.TargetId,
+                    Type = c.Type,
                     Content = c.Content,
-                    Replies = c.Replies.Select(rp => new CommentView{
-                        Id = rp.Id,
-                        Content = rp.Content,
-                        Replies = c.Replies.Select(rp => new CommentView{
-                            Id = rp.Id,
-                            Content = rp.Content,
-                        }).ToList()
-                    }).ToList()
+                    Replies = []
                 })
-                .ToListAsync();
+                .ToList();
+            var map = all.ToDictionary(c => c.Id!.Value);
+            foreach (var comment in all)
+            {
+                if (comment.ParentCommentId is Guid parentId &&
+                    map.TryGetValue(parentId, out var parent))
+                {
+                    parent.Replies.Add(comment);
+                }
+            }
+            var items = all.Where(c => c.ParentCommentId == null).ToList();
             return new PaginatedResult<CommentView>
             {
                 Items = items,
                 TotalItems = totalItems,
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling(totalItems / (double)itemsPage)
-            };  
+            };
         }
 
         public async Task<List<Comment>> GetCommentsByTargetId(Guid targetId)
         {
             return await this.context.Comments
                 .AsSplitQuery()
-                .OrderByDescending(p=> p.CreatedAt)
+                .OrderByDescending(p => p.CreatedAt)
                 .Where(c => c.TargetId == targetId)
                 .Include(c => c.ParentComment)
                 .ToListAsync();
@@ -82,7 +92,7 @@ namespace CommentService.Infrastructure.Repositories
                 .ToDictionaryAsync(
                     x => x.TargetId,
                     x => x.Count
-                );     
+                );
         }
     }
 }

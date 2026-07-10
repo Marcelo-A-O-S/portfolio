@@ -6,6 +6,8 @@ namespace CommentService.Domain.Entities
         public Guid Id { get; private set; }
         public Guid UserId { get; private set; }
         public Guid TargetId { get; private set; }
+        public Guid UserProjectionId { get; private set; }
+        public UserProjection UserProjection { get; private set; } 
         public CommentType Type { get; private set; }
         public string Content { get; private set; }
         public Guid? ParentCommentId { get; private set; }
@@ -34,6 +36,10 @@ namespace CommentService.Domain.Entities
             this.Content = content;
             this.ParentCommentId = parentCommentId;
             this.UpdatedAt = DateTime.UtcNow;
+        }
+        public void SetUserProjectionId(Guid userProjectionId)
+        {
+            this.UserProjectionId = userProjectionId;
         }
     }
 }

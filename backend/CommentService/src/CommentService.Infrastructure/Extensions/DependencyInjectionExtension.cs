@@ -6,7 +6,6 @@ using CommentService.Application.Interfaces;
 using CommentService.Infrastructure.Workers;
 using CommentService.Infrastructure.Messaging.Handlers.Interfaces;
 using CommentService.Infrastructure.Messaging.Handlers;
-
 namespace CommentService.Infrastructure.Extensions
 {
     public static class DependencyInjectionExtension
@@ -19,6 +18,8 @@ namespace CommentService.Infrastructure.Extensions
 
             services.AddScoped<ICommentRepository, CommentRepository>();
             services.AddScoped<ILikeRepository, LikeRepository>();
+            services.AddScoped<ICommentProjectionRepository, CommentProjectionRepository>();
+            services.AddScoped<IUserProjectionRepository, UserProjectionRepository>();
 
             services.AddSingleton<IRabbitMQProducer, RabbitMQProducer>();
 

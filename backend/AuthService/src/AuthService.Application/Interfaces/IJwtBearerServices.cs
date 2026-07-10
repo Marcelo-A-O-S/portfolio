@@ -6,9 +6,9 @@ namespace AuthService.Application.Interfaces
 {
     public interface IJwtBearerServices
     {
-        Task<(string token, int expireIn)> GenerateAccessToken(User user);
+        Task<(string token, int expireIn)> GenerateAccessToken(User user, string providerId);
         Task<(RefreshToken entity, string plainToken)> GenerateRefreshToken(Guid userId, string deviceId, string deviceName);
-        Task<AuthResponse> RefreshAsync(Guid refreshTokenId, Guid userId, string refreshToken, string deviceId, string deviceName);
+        Task<AuthResponse> RefreshAsync(Guid refreshTokenId, Guid userId, string providerId, string refreshToken, string deviceId, string deviceName);
         Task<string> GenerateInternalToken(List<Claim> claims);
     }
 }

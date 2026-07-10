@@ -1,9 +1,11 @@
-using CommentService.Application.UseCases.Comments.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using CommentService.Application.DTOs.Request;
-using Microsoft.AspNetCore.Authorization;
-using CommentService.Application.UseCases.Likes.Interfaces;
 using System.Security.Claims;
+using CommentService.Application.DTOs.Request;
+using CommentService.Application.Interfaces;
+using CommentService.Application.UseCases.Comments.Interfaces;
+using CommentService.Application.UseCases.Likes.Interfaces;
+using CommentService.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CommentService.API.Controllers
 {
@@ -11,6 +13,7 @@ namespace CommentService.API.Controllers
     [Route("api/[controller]")]
     public class CommentController : ControllerBase
     {
+        private readonly ICommentServices commentServices;
         private readonly IAddComment addComment;
         private readonly IUpdateComment updateComment;
         private readonly IRemoveComment removeComment;
@@ -27,7 +30,8 @@ namespace CommentService.API.Controllers
             IUpdateReply _updateReply,
             IRemoveReply _removeReply,
             IAddLike _addLike,
-            IRemoveLike _removeLike
+            IRemoveLike _removeLike,
+            ICommentServices _commentServices
         )
         {
             this.addComment = _addComment;
@@ -38,103 +42,130 @@ namespace CommentService.API.Controllers
             this.removeReply = _removeReply;
             this.addLike = _addLike;
             this.removeLike = _removeLike;
+            this.commentServices = _commentServices;
+        }
+        [HttpGet("GetByPagination")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
+        public async Task<IActionResult> GetPagination(
+            [FromQuery] int page,
+            [FromQuery] Guid targetId,
+            [FromQuery] CommentType type)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var result = await this.commentServices.GetCommentsPaginationByTargetAndType(Guid.Parse(userId), targetId, type, page);
+            return Ok(result);
         }
         [HttpPost]
-        [Authorize( Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> AddComment(CommentRequest commentRequest)
         {
             if (ModelState.IsValid)
             {
+                var providerId = User.FindFirst("ProviderId")?.Value;
+                if (providerId == null)
+                    return BadRequest(new { message = "Provider inválido." });
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if(userId == null)
-                    return Unauthorized(new { message = "Usuário não autorizado."});
-                await this.addComment.ExecuteAsync(Guid.Parse(userId), commentRequest);
-                return Ok(new { message = "Comentário adicionado com sucesso!"});
+                if (userId == null)
+                    return Unauthorized(new { message = "Usuário não autorizado." });
+                await this.addComment.ExecuteAsync(Guid.Parse(userId), providerId, commentRequest);
+                return Ok(new { message = "Comentário adicionado com sucesso!" });
             }
             var errors = ModelState.Values.Select(e => e.Errors);
             return BadRequest(errors);
         }
         [HttpPut("{Id}")]
-        [Authorize( Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
+        [Authorize(Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> UpdateComment([FromRoute] Guid Id, [FromBody] CommentRequest commentRequest)
         {
             if (ModelState.IsValid)
             {
+                var providerId = User.FindFirst("ProviderId")?.Value;
+                if (providerId == null)
+                    return BadRequest(new { message = "Provider inválido." });
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if(userId == null)
-                    return Unauthorized(new { message = "Usuário não autorizado."});
+                if (userId == null)
+                    return Unauthorized(new { message = "Usuário não autorizado." });
                 await this.updateComment.ExecuteAsync(Guid.Parse(userId), Id, commentRequest);
-                return Ok(new { message = "Comentário atualizado com sucesso!"});
+                return Ok(new { message = "Comentário atualizado com sucesso!" });
             }
             var errors = ModelState.Values.Select(e => e.Errors);
             return BadRequest(errors);
         }
         [HttpDelete("{Id}")]
-        [Authorize( Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
+        [Authorize(Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> DeleteComment([FromRoute] Guid Id)
         {
+            var providerId = User.FindFirst("ProviderId")?.Value;
+            if (providerId == null)
+                return BadRequest(new { message = "Provider inválido." });
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if(userId == null)
-                return Unauthorized(new { message = "Usuário não autorizado."});
+            if (userId == null)
+                return Unauthorized(new { message = "Usuário não autorizado." });
             await this.removeComment.ExecuteAsync(Guid.Parse(userId), Id);
-            return Ok(new { message = "Comentário deletado com sucesso!"});
+            return Ok(new { message = "Comentário deletado com sucesso!" });
         }
         [HttpPost("{Id:guid}/Reply")]
-        [Authorize( Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
+        [Authorize(Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> AddReply([FromRoute] Guid Id, [FromBody] CommentRequest commentRequest)
         {
             if (ModelState.IsValid)
             {
+                var providerId = User.FindFirst("ProviderId")?.Value;
+                if (providerId == null)
+                    return BadRequest(new { message = "Provider inválido." });
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if(userId == null)
-                    return Unauthorized(new { message = "Usuário não autorizado."});
+                if (userId == null)
+                    return Unauthorized(new { message = "Usuário não autorizado." });
                 await this.addReply.ExecuteAsync(Guid.Parse(userId), Id, commentRequest);
-                return Ok(new { message = "Comentário adicionado com sucesso!"});
+                return Ok(new { message = "Comentário adicionado com sucesso!" });
             }
             var errors = ModelState.Values.Select(e => e.Errors);
             return BadRequest(errors);
         }
         [HttpPut("{commentId:guid}/Reply/{replyId:guid}")]
-        [Authorize( Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
+        [Authorize(Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> UpdateReply([FromRoute] Guid commentId, [FromRoute] Guid replyId, [FromBody] CommentRequest commentRequest)
         {
             if (ModelState.IsValid)
             {
+                var providerId = User.FindFirst("ProviderId")?.Value;
+                if (providerId == null)
+                    return BadRequest(new { message = "Provider inválido." });
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if(userId == null)
-                    return Unauthorized(new { message = "Usuário não autorizado."});
+                if (userId == null)
+                    return Unauthorized(new { message = "Usuário não autorizado." });
                 await this.updateReply.ExecuteAsync(Guid.Parse(userId), commentId, replyId, commentRequest);
-                return Ok(new { message = "Comentário atualizado com sucesso!"});
+                return Ok(new { message = "Comentário atualizado com sucesso!" });
             }
             var errors = ModelState.Values.Select(e => e.Errors);
             return BadRequest(errors);
         }
         [HttpDelete("{commentId:guid}/Reply/{replyId:guid}")]
-        [Authorize( Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
+        [Authorize(Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> DeleteReply([FromRoute] Guid commentId, [FromRoute] Guid replyId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if(userId == null)
-                return Unauthorized(new { message = "Usuário não autorizado."});
+            if (userId == null)
+                return Unauthorized(new { message = "Usuário não autorizado." });
             await this.removeReply.ExecuteAsync(Guid.Parse(userId), commentId, replyId);
-            return Ok(new { message = "Comentário deletado com sucesso!"});
+            return Ok(new { message = "Comentário deletado com sucesso!" });
         }
         [HttpPost("Like")]
-        [Authorize( Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
+        [Authorize(Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> AddLike([FromBody] LikeRequest likeRequest)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if(userId == null)
+            if (userId == null)
                 return Unauthorized();
             await this.addLike.ExecuteAsync(Guid.Parse(userId), likeRequest);
             return Ok();
         }
         [HttpDelete("Like")]
-        [Authorize( Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
+        [Authorize(Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> RemoveLike([FromBody] LikeRequest likeRequest)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if(userId == null)
+            if (userId == null)
                 return Unauthorized();
             await this.removeLike.ExecuteAsync(Guid.Parse(userId), likeRequest);
             return Ok();

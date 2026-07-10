@@ -11,7 +11,7 @@ export function useAddCommentTool(){
         mutationFn: addToolComment,
         onSuccess: (response) =>{
             queryClient.invalidateQueries({
-                queryKey: ["tool-pagination"]
+                queryKey: ["tool-comment-pagination"]
             })
             toast.success(response.data.message);
         },

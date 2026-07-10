@@ -1,7 +1,9 @@
 using System.Linq.Expressions;
 using CommentService.Application.Interfaces;
 using CommentService.Domain.Entities;
+using CommentService.Domain.Enums;
 using CommentService.Domain.Interfaces;
+using CommentService.Domain.Queries;
 namespace CommentService.Application.Services
 {
     public class CommentServices : ICommentServices
@@ -36,9 +38,24 @@ namespace CommentService.Application.Services
             return await this.commentRepository.GetById(Id);
         }
 
+        public async Task<List<Comment>> GetCommentsByTargeIdsPage(List<Guid> targetIds)
+        {
+            return await this.commentRepository.GetCommentsByTargeIdsPage(targetIds);
+        }
+
         public async Task<List<Comment>> GetCommentsByTargetId(Guid targetId)
         {
             return await this.commentRepository.GetCommentsByTargetId(targetId);
+        }
+
+        public async Task<PaginatedResult<CommentView>> GetCommentsPaginationByTargetAndType(Guid? authenticatedUserId, Guid targetId, CommentType type, int page, int itemsPage = 10)
+        {
+            return await this.commentRepository.GetCommentsPaginationByTargetAndType(authenticatedUserId, targetId, type, page, itemsPage);
+        }
+
+        public async Task<Dictionary<Guid, int>> GetQuantityCommentsByTargeIdsPage(List<Guid> targetIds)
+        {
+            return await this.commentRepository.GetQuantityCommentsByTargeIdsPage(targetIds);
         }
 
         public async Task<List<Comment>> List()

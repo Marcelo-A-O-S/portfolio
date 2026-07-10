@@ -2,7 +2,6 @@ using System.Linq.Expressions;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
 using AuthService.Domain.Interfaces;
-
 namespace AuthService.Application.Services
 {
     public class UserServices : IUserServices
@@ -59,6 +58,11 @@ namespace AuthService.Application.Services
         public async Task<bool> Exists(Guid Id)
         {
             return await this.userRepository.Exists(Id);
+        }
+
+        public async Task<User> GetFullById(Guid id)
+        {
+            return await this.userRepository.GetFullById(id);
         }
     }
 }

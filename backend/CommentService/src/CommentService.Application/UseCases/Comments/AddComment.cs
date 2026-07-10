@@ -13,24 +13,36 @@ namespace CommentService.Application.UseCases.Comments
         private readonly ICommentCacheServices commentCacheServices;
         private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly ICommentValidationService commentValidationService;
+        private readonly IUserServicesClient userServicesClient;
+        private readonly IUserProjectionServices userProjectionServices;
         public AddComment(
             ICommentServices _commentServices,
             ICommentCacheServices _commentCacheServices,
             IRabbitMQProducer _rabbitMQProducer,
-            ICommentValidationService _commentValidationService
+            ICommentValidationService _commentValidationService,
+            IUserServicesClient _userServicesClient,
+            IUserProjectionServices _userProjectionServices
         )
         {
             this.commentServices = _commentServices;
             this.commentCacheServices = _commentCacheServices;
             this.rabbitMQProducer = _rabbitMQProducer;
             this.commentValidationService = _commentValidationService;
+            this.userServicesClient = _userServicesClient;
+            this.userProjectionServices = _userProjectionServices;
         }
-        public async Task ExecuteAsync(Guid authenticatedUserId, CommentRequest commentRequest)
+        public async Task ExecuteAsync(Guid authenticatedUserId, string providerId, CommentRequest commentRequest)
         {
             ValidateRequest(commentRequest);
             await this.commentValidationService.ValidateUserExists(authenticatedUserId);
             await this.commentValidationService.ValidateTargetExists(commentRequest.TargetId, commentRequest.Type);
             var comment = new Comment(authenticatedUserId, commentRequest.TargetId, commentRequest.Type, commentRequest.Content);
+            var user = await this.userServicesClient.GetUserAsync(authenticatedUserId, providerId);
+            if(user == null)
+                throw new ValidationException("Erro ao buscar usuário.");
+            var userProjection = new UserProjection(authenticatedUserId, user.Name, user.ProfileUrl, user.ProviderId);
+            await this.userProjectionServices.Save(userProjection);
+            comment.SetUserProjectionId(userProjection.Id);
             await this.commentServices.Save(comment);
             var type = comment.Type.ToString();
             await this.commentCacheServices.AddCommentCache($"comment:{type}:exists:{comment.Id}", comment.Id);

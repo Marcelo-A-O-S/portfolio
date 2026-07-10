@@ -8,20 +8,36 @@ namespace AuthService.API.Controllers
     public class InternalUserController : ControllerBase
     {
         private readonly IExistsByIdUser existsByIdUser;
+        private readonly IGetByIdUser getByIdUser;
         public InternalUserController(
-            IExistsByIdUser _existsByIdUser
+            IExistsByIdUser _existsByIdUser,
+            IGetByIdUser _getByIdUser
         )
         {
             this.existsByIdUser = _existsByIdUser;
+            this.getByIdUser = _getByIdUser;
         }
         [HttpGet("{Id}/exists")]
-        [Authorize(AuthenticationSchemes="InternalJwt", Policy="UsersRead")]
+        [Authorize(AuthenticationSchemes = "InternalJwt", Policy = "UsersRead")]
         public async Task<IActionResult> UserExists([FromRoute] Guid Id)
         {
             var exists = await existsByIdUser.ExecuteAsync(Id);
-            if(!exists)
+            if (!exists)
                 return NotFound();
             return Ok(exists);
+        }
+        [HttpGet("{Id}")]
+        [Authorize(AuthenticationSchemes = "InternalJwt", Policy = "UsersRead")]
+        public async Task<IActionResult> GetUser([FromRoute] Guid Id)
+        {
+            return Ok();
+        }
+        [HttpGet("{Id:guid}/provider/{ProviderId:string}")]
+        [Authorize(AuthenticationSchemes = "InternalJwt", Policy = "UsersRead")]
+        public async Task<IActionResult> GetUserById([FromRoute] Guid Id, [FromRoute] string ProviderId)
+        {
+            var user = await this.getByIdUser.ExecuteAsync(Id, ProviderId);
+            return Ok(user);
         }
     }
 }

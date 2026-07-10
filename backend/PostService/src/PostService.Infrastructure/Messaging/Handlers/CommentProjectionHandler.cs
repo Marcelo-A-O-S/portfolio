@@ -43,7 +43,7 @@ namespace PostService.Infrastructure.Messaging.Handlers
             switch (payload.Type)
             {
                 case CommentType.Post:
-                    await RemovePosCommentCount(payload);
+                    await RemovePostCommentCount (payload);
                     break;
                 case CommentType.Tool:
                     await RemoveToolCommentCount(payload);
@@ -53,7 +53,6 @@ namespace PostService.Infrastructure.Messaging.Handlers
         private async Task AddPostCommentCount(CommentEvent payload)
         {
             using var scope = this.scopeFactory.CreateScope();
-            var likeProjectionServices = scope.ServiceProvider.GetRequiredService<ILikeProjectionServices>();
             var postServices = scope.ServiceProvider.GetRequiredService<IPostServices>();
             var post = await postServices.GetById(payload.TargetId);
             if (post == null)
@@ -61,14 +60,11 @@ namespace PostService.Infrastructure.Messaging.Handlers
                 this.logger.LogWarning("Evento recebido para post inexistente. PostId: {PostId}", payload.TargetId);
                 return;
             }
-            var likeProjection = new LikeProjection(payload.TargetId, payload.UserId);
-            await likeProjectionServices.Save(likeProjection);
             await postServices.IncrementCommentCount(post.Id);
         }
-        private async Task RemovePosCommentCount(CommentEvent payload)
+        private async Task RemovePostCommentCount(CommentEvent payload)
         {
             using var scope = this.scopeFactory.CreateScope();
-            var likeProjectionServices = scope.ServiceProvider.GetRequiredService<ILikeProjectionServices>();
             var postServices = scope.ServiceProvider.GetRequiredService<IPostServices>();
             var post = await postServices.GetById(payload.TargetId);
             if (post == null)
@@ -76,19 +72,11 @@ namespace PostService.Infrastructure.Messaging.Handlers
                 this.logger.LogWarning("Evento recebido para post inexistente. PostId: {PostId}", payload.TargetId);
                 return;
             }
-            var likeProjection = await likeProjectionServices.FindBy(pl => pl.TargetId == payload.TargetId && pl.UserId == payload.UserId);
-            if (likeProjection == null)
-            {
-                this.logger.LogWarning("Evento recebido para post inexistente. PostId: {PostId}", payload.TargetId);
-                return;
-            }
-            await likeProjectionServices.Delete(likeProjection);
             await postServices.DecrementCommentCount(post.Id);
         }
         private async Task AddToolCommentCount(CommentEvent payload)
         {
             using var scope = this.scopeFactory.CreateScope();
-            var likeProjectionServices = scope.ServiceProvider.GetRequiredService<ILikeProjectionServices>();
             var toolsServices = scope.ServiceProvider.GetRequiredService<IToolsServices>();
             var tool = await toolsServices.GetById(payload.TargetId);
             if(tool == null)
@@ -96,14 +84,11 @@ namespace PostService.Infrastructure.Messaging.Handlers
                 logger.LogWarning("Evento recebido para ferramenta inexistente. ToolId: {ToolId}", payload.TargetId);
                 return;
             }
-            var likeProjection = new LikeProjection(payload.TargetId, payload.UserId);
-            await likeProjectionServices.Save(likeProjection);
             await toolsServices.IncrementCommentCount(tool.Id);
         }
         private async Task RemoveToolCommentCount(CommentEvent payload)
         {
             using var scope = this.scopeFactory.CreateScope();
-            var likeProjectionServices = scope.ServiceProvider.GetRequiredService<ILikeProjectionServices>();
             var toolsServices = scope.ServiceProvider.GetRequiredService<IToolsServices>();
             var tool = await toolsServices.GetById(payload.TargetId);
             if(tool == null)
@@ -111,13 +96,6 @@ namespace PostService.Infrastructure.Messaging.Handlers
                 logger.LogWarning("Evento recebido para ferramenta inexistente. ToolId: {ToolId}", payload.TargetId);
                 return;
             }
-            var likeProjection = await likeProjectionServices.FindBy(pl => pl.TargetId == payload.TargetId && pl.UserId == payload.UserId);
-            if (likeProjection == null)
-            {
-                this.logger.LogWarning("Evento recebido para post inexistente. PostId: {PostId}", payload.TargetId);
-                return;
-            }
-            await likeProjectionServices.Delete(likeProjection);
             await toolsServices.DecrementCommentCount(tool.Id);
         }
     }
