@@ -1,4 +1,4 @@
-namespace CommentService.Application.Interfaces
+namespace CommentService.Application.Caching.Tools
 {
     public interface IToolCacheServices
     {

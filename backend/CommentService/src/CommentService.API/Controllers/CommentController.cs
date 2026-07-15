@@ -116,7 +116,7 @@ namespace CommentService.API.Controllers
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (userId == null)
                     return Unauthorized(new { message = "Usuário não autorizado." });
-                await this.addReply.ExecuteAsync(Guid.Parse(userId), Id, commentRequest);
+                await this.addReply.ExecuteAsync(Guid.Parse(userId), providerId, Id, commentRequest);
                 return Ok(new { message = "Comentário adicionado com sucesso!" });
             }
             var errors = ModelState.Values.Select(e => e.Errors);

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CommentService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20260630044443_CreateTables")]
+    [Migration("20260715214532_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -51,12 +51,14 @@ namespace CommentService.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("UserProjectionId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ParentCommentId");
+
+                    b.HasIndex("UserProjectionId");
 
                     b.HasIndex("Type", "TargetId")
                         .IsUnique();
@@ -91,6 +93,39 @@ namespace CommentService.Infrastructure.Migrations
                     b.ToTable("Likes");
                 });
 
+            modelBuilder.Entity("CommentService.Domain.Entities.UserProjection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ProfileUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserProjections");
+                });
+
             modelBuilder.Entity("CommentService.Domain.Entities.Comment", b =>
                 {
                     b.HasOne("CommentService.Domain.Entities.Comment", "ParentComment")
@@ -98,7 +133,15 @@ namespace CommentService.Infrastructure.Migrations
                         .HasForeignKey("ParentCommentId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("CommentService.Domain.Entities.UserProjection", "UserProjection")
+                        .WithMany()
+                        .HasForeignKey("UserProjectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("ParentComment");
+
+                    b.Navigation("UserProjection");
                 });
 
             modelBuilder.Entity("CommentService.Domain.Entities.Comment", b =>

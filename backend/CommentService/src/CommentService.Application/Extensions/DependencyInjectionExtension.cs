@@ -7,6 +7,11 @@ using CommentService.Application.UseCases.Likes.Interfaces;
 using CommentService.Application.Validators.Interfaces;
 using CommentService.Application.Validators;
 using Microsoft.Extensions.DependencyInjection;
+using CommentService.Application.Caching.Users;
+using CommentService.Application.Caching.Posts;
+using CommentService.Application.Caching.Like;
+using CommentService.Application.Caching.Comment;
+using CommentService.Application.Caching.Tools;
 namespace CommentService.Application.Extensions
 {
     public static class DependencyInjectionExtension
@@ -18,6 +23,7 @@ namespace CommentService.Application.Extensions
             services.AddScoped<ICommentServices, CommentServices>();
             services.AddScoped<ILikeServices, LikeServices>();
             services.AddScoped<ICommentProjectionServices, CommentProjectionServices>();
+            services.AddScoped<IUserProjectionServices, UserProjectionServices>();
 
             services.AddScoped<IUserCacheServices, UserCacheServices>();
             services.AddScoped<IPostCacheServices, PostCacheServices>();

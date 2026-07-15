@@ -4,6 +4,6 @@ namespace CommentService.Domain.Interfaces
 {
     public interface IUserProjectionRepository : IGenerics<UserProjection>
     {
-        
+
     }
 }

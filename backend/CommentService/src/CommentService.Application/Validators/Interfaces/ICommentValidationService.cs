@@ -9,5 +9,6 @@ namespace CommentService.Application.Validators.Interfaces
         Task ValidateToolExists(Guid toolId);
         Task ValidateCommentExists(Guid commentId);
         Task ValidateReply(Guid replyId);
+        Task ValidateProviderExists(Guid userId, string providerId);
     }
 }

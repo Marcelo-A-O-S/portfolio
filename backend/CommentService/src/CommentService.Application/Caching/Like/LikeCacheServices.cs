@@ -1,5 +1,5 @@
 using CommentService.Application.Interfaces;
-namespace CommentService.Application.Services
+namespace CommentService.Application.Caching.Like
 {
     public class LikeCacheServices : ILikeCacheServices
     {

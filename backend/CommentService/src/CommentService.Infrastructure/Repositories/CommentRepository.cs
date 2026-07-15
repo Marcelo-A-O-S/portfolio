@@ -47,6 +47,12 @@ namespace CommentService.Infrastructure.Repositories
                     TargetId = c.TargetId,
                     Type = c.Type,
                     Content = c.Content,
+                    User = new UserView
+                    {
+                        Username = c.UserProjection.Username,
+                        ProfileUrl = c.UserProjection.ProfileUrl,
+                        Provider = c.UserProjection.Provider
+                    },
                     Replies = []
                 })
                 .ToList();

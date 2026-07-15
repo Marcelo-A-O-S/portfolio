@@ -4,6 +4,6 @@ namespace CommentService.Application.UseCases.Comments.Interfaces
 {
     public interface IAddReply
     {
-        Task ExecuteAsync(Guid authenticatedUserId, Guid commentId, CommentRequest commentRequest); 
+        Task ExecuteAsync(Guid authenticatedUserId, string providerId, Guid commentId, CommentRequest commentRequest); 
     }
 }

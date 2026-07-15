@@ -1,7 +1,7 @@
 using CommentService.Application.UseCases.Comments.Interfaces;
 using CommentService.Application.Interfaces;
 using CommentService.Application.DTOs.Request;
-
+using CommentService.Application.Caching.Comment;
 namespace CommentService.Application.UseCases.Comments
 {
     public class GetByTargetIdComment : IGetByTargetIdComment

@@ -1,3 +1,4 @@
+using CommentService.Application.Caching.Comment;
 using CommentService.Application.DTOs.Request;
 using CommentService.Application.Exceptions;
 using CommentService.Application.Interfaces;
@@ -32,7 +33,7 @@ namespace CommentService.Application.UseCases.Comments
             await this.commentValidationService.ValidateTargetExists(commentRequest.TargetId, commentRequest.Type);
             await this.commentValidationService.ValidateCommentExists(commentId);
             var comment = await GetComment(commentId);
-            if(comment.UserId != authenticatedUserId)
+            if(comment.UserProjection.UserId != authenticatedUserId)
                 throw new ForbiddenException("Você não pode editar este comentário.");
             if(comment.TargetId != commentRequest.TargetId)
                 throw new ValidationException("Comentário não pertence ao post informado.");
@@ -42,7 +43,6 @@ namespace CommentService.Application.UseCases.Comments
             await this.commentServices.Update(comment);
             var type = comment.Type.ToString();
             await this.commentCacheServices.AddCommentCache($"comment:{type}:exists:{comment.Id}", comment.Id);
-            
         }
         private static void ValidateRequest(CommentRequest commentRequest)
         {

@@ -8,6 +8,7 @@ namespace CommentService.Domain.Queries
         public Guid TargetId { get; set; }
         public CommentType Type { get; set; }
         public string Content { get; set; }
+        public UserView User { get; set; }
         public ICollection<CommentView> Replies { get; set; }
     }
 }

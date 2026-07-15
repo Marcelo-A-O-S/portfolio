@@ -3,7 +3,8 @@ using CommentService.Infrastructure.Messaging.Handlers.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
-using CommentService.Application.Interfaces;
+using CommentService.Application.Caching.Posts;
+using CommentService.Application.Constants;
 namespace CommentService.Infrastructure.Messaging.Handlers
 {
     public class PostEventHandler : IPostEventHandler
@@ -25,7 +26,7 @@ namespace CommentService.Infrastructure.Messaging.Handlers
                 return;
             using var scope = this.scopeFactory.CreateScope();
             var cache = scope.ServiceProvider.GetRequiredService<IPostCacheServices>();
-            await cache.RemovePostCache($"post:exists:{payload.PostId}");
+            await cache.RemovePostCache(CacheKeys.PostExists(payload.PostId));
         }
     }
 }

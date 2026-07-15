@@ -3,8 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using CommentService.Infrastructure.Messaging.Events;
-using CommentService.Application.Interfaces;
-
+using CommentService.Application.Caching.Users;
+using CommentService.Application.Constants;
 namespace CommentService.Infrastructure.Messaging.Handlers
 {
     public class UserEventHandler : IUserEventHandler
@@ -26,7 +26,7 @@ namespace CommentService.Infrastructure.Messaging.Handlers
                 return;
             using var scope = this.scopeFactory.CreateScope();
             var cache = scope.ServiceProvider.GetRequiredService<IUserCacheServices>();
-            await cache.RemoveUserCache($"user:exists:{payload.UserId}");
+            await cache.RemoveUserCache(CacheKeys.UserExists(payload.UserId));
         }
     }
 }

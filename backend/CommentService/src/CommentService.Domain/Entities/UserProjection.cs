@@ -8,6 +8,7 @@ namespace CommentService.Domain.Entities
         public string Username { get; private set; }
         public string ProfileUrl { get; private set; }
         public string ProviderId { get; private set; }
+        public string Provider { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public UserProjection(Guid userId, string username, string profileUrl, string providerId)
         {
@@ -17,6 +18,5 @@ namespace CommentService.Domain.Entities
             this.ProviderId = providerId;
             this.CreatedAt = DateTime.UtcNow;
         }
-
     }
 }

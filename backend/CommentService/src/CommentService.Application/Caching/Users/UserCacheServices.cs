@@ -1,6 +1,5 @@
 using CommentService.Application.Interfaces;
-
-namespace CommentService.Application.Services
+namespace CommentService.Application.Caching.Users
 {
     public class UserCacheServices : IUserCacheServices
     {
@@ -11,10 +10,21 @@ namespace CommentService.Application.Services
         {
             this.cacheServices = _cacheServices;
         }
+
+        public async Task AddProviderCache(string key, string providerId)
+        {
+            await this.cacheServices.SetAsync(key, providerId, TimeSpan.FromMinutes(10));
+        }
         public async Task AddUserCache(string key, Guid userId)
         {
             await this.cacheServices.SetAsync(key, userId.ToString(), TimeSpan.FromMinutes(10));
         }
+
+        public async Task<string?> GetProviderCache(string key)
+        {
+            return await this.cacheServices.GetAsync(key);
+        }
+
         public async Task<string?> GetUserCache(string key)
         {
             return await this.cacheServices.GetAsync(key);

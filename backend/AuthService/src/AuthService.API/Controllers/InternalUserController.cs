@@ -26,13 +26,19 @@ namespace AuthService.API.Controllers
                 return NotFound();
             return Ok(exists);
         }
+        [HttpGet("{userId}/provider/{providerId}/exists")]
+        [Authorize(AuthenticationSchemes = "InternalJwt", Policy = "UsersRead")]
+        public async Task<IActionResult> ProviderExists([FromRoute] Guid userId, [FromRoute] string providerId)
+        {
+            return Ok();
+        }
         [HttpGet("{Id}")]
         [Authorize(AuthenticationSchemes = "InternalJwt", Policy = "UsersRead")]
         public async Task<IActionResult> GetUser([FromRoute] Guid Id)
         {
             return Ok();
         }
-        [HttpGet("{Id:guid}/provider/{ProviderId:string}")]
+        [HttpGet("{Id:guid}/provider/{ProviderId}")]
         [Authorize(AuthenticationSchemes = "InternalJwt", Policy = "UsersRead")]
         public async Task<IActionResult> GetUserById([FromRoute] Guid Id, [FromRoute] string ProviderId)
         {

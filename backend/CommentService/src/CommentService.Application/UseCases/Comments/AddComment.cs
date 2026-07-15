@@ -1,3 +1,4 @@
+using CommentService.Application.Caching.Comment;
 using CommentService.Application.DTOs.Request;
 using CommentService.Application.Exceptions;
 using CommentService.Application.Interfaces;
@@ -34,9 +35,10 @@ namespace CommentService.Application.UseCases.Comments
         public async Task ExecuteAsync(Guid authenticatedUserId, string providerId, CommentRequest commentRequest)
         {
             ValidateRequest(commentRequest);
+            await this.commentValidationService.ValidateProviderExists(authenticatedUserId,providerId);
             await this.commentValidationService.ValidateUserExists(authenticatedUserId);
             await this.commentValidationService.ValidateTargetExists(commentRequest.TargetId, commentRequest.Type);
-            var comment = new Comment(authenticatedUserId, commentRequest.TargetId, commentRequest.Type, commentRequest.Content);
+            var comment = new Comment(commentRequest.TargetId, commentRequest.Type, commentRequest.Content);
             var user = await this.userServicesClient.GetUserAsync(authenticatedUserId, providerId);
             if(user == null)
                 throw new ValidationException("Erro ao buscar usuário.");
@@ -52,7 +54,7 @@ namespace CommentService.Application.UseCases.Comments
                 CommentId = comment.Id,
                 TargetId = comment.TargetId,
                 Type = comment.Type,
-                UserId = comment.UserId
+                UserId = comment.UserProjection.UserId
             });
         }
         private static void ValidateRequest(CommentRequest commentRequest)

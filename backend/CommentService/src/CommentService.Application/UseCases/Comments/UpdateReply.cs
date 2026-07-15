@@ -1,3 +1,4 @@
+using CommentService.Application.Caching.Comment;
 using CommentService.Application.DTOs.Request;
 using CommentService.Application.Exceptions;
 using CommentService.Application.Interfaces;
@@ -34,7 +35,7 @@ namespace CommentService.Application.UseCases.Comments
             if(comment.TargetId != commentRequest.TargetId)
                 throw new ValidationException("Comentário não pertence a publicação informada.");
             var reply = await GetReply(replyId);
-            if(reply.UserId != authenticatedUserId)
+            if(reply.UserProjection.UserId != authenticatedUserId)
                 throw new ValidationException("Você não pode editar esta resposta.");
             if(reply.ParentCommentId == null)
                 throw new ValidationException("O comentário informado não é uma resposta.");
@@ -44,7 +45,6 @@ namespace CommentService.Application.UseCases.Comments
             await this.commentServices.Update(reply);
             var type = reply.Type.ToString();
             await this.commentCacheServices.AddCommentCache($"comment:{type}:exists:{reply.Id}", reply.Id);
-            
         }
         private static void ValidateRequest(CommentRequest request)
         {

@@ -2,7 +2,10 @@ using CommentService.Domain.Enums;
 using CommentService.Application.Exceptions;
 using CommentService.Application.Interfaces;
 using CommentService.Application.Validators.Interfaces;
-
+using CommentService.Application.Caching.Users;
+using CommentService.Application.Caching.Comment;
+using CommentService.Application.Caching.Posts;
+using CommentService.Application.Caching.Tools;
 namespace CommentService.Application.Validators
 {
     public class LikeValidationService : ILikeValidationService

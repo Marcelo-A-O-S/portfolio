@@ -1,6 +1,5 @@
 using CommentService.Application.Interfaces;
-
-namespace CommentService.Application.Services
+namespace CommentService.Application.Caching.Tools
 {
     public class ToolCacheServices : IToolCacheServices
     {

@@ -4,7 +4,6 @@ namespace CommentService.Domain.Entities
     public class Comment
     {
         public Guid Id { get; private set; }
-        public Guid UserId { get; private set; }
         public Guid TargetId { get; private set; }
         public Guid UserProjectionId { get; private set; }
         public UserProjection UserProjection { get; private set; } 
@@ -16,13 +15,11 @@ namespace CommentService.Domain.Entities
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
         public Comment(
-            Guid userId,
             Guid targetId,
             CommentType type,
             string content,
             Guid? parentCommentId = null)
         {
-            this.UserId = userId;
             this.TargetId = targetId;
             this.Type = type;
             this.Content = content;

@@ -1,11 +1,9 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using CommentService.Application.DTOs.Response;
 using CommentService.Application.Exceptions;
 using CommentService.Application.Interfaces;
-using CommentService.Application.DTOs.Response;
-using CommentService.Application.DTOs.Response;
-using Microsoft.AspNetCore.Http.HttpResults;
 namespace CommentService.Infrastructure.Integrations
 {
     public class UserServicesClient : IUserServicesClient
@@ -22,11 +20,12 @@ namespace CommentService.Infrastructure.Integrations
         }
         public async Task<UserResponse> GetUserAsync(Guid userId, string providerId)
         {
-            var token = await authClient.GetToken();
+            var token = await this.authClient.GetToken();
             if (token == null)
                 throw new UnauthorizedException("Usuário não autorizado");
             var request = new HttpRequestMessage(
                 HttpMethod.Get, $"/api/InternalUser/{userId}/provider/{providerId}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await this.http.SendAsync(request);
             if (response.StatusCode == HttpStatusCode.Unauthorized)
                 throw new UnauthorizedException("Token interno inválido");
@@ -35,6 +34,25 @@ namespace CommentService.Infrastructure.Integrations
             if (response.StatusCode == HttpStatusCode.Forbidden)
                 throw new ForbiddenException("Permissões insuficientes");
             return await response.Content.ReadFromJsonAsync<UserResponse>();
+        }
+
+        public async Task<bool> ProviderExistsAsync(Guid userId, string providerId)
+        {
+            var token = await this.authClient.GetToken();
+            if (token == null)
+                throw new UnauthorizedException("Usuário não autorizado");
+            var request = new HttpRequestMessage(
+                HttpMethod.Get, $"/api/InternalUser/{userId}/provider/{providerId}/exists");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await this.http.SendAsync(request);
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+                throw new UnauthorizedException("Token interno inválido");
+            if (response.StatusCode == HttpStatusCode.NotFound)
+                return false;
+            if (response.StatusCode == HttpStatusCode.Forbidden)
+                throw new ForbiddenException("Permissões insuficientes");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<bool>();
         }
 
         public async Task<bool> UserExistsAsync(Guid userId)

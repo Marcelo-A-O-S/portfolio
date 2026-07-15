@@ -4,11 +4,11 @@ using CommentService.Application.Exceptions;
 using CommentService.Domain.Entities;
 using CommentService.Application.DTOs.Request;
 using CommentService.Application.Validators.Interfaces;
+using CommentService.Application.Caching.Like;
 namespace CommentService.Application.UseCases.Likes
 {
     public class RemoveLike : IRemoveLike
     {
-
         private readonly ILikeServices likeServices;
         private readonly ILikeCacheServices likeCacheServices;
         private readonly ILikeValidationService likeValidationService;
