@@ -25,7 +25,8 @@ namespace AuthService.Application.UseCases.InternalUser
             {
                 Name = user.Name,
                 ProviderId = account.ProviderId,
-                ProfileUrl = account.ProfileUrl
+                ProfileUrl = account.ProfileUrl,
+                Provider = account.Provider
             };
         }
     }

@@ -29,8 +29,8 @@
               "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Application\\MediaService.Application.csproj": {
                 "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Application\\MediaService.Application.csproj"
               },
-              "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\MediaService.Infrastructure.csproj": {
-                "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\MediaService.Infrastructure.csproj"
+              "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\MediaService.Infrastructure.csproj": {
+                "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\MediaService.Infrastructure.csproj"
               }
             }
           }
@@ -280,14 +280,14 @@
         }
       }
     },
-    "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\MediaService.Infrastructure.csproj": {
+    "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\MediaService.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\MediaService.Infrastructure.csproj",
+        "projectUniqueName": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\MediaService.Infrastructure.csproj",
         "projectName": "MediaService.Infrastructure",
-        "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\MediaService.Infrastructure.csproj",
+        "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\MediaService.Infrastructure.csproj",
         "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-        "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\obj\\",
+        "outputPath": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"

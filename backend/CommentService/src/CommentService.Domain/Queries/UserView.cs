@@ -2,6 +2,7 @@ namespace CommentService.Domain.Queries
 {
     public class UserView
     {
+        public Guid Id { get; set; }
         public string Username { get; set; }
         public string ProfileUrl { get; set; }
         public string Provider { get; set; }

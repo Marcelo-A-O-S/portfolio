@@ -9,13 +9,16 @@ namespace AuthService.API.Controllers
     {
         private readonly IExistsByIdUser existsByIdUser;
         private readonly IGetByIdUser getByIdUser;
+        private readonly IExistsProviderId existsProviderId;
         public InternalUserController(
             IExistsByIdUser _existsByIdUser,
-            IGetByIdUser _getByIdUser
+            IGetByIdUser _getByIdUser,
+            IExistsProviderId _existsProviderId
         )
         {
             this.existsByIdUser = _existsByIdUser;
             this.getByIdUser = _getByIdUser;
+            this.existsProviderId = _existsProviderId;
         }
         [HttpGet("{Id}/exists")]
         [Authorize(AuthenticationSchemes = "InternalJwt", Policy = "UsersRead")]
@@ -30,7 +33,10 @@ namespace AuthService.API.Controllers
         [Authorize(AuthenticationSchemes = "InternalJwt", Policy = "UsersRead")]
         public async Task<IActionResult> ProviderExists([FromRoute] Guid userId, [FromRoute] string providerId)
         {
-            return Ok();
+            var exists = await this.existsProviderId.ExecuteAsync(userId, providerId);
+            if (!exists)
+                return NotFound();
+            return Ok(exists);
         }
         [HttpGet("{Id}")]
         [Authorize(AuthenticationSchemes = "InternalJwt", Policy = "UsersRead")]

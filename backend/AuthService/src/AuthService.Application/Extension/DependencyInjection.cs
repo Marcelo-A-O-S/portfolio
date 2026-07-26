@@ -26,7 +26,9 @@ namespace AuthService.Application.Extension
             services.AddScoped<IModifyRoleUser, ModifyRoleUser>();
             services.AddScoped<ICreateToken, CreateToken>();
             services.AddScoped<ILogin, Login>();
+            services.AddScoped<IGetByIdUser, GetByIdUser>();
             services.AddScoped<IExistsByIdUser, ExistsByIdUser>();
+            services.AddScoped<IExistsProviderId, ExistsProviderId>();
             return services;
         }
     }

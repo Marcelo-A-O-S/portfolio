@@ -17,5 +17,13 @@ namespace AuthService.Infrastructure.Repositories
         {
             return await this.context.SocialAccounts.Where(s=> s.ProviderId == providerId).FirstOrDefaultAsync();
         }
+
+        public async Task<bool> VerifyProviderExists(Guid userId, string providerId)
+        {
+            var socialAccount = await this.context.SocialAccounts.Where(s => s.UserId == userId && s.ProviderId == providerId).FirstOrDefaultAsync();
+            if(socialAccount == null)
+                return false;
+            return true;
+        }
     }
 }

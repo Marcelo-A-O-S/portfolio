@@ -119,10 +119,10 @@ export default async function PageById({ params }: Props) {
         : null;
     return (
         <>
-            <main className="mx-auto flex min-h-screen w-screen max-w-[1440px] justify-center  ">
-                <MaxWidthWrapper className="prose prose-neutral dark:prose-invert px-10 py-20">
-                    <div className="flex px-12 gap-8">
-                        <article className="prose prose-neutral dark:prose-invert max-w-none">
+            <main className="mx-auto flex min-h-screen w-full max-w-[1440px] justify-center  ">
+                <MaxWidthWrapper className="prose prose-neutral dark:prose-invert px-4 md:px-10 py-20">
+                    <div className="flex md:px-12 gap-8">
+                        <article className="min-w-0 prose prose-neutral dark:prose-invert md:max-w-none">
                             <h1 className="text-4xl font-bold sm:text-5xl">{toolContent.title}</h1>
                             {categories.length > 0 && (
                                 <div className="flex flex-wrap gap-2 not-prose my-4">
@@ -139,7 +139,7 @@ export default async function PageById({ params }: Props) {
                                         src={`${hostBackend}/${tool.media.url}`}
                                         alt={toolContent.description ?? toolContent.title}
                                         loading="eager"
-                                        className="w-full rounded-lg object-cover"
+                                        className="max-w-full w-full rounded-lg object-cover"
                                     />
                                 )}
                             </div>
@@ -159,7 +159,7 @@ export default async function PageById({ params }: Props) {
                                     </button>
                                 </div>
                             </div>
-                            <div>
+                            <div className="max-w-full">
                                 <ToolComments
                                     toolId={Id}
                                     initialItems={commentsResponse.data.items}

@@ -2,7 +2,6 @@ using System.Linq.Expressions;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
 using AuthService.Domain.Interfaces;
-
 namespace AuthService.Application.Services
 {
     public class SocialAccountServices : ISocialAccountServices
@@ -41,20 +40,21 @@ namespace AuthService.Application.Services
         {
             return await this.socialAccountRepository.List();
         }
-
         public async Task<List<SocialAccount>> List(int page)
         {
             return await this.socialAccountRepository.List(page);
         }
-
         public async Task Save(SocialAccount entity)
         {
             await this.socialAccountRepository.Save(entity);
         }
-
         public async Task Update(SocialAccount entity)
         {
             await this.socialAccountRepository.Update(entity);
+        }
+        public async Task<bool> VerifyProviderExists(Guid userId, string providerId)
+        {
+            return await this.socialAccountRepository.VerifyProviderExists(userId, providerId);
         }
     }
 }

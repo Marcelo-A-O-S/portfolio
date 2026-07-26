@@ -53,6 +53,11 @@ namespace CommentService.Application.Services
             return await this.commentRepository.GetCommentsPaginationByTargetAndType(authenticatedUserId, targetId, type, page, itemsPage);
         }
 
+        public async Task<Comment> GetFullDataById(Guid id)
+        {
+            return await this.commentRepository.GetFullDataById(id);
+        }
+
         public async Task<Dictionary<Guid, int>> GetQuantityCommentsByTargeIdsPage(List<Guid> targetIds)
         {
             return await this.commentRepository.GetQuantityCommentsByTargeIdsPage(targetIds);

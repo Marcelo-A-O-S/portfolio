@@ -24,6 +24,7 @@ namespace CommentService.Infrastructure.Repositories
             Guid? authenticatedUserId, Guid targetId, CommentType type, int page, int itemsPage = 10)
         {
             var query = context.Comments
+                .Include(c => c.UserProjection)
                 .AsNoTracking()
                 .Where(c =>
                     c.TargetId == targetId &&
@@ -43,12 +44,13 @@ namespace CommentService.Infrastructure.Repositories
                 .Select(c => new CommentView
                 {
                     Id = c.Id,
-                    ParentCommentId = c.ParentCommentId,
                     TargetId = c.TargetId,
                     Type = c.Type,
                     Content = c.Content,
+                    CreatedAt = c.CreatedAt,
                     User = new UserView
                     {
+                        Id = c.UserProjection.UserId,
                         Username = c.UserProjection.Username,
                         ProfileUrl = c.UserProjection.ProfileUrl,
                         Provider = c.UserProjection.Provider
@@ -99,6 +101,13 @@ namespace CommentService.Infrastructure.Repositories
                     x => x.TargetId,
                     x => x.Count
                 );
+        }
+        public async Task<Comment> GetFullDataById(Guid id)
+        {
+            return await this.context.Comments
+                .Where(c => c.Id == id)
+                .Include(c => c.UserProjection)
+                .FirstOrDefaultAsync();
         }
     }
 }

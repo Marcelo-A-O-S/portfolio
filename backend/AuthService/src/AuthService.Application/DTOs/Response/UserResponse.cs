@@ -6,5 +6,6 @@ namespace AuthService.Application.DTOs.Response
         public string Name { get; set; }
         public string ProfileUrl { get; set; }
         public string ProviderId { get; set; }
+        public string Provider { get; set; }
     }
 }

@@ -56,28 +56,66 @@ export const removeToolLike = async (data: LikeSchema) => {
     });
     return response;
 }
-export const addToolComment = async(data: CommentSchema) =>{
+export const addToolComment = async (data: CommentSchema) => {
     const api = await apiServer();
-    if(data.type != "Tool")
+    if (data.type != "Tool")
         throw new Error("Só é possivel comentar em uma postagem de ferramenta")
-    const response = await api.post(`/api/Comment`,data);
+    const response = await api.post(`/api/Comment`, data);
     return response;
 }
-export const removeToolComment = async(data: CommentSchema) =>{
+export const updateToolComment = async (id: string, data: CommentSchema) => {
     const api = await apiServer();
-    if(data.type != "Tool")
+    if (data.type != "Tool")
         throw new Error("Só é possivel comentar em uma postagem de ferramenta")
-    const response = await api.delete(`/api/Comment`,{
+    console.log("Enviando para o backend: ", data);
+    const response = await api.put(`/api/Comment/${id}`, data);
+    return response;
+}
+export const removeToolCommentById = async (id: string, data: CommentSchema) => {
+    const api = await apiServer();
+    if (data.type != "Tool")
+        throw new Error("Só é possivel comentar em uma postagem de ferramenta")
+    const response = await api.delete(`/api/Comment/${id}`);
+    return response;
+}
+export const removeToolComment = async (data: CommentSchema) => {
+    const api = await apiServer();
+    if (data.type != "Tool")
+        throw new Error("Só é possivel comentar em uma postagem de ferramenta")
+    const response = await api.delete(`/api/Comment`, {
         data: data
     });
     return response;
 }
-export const getToolCommentsByPagination = async(filters: CommentFilters) => {
+export const addToolReply = async (ownerId: string, data: CommentSchema) => {
+    const api = await apiServer();
+    if (data.type != "Tool")
+        throw new Error("Só é possivel responder em uma postagem de ferramenta")
+    const response = await api.post(`/api/Comment/${ownerId}/Reply`, data);
+    return response;
+}
+export const updateToolReply = async (ownerId: string, id:string, data: CommentSchema) => {
+    const api = await apiServer();
+    if (data.type != "Tool")
+        throw new Error("Só é possivel responder em uma postagem de ferramenta")
+    const response = await api.put(`/api/Comment/${ownerId}/Reply/${id}`, data);
+    return response;
+}
+export const deleteToolReply = async (ownerId: string, id:string, data: CommentSchema) => {
+    const api = await apiServer();
+    if (data.type != "Tool")
+        throw new Error("Só é possivel responder em uma postagem de ferramenta")
+    const response = await api.delete(`/api/Comment/${ownerId}/Reply/${id}`, {
+        data: data
+    });
+    return response;
+}
+export const getToolCommentsByPagination = async (filters: CommentFilters) => {
     const api = await apiServer();
     const params = new URLSearchParams();
     params.append("page", filters.page.toString());
     params.append("targetId", filters.targetId.toString());
-    if(filters.type != "Tool")
+    if (filters.type != "Tool")
         throw new Error("Só é possivel buscar comentários de uma postagem de ferramenta");
     params.append("type", filters.type.toString());
     const response = await api.get(`/api/Comment/GetByPagination?${params}`);

@@ -43,7 +43,7 @@ namespace CommentService.Application.UseCases.Comments
                 throw new ValidationException("Comentário não pertence ao post informado.");
             var reply = new Comment(commentRequest.TargetId, commentRequest.Type, commentRequest.Content, comment.Id);
             var user = await this.userServicesClient.GetUserAsync(authenticatedUserId, providerId);
-            var userProjection = new UserProjection(authenticatedUserId, user.Name, user.ProfileUrl, user.ProviderId);
+            var userProjection = new UserProjection(authenticatedUserId, user.Name, user.ProfileUrl, user.ProviderId, user.Provider);
             await this.userProjectionServices.Save(userProjection);
             reply.SetUserProjectionId(userProjection.Id);
             await this.commentServices.Save(reply);

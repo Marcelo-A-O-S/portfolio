@@ -135,7 +135,7 @@ export default function Navbar({session}:NavbarProps) {
                 style={{
                     clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)"
                 }}
-                className={`fixed mx-auto inset-0 w-screen max-w-[1440px] h-svh z-10 bg-white dark:bg-black`}>
+                className={`fixed mx-auto inset-0 w-full max-w-[1440px] h-svh z-10 bg-white dark:bg-black`}>
                 <div ref={menuContentRef} id="menu-content" className="relative w-full h-full flex justify-center items-center origin-bottom-left will-change-transform">
                     <div id="menu-items" className="w-full p-10 flex gap-10">
                         <div id="col-preview" className="flex-3 flex justify-center items-center">

@@ -57,7 +57,7 @@ export function rehypePrefixImageHost(host: string) {
           node.properties?.src &&
           typeof node.properties.src === "string"
         ) {
-          node.properties.class = "object-cover w-full"
+          node.properties.class = "max-w-full w-full object-cover"
           node.properties.src = `${host}/${node.properties.src}`;
         }
       })

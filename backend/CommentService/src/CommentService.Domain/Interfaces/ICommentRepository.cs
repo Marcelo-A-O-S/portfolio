@@ -9,5 +9,6 @@ namespace CommentService.Domain.Interfaces
         Task<List<Comment>> GetCommentsByTargeIdsPage(List<Guid> targetIds);
         Task<Dictionary<Guid, int>> GetQuantityCommentsByTargeIdsPage(List<Guid> targetIds);
         Task<PaginatedResult<CommentView>> GetCommentsPaginationByTargetAndType(Guid? authenticatedUserId, Guid targetId, CommentType type,int page, int itemsPage = 10);
+        Task<Comment> GetFullDataById(Guid id);
     }
 }

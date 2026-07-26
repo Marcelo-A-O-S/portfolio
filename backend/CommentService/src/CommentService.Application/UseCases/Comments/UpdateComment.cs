@@ -55,7 +55,7 @@ namespace CommentService.Application.UseCases.Comments
         }
         private async Task<Comment> GetComment(Guid commentId)
         {
-            var comment = await commentServices.GetById(commentId);
+            var comment = await this.commentServices.GetFullDataById(commentId);
             if(comment == null)
                 throw new NotFoundException("Comentário não encontrado");
             return comment;
