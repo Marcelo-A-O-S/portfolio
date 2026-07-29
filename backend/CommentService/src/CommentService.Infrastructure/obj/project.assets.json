@@ -3144,11 +3144,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Infrastructure\\CommentService.Infrastructure.csproj",
+      "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Infrastructure\\CommentService.Infrastructure.csproj",
       "projectName": "CommentService.Infrastructure",
-      "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Infrastructure\\CommentService.Infrastructure.csproj",
+      "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Infrastructure\\CommentService.Infrastructure.csproj",
       "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-      "outputPath": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Infrastructure\\obj\\",
+      "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Infrastructure\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"

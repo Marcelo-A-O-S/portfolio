@@ -44,6 +44,7 @@ namespace CommentService.Infrastructure.Repositories
                 .Select(c => new CommentView
                 {
                     Id = c.Id,
+                    ParentCommentId = c.ParentCommentId,
                     TargetId = c.TargetId,
                     Type = c.Type,
                     Content = c.Content,

@@ -10,12 +10,18 @@ import DeleteConfirm from "./tool-comment-delete";
 import EditCommentForm from "./tool-comment-edit";
 import CommentHeader from "./tool-comment-header";
 import ReplyForm from "./tool-reply-form";
+import { useAddReplyTool } from "@/hooks/Tool/useAddReplyTool";
+import { useAddLikeTool } from "@/hooks/Tool/useAddLikeTool";
+import { useRemoveLikeTool } from "@/hooks/Tool/useRemoveLikeTool";
 
 export default function CommentItem({ comment, toolId }: { comment: CommentSchema; toolId: string }) {
     const { data: currentUser } = useSession()
     const { mutateAsync: updateCommentTool, isPending: isUpdating } = useUpdateCommentTool()
     const { mutateAsync: deleteCommentTool, isPending: isDeleting } = useDeleteCommentTool()
-    const { mutateAsync: addCommentTool, isPending: isReplying } = useAddCommentTool()
+    const { mutateAsync: addCommentTool, isPending: isCommenting } = useAddCommentTool()
+    const { mutateAsync: addReplyTool, isPending: isReplying } = useAddReplyTool();
+    const { mutateAsync: addLike, isPending: isAdding } = useAddLikeTool();
+    const { mutateAsync: removeLike, isPending: isRemoving } = useRemoveLikeTool();
 
     const [isEditing, setIsEditing] = useState(false)
     const [isDeletingConfirm, setIsDeletingConfirm] = useState(false)
@@ -24,9 +30,45 @@ export default function CommentItem({ comment, toolId }: { comment: CommentSchem
 
     const isOwner = currentUser?.user?.id === comment.user?.id
     const replies = comment.replies ?? []
+    // const handleLike = async () => {
+    //     if(item.liked){
+    //         await removeLike({
+    //             targetId: toolId,
+    //             type: "Tool"
+    //         });
+    //     }else{
+    //         await addLike({
+    //             targetId: toolId,
+    //             type: "Tool"
+    //         });
+    //     }
+    // }
     return (
         <li className="border px-6 py-4 rounded-lg w-full">
-            <CommentHeader comment={comment} />
+            <div className="flex justify-between items-center">
+                <CommentHeader comment={comment} />
+                <div className="flex gap-4 flex-col md:flex-row">
+                    {isOwner && !isEditing && (
+                        <>
+                            <button
+                                type="button"
+                                className="flex items-center gap-1 hover:opacity-70 text-sm"
+                                onClick={() => setIsEditing(true)}
+                            >
+                                <Pencil size={14} /> Editar
+                            </button>
+                            <button
+                                type="button"
+                                className="flex items-center gap-1 text-red-600 hover:opacity-70 text-sm"
+                                onClick={() => setIsDeletingConfirm(true)}
+                            >
+                                <Trash2 size={14} /> Excluir
+                            </button>
+                        </>
+                    )}
+                </div>
+            </div>
+
             {isEditing ? (
                 <EditCommentForm
                     comment={comment}
@@ -81,26 +123,7 @@ export default function CommentItem({ comment, toolId }: { comment: CommentSchem
                         </button>
                     )}
                 </div>
-                <div className="flex gap-4">
-                    {isOwner && !isEditing && (
-                        <>
-                            <button
-                                type="button"
-                                className="flex items-center gap-1 hover:opacity-70"
-                                onClick={() => setIsEditing(true)}
-                            >
-                                <Pencil size={14} /> Editar
-                            </button>
-                            <button
-                                type="button"
-                                className="flex items-center gap-1 text-red-600 hover:opacity-70"
-                                onClick={() => setIsDeletingConfirm(true)}
-                            >
-                                <Trash2 size={14} /> Excluir
-                            </button>
-                        </>
-                    )}
-                </div>
+
             </div>
             {isReplyFormOpen && (
                 <ReplyForm
@@ -109,11 +132,14 @@ export default function CommentItem({ comment, toolId }: { comment: CommentSchem
                     isSaving={isReplying}
                     onCancel={() => setIsReplyFormOpen(false)}
                     onSave={async (content) => {
-                        await addCommentTool({
-                            content,
-                            targetId: toolId,
-                            type: "Tool",
-                            parentCommentId: comment.id!,
+                        await addReplyTool({
+                            ownerId: comment.id!,
+                            reply: {
+                                content,
+                                targetId: toolId,
+                                type: "Tool",
+                                parentCommentId: comment.id!,
+                            }
                         })
                         setIsReplyFormOpen(false)
                         setShowReplies(true)
@@ -121,7 +147,7 @@ export default function CommentItem({ comment, toolId }: { comment: CommentSchem
                 />
             )}
             {showReplies && replies.length > 0 && (
-                <ul className="flex flex-col gap-3 mt-4 pl-6 border-l list-none">
+                <ul className="flex flex-col gap-3 mt-3 pl-4 border-l border-muted-foreground/20 list-none">
                     {replies.map((reply) => (
                         <ReplyItem key={reply.id} reply={reply} toolId={toolId} commentId={comment.id!} />
                     ))}

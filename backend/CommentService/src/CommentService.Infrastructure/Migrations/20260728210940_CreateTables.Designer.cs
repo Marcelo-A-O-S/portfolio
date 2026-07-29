@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CommentService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20260715214532_CreateTables")]
+    [Migration("20260728210940_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -60,8 +60,7 @@ namespace CommentService.Infrastructure.Migrations
 
                     b.HasIndex("UserProjectionId");
 
-                    b.HasIndex("Type", "TargetId")
-                        .IsUnique();
+                    b.HasIndex("Type", "TargetId");
 
                     b.ToTable("Comments");
                 });

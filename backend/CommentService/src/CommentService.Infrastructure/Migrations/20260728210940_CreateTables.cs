@@ -81,8 +81,7 @@ namespace CommentService.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_Type_TargetId",
                 table: "Comments",
-                columns: new[] { "Type", "TargetId" },
-                unique: true);
+                columns: new[] { "Type", "TargetId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_UserProjectionId",

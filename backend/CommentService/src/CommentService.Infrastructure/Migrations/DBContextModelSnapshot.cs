@@ -57,8 +57,7 @@ namespace CommentService.Infrastructure.Migrations
 
                     b.HasIndex("UserProjectionId");
 
-                    b.HasIndex("Type", "TargetId")
-                        .IsUnique();
+                    b.HasIndex("Type", "TargetId");
 
                     b.ToTable("Comments");
                 });
