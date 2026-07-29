@@ -110,6 +110,22 @@ export const deleteToolReply = async (ownerId: string, id:string, data: CommentS
     });
     return response;
 }
+export const addToolCommentLike = async(data: LikeSchema) => {
+    const api = await apiServer();
+    if (data.type != "Comment")
+        throw new Error("Só é possivel dar curtidas nos comentários da ferramenta.");
+    const response = await api.post(`/api/Like`, data);
+    return response;
+}
+export const removeToolCommentLike = async(data: LikeSchema) => {
+    const api = await apiServer();
+    if (data.type != "Comment")
+        throw new Error("Só é possivel dar curtidas nos comentários da ferramenta.");
+    const response = await api.delete(`/api/Like`, {
+        data: data
+    });
+    return response;
+}
 export const getToolCommentsByPagination = async (filters: CommentFilters) => {
     const api = await apiServer();
     const params = new URLSearchParams();

@@ -5,14 +5,14 @@ import { useUpdateCommentTool } from "@/hooks/Tool/useUpdateCommentTool";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import ReplyItem from "./tool-reply-item";
-import { ChevronDown, ChevronUp, MessageSquare, Pencil, ThumbsUp, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Heart, MessageSquare, Pencil, ThumbsUp, Trash2 } from "lucide-react";
 import DeleteConfirm from "./tool-comment-delete";
 import EditCommentForm from "./tool-comment-edit";
 import CommentHeader from "./tool-comment-header";
 import ReplyForm from "./tool-reply-form";
 import { useAddReplyTool } from "@/hooks/Tool/useAddReplyTool";
-import { useAddLikeTool } from "@/hooks/Tool/useAddLikeTool";
-import { useRemoveLikeTool } from "@/hooks/Tool/useRemoveLikeTool";
+import { useAddLikeCommentTool } from "@/hooks/Tool/useAddLikeCommentTool";
+import { useRemoveLikeCommentTool } from "@/hooks/Tool/useRemoveLikeCommentTool";
 
 export default function CommentItem({ comment, toolId }: { comment: CommentSchema; toolId: string }) {
     const { data: currentUser } = useSession()
@@ -20,29 +20,30 @@ export default function CommentItem({ comment, toolId }: { comment: CommentSchem
     const { mutateAsync: deleteCommentTool, isPending: isDeleting } = useDeleteCommentTool()
     const { mutateAsync: addCommentTool, isPending: isCommenting } = useAddCommentTool()
     const { mutateAsync: addReplyTool, isPending: isReplying } = useAddReplyTool();
-    const { mutateAsync: addLike, isPending: isAdding } = useAddLikeTool();
-    const { mutateAsync: removeLike, isPending: isRemoving } = useRemoveLikeTool();
+    const { mutateAsync: addLike, isPending: isAdding } = useAddLikeCommentTool();
+    const { mutateAsync: removeLike, isPending: isRemoving } = useRemoveLikeCommentTool();
 
     const [isEditing, setIsEditing] = useState(false)
     const [isDeletingConfirm, setIsDeletingConfirm] = useState(false)
     const [isReplyFormOpen, setIsReplyFormOpen] = useState(false)
     const [showReplies, setShowReplies] = useState(true)
 
+    const loading = isAdding || isRemoving;
     const isOwner = currentUser?.user?.id === comment.user?.id
     const replies = comment.replies ?? []
-    // const handleLike = async () => {
-    //     if(item.liked){
-    //         await removeLike({
-    //             targetId: toolId,
-    //             type: "Tool"
-    //         });
-    //     }else{
-    //         await addLike({
-    //             targetId: toolId,
-    //             type: "Tool"
-    //         });
-    //     }
-    // }
+    const handleLike = async () => {
+        if (comment.liked) {
+            await removeLike({
+                targetId: comment.id!,
+                type: "Comment"
+            });
+        } else {
+            await addLike({
+                targetId: comment.id!,
+                type: "Comment"
+            });
+        }
+    }
     return (
         <li className="border px-6 py-4 rounded-lg w-full">
             <div className="flex justify-between items-center">
@@ -102,8 +103,14 @@ export default function CommentItem({ comment, toolId }: { comment: CommentSchem
             )}
             <div className="flex justify-between items-center text-sm mb-2">
                 <div className="flex gap-4">
-                    <button type="button" className="flex items-center gap-1 hover:opacity-70">
-                        <ThumbsUp size={16} /> Curtir
+                    <button
+                        disabled={loading}
+                        onClick={handleLike}
+                        className="flex items-center space-x-1 p-2 rounded-full cursor-pointer">
+                        <Heart
+                            size={16} className={comment.liked ? "fill-current" : ""}
+                        />
+                        <span>{comment.likes}</span>
                     </button>
                     <button
                         type="button"

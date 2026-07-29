@@ -13,12 +13,14 @@ namespace CommentService.Application.UseCases.Comments
         private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly ICommentValidationService commentValidationService;
         private readonly IUserProjectionServices userProjectionServices;
+        private readonly ILikeServices likeServices;
         public RemoveComment(
             ICommentServices _commentServices,
             ICommentCacheServices _commentCacheServices,
             IRabbitMQProducer _rabbitMQProducer,
             ICommentValidationService _commentValidationService,
-            IUserProjectionServices _userProjectionServices
+            IUserProjectionServices _userProjectionServices,
+            ILikeServices _likeServices
         )
         {
             this.commentServices = _commentServices;
@@ -26,6 +28,7 @@ namespace CommentService.Application.UseCases.Comments
             this.rabbitMQProducer = _rabbitMQProducer;
             this.commentValidationService = _commentValidationService;
             this.userProjectionServices = _userProjectionServices;
+            this.likeServices = _likeServices;
         }
         public async Task ExecuteAsync(Guid authenticatedUserId, Guid commentId)
         {
@@ -36,6 +39,7 @@ namespace CommentService.Application.UseCases.Comments
             var userProjection = await this.userProjectionServices.GetById(comment.UserProjectionId);
             await this.commentServices.DeleteById(commentId);
             await this.userProjectionServices.DeleteById(userProjection.Id);
+            await this.likeServices.DeleteByCommentId(commentId);
             var type = comment.Type.ToString();
             await this.commentCacheServices.RemoveCommentCache($"comment:{type}:exists:{commentId}");
             await this.rabbitMQProducer.Publish($"{type}CommentDeleted",

@@ -7,22 +7,39 @@ import { useState } from "react";
 import CommentHeader from "./tool-comment-header";
 import DeleteConfirm from "./tool-comment-delete";
 import EditCommentForm from "./tool-comment-edit";
-import { ChevronDown, ChevronUp, MessageSquare, Pencil, ThumbsUp, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Heart, MessageSquare, Pencil, Trash2 } from "lucide-react";
 import ReplyForm from "./tool-reply-form";
-
+import { useAddLikeCommentTool } from "@/hooks/Tool/useAddLikeCommentTool";
+import { useRemoveLikeCommentTool } from "@/hooks/Tool/useRemoveLikeCommentTool";
 export default function ReplyItem({ reply, toolId, commentId }: { reply: CommentSchema; toolId: string, commentId: string }) {
     const { data: currentUser } = useSession()
     const { mutateAsync: addReplyTool, isPending: isReplying } = useAddReplyTool();
     const { mutateAsync: updateReplyTool, isPending: isUpdating } = useUpdateReplyTool();
     const { mutateAsync: deleteReplyTool, isPending: isDeleting } = useDeleteReplyTool();
+    const { mutateAsync: addLike, isPending: isAdding } = useAddLikeCommentTool();
+    const { mutateAsync: removeLike, isPending: isRemoving } = useRemoveLikeCommentTool();
 
     const [isEditing, setIsEditing] = useState(false)
     const [isDeletingConfirm, setIsDeletingConfirm] = useState(false)
     const [isReplyFormOpen, setIsReplyFormOpen] = useState(false)
     const [showReplies, setShowReplies] = useState(true)
 
+    const loading = isAdding || isRemoving;
     const isOwner = currentUser?.user?.id === reply.user?.id
     const replies = reply.replies ?? []
+    const handleLike = async () => {
+        if (reply.liked) {
+            await removeLike({
+                targetId: reply.id!,
+                type: "Comment"
+            });
+        } else {
+            await addLike({
+                targetId: reply.id!,
+                type: "Comment"
+            });
+        }
+    }
     return (
         <li className="pt-3">
             <div className="flex justify-between items-center">
@@ -90,8 +107,14 @@ export default function ReplyItem({ reply, toolId, commentId }: { reply: Comment
             )}
             <div className="flex justify-between items-center text-sm mb-2">
                 <div className="flex gap-4">
-                    <button type="button" className="flex items-center gap-1 hover:opacity-70">
-                        <ThumbsUp size={16} /> Curtir
+                    <button
+                        disabled={loading}
+                        onClick={handleLike}
+                        className="flex items-center space-x-1 p-2 rounded-full cursor-pointer">
+                        <Heart
+                            size={16} className={reply.liked ? "fill-current" : ""}
+                        />
+                        <span>{reply.likes}</span>
                     </button>
                     <button
                         type="button"

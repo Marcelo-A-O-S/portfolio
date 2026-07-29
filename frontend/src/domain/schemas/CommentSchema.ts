@@ -1,13 +1,15 @@
 import z from "zod";
 import { userSchema } from "./UserSchema";
-export const commentTypeSchema = z.enum(["Post","Tool","Blog","Certificate"])
+export const commentTypeSchema = z.enum(["Post", "Tool", "Blog", "Certificate"])
 const commentBaseSchema = z.object({
     id: z.uuid().optional(),
     targetId: z.uuid(),
     type: commentTypeSchema,
     content: z.string({}),
     user: userSchema.optional(),
-    createdAt: z.string().optional()
+    createdAt: z.string().optional(),
+    likes: z.number().optional(),
+    liked: z.boolean().optional()
 })
 export const commentSchema = commentBaseSchema.extend({
     parentCommentId: z.uuid().optional().nullable(),

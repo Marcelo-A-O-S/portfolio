@@ -48,6 +48,11 @@ namespace CommentService.Infrastructure.Repositories
                     TargetId = c.TargetId,
                     Type = c.Type,
                     Content = c.Content,
+                    Likes = this.context.Likes.Count(l =>
+                                l.TargetId == c.Id),
+                    Liked = this.context.Likes.Any(l =>
+                                l.TargetId == c.Id &&
+                                l.UserId == authenticatedUserId),
                     CreatedAt = c.CreatedAt,
                     User = new UserView
                     {

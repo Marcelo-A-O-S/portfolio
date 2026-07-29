@@ -16,6 +16,11 @@ namespace CommentService.Application.Services
             await this.likeRepository.Delete(entity);
         }
 
+        public async Task DeleteByCommentId(Guid commentId)
+        {
+            await this.likeRepository.DeleteByCommentId(commentId);
+        }
+
         public async Task DeleteById(Guid Id)
         {
             await this.likeRepository.DeleteById(Id);

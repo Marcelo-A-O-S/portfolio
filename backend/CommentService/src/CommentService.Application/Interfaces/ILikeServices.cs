@@ -4,6 +4,6 @@ namespace CommentService.Application.Interfaces
 {
     public interface ILikeServices : IServices<Like>
     {
-        
+        Task DeleteByCommentId(Guid commentId);
     }
 }
