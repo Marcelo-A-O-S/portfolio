@@ -6,11 +6,14 @@ namespace CommentService.Domain.Queries
         public Guid? Id { get; set; }
         public Guid? ParentCommentId { get; set; }
         public Guid TargetId { get; set; }
-        public CommentType Type { get; set; }
+        
         public string Content { get; set; }
         public UserView User { get; set; }
         public bool Liked { get; set; }
         public int Likes { get; set; }
+        public CommentType Type { get; set; }
+        public CommentStatus CommentStatus { get;  set; }
+        public CommentDeletionType CommentDeletion { get;  set; }
         public DateTime CreatedAt { get; set; }
         public ICollection<CommentView> Replies { get; set; }
     }

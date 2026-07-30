@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ZIrBVZcNfM0=",
+  "dgSpecHash": "hCbLwO0/nBw=",
   "success": true,
-  "projectFilePath": "c:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\PostService.Domain.csproj",
+  "projectFilePath": "C:\\Backup\\Projetos\\portfolio\\backend\\PostService\\src\\PostService.Domain\\PostService.Domain.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\marce\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.25\\microsoft.netcore.app.ref.8.0.25.nupkg.sha512",
     "C:\\Users\\marce\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.25\\microsoft.windowsdesktop.app.ref.8.0.25.nupkg.sha512",

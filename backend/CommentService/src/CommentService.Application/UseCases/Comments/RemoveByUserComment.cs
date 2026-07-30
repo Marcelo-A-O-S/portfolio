@@ -1,34 +1,24 @@
-using CommentService.Application.Caching.Comment;
-using CommentService.Application.Exceptions;
-using CommentService.Application.Interfaces;
 using CommentService.Application.UseCases.Comments.Interfaces;
+using CommentService.Application.Interfaces;
 using CommentService.Application.Validators.Interfaces;
+using CommentService.Application.Exceptions;
 using CommentService.Domain.Entities;
 namespace CommentService.Application.UseCases.Comments
 {
-    public class RemoveComment : IRemoveComment
+    public class RemoveByUserComment : IRemoveByUserComment
     {
         private readonly ICommentServices commentServices;
-        private readonly ICommentCacheServices commentCacheServices;
         private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly ICommentValidationService commentValidationService;
-        private readonly IUserProjectionServices userProjectionServices;
-        private readonly ILikeServices likeServices;
-        public RemoveComment(
+        public RemoveByUserComment(
             ICommentServices _commentServices,
-            ICommentCacheServices _commentCacheServices,
             IRabbitMQProducer _rabbitMQProducer,
-            ICommentValidationService _commentValidationService,
-            IUserProjectionServices _userProjectionServices,
-            ILikeServices _likeServices
+            ICommentValidationService _commentValidationService
         )
         {
             this.commentServices = _commentServices;
-            this.commentCacheServices = _commentCacheServices;
             this.rabbitMQProducer = _rabbitMQProducer;
             this.commentValidationService = _commentValidationService;
-            this.userProjectionServices = _userProjectionServices;
-            this.likeServices = _likeServices;
         }
         public async Task ExecuteAsync(Guid authenticatedUserId, Guid commentId)
         {
@@ -36,12 +26,9 @@ namespace CommentService.Application.UseCases.Comments
             var comment = await GetComment(commentId);
             if(comment.UserProjection.UserId != authenticatedUserId)
                 throw new ValidationException("Você não pode remover este comentário.");
-            var userProjection = await this.userProjectionServices.GetById(comment.UserProjectionId);
-            await this.commentServices.DeleteById(commentId);
-            await this.userProjectionServices.DeleteById(userProjection.Id);
-            await this.likeServices.DeleteByCommentId(commentId);
+            comment.DeleteByUser();
+            await this.commentServices.Update(comment);
             var type = comment.Type.ToString();
-            await this.commentCacheServices.RemoveCommentCache($"comment:{type}:exists:{commentId}");
             await this.rabbitMQProducer.Publish($"{type}CommentDeleted",
             new
             {

@@ -37,11 +37,14 @@ namespace CommentService.Application.Extensions
             services.AddScoped<IAddComment, AddComment>();
             services.AddScoped<IRemoveComment, RemoveComment>();
             services.AddScoped<IUpdateComment, UpdateComment>();
+            services.AddScoped<IRemoveByUserComment, RemoveByUserComment>();
             services.AddScoped<IAddReply, AddReply>();
             services.AddScoped<IRemoveReply, RemoveReply>();
             services.AddScoped<IUpdateReply, UpdateReply>();
+            services.AddScoped<IRemoveByUserReply, RemoveByUserReply>();
             services.AddScoped<IAddLike, AddLike>();
             services.AddScoped<IRemoveLike, RemoveLike>();
+            
             return services;
 
         }

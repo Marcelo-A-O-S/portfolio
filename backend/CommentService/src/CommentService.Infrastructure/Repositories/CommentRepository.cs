@@ -41,31 +41,58 @@ namespace CommentService.Infrastructure.Repositories
                 .ToListAsync();
             var all = roots
                 .Concat(replies)
-                .Select(c => new CommentView
+                .ToList();
+            var commentIds = all.Select(c => c.Id).ToList();
+            var likes = await context.Likes
+                .Where(l => commentIds.Contains(l.TargetId))
+                .ToListAsync();
+            var allComments = all
+                .Select(c =>
                 {
-                    Id = c.Id,
-                    ParentCommentId = c.ParentCommentId,
-                    TargetId = c.TargetId,
-                    Type = c.Type,
-                    Content = c.Content,
-                    Likes = this.context.Likes.Count(l =>
-                                l.TargetId == c.Id),
-                    Liked = this.context.Likes.Any(l =>
-                                l.TargetId == c.Id &&
-                                l.UserId == authenticatedUserId),
-                    CreatedAt = c.CreatedAt,
-                    User = new UserView
+                    string content = "";
+                    switch (c.CommentDeletion)
                     {
-                        Id = c.UserProjection.UserId,
-                        Username = c.UserProjection.Username,
-                        ProfileUrl = c.UserProjection.ProfileUrl,
-                        Provider = c.UserProjection.Provider
-                    },
-                    Replies = []
+                        case CommentDeletionType.None:
+                            content = c.Content;
+                            break;
+                        case CommentDeletionType.User:
+                            content = "Comentário excluído.";
+                            break;
+                        case CommentDeletionType.Moderator:
+                            content = "Comentário removido pela moderação.";
+                            break;
+                        case CommentDeletionType.System:
+                            content = "Comentário removido pelo sistema.";
+                            break;
+                    }
+                    return new CommentView
+                    {
+                        Id = c.Id,
+                        ParentCommentId = c.ParentCommentId,
+                        TargetId = c.TargetId,
+                        Type = c.Type,
+                        Content = content,
+                        CommentStatus = c.CommentStatus,
+                        CommentDeletion = c.CommentDeletion,
+                        Likes = likes.Count(l =>
+                                    l.TargetId == c.Id),
+                        Liked = likes.Any(l =>
+                                    l.TargetId == c.Id &&
+                                    l.UserId == authenticatedUserId),
+                        CreatedAt = c.CreatedAt,
+                        User = new UserView
+                        {
+                            Id = c.UserProjection.UserId,
+                            Username = c.UserProjection.Username,
+                            ProfileUrl = c.UserProjection.ProfileUrl,
+                            Provider = c.UserProjection.Provider
+                        },
+                        Replies = []
+                    };
                 })
                 .ToList();
-            var map = all.ToDictionary(c => c.Id!.Value);
-            foreach (var comment in all)
+            var map = allComments.ToDictionary(c => c.Id!.Value);
+            foreach (var comment in allComments)
             {
                 if (comment.ParentCommentId is Guid parentId &&
                     map.TryGetValue(parentId, out var parent))
@@ -73,7 +100,7 @@ namespace CommentService.Infrastructure.Repositories
                     parent.Replies.Add(comment);
                 }
             }
-            var items = all.Where(c => c.ParentCommentId == null).ToList();
+            var items = allComments.Where(c => c.ParentCommentId == null).ToList();
             return new PaginatedResult<CommentView>
             {
                 Items = items,

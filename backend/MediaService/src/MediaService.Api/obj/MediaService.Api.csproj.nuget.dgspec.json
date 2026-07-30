@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Api\\MediaService.Api.csproj": {}
+    "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Api\\MediaService.Api.csproj": {}
   },
   "projects": {
-    "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Api\\MediaService.Api.csproj": {
+    "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Api\\MediaService.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Api\\MediaService.Api.csproj",
+        "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Api\\MediaService.Api.csproj",
         "projectName": "MediaService.Api",
-        "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Api\\MediaService.Api.csproj",
+        "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Api\\MediaService.Api.csproj",
         "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-        "outputPath": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Api\\obj\\",
+        "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -26,11 +26,11 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Application\\MediaService.Application.csproj": {
-                "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Application\\MediaService.Application.csproj"
+              "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Application\\MediaService.Application.csproj": {
+                "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Application\\MediaService.Application.csproj"
               },
-              "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\MediaService.Infrastructure.csproj": {
-                "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\MediaService.Infrastructure.csproj"
+              "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\MediaService.Infrastructure.csproj": {
+                "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\MediaService.Infrastructure.csproj"
               }
             }
           }
@@ -113,14 +113,14 @@
         }
       }
     },
-    "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Application\\MediaService.Application.csproj": {
+    "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Application\\MediaService.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Application\\MediaService.Application.csproj",
+        "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Application\\MediaService.Application.csproj",
         "projectName": "MediaService.Application",
-        "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Application\\MediaService.Application.csproj",
+        "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Application\\MediaService.Application.csproj",
         "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-        "outputPath": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Application\\obj\\",
+        "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Application\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -135,8 +135,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj": {
-                "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj"
+              "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj": {
+                "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj"
               }
             }
           }
@@ -207,14 +207,14 @@
         }
       }
     },
-    "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj": {
+    "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj",
+        "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj",
         "projectName": "MediaService.Domain",
-        "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj",
+        "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj",
         "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-        "outputPath": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\obj\\",
+        "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -280,14 +280,14 @@
         }
       }
     },
-    "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\MediaService.Infrastructure.csproj": {
+    "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\MediaService.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\MediaService.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\MediaService.Infrastructure.csproj",
         "projectName": "MediaService.Infrastructure",
-        "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\MediaService.Infrastructure.csproj",
+        "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\MediaService.Infrastructure.csproj",
         "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-        "outputPath": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\obj\\",
+        "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -302,11 +302,11 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Application\\MediaService.Application.csproj": {
-                "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Application\\MediaService.Application.csproj"
+              "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Application\\MediaService.Application.csproj": {
+                "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Application\\MediaService.Application.csproj"
               },
-              "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj": {
-                "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj"
+              "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj": {
+                "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj"
               }
             }
           }

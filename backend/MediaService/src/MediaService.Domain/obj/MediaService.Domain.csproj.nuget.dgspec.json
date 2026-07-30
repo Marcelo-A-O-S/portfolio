@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj": {}
+    "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj": {}
   },
   "projects": {
-    "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj": {
+    "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj",
+        "projectUniqueName": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj",
         "projectName": "MediaService.Domain",
-        "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj",
+        "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\MediaService.Domain.csproj",
         "packagesPath": "C:\\Users\\marce\\.nuget\\packages\\",
-        "outputPath": "c:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\obj\\",
+        "outputPath": "C:\\Backup\\Projetos\\portfolio\\backend\\MediaService\\src\\MediaService.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\marce\\AppData\\Roaming\\NuGet\\NuGet.Config"

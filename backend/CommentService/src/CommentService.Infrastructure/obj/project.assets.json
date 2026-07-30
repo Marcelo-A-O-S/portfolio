@@ -3163,11 +3163,11 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Application\\CommentService.Application.csproj": {
-              "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Application\\CommentService.Application.csproj"
+            "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Application\\CommentService.Application.csproj": {
+              "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Application\\CommentService.Application.csproj"
             },
-            "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj": {
-              "projectPath": "c:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj"
+            "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj": {
+              "projectPath": "C:\\Backup\\Projetos\\portfolio\\backend\\CommentService\\src\\CommentService.Domain\\CommentService.Domain.csproj"
             }
           }
         }

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CommentService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20260728210940_CreateTables")]
+    [Migration("20260730170936_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -31,11 +31,22 @@ namespace CommentService.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("CommentDeletion")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CommentStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid?>("ParentCommentId")

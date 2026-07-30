@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MediaService.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+954071a6fc558b70ad2f5937129289cb0c5479da")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+061112fc5c97a8a32e325f5641b8e5cdc6007b96")]
 [assembly: System.Reflection.AssemblyProductAttribute("MediaService.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MediaService.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
