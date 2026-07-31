@@ -4,15 +4,17 @@ using CommentService.Application.Caching.Comment;
 using CommentService.Application.Validators.Interfaces;
 using CommentService.Domain.Entities;
 using CommentService.Application.Exceptions;
+
 namespace CommentService.Application.UseCases.Comments
 {
-    public class RemoveByUserReply : IRemoveByUserReply
+    public class RemoveByModeratorReply : IRemoveByModeratorReply
     {
         private readonly ICommentServices commentServices;
         private readonly ICommentCacheServices commentCacheServices;
         private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly ICommentValidationService commentValidationService;
-        public RemoveByUserReply(
+
+        public RemoveByModeratorReply(
             ICommentServices _commentServices,
             ICommentCacheServices _commentCacheServices,
             IRabbitMQProducer _rabbitMQProducer,
@@ -32,7 +34,7 @@ namespace CommentService.Application.UseCases.Comments
                 throw new ValidationException("Você não pode remover esta resposta.");
             if(reply.ParentCommentId != commentId)
                 throw new ValidationException("Essa resposta não pertence ao comentário informado.");
-            reply.DeleteByUser();
+            reply.DeleteByModerator();
             await this.commentServices.Update(reply);
             var type = reply.Type.ToString();
             await this.rabbitMQProducer.Publish($"{type}ReplyDeleted",
