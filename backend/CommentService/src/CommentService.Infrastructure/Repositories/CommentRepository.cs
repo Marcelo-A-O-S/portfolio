@@ -64,6 +64,9 @@ namespace CommentService.Infrastructure.Repositories
                         case CommentDeletionType.System:
                             content = "Comentário removido pelo sistema.";
                             break;
+                        case CommentDeletionType.Administrador:
+                            content = "Comentário removido pela administração do sistema.";
+                            break;
                     }
                     return new CommentView
                     {

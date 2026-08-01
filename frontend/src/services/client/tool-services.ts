@@ -60,7 +60,7 @@ export const addToolComment = async (data: CommentSchema) => {
     const api = await apiClient();
     if (data.type != "Tool")
         throw new Error("Só é possivel comentar em uma postagem de ferramenta")
-    const response = await api.post(`/api/admin/tools/comments`, data);
+    const response = await api.post(`/api/user/tools/comments`, data);
     return response;
 }
 export const updateToolComment = async (id: string, data: CommentSchema) => {

@@ -1,7 +1,7 @@
 import { CommentSchema } from "@/domain/schemas/CommentSchema";
-import { useAddCommentTool } from "@/hooks/Tool/useAddCommentTool";
-import { useDeleteCommentTool } from "@/hooks/Tool/useDeleteCommentTool";
-import { useUpdateCommentTool } from "@/hooks/Tool/useUpdateCommentTool";
+import { useAddCommentTool } from "@/hooks/Tool/Comment/useAddCommentTool";
+import { useDeleteCommentTool } from "@/hooks/Tool/Comment/useDeleteCommentTool";
+import { useUpdateCommentTool } from "@/hooks/Tool/Comment/useUpdateCommentTool";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import ReplyItem from "./tool-reply-item";
@@ -10,7 +10,7 @@ import DeleteConfirm from "./tool-comment-delete";
 import EditCommentForm from "./tool-comment-edit";
 import CommentHeader from "./tool-comment-header";
 import ReplyForm from "./tool-reply-form";
-import { useAddReplyTool } from "@/hooks/Tool/useAddReplyTool";
+import { useAddReplyTool } from "@/hooks/Tool/Comment/useAddReplyTool";
 import { useAddLikeCommentTool } from "@/hooks/Tool/useAddLikeCommentTool";
 import { useRemoveLikeCommentTool } from "@/hooks/Tool/useRemoveLikeCommentTool";
 
@@ -18,7 +18,6 @@ export default function CommentItem({ comment, toolId }: { comment: CommentSchem
     const { data: currentUser } = useSession()
     const { mutateAsync: updateCommentTool, isPending: isUpdating } = useUpdateCommentTool()
     const { mutateAsync: deleteCommentTool, isPending: isDeleting } = useDeleteCommentTool()
-    const { mutateAsync: addCommentTool, isPending: isCommenting } = useAddCommentTool()
     const { mutateAsync: addReplyTool, isPending: isReplying } = useAddReplyTool();
     const { mutateAsync: addLike, isPending: isAdding } = useAddLikeCommentTool();
     const { mutateAsync: removeLike, isPending: isRemoving } = useRemoveLikeCommentTool();

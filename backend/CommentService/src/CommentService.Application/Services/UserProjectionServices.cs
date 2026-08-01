@@ -39,6 +39,11 @@ namespace CommentService.Application.Services
             return await this.userProjectionRepository.GetById(Id);
         }
 
+        public async Task<UserProjection> GetByUserId(Guid userId)
+        {
+            return await this.userProjectionRepository.GetByUserId(userId);
+        }
+
         public async Task<List<UserProjection>> List()
         {
             return await this.userProjectionRepository.List();

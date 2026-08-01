@@ -42,8 +42,13 @@ namespace CommentService.Application.UseCases.Comments
             var user = await this.userServicesClient.GetUserAsync(authenticatedUserId, providerId);
             if(user == null)
                 throw new ValidationException("Erro ao buscar usuário.");
-            var userProjection = new UserProjection(authenticatedUserId, user.Name, user.ProfileUrl, user.ProviderId, user.Provider);
-            await this.userProjectionServices.Save(userProjection);
+            var userProjection = await this.userProjectionServices
+                .FindBy(up => up.UserId == authenticatedUserId && up.ProviderId == providerId);
+            if(userProjection == null)
+            {
+                userProjection = new UserProjection(authenticatedUserId, user.Name, user.ProfileUrl, user.ProviderId, user.Provider);
+                await this.userProjectionServices.Save(userProjection);
+            }
             comment.SetUserProjectionId(userProjection.Id);
             await this.commentServices.Save(comment);
             var type = comment.Type.ToString();

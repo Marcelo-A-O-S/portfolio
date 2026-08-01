@@ -5,6 +5,7 @@ namespace CommentService.Domain.Enums
         None,
         User,
         Moderator,
+        Administrador,
         System
     }
 }

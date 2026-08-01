@@ -53,6 +53,10 @@ namespace CommentService.Domain.Entities
         {
             this.Delete(CommentDeletionType.Moderator);
         }
+        public void DeleteByAdministrador()
+        {
+            this.Delete(CommentDeletionType.Administrador);
+        }
         public void Restore()
         {
             this.CommentDeletion = CommentDeletionType.None;

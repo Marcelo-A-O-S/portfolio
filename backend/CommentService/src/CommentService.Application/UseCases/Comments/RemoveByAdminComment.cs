@@ -6,14 +6,13 @@ using CommentService.Domain.Entities;
 using CommentService.Application.Exceptions;
 namespace CommentService.Application.UseCases.Comments
 {
-    public class RemoveByModeratorReply : IRemoveByModeratorReply
+    public class RemoveByAdminComment : IRemoveByAdminComment
     {
         private readonly ICommentServices commentServices;
         private readonly ICommentCacheServices commentCacheServices;
         private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly ICommentValidationService commentValidationService;
-
-        public RemoveByModeratorReply(
+        public RemoveByAdminComment(
             ICommentServices _commentServices,
             ICommentCacheServices _commentCacheServices,
             IRabbitMQProducer _rabbitMQProducer,
@@ -25,30 +24,28 @@ namespace CommentService.Application.UseCases.Comments
             this.rabbitMQProducer = _rabbitMQProducer;
             this.commentValidationService = _commentValidationService;
         }
-        public async Task ExecuteAsync(Guid authenticatedUserId, Guid commentId, Guid replyId)
+        public async Task ExecuteAsync(Guid authenticatedUserId, Guid commentId)
         {
             await this.commentValidationService.ValidateUserExists(authenticatedUserId);
-            var reply = await GetReply(replyId);
-            if(reply.ParentCommentId != commentId)
-                throw new ValidationException("Essa resposta não pertence ao comentário informado.");
-            reply.DeleteByModerator();
-            await this.commentServices.Update(reply);
-            var type = reply.Type.ToString();
-            await this.rabbitMQProducer.Publish($"{type}ReplyDeleted",
+            var comment = await GetComment(commentId);
+            comment.DeleteByAdministrador();
+            await this.commentServices.Update(comment);
+            var type = comment.Type.ToString();
+            await this.rabbitMQProducer.Publish($"{type}CommentDeleted",
             new
             {
-                CommentId = reply.Id,
-                TargetId = reply.TargetId,
-                Type = reply.Type,
-                UserId = reply.UserProjection.UserId
+                CommentId = comment.Id,
+                TargetId = comment.TargetId,
+                Type = comment.Type,
+                UserId = comment.UserProjection.UserId
             });
         }
-        private async Task<Comment> GetReply(Guid replyId)
+        private async Task<Comment> GetComment(Guid commentId)
         {
-            var reply = await commentServices.GetById(replyId);
-            if(reply == null)
-                throw new NotFoundException("Resposta não encontrado");
-            return reply;
+            var comment = await commentServices.GetFullDataById(commentId);
+            if(comment == null)
+                throw new NotFoundException("Comentário não encontrado");
+            return comment;
         }
     }
 }

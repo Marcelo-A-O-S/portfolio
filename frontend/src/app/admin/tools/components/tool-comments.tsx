@@ -1,6 +1,6 @@
 "use client"
 import { CommentSchema } from "@/domain/schemas/CommentSchema"
-import { useGetToolCommentPagination } from "@/hooks/Tool/useGetToolCommentPagination"
+import { useGetToolCommentPagination } from "@/hooks/Tool/Comment/useGetToolCommentPagination"
 import { useSession } from "next-auth/react"
 import { useState } from "react"
 import CommentItem from "./tool-comment-item"

@@ -1,7 +1,7 @@
 import { CommentSchema } from "@/domain/schemas/CommentSchema";
-import { useAddReplyTool } from "@/hooks/Tool/useAddReplyTool";
-import { useDeleteReplyTool } from "@/hooks/Tool/useDeleteReplyTool";
-import { useUpdateReplyTool } from "@/hooks/Tool/useUpdateReplyTool";
+import { useAddReplyTool } from "@/hooks/Tool/Comment/useAddReplyTool";
+import { useDeleteReplyTool } from "@/hooks/Tool/Comment/useDeleteReplyTool";
+import { useUpdateReplyTool } from "@/hooks/Tool/Comment/useUpdateReplyTool";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import CommentHeader from "./tool-comment-header";

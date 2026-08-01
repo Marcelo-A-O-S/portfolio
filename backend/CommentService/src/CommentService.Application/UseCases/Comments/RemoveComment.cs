@@ -30,18 +30,30 @@ namespace CommentService.Application.UseCases.Comments
             this.userProjectionServices = _userProjectionServices;
             this.likeServices = _likeServices;
         }
-        public async Task ExecuteAsync(Guid authenticatedUserId, Guid commentId)
+        public async Task ExecuteAsync(Guid authenticatedUserId, string role, Guid commentId)
         {
             await this.commentValidationService.ValidateUserExists(authenticatedUserId);
             var comment = await GetComment(commentId);
-            if(comment.UserProjection.UserId != authenticatedUserId)
-                throw new ValidationException("Você não pode remover este comentário.");
+            if(role == "Client")
+            {
+                if(comment.UserProjection.UserId != authenticatedUserId)
+                    throw new ValidationException("Você não pode remover este comentário.");
+            }
             var userProjection = await this.userProjectionServices.GetById(comment.UserProjectionId);
-            await this.commentServices.DeleteById(commentId);
-            await this.userProjectionServices.DeleteById(userProjection.Id);
-            await this.likeServices.DeleteByCommentId(commentId);
+            switch (role)
+            {
+                case "Administrador":
+                    comment.DeleteByAdministrador();
+                    break;
+                case "Moderator":
+                    comment.DeleteByModerator();
+                    break;
+                case "Client":
+                    comment.DeleteByUser();
+                    break;
+            }
+            await this.commentServices.Update(comment);
             var type = comment.Type.ToString();
-            await this.commentCacheServices.RemoveCommentCache($"comment:{type}:exists:{commentId}");
             await this.rabbitMQProducer.Publish($"{type}CommentDeleted",
             new
             {

@@ -150,6 +150,7 @@ export const authOptions: AuthOptions = {
         async session({ session, token, user }) {
             session.user.username = token.username;
             session.user.id = token.userId;
+            session.user.role = token.role;
             return session;
         }
     }
