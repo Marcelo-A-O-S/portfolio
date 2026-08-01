@@ -4,6 +4,7 @@ using CommentService.Application.Exceptions;
 using CommentService.Domain.Entities;
 using CommentService.Application.Validators.Interfaces;
 using CommentService.Application.Caching.Comment;
+using CommentService.Domain.Enums;
 namespace CommentService.Application.UseCases.Comments
 {
     public class RemoveReply : IRemoveReply
@@ -27,19 +28,32 @@ namespace CommentService.Application.UseCases.Comments
             this.commentValidationService = _commentValidationService;
             this.userProjectionServices = _userProjectionServices;
         }
-        public async Task ExecuteAsync(Guid authenticatedUserId, Guid commentId, Guid replyId)
+        public async Task ExecuteAsync(Guid authenticatedUserId, string role, Guid commentId, Guid replyId)
         {
             await this.commentValidationService.ValidateUserExists(authenticatedUserId);
+            if(!Enum.TryParse<UserRole>(role,true, out var userRole))
+                throw new ValidationException("Usuário inválido.");
             var reply = await GetReply(replyId);
-            if(reply.UserProjection.UserId != authenticatedUserId)
+            if(userRole == UserRole.Client && reply.UserProjection.UserId != authenticatedUserId)
+            {
                 throw new ValidationException("Você não pode remover esta resposta.");
+            }
             if(reply.ParentCommentId != commentId)
                 throw new ValidationException("Essa resposta não pertence ao comentário informado.");
-            var userProjection = await this.userProjectionServices.GetById(reply.UserProjectionId);
-            await this.commentServices.DeleteById(reply.Id);
-            await this.userProjectionServices.DeleteById(userProjection.Id);
+            switch (userRole)
+            {
+                case UserRole.Administrador:
+                    reply.DeleteByAdministrador();
+                    break;
+                case UserRole.Moderator:
+                    reply.DeleteByModerator();
+                    break;
+                case UserRole.Client:
+                    reply.DeleteByUser();
+                    break;
+            }
+            await this.commentServices.Update(reply);
             var type = reply.Type.ToString();
-            await this.commentCacheServices.RemoveCommentCache($"comment:{type}:exists:{replyId}");
             await this.rabbitMQProducer.Publish($"{type}ReplyDeleted",
             new
             {

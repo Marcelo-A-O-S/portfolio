@@ -5,7 +5,7 @@ import { useUpdateCommentTool } from "@/hooks/Tool/Comment/useUpdateCommentTool"
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import ReplyItem from "./tool-reply-item";
-import { ChevronDown, ChevronUp, Heart, MessageSquare, Pencil, ThumbsUp, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Heart, MessageSquare, Pencil, RotateCcw, ThumbsUp, Trash2 } from "lucide-react";
 import DeleteConfirm from "./tool-comment-delete";
 import EditCommentForm from "./tool-comment-edit";
 import CommentHeader from "./tool-comment-header";
@@ -13,9 +13,10 @@ import ReplyForm from "./tool-reply-form";
 import { useAddReplyTool } from "@/hooks/Tool/Comment/useAddReplyTool";
 import { useAddLikeCommentTool } from "@/hooks/Tool/useAddLikeCommentTool";
 import { useRemoveLikeCommentTool } from "@/hooks/Tool/useRemoveLikeCommentTool";
-
+import { useCommentPermissions } from "@/hooks/Comments/useCommentPermissions";
 export default function CommentItem({ comment, toolId }: { comment: CommentSchema; toolId: string }) {
     const { data: currentUser } = useSession()
+    const permissions = useCommentPermissions(comment);
     const { mutateAsync: updateCommentTool, isPending: isUpdating } = useUpdateCommentTool()
     const { mutateAsync: deleteCommentTool, isPending: isDeleting } = useDeleteCommentTool()
     const { mutateAsync: addReplyTool, isPending: isReplying } = useAddReplyTool();
@@ -28,7 +29,6 @@ export default function CommentItem({ comment, toolId }: { comment: CommentSchem
     const [showReplies, setShowReplies] = useState(true)
 
     const loading = isAdding || isRemoving;
-    const isOwner = currentUser?.user?.id === comment.user?.id
     const replies = comment.replies ?? []
     const handleLike = async () => {
         if (comment.liked) {
@@ -48,27 +48,44 @@ export default function CommentItem({ comment, toolId }: { comment: CommentSchem
             <div className="flex justify-between items-center">
                 <CommentHeader comment={comment} />
                 <div className="flex gap-4 flex-col md:flex-row">
-                    {isOwner && !isEditing && (
-                        <>
-                            <button
-                                type="button"
-                                className="flex items-center gap-1 hover:opacity-70 text-sm"
-                                onClick={() => setIsEditing(true)}
-                            >
-                                <Pencil size={14} /> Editar
-                            </button>
-                            <button
-                                type="button"
-                                className="flex items-center gap-1 text-red-600 hover:opacity-70 text-sm"
-                                onClick={() => setIsDeletingConfirm(true)}
-                            >
-                                <Trash2 size={14} /> Excluir
-                            </button>
-                        </>
+                    {permissions.canEdit && (
+                        <button
+                            type="button"
+                            className="flex items-center gap-1 hover:opacity-70 text-sm"
+                            onClick={() => setIsEditing(true)}
+                        >
+                            <Pencil size={14} /> Editar
+                        </button>
+                    )}
+                    {permissions.canDelete && (
+                        <button
+                            type="button"
+                            className="flex items-center gap-1 text-red-600 hover:opacity-70 text-sm"
+                            onClick={() => setIsDeletingConfirm(true)}
+                        >
+                            <Trash2 size={14} /> Excluir
+                        </button>
+                    )}
+                    {permissions.canRestore && (
+                        <button
+                            type="button"
+                            className="flex items-center gap-1 hover:opacity-70 text-sm"
+                        >
+                            <RotateCcw />
+                            Restaurar
+                        </button>
+                    )}
+                    {permissions.canHardDelete && (
+                        <button
+                            type="button"
+                            className="flex items-center gap-1 text-red-600 hover:opacity-70 text-sm"
+                            onClick={() => setIsDeletingConfirm(true)}
+                        >
+                            <Trash2 size={14} /> Excluir
+                        </button>
                     )}
                 </div>
             </div>
-
             {isEditing ? (
                 <EditCommentForm
                     comment={comment}
@@ -88,7 +105,11 @@ export default function CommentItem({ comment, toolId }: { comment: CommentSchem
                     }}
                 />
             ) : (
-                <p className="text-base leading-relaxed mb-4">{comment.content}</p>
+                <p className={
+                    permissions.isDeleted
+                        ? "italic text-muted-foreground"
+                        : "text-base leading-relaxed"
+                }>{comment.content}</p>
             )}
             {isDeletingConfirm && (
                 <DeleteConfirm
@@ -102,15 +123,17 @@ export default function CommentItem({ comment, toolId }: { comment: CommentSchem
             )}
             <div className="flex justify-between items-center text-sm mb-2">
                 <div className="flex gap-4">
-                    <button
-                        disabled={loading}
-                        onClick={handleLike}
-                        className="flex items-center space-x-1 p-2 rounded-full cursor-pointer">
-                        <Heart
-                            size={16} className={comment.liked ? "fill-current" : ""}
-                        />
-                        <span>{comment.likes}</span>
-                    </button>
+                    {permissions.canLike && (
+                        <button
+                            disabled={loading}
+                            onClick={handleLike}
+                            className="flex items-center space-x-1 p-2 rounded-full cursor-pointer">
+                            <Heart
+                                size={16} className={comment.liked ? "fill-current" : ""}
+                            />
+                            <span>{comment.likes}</span>
+                        </button>
+                    )}
                     <button
                         type="button"
                         className="flex items-center gap-1 hover:opacity-70"

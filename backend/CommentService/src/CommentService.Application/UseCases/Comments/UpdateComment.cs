@@ -6,6 +6,7 @@ using CommentService.Application.UseCases.Comments.Interfaces;
 using CommentService.Application.Validations;
 using CommentService.Application.Validators.Interfaces;
 using CommentService.Domain.Entities;
+using CommentService.Domain.Enums;
 namespace CommentService.Application.UseCases.Comments
 {
     public class UpdateComment : IUpdateComment
@@ -26,17 +27,19 @@ namespace CommentService.Application.UseCases.Comments
             this.rabbitMQProducer = _rabbitMQProducer;
             this.commentValidationService = _commentValidationService;
         }
-        public async Task ExecuteAsync(Guid authenticatedUserId, Guid commentId, CommentRequest commentRequest)
+        public async Task ExecuteAsync(Guid authenticatedUserId, string role, Guid commentId, CommentRequest commentRequest)
         {
             ValidateRequest(commentRequest);
+            if(!Enum.TryParse<UserRole>(role,true, out var userRole))
+                throw new ValidationException("Usuário inválido.");
             await this.commentValidationService.ValidateUserExists(authenticatedUserId);
             await this.commentValidationService.ValidateTargetExists(commentRequest.TargetId, commentRequest.Type);
             await this.commentValidationService.ValidateCommentExists(commentId);
             var comment = await GetComment(commentId);
-            if(comment.UserProjection.UserId != authenticatedUserId)
-                throw new ForbiddenException("Você não pode editar este comentário.");
+            if(userRole == UserRole.Client && comment.UserProjection.UserId != authenticatedUserId)
+                throw new ValidationException("Você não pode editar este comentário.");
             if(comment.TargetId != commentRequest.TargetId)
-                throw new ValidationException("Comentário não pertence ao post informado.");
+                throw new ValidationException("Comentário não pertence ao publicação informada.");
             if(comment.Type != commentRequest.Type)
                 throw new ValidationException("Tipo de comentário inválido.");
             comment.Update(commentRequest.Content);

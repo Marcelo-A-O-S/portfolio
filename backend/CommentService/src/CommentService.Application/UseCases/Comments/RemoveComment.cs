@@ -4,6 +4,7 @@ using CommentService.Application.Interfaces;
 using CommentService.Application.UseCases.Comments.Interfaces;
 using CommentService.Application.Validators.Interfaces;
 using CommentService.Domain.Entities;
+using CommentService.Domain.Enums;
 namespace CommentService.Application.UseCases.Comments
 {
     public class RemoveComment : IRemoveComment
@@ -30,27 +31,30 @@ namespace CommentService.Application.UseCases.Comments
             this.userProjectionServices = _userProjectionServices;
             this.likeServices = _likeServices;
         }
+
         public async Task ExecuteAsync(Guid authenticatedUserId, string role, Guid commentId)
         {
             await this.commentValidationService.ValidateUserExists(authenticatedUserId);
+            if(!Enum.TryParse<UserRole>(role,true, out var userRole))
+                throw new ValidationException("Usuário inválido.");
             var comment = await GetComment(commentId);
-            if(role == "Client")
+            if(userRole == UserRole.Client && comment.UserProjection.UserId != authenticatedUserId)
             {
-                if(comment.UserProjection.UserId != authenticatedUserId)
-                    throw new ValidationException("Você não pode remover este comentário.");
+                throw new ValidationException("Você não pode remover este comentário."); 
             }
-            var userProjection = await this.userProjectionServices.GetById(comment.UserProjectionId);
-            switch (role)
+            switch (userRole)
             {
-                case "Administrador":
+                case UserRole.Administrador:
                     comment.DeleteByAdministrador();
                     break;
-                case "Moderator":
+                case UserRole.Moderator:
                     comment.DeleteByModerator();
                     break;
-                case "Client":
+                case UserRole.Client:
                     comment.DeleteByUser();
                     break;
+                default:
+                    throw new ValidationException("Usuário inválido");
             }
             await this.commentServices.Update(comment);
             var type = comment.Type.ToString();

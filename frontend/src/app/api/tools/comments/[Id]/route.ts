@@ -1,16 +1,17 @@
 import { commentSchema } from "@/domain/schemas/CommentSchema";
 import { ApiErrorResponse } from "@/domain/types/ApiErrorResponse";
 import { validateUserByRequest } from "@/services/server/auth-services";
-import { deleteToolReply, updateToolReply } from "@/services/server/tool-services";
+import { removeToolCommentById, updateToolComment } from "@/services/server/tool-services";
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ ownerId: string, Id: string }> }) {
+
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ Id: string }> }) {
     try {
-        const allowed = await validateUserByRequest(request, ["Administrador"]);
+        const allowed = await validateUserByRequest(request, ["Administrador", "Moderator", "Client"]);
         if (!allowed) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
-        const { ownerId, Id } = await params;
+        const { Id } = await params;
         const data = await request.json();
         const result = await commentSchema.safeParseAsync(data);
         if (result.error) {
@@ -21,8 +22,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
                 status: 400
             });
         }
-        const reply = result.data;
-        const response = await updateToolReply(ownerId, Id, reply);
+        const comment = result.data;
+        const response = await updateToolComment(Id, comment);
         if (response.status !== 200 && response.status !== 201) {
             return NextResponse.json({
                 message: response.data.message
@@ -30,7 +31,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
                 status: response.status
             });
         }
-        return NextResponse.json({ message: "Resposta atualizada com sucesso!" })
+        return NextResponse.json({ message: "Comentário atualizado com sucesso!" })
     } catch (error) {
         if (axios.isAxiosError<ApiErrorResponse>(error)) {
             console.log(error.response?.data);
@@ -45,14 +46,15 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         }
     }
 }
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ ownerId: string, Id: string }> }){
-    try{
-        const allowed = await validateUserByRequest(request, ["Administrador"]);
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ Id: string }> }) {
+    try {
+        const allowed = await validateUserByRequest(request, ["Administrador", "Moderator", "Client"]);
         if (!allowed) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
-        const { ownerId, Id } = await params;
+        const { Id } = await params;
         const data = await request.json();
+        console.log("Dados: ", data)
         const result = await commentSchema.safeParseAsync(data);
         if (result.error) {
             console.log("Erro ao validar dados: ", result.error.message);
@@ -62,8 +64,8 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
                 status: 400
             });
         }
-        const reply = result.data;
-        const response = await deleteToolReply(ownerId, Id, reply);
+        const comment = result.data;
+        const response = await removeToolCommentById(Id, comment);
         if (response.status !== 200 && response.status !== 201) {
             return NextResponse.json({
                 message: response.data.message
@@ -71,10 +73,9 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
                 status: response.status
             });
         }
-        return NextResponse.json({ message: "Resposta deletada com sucesso!" })
-    }catch(error){
+        return NextResponse.json({ message: "Comentário deletado com sucesso!" })
+    } catch (error) {
         if (axios.isAxiosError<ApiErrorResponse>(error)) {
-            console.log(error.response?.data);
             return NextResponse.json(
                 {
                     message: error.response?.data?.message ?? "Erro no backend"

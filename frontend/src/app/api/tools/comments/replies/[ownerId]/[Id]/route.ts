@@ -1,36 +1,37 @@
-import { likeSchema } from "@/domain/schemas/LikeSchema";
+import { commentSchema } from "@/domain/schemas/CommentSchema";
 import { ApiErrorResponse } from "@/domain/types/ApiErrorResponse";
 import { validateUserByRequest } from "@/services/server/auth-services";
-import { addToolLike, removeToolLike } from "@/services/server/tool-services";
+import { deleteToolReply, updateToolReply } from "@/services/server/tool-services";
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
-
-export async function POST(request: NextRequest){
-    try{
-        const allowed = await validateUserByRequest(request, ["Administrador"]);
-        if (!allowed)
-            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ ownerId: string, Id: string }> }) {
+    try {
+        const allowed = await validateUserByRequest(request, ["Administrador", "Moderator", "Client"]);
+        if (!allowed) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+        const { ownerId, Id } = await params;
         const data = await request.json();
-        const result = await likeSchema.safeParseAsync(data);
-        if(!result.success){
+        const result = await commentSchema.safeParseAsync(data);
+        if (result.error) {
+            console.log("Erro ao validar dados: ", result.error.message);
             return NextResponse.json({
                 message: `Erro ao validar dados: ${result.error.message}`
-            },{
+            }, {
                 status: 400
             });
         }
-        const like = result.data;
-        const response = await addToolLike(like);
+        const reply = result.data;
+        const response = await updateToolReply(ownerId, Id, reply);
         if (response.status !== 200 && response.status !== 201) {
-            console.log(`Erro: ${response.data.message}`)
             return NextResponse.json({
                 message: response.data.message
             }, {
                 status: response.status
             });
         }
-        return NextResponse.json({ message: "Curtida adicionada com sucesso!" })
-    }catch(error){
+        return NextResponse.json({ message: "Resposta atualizada com sucesso!" })
+    } catch (error) {
         if (axios.isAxiosError<ApiErrorResponse>(error)) {
             console.log(error.response?.data);
             return NextResponse.json(
@@ -44,32 +45,34 @@ export async function POST(request: NextRequest){
         }
     }
 }
-export async function DELETE(request: NextRequest){
-    try{
-        const allowed = await validateUserByRequest(request, ["Administrador"]);
-        if (!allowed)
-            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ ownerId: string, Id: string }> }) {
+    try {
+        const allowed = await validateUserByRequest(request, ["Administrador", "Moderator", "Client"]);
+        if (!allowed) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+        const { ownerId, Id } = await params;
         const data = await request.json();
-        const result = await likeSchema.safeParseAsync(data);
-        if(!result.success){
+        const result = await commentSchema.safeParseAsync(data);
+        if (result.error) {
+            console.log("Erro ao validar dados: ", result.error.message);
             return NextResponse.json({
                 message: `Erro ao validar dados: ${result.error.message}`
-            },{
+            }, {
                 status: 400
             });
         }
-        const like = result.data;
-        const response = await removeToolLike(like);
+        const reply = result.data;
+        const response = await deleteToolReply(ownerId, Id, reply);
         if (response.status !== 200 && response.status !== 201) {
-            console.log(`Erro: ${response.data.message}`)
             return NextResponse.json({
                 message: response.data.message
             }, {
                 status: response.status
             });
         }
-        return NextResponse.json({ message: "Curtida removida com sucesso" })
-    }catch(error){
+        return NextResponse.json({ message: "Resposta deletada com sucesso!" })
+    } catch (error) {
         if (axios.isAxiosError<ApiErrorResponse>(error)) {
             console.log(error.response?.data);
             return NextResponse.json(

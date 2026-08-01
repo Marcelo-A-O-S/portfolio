@@ -7,12 +7,14 @@ import { useState } from "react";
 import CommentHeader from "./tool-comment-header";
 import DeleteConfirm from "./tool-comment-delete";
 import EditCommentForm from "./tool-comment-edit";
-import { ChevronDown, ChevronUp, Heart, MessageSquare, Pencil, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Heart, MessageSquare, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import ReplyForm from "./tool-reply-form";
 import { useAddLikeCommentTool } from "@/hooks/Tool/useAddLikeCommentTool";
 import { useRemoveLikeCommentTool } from "@/hooks/Tool/useRemoveLikeCommentTool";
+import { useCommentPermissions } from "@/hooks/Comments/useCommentPermissions";
 export default function ReplyItem({ reply, toolId, commentId }: { reply: CommentSchema; toolId: string, commentId: string }) {
     const { data: currentUser } = useSession()
+    const permissions = useCommentPermissions(reply);
     const { mutateAsync: addReplyTool, isPending: isReplying } = useAddReplyTool();
     const { mutateAsync: updateReplyTool, isPending: isUpdating } = useUpdateReplyTool();
     const { mutateAsync: deleteReplyTool, isPending: isDeleting } = useDeleteReplyTool();
@@ -25,7 +27,6 @@ export default function ReplyItem({ reply, toolId, commentId }: { reply: Comment
     const [showReplies, setShowReplies] = useState(true)
 
     const loading = isAdding || isRemoving;
-    const isOwner = currentUser?.user?.id === reply.user?.id
     const replies = reply.replies ?? []
     const handleLike = async () => {
         if (reply.liked) {
@@ -45,23 +46,41 @@ export default function ReplyItem({ reply, toolId, commentId }: { reply: Comment
             <div className="flex justify-between items-center">
                 <CommentHeader comment={reply} compact={true} isReply={true} />
                 <div className="flex gap-4 flex-col md:flex-row">
-                    {isOwner && !isEditing && (
-                        <>
-                            <button
-                                type="button"
-                                className="flex items-center gap-1 hover:opacity-70 text-sm"
-                                onClick={() => setIsEditing(true)}
-                            >
-                                <Pencil size={14} /> Editar
-                            </button>
-                            <button
-                                type="button"
-                                className="flex items-center gap-1 text-red-600 hover:opacity-70 text-sm"
-                                onClick={() => setIsDeletingConfirm(true)}
-                            >
-                                <Trash2 size={14} /> Excluir
-                            </button>
-                        </>
+                    {permissions.canEdit && (
+                        <button
+                            type="button"
+                            className="flex items-center gap-1 hover:opacity-70 text-sm"
+                            onClick={() => setIsEditing(true)}
+                        >
+                            <Pencil size={14} /> Editar
+                        </button>
+                    )}
+                    {permissions.canDelete && (
+                        <button
+                            type="button"
+                            className="flex items-center gap-1 text-red-600 hover:opacity-70 text-sm"
+                            onClick={() => setIsDeletingConfirm(true)}
+                        >
+                            <Trash2 size={14} /> Excluir
+                        </button>
+                    )}
+                    {permissions.canRestore && (
+                        <button
+                            type="button"
+                            className="flex items-center gap-1 hover:opacity-70 text-sm"
+                        >
+                            <RotateCcw />
+                            Restaurar
+                        </button>
+                    )}
+                    {permissions.canHardDelete && (
+                        <button
+                            type="button"
+                            className="flex items-center gap-1 text-red-600 hover:opacity-70 text-sm"
+                            onClick={() => setIsDeletingConfirm(true)}
+                        >
+                            <Trash2 size={14} /> Excluir
+                        </button>
                     )}
                 </div>
             </div>
@@ -88,7 +107,10 @@ export default function ReplyItem({ reply, toolId, commentId }: { reply: Comment
                     }}
                 />
             ) : (
-                <p className="text-base leading-relaxed mb-4">{reply.content}</p>
+                <p className={
+                    permissions.isDeleted
+                        ? "italic text-muted-foreground" :
+                        "text-base leading-relaxed mb-4"}>{reply.content}</p>
             )}
             {isDeletingConfirm && (
                 <DeleteConfirm
@@ -107,15 +129,18 @@ export default function ReplyItem({ reply, toolId, commentId }: { reply: Comment
             )}
             <div className="flex justify-between items-center text-sm mb-2">
                 <div className="flex gap-4">
-                    <button
-                        disabled={loading}
-                        onClick={handleLike}
-                        className="flex items-center space-x-1 p-2 rounded-full cursor-pointer">
-                        <Heart
-                            size={16} className={reply.liked ? "fill-current" : ""}
-                        />
-                        <span>{reply.likes}</span>
-                    </button>
+                    {permissions.canLike && (
+                        <button
+                            disabled={loading}
+                            onClick={handleLike}
+                            className="flex items-center space-x-1 p-2 rounded-full cursor-pointer">
+                            <Heart
+                                size={16} className={reply.liked ? "fill-current" : ""}
+                            />
+                            <span>{reply.likes}</span>
+                        </button>
+                    )}
+                    
                     <button
                         type="button"
                         className="flex items-center gap-1 hover:opacity-70"

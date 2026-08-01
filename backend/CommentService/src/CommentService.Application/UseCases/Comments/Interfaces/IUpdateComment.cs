@@ -3,6 +3,6 @@ namespace CommentService.Application.UseCases.Comments.Interfaces
 {
     public interface IUpdateComment
     {
-        Task ExecuteAsync(Guid authenticatedUserId, Guid commentId, CommentRequest commentRequest);
+        Task ExecuteAsync(Guid authenticatedUserId, string role, Guid commentId, CommentRequest commentRequest);
     }
 }

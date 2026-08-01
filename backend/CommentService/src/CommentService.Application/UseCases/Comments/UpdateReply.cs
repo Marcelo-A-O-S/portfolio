@@ -6,6 +6,7 @@ using CommentService.Application.UseCases.Comments.Interfaces;
 using CommentService.Application.Validations;
 using CommentService.Application.Validators.Interfaces;
 using CommentService.Domain.Entities;
+using CommentService.Domain.Enums;
 namespace CommentService.Application.UseCases.Comments
 {
     public class UpdateReply : IUpdateReply
@@ -26,17 +27,19 @@ namespace CommentService.Application.UseCases.Comments
             this.rabbitMQProducer = _rabbitMQProducer;
             this.commentValidationService = _commentValidationService;
         }
-        public async Task ExecuteAsync(Guid authenticatedUserId, Guid commentId, Guid replyId, CommentRequest commentRequest)
+        public async Task ExecuteAsync(Guid authenticatedUserId, string role, Guid commentId, Guid replyId, CommentRequest commentRequest)
         {
             ValidateRequest(commentRequest);
+            if(!Enum.TryParse<UserRole>(role,true, out var userRole))
+                throw new ValidationException("Usuário inválido.");
             await this.commentValidationService.ValidateUserExists(authenticatedUserId);
             await this.commentValidationService.ValidateTargetExists(commentRequest.TargetId, commentRequest.Type);
             var comment = await GetComment(commentId);
             if(comment.TargetId != commentRequest.TargetId)
                 throw new ValidationException("Comentário não pertence a publicação informada.");
             var reply = await GetReply(replyId);
-            if(reply.UserProjection.UserId != authenticatedUserId)
-                throw new ValidationException("Você não pode editar esta resposta.");
+            if(userRole == UserRole.Client && reply.UserProjection.UserId != authenticatedUserId)
+                throw new ValidationException("Você não pode editar este comentário.");
             if(reply.ParentCommentId == null)
                 throw new ValidationException("O comentário informado não é uma resposta.");
             if(reply.ParentCommentId != commentId)

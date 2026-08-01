@@ -73,7 +73,7 @@ namespace CommentService.API.Controllers
             return Ok(result);
         }
         [HttpPost]
-        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
+        [Authorize(Roles = "Administrador,Moderator,Client", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> AddComment(CommentRequest commentRequest)
         {
             if (ModelState.IsValid)
@@ -92,7 +92,7 @@ namespace CommentService.API.Controllers
             return BadRequest(errors);
         }
         [HttpPut("{Id}")]
-        [Authorize(Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
+        [Authorize(Roles = "Administrador,Moderator,Client", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> UpdateComment([FromRoute] Guid Id, [FromBody] CommentRequest commentRequest)
         {
             if (ModelState.IsValid)
@@ -101,9 +101,10 @@ namespace CommentService.API.Controllers
                 if (providerId == null)
                     return BadRequest(new { message = "Provider inválido." });
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (userId == null)
+                var role = User.FindFirst(ClaimTypes.Role)?.Value;
+                if (userId == null || role == null)
                     return Unauthorized(new { message = "Usuário não autorizado." });
-                await this.updateComment.ExecuteAsync(Guid.Parse(userId), Id, commentRequest);
+                await this.updateComment.ExecuteAsync(Guid.Parse(userId), role, Id, commentRequest);
                 return Ok(new { message = "Comentário atualizado com sucesso!" });
             }
             var errors = ModelState.Values.Select(e => e.Errors);
@@ -163,7 +164,7 @@ namespace CommentService.API.Controllers
             return Ok(new { message = "Comentário deletado com sucesso!" });
         }
         [HttpPost("{Id:guid}/Reply")]
-        [Authorize(Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
+        [Authorize(Roles = "Administrador,Moderator,Client", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> AddReply([FromRoute] Guid Id, [FromBody] CommentRequest commentRequest)
         {
             if (ModelState.IsValid)
@@ -181,7 +182,7 @@ namespace CommentService.API.Controllers
             return BadRequest(errors);
         }
         [HttpPut("{commentId:guid}/Reply/{replyId:guid}")]
-        [Authorize(Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
+        [Authorize(Roles = "Administrador,Moderator,Client", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> UpdateReply([FromRoute] Guid commentId, [FromRoute] Guid replyId, [FromBody] CommentRequest commentRequest)
         {
             if (ModelState.IsValid)
@@ -190,9 +191,10 @@ namespace CommentService.API.Controllers
                 if (providerId == null)
                     return BadRequest(new { message = "Provider inválido." });
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (userId == null)
+                var role = User.FindFirst(ClaimTypes.Role)?.Value;
+                if (userId == null || role == null)
                     return Unauthorized(new { message = "Usuário não autorizado." });
-                await this.updateReply.ExecuteAsync(Guid.Parse(userId), commentId, replyId, commentRequest);
+                await this.updateReply.ExecuteAsync(Guid.Parse(userId), role, commentId, replyId, commentRequest);
                 return Ok(new { message = "Comentário atualizado com sucesso!" });
             }
             var errors = ModelState.Values.Select(e => e.Errors);
@@ -202,10 +204,14 @@ namespace CommentService.API.Controllers
         [Authorize(Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> DeleteReply([FromRoute] Guid commentId, [FromRoute] Guid replyId)
         {
+            var providerId = User.FindFirst("ProviderId")?.Value;
+            if (providerId == null)
+                return BadRequest(new { message = "Provider inválido." });
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null)
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+            if (userId == null || role == null)
                 return Unauthorized(new { message = "Usuário não autorizado." });
-            await this.removeReply.ExecuteAsync(Guid.Parse(userId), commentId, replyId);
+            await this.removeReply.ExecuteAsync(Guid.Parse(userId), role, commentId, replyId);
             return Ok(new { message = "Comentário deletado com sucesso!" });
         }
         [HttpDelete("User/{commentId:guid}/Reply/{replyId:guid}")]
