@@ -97,9 +97,11 @@ export default function ReplyItem({ reply, toolId, commentId }: { reply: Comment
                             data: {
                                 ownerId: commentId,
                                 reply: {
+                                    id: reply.id!,
                                     content: content,
                                     targetId: toolId,
                                     type: "Tool",
+                                    parentCommentId: commentId,
                                 }
                             }
                         })

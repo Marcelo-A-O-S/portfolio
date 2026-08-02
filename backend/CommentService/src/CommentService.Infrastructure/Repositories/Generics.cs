@@ -4,7 +4,6 @@ using CommentService.Domain.Interfaces;
 using CommentService.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
-
 namespace CommentService.Infrastructure.Repositories
 {
     public class Generics<T> : IGenerics<T> where T : class
@@ -17,14 +16,12 @@ namespace CommentService.Infrastructure.Repositories
         public async Task Delete(T entity)
         {
             this.context.Set<T>().Remove(entity);
-            await this.context.SaveChangesAsync();
         }
 
         public async Task DeleteById(Guid Id)
         {
             var entity = await this.context.Set<T>().FindAsync(Id);
             this.context.Set<T>().Remove(entity);
-            await this.context.SaveChangesAsync();
         }
 
         public async Task<bool> Exists(Guid Id)
@@ -60,26 +57,12 @@ namespace CommentService.Infrastructure.Repositories
 
         public async Task Save(T entity)
         {
-            try
-            {
-                await this.context.AddAsync(entity);
-                await this.context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                if (ex.InnerException is PostgresException postgresEx
-                    && postgresEx.SqlState == PostgresErrorCodes.UniqueViolation)
-                {
-                    throw new DuplicateException();
-                }
-                throw;
-            }
+            await this.context.AddAsync(entity);
+            
         }
-
         public async Task Update(T entity)
         {
             this.context.Set<T>().Update(entity);
-            await this.context.SaveChangesAsync();
         }
     }
 }

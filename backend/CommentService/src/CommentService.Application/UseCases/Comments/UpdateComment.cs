@@ -15,35 +15,47 @@ namespace CommentService.Application.UseCases.Comments
         private readonly ICommentServices commentServices;
         private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly ICommentValidationService commentValidationService;
+        private readonly IUnitOfWork unitOfWork;
         public UpdateComment(
             ICommentCacheServices _commentCacheServices,
             ICommentServices _commentServices,
             IRabbitMQProducer _rabbitMQProducer,
-            ICommentValidationService _commentValidationService
+            ICommentValidationService _commentValidationService,
+            IUnitOfWork _unitOfWork
         )
         {
             this.commentCacheServices = _commentCacheServices;
             this.commentServices = _commentServices;
             this.rabbitMQProducer = _rabbitMQProducer;
             this.commentValidationService = _commentValidationService;
+            this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid authenticatedUserId, string role, Guid commentId, CommentRequest commentRequest)
         {
             ValidateRequest(commentRequest);
-            if(!Enum.TryParse<UserRole>(role,true, out var userRole))
+            if (!Enum.TryParse<UserRole>(role, true, out var userRole))
                 throw new ValidationException("Usuário inválido.");
             await this.commentValidationService.ValidateUserExists(authenticatedUserId);
             await this.commentValidationService.ValidateTargetExists(commentRequest.TargetId, commentRequest.Type);
-            await this.commentValidationService.ValidateCommentExists(commentId);
             var comment = await GetComment(commentId);
-            if(userRole == UserRole.Client && comment.UserProjection.UserId != authenticatedUserId)
+            if (userRole == UserRole.Client && comment.UserProjection.UserId != authenticatedUserId)
                 throw new ValidationException("Você não pode editar este comentário.");
-            if(comment.TargetId != commentRequest.TargetId)
+            if (comment.TargetId != commentRequest.TargetId)
                 throw new ValidationException("Comentário não pertence ao publicação informada.");
-            if(comment.Type != commentRequest.Type)
+            if (comment.Type != commentRequest.Type)
                 throw new ValidationException("Tipo de comentário inválido.");
-            comment.Update(commentRequest.Content);
-            await this.commentServices.Update(comment);
+            await this.unitOfWork.BeginAsync();
+            try
+            {
+                comment.Update(commentRequest.Content);
+                await this.commentServices.Update(comment);
+                await this.unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
             var type = comment.Type.ToString();
             await this.commentCacheServices.AddCommentCache($"comment:{type}:exists:{comment.Id}", comment.Id);
         }
@@ -59,9 +71,9 @@ namespace CommentService.Application.UseCases.Comments
         private async Task<Comment> GetComment(Guid commentId)
         {
             var comment = await this.commentServices.GetFullDataById(commentId);
-            if(comment == null)
+            if (comment == null)
                 throw new NotFoundException("Comentário não encontrado");
             return comment;
-        } 
+        }
     }
 }

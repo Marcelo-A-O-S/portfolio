@@ -16,12 +16,14 @@ namespace CommentService.API.Controllers
         private readonly IAddComment addComment;
         private readonly IUpdateComment updateComment;
         private readonly IRemoveComment removeComment;
+        private readonly IHardRemoveComment hardRemoveComment;
         private readonly IRemoveByUserComment removeByUserComment;
         private readonly IRemoveByModeratorComment removeByModeratorComment;
         private readonly IRemoveByAdminComment removeByAdminComment;
         private readonly IAddReply addReply;
         private readonly IUpdateReply updateReply;
         private readonly IRemoveReply removeReply;
+        private readonly IHardRemoveReply hardRemoveReply;
         private readonly IRemoveByUserReply removeByUserReply;
         private readonly IRemoveByModeratorReply removeByModeratorReply;
         private readonly IRemoveByAdminReply removeByAdminReply;
@@ -31,12 +33,14 @@ namespace CommentService.API.Controllers
             IAddComment _addComment,
             IUpdateComment _updateComment,
             IRemoveComment _removeComment,
+            IHardRemoveComment _hardRemoveComment,
             IRemoveByUserComment _removeByUserComment,
             IRemoveByModeratorComment _removeByModeratorComment,
             IRemoveByAdminComment _removeByAdminComment,
             IAddReply _addReply,
             IUpdateReply _updateReply,
             IRemoveReply _removeReply,
+            IHardRemoveReply _hardRemoveReply,
             IRemoveByUserReply _removeByUserReply,
             IRemoveByModeratorReply _removeByModeratorReply,
             IRemoveByAdminReply _removeByAdminReply,
@@ -48,12 +52,14 @@ namespace CommentService.API.Controllers
             this.addComment = _addComment;
             this.updateComment = _updateComment;
             this.removeComment = _removeComment;
+            this.hardRemoveComment = _hardRemoveComment;
             this.removeByUserComment = _removeByUserComment;
             this.removeByModeratorComment = _removeByModeratorComment;
             this.removeByAdminComment = _removeByAdminComment;
             this.addReply = _addReply;
             this.updateReply = _updateReply;
             this.removeReply = _removeReply;
+            this.hardRemoveReply = _hardRemoveReply;
             this.removeByUserReply = _removeByUserReply;
             this.removeByModeratorReply = _removeByModeratorReply;
             this.removeByAdminReply = _removeByAdminReply;
@@ -122,6 +128,20 @@ namespace CommentService.API.Controllers
             if (userId == null || role == null)
                 return Unauthorized(new { message = "Usuário não autorizado." });
             await this.removeComment.ExecuteAsync(Guid.Parse(userId), role, Id);
+            return Ok(new { message = "Comentário deletado com sucesso!" });
+        }
+        [HttpDelete("Hard/{Id}")]
+        [Authorize(Roles = "Administrador,Moderator,Client", AuthenticationSchemes = "UserJwt")]
+        public async Task<IActionResult> HardDeleteComment([FromRoute] Guid Id)
+        {
+            var providerId = User.FindFirst("ProviderId")?.Value;
+            if (providerId == null)
+                return BadRequest(new { message = "Provider inválido." });
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+            if (userId == null || role == null)
+                return Unauthorized(new { message = "Usuário não autorizado." });
+            await this.hardRemoveComment.ExecuteAsync(Guid.Parse(userId), Id);
             return Ok(new { message = "Comentário deletado com sucesso!" });
         }
         [HttpDelete("User/{Id}")]
@@ -201,7 +221,7 @@ namespace CommentService.API.Controllers
             return BadRequest(errors);
         }
         [HttpDelete("{commentId:guid}/Reply/{replyId:guid}")]
-        [Authorize(Roles = "Administrador,Client", AuthenticationSchemes = "UserJwt")]
+        [Authorize(Roles = "Administrador,Moderator,Client", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> DeleteReply([FromRoute] Guid commentId, [FromRoute] Guid replyId)
         {
             var providerId = User.FindFirst("ProviderId")?.Value;
@@ -212,6 +232,20 @@ namespace CommentService.API.Controllers
             if (userId == null || role == null)
                 return Unauthorized(new { message = "Usuário não autorizado." });
             await this.removeReply.ExecuteAsync(Guid.Parse(userId), role, commentId, replyId);
+            return Ok(new { message = "Comentário deletado com sucesso!" });
+        }
+        [HttpDelete("Hard/{commentId:guid}/Reply/{replyId:guid}")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
+        public async Task<IActionResult> HardDeleteReply([FromRoute] Guid commentId, [FromRoute] Guid replyId)
+        {
+            var providerId = User.FindFirst("ProviderId")?.Value;
+            if (providerId == null)
+                return BadRequest(new { message = "Provider inválido." });
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+            if (userId == null || role == null)
+                return Unauthorized(new { message = "Usuário não autorizado." });
+            await this.hardRemoveReply.ExecuteAsync(Guid.Parse(userId), commentId, replyId);
             return Ok(new { message = "Comentário deletado com sucesso!" });
         }
         [HttpDelete("User/{commentId:guid}/Reply/{replyId:guid}")]

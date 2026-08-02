@@ -11,6 +11,13 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
         const { ownerId, Id } = await params;
+        if (Id == undefined || Id == null) {
+            return NextResponse.json({
+                message: "Identificador da resposta não informado!"
+            }, {
+                status: 400
+            })
+        }
         const data = await request.json();
         const result = await commentSchema.safeParseAsync(data);
         if (result.error) {
@@ -52,10 +59,17 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
         const { ownerId, Id } = await params;
+        if (Id == undefined || Id == null) {
+            return NextResponse.json({
+                message: "Server Side: Identificador da resposta não informado!"
+            }, {
+                status: 400
+            })
+        }
         const data = await request.json();
         const result = await commentSchema.safeParseAsync(data);
         if (result.error) {
-            console.log("Erro ao validar dados: ", result.error.message);
+
             return NextResponse.json({
                 message: `Erro ao validar dados: ${result.error.message}`
             }, {

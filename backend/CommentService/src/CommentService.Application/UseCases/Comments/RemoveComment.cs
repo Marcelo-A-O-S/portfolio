@@ -58,6 +58,7 @@ namespace CommentService.Application.UseCases.Comments
             }
             await this.commentServices.Update(comment);
             var type = comment.Type.ToString();
+            await this.commentCacheServices.AddCommentCache($"comment:{type}:exists:{comment.Id}", comment.Id);
             await this.rabbitMQProducer.Publish($"{type}CommentDeleted",
             new
             {

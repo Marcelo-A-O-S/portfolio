@@ -16,13 +16,15 @@ namespace CommentService.Application.UseCases.Comments
         private readonly ICommentValidationService commentValidationService;
         private readonly IUserServicesClient userServicesClient;
         private readonly IUserProjectionServices userProjectionServices;
+        private readonly IUnitOfWork unitOfWork;
         public AddReply(
             ICommentCacheServices _commentCacheServices,
             ICommentServices _commentServices,
             IRabbitMQProducer _rabbitMQProducer,
             ICommentValidationService _commentValidationService,
             IUserServicesClient _userServicesClient,
-            IUserProjectionServices _userProjectionServices
+            IUserProjectionServices _userProjectionServices,
+            IUnitOfWork _unitOfWork
         )
         {
             this.commentCacheServices = _commentCacheServices;
@@ -31,6 +33,7 @@ namespace CommentService.Application.UseCases.Comments
             this.commentValidationService = _commentValidationService;
             this.userServicesClient = _userServicesClient;
             this.userProjectionServices = _userProjectionServices;
+            this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid authenticatedUserId, string providerId, Guid commentId, CommentRequest commentRequest)
         {
@@ -45,13 +48,24 @@ namespace CommentService.Application.UseCases.Comments
             var user = await this.userServicesClient.GetUserAsync(authenticatedUserId, providerId);
             var userProjection = await this.userProjectionServices
                 .FindBy(up => up.UserId == authenticatedUserId && up.ProviderId == providerId);
-            if(userProjection == null)
+            await this.unitOfWork.BeginAsync();
+            try
             {
-                userProjection = new UserProjection(authenticatedUserId, user.Name, user.ProfileUrl, user.ProviderId, user.Provider);
-                await this.userProjectionServices.Save(userProjection);
+                if(userProjection == null)
+                {
+                    userProjection = new UserProjection(authenticatedUserId, user.Name, user.ProfileUrl, user.ProviderId, user.Provider);
+                    await this.userProjectionServices.Save(userProjection);
+                }
+                reply.SetUserProjectionId(userProjection.Id);
+                await this.commentServices.Save(reply);
+                await this.unitOfWork.CommitAsync();
             }
-            reply.SetUserProjectionId(userProjection.Id);
-            await this.commentServices.Save(reply);
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
+            
             var type = reply.Type.ToString();
             await this.commentCacheServices.AddCommentCache($"comment:{type}:exists:{reply.Id}", reply.Id);
             await this.rabbitMQProducer.Publish($"{type}ReplyCreated",

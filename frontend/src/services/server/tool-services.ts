@@ -104,8 +104,17 @@ export const updateToolReply = async (ownerId: string, id:string, data: CommentS
 export const deleteToolReply = async (ownerId: string, id:string, data: CommentSchema) => {
     const api = await apiServer();
     if (data.type != "Tool")
-        throw new Error("Só é possivel responder em uma postagem de ferramenta")
+        throw new Error("Só é possivel responder em uma postagem de ferramenta");
     const response = await api.delete(`/api/Comment/${ownerId}/Reply/${id}`, {
+        data: data
+    });
+    return response;
+}
+export const hardDeleteToolReply = async (ownerId: string, id:string, data:CommentSchema) =>{
+    const api = await apiServer();
+    if(data.type != "Tool")
+        throw new Error("Só é possivel deletar uma publicação de uma ferramenta.");
+    const response = await api.delete(`/api/Comment/Hard/${ownerId}/Reply/${id}`, {
         data: data
     });
     return response;

@@ -106,7 +106,7 @@ export const deleteToolReply = async (ownerId: string, id:string, data: CommentS
     const api = await apiClient();
     if (data.type != "Tool")
         throw new Error("Só é possivel responder em uma postagem de ferramenta")
-    const response = await api.delete(`/api/admin/tools/comments/replies/${ownerId}/${id}`, {
+    const response = await api.delete(`/api/tools/comments/replies/${ownerId}/${id}`, {
         data: data
     });
     return response;

@@ -40,17 +40,18 @@ namespace CommentService.Application.Extensions
             services.AddScoped<IRemoveByUserComment, RemoveByUserComment>();
             services.AddScoped<IRemoveByModeratorComment, RemoveByModeratorComment>();
             services.AddScoped<IRemoveByAdminComment, RemoveByAdminComment>();
+            services.AddScoped<IHardRemoveComment, HardRemoveComment>();
             services.AddScoped<IAddReply, AddReply>();
             services.AddScoped<IRemoveReply, RemoveReply>();
             services.AddScoped<IUpdateReply, UpdateReply>();
             services.AddScoped<IRemoveByUserReply, RemoveByUserReply>();
             services.AddScoped<IRemoveByModeratorReply, RemoveByModeratorReply>();
             services.AddScoped<IRemoveByAdminReply, RemoveByAdminReply>();
+            services.AddScoped<IHardRemoveReply, HardRemoveReply>();
             services.AddScoped<IAddLike, AddLike>();
             services.AddScoped<IRemoveLike, RemoveLike>();
             
             return services;
-
         }
     }
 }

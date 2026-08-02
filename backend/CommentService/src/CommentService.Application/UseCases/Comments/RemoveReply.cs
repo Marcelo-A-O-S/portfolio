@@ -65,7 +65,7 @@ namespace CommentService.Application.UseCases.Comments
         }
         private async Task<Comment> GetReply(Guid replyId)
         {
-            var reply = await commentServices.GetById(replyId);
+            var reply = await commentServices.GetFullDataById(replyId);
             if(reply == null)
                 throw new NotFoundException("Resposta não encontrado");
             return reply;

@@ -6,6 +6,7 @@ using CommentService.Application.Interfaces;
 using CommentService.Infrastructure.Workers;
 using CommentService.Infrastructure.Messaging.Handlers.Interfaces;
 using CommentService.Infrastructure.Messaging.Handlers;
+using CommentService.Infrastructure.Persistence;
 namespace CommentService.Infrastructure.Extensions
 {
     public static class DependencyInjectionExtension
@@ -13,6 +14,7 @@ namespace CommentService.Infrastructure.Extensions
         public static IServiceCollection AddDependencyInjectionExtension(
             this IServiceCollection services
         ){
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IGenerics<Comment>, Generics<Comment>>();
             services.AddScoped<IGenerics<Like>, Generics<Like>>();
 

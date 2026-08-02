@@ -15,17 +15,20 @@ namespace CommentService.Application.UseCases.Comments
         private readonly ICommentServices commentServices;
         private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly ICommentValidationService commentValidationService;
+        private readonly IUnitOfWork unitOfWork;
         public UpdateReply(
             ICommentCacheServices _commentCacheServices,
             ICommentServices _commentServices,
             IRabbitMQProducer _rabbitMQProducer,
-            ICommentValidationService _commentValidationService
+            ICommentValidationService _commentValidationService,
+            IUnitOfWork _unitOfWork
         )
         {
             this.commentCacheServices = _commentCacheServices;
             this.commentServices = _commentServices;
             this.rabbitMQProducer = _rabbitMQProducer;
             this.commentValidationService = _commentValidationService;
+            this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid authenticatedUserId, string role, Guid commentId, Guid replyId, CommentRequest commentRequest)
         {
@@ -44,15 +47,25 @@ namespace CommentService.Application.UseCases.Comments
                 throw new ValidationException("O comentário informado não é uma resposta.");
             if(reply.ParentCommentId != commentId)
                 throw new ValidationException("Essa resposta não pertence ao comentário informado.");
-            reply.Update(commentRequest.Content);
-            await this.commentServices.Update(reply);
+            await this.unitOfWork.BeginAsync();
+            try
+            {
+                reply.Update(commentRequest.Content, comment.Id);
+                await this.commentServices.Update(reply);
+                await this.unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
             var type = reply.Type.ToString();
             await this.commentCacheServices.AddCommentCache($"comment:{type}:exists:{reply.Id}", reply.Id);
         }
         private static void ValidateRequest(CommentRequest request)
         {
             if(request.Id == null)
-                throw new ValidationException("Identificador da resposta não informado.");
+                throw new ValidationException("Identificador da resposta não informado");
             var validationError = ValidationHelper.Validate(request);
             if(validationError.Count > 0)
             {
