@@ -15,13 +15,15 @@ namespace CommentService.Application.UseCases.Comments
         private readonly ICommentValidationService commentValidationService;
         private readonly IUserProjectionServices userProjectionServices;
         private readonly ILikeServices likeServices;
+        private readonly IUnitOfWork unitOfWork;
         public RemoveComment(
             ICommentServices _commentServices,
             ICommentCacheServices _commentCacheServices,
             IRabbitMQProducer _rabbitMQProducer,
             ICommentValidationService _commentValidationService,
             IUserProjectionServices _userProjectionServices,
-            ILikeServices _likeServices
+            ILikeServices _likeServices,
+            IUnitOfWork _unitOfWork
         )
         {
             this.commentServices = _commentServices;
@@ -30,6 +32,7 @@ namespace CommentService.Application.UseCases.Comments
             this.commentValidationService = _commentValidationService;
             this.userProjectionServices = _userProjectionServices;
             this.likeServices = _likeServices;
+            this.unitOfWork = _unitOfWork;
         }
 
         public async Task ExecuteAsync(Guid authenticatedUserId, string role, Guid commentId)
@@ -42,21 +45,31 @@ namespace CommentService.Application.UseCases.Comments
             {
                 throw new ValidationException("Você não pode remover este comentário."); 
             }
-            switch (userRole)
+            await this.unitOfWork.BeginAsync();
+            try
             {
-                case UserRole.Administrador:
-                    comment.DeleteByAdministrador();
-                    break;
-                case UserRole.Moderator:
-                    comment.DeleteByModerator();
-                    break;
-                case UserRole.Client:
-                    comment.DeleteByUser();
-                    break;
-                default:
-                    throw new ValidationException("Usuário inválido");
+                switch (userRole)
+                {
+                    case UserRole.Administrador:
+                        comment.DeleteByAdministrador();
+                        break;
+                    case UserRole.Moderator:
+                        comment.DeleteByModerator();
+                        break;
+                    case UserRole.Client:
+                        comment.DeleteByUser();
+                        break;
+                    default:
+                        throw new ValidationException("Usuário inválido");
+                }
+                await this.commentServices.Update(comment);
+                await this.unitOfWork.CommitAsync();
             }
-            await this.commentServices.Update(comment);
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
             var type = comment.Type.ToString();
             await this.commentCacheServices.AddCommentCache($"comment:{type}:exists:{comment.Id}", comment.Id);
             await this.rabbitMQProducer.Publish($"{type}CommentDeleted",

@@ -12,17 +12,21 @@ import ReplyForm from "./tool-reply-form";
 import { useAddLikeCommentTool } from "@/hooks/Tool/useAddLikeCommentTool";
 import { useRemoveLikeCommentTool } from "@/hooks/Tool/useRemoveLikeCommentTool";
 import { useCommentPermissions } from "@/hooks/Comments/useCommentPermissions";
+import HardDeleteConfirm from "./tool-comment-hard-delete";
+import { useHardDeleteReplyTool } from "@/hooks/Tool/Comment/useHardDeleteReplyTool";
 export default function ReplyItem({ reply, toolId, commentId }: { reply: CommentSchema; toolId: string, commentId: string }) {
     const { data: currentUser } = useSession()
     const permissions = useCommentPermissions(reply);
     const { mutateAsync: addReplyTool, isPending: isReplying } = useAddReplyTool();
     const { mutateAsync: updateReplyTool, isPending: isUpdating } = useUpdateReplyTool();
     const { mutateAsync: deleteReplyTool, isPending: isDeleting } = useDeleteReplyTool();
+    const { mutateAsync: hardDeleteReplyTool, isPending: isHardDeleting } = useHardDeleteReplyTool();
     const { mutateAsync: addLike, isPending: isAdding } = useAddLikeCommentTool();
     const { mutateAsync: removeLike, isPending: isRemoving } = useRemoveLikeCommentTool();
 
     const [isEditing, setIsEditing] = useState(false)
     const [isDeletingConfirm, setIsDeletingConfirm] = useState(false)
+    const [isHardDeletingConfirm, setIsHardDeletingConfirm] = useState(false)
     const [isReplyFormOpen, setIsReplyFormOpen] = useState(false)
     const [showReplies, setShowReplies] = useState(true)
 
@@ -77,7 +81,7 @@ export default function ReplyItem({ reply, toolId, commentId }: { reply: Comment
                         <button
                             type="button"
                             className="flex items-center gap-1 text-red-600 hover:opacity-70 text-sm"
-                            onClick={() => setIsDeletingConfirm(true)}
+                            onClick={() => setIsHardDeletingConfirm(true)}
                         >
                             <Trash2 size={14} /> Excluir
                         </button>
@@ -120,7 +124,24 @@ export default function ReplyItem({ reply, toolId, commentId }: { reply: Comment
                     onCancel={() => setIsDeletingConfirm(false)}
                     onConfirm={async () => {
                         await deleteReplyTool({
-                            id: reply.id!, data: {
+                            id: reply.id!, 
+                            data: {
+                                ownerId: commentId,
+                                reply: reply
+                            }
+                        })
+                        setIsDeletingConfirm(false)
+                    }}
+                />
+            )}
+            {isHardDeletingConfirm && (
+                <HardDeleteConfirm
+                    isDeleting={isHardDeleting}
+                    onCancel={() => setIsHardDeletingConfirm(false)}
+                    onConfirm={async () => {
+                        await hardDeleteReplyTool({
+                            id: reply.id!, 
+                            data: {
                                 ownerId: commentId,
                                 reply: reply
                             }

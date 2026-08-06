@@ -13,17 +13,20 @@ namespace CommentService.Application.UseCases.Likes
         private readonly ILikeCacheServices likeCacheServices;
         private readonly ILikeValidationService likeValidationService;
         private readonly IRabbitMQProducer rabbitMQProducer;
+        private readonly IUnitOfWork unitOfWork;
         public RemoveLike(
             ILikeServices _likeServices,
             ILikeCacheServices _likeCacheServices,
             ILikeValidationService _likeValidationService,
-            IRabbitMQProducer _rabbitMQProducer
+            IRabbitMQProducer _rabbitMQProducer,
+            IUnitOfWork _unitOfWork
         )
         {
             this.likeServices = _likeServices;
             this.likeCacheServices = _likeCacheServices;
             this.likeValidationService = _likeValidationService;
             this.rabbitMQProducer = _rabbitMQProducer;
+            this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid authenticatedUserId, LikeRequest likeRequest)
         {
@@ -31,7 +34,17 @@ namespace CommentService.Application.UseCases.Likes
             await likeValidationService.ValidateTargetExists(likeRequest.TargetId, likeRequest.Type);
             var like = await GetLike(likeRequest.TargetId, authenticatedUserId);
             var type = like.Type.ToString();
-            await this.likeServices.DeleteById(like.Id);
+            await this.unitOfWork.BeginAsync();
+            try
+            {
+                await this.likeServices.DeleteById(like.Id);
+                await this.unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
             await this.likeCacheServices.RemoveLikeCache($"like:{type}:{like.TargetId}:user:{like.UserId}");
             await this.rabbitMQProducer.Publish($"{type}Unliked", 
             new { 

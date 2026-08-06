@@ -14,12 +14,14 @@ namespace CommentService.Application.UseCases.Comments
         private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly ICommentValidationService commentValidationService;
         private readonly IUserProjectionServices userProjectionServices;
+        private readonly IUnitOfWork unitOfWork;
         public RemoveReply(
             ICommentServices _commentServices,
             ICommentCacheServices _commentCacheServices,
             IRabbitMQProducer _rabbitMQProducer,
             ICommentValidationService _commentValidationService,
-            IUserProjectionServices _userProjectionServices
+            IUserProjectionServices _userProjectionServices,
+            IUnitOfWork _unitOfWork
         )
         {
             this.commentServices = _commentServices;
@@ -27,6 +29,7 @@ namespace CommentService.Application.UseCases.Comments
             this.rabbitMQProducer = _rabbitMQProducer;
             this.commentValidationService = _commentValidationService;
             this.userProjectionServices = _userProjectionServices;
+            this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid authenticatedUserId, string role, Guid commentId, Guid replyId)
         {
@@ -40,19 +43,29 @@ namespace CommentService.Application.UseCases.Comments
             }
             if(reply.ParentCommentId != commentId)
                 throw new ValidationException("Essa resposta não pertence ao comentário informado.");
-            switch (userRole)
+            await this.unitOfWork.BeginAsync();
+            try
             {
-                case UserRole.Administrador:
-                    reply.DeleteByAdministrador();
-                    break;
-                case UserRole.Moderator:
-                    reply.DeleteByModerator();
-                    break;
-                case UserRole.Client:
-                    reply.DeleteByUser();
-                    break;
+                switch (userRole)
+                {
+                    case UserRole.Administrador:
+                        reply.DeleteByAdministrador();
+                        break;
+                    case UserRole.Moderator:
+                        reply.DeleteByModerator();
+                        break;
+                    case UserRole.Client:
+                        reply.DeleteByUser();
+                        break;
+                }
+                await this.commentServices.Update(reply);
+                await this.unitOfWork.CommitAsync();
             }
-            await this.commentServices.Update(reply);
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
             var type = reply.Type.ToString();
             await this.rabbitMQProducer.Publish($"{type}ReplyDeleted",
             new

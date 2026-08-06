@@ -81,8 +81,17 @@ export const removeToolCommentById = async (id: string, data: CommentSchema) => 
 export const removeToolComment = async (data: CommentSchema) => {
     const api = await apiServer();
     if (data.type != "Tool")
-        throw new Error("Só é possivel comentar em uma postagem de ferramenta")
+        throw new Error("Só é possivel deletar o comentário em uma postagem de uma ferramenta.")
     const response = await api.delete(`/api/Comment`, {
+        data: data
+    });
+    return response;
+}
+export const hardRemoveToolComment = async(id:string, data: CommentSchema) =>{
+    const api = await apiServer();
+    if(data.type != "Tool")
+        throw new Error("Só é possivel deletar o comentário de uma postagem de uma ferramenta.")
+    const response = await api.delete(`/api/Comment/Hard/${id}`,{
         data: data
     });
     return response;
@@ -110,7 +119,7 @@ export const deleteToolReply = async (ownerId: string, id:string, data: CommentS
     });
     return response;
 }
-export const hardDeleteToolReply = async (ownerId: string, id:string, data:CommentSchema) =>{
+export const hardRemoveToolReply = async (ownerId: string, id:string, data:CommentSchema) =>{
     const api = await apiServer();
     if(data.type != "Tool")
         throw new Error("Só é possivel deletar uma publicação de uma ferramenta.");

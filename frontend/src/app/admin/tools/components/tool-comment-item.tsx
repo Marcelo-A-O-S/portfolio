@@ -14,17 +14,21 @@ import { useAddReplyTool } from "@/hooks/Tool/Comment/useAddReplyTool";
 import { useAddLikeCommentTool } from "@/hooks/Tool/useAddLikeCommentTool";
 import { useRemoveLikeCommentTool } from "@/hooks/Tool/useRemoveLikeCommentTool";
 import { useCommentPermissions } from "@/hooks/Comments/useCommentPermissions";
+import HardDeleteConfirm from "./tool-comment-hard-delete";
+import { useHardDeleteCommentTool } from "@/hooks/Tool/Comment/useHardDeleteCommentTool";
 export default function CommentItem({ comment, toolId }: { comment: CommentSchema; toolId: string }) {
-    const { data: currentUser } = useSession()
+    const { data: currentUser } = useSession();
     const permissions = useCommentPermissions(comment);
-    const { mutateAsync: updateCommentTool, isPending: isUpdating } = useUpdateCommentTool()
-    const { mutateAsync: deleteCommentTool, isPending: isDeleting } = useDeleteCommentTool()
+    const { mutateAsync: updateCommentTool, isPending: isUpdating } = useUpdateCommentTool();
+    const { mutateAsync: deleteCommentTool, isPending: isDeleting } = useDeleteCommentTool();
+    const { mutateAsync: hardDeleteCommentTool, isPending: isHardDeleting } = useHardDeleteCommentTool();
     const { mutateAsync: addReplyTool, isPending: isReplying } = useAddReplyTool();
     const { mutateAsync: addLike, isPending: isAdding } = useAddLikeCommentTool();
     const { mutateAsync: removeLike, isPending: isRemoving } = useRemoveLikeCommentTool();
 
     const [isEditing, setIsEditing] = useState(false)
     const [isDeletingConfirm, setIsDeletingConfirm] = useState(false)
+    const [isHardDeletingConfirm, setIsHardDeletingConfirm] = useState(false)
     const [isReplyFormOpen, setIsReplyFormOpen] = useState(false)
     const [showReplies, setShowReplies] = useState(true)
 
@@ -79,7 +83,7 @@ export default function CommentItem({ comment, toolId }: { comment: CommentSchem
                         <button
                             type="button"
                             className="flex items-center gap-1 text-red-600 hover:opacity-70 text-sm"
-                            onClick={() => setIsDeletingConfirm(true)}
+                            onClick={() => setIsHardDeletingConfirm(true)}
                         >
                             <Trash2 size={14} /> Excluir
                         </button>
@@ -117,6 +121,19 @@ export default function CommentItem({ comment, toolId }: { comment: CommentSchem
                     onCancel={() => setIsDeletingConfirm(false)}
                     onConfirm={async () => {
                         await deleteCommentTool({ id: comment.id!, data: comment })
+                        setIsDeletingConfirm(false)
+                    }}
+                />
+            )}
+            {isHardDeletingConfirm && (
+                <HardDeleteConfirm
+                    isDeleting={isHardDeleting}
+                    onCancel={() => setIsHardDeletingConfirm(false)}
+                    onConfirm={async () => {
+                        await hardDeleteCommentTool({
+                            id: comment.id!, 
+                            data: comment
+                        })
                         setIsDeletingConfirm(false)
                     }}
                 />

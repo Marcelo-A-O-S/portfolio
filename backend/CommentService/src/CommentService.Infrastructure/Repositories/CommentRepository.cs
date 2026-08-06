@@ -143,6 +143,7 @@ namespace CommentService.Infrastructure.Repositories
             return await this.context.Comments
                 .Where(c => c.Id == id)
                 .Include(c => c.UserProjection)
+                .Include(c => c.Replies)
                 .FirstOrDefaultAsync();
         }
     }

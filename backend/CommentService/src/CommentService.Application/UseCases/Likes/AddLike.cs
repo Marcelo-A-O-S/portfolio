@@ -13,26 +13,39 @@ namespace CommentService.Application.UseCases.Likes
         private readonly ILikeCacheServices likeCacheServices;
         private readonly ILikeValidationService likeValidationService;
         private readonly IRabbitMQProducer rabbitMQProducer;
+        private readonly IUnitOfWork unitOfWork;
         public AddLike(
             ILikeServices _likeServices,
             ILikeCacheServices _likeCacheServices,
             ILikeValidationService _likeValidationService,
-            IRabbitMQProducer _rabbitMQProducer
+            IRabbitMQProducer _rabbitMQProducer,
+            IUnitOfWork _unitOfWork
         )
         {
             this.likeServices = _likeServices;
             this.likeCacheServices = _likeCacheServices;
             this.likeValidationService = _likeValidationService;
             this.rabbitMQProducer = _rabbitMQProducer;
+            this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid authenticatedUserId, LikeRequest likeRequest)
         {
             await this.likeValidationService.ValidateUserExists(authenticatedUserId);
             await this.likeValidationService.ValidateTargetExists(likeRequest.TargetId, likeRequest.Type);
+            await this.unitOfWork.BeginAsync();
             try
             {
                 var like = new Like(likeRequest.TargetId, likeRequest.Type, authenticatedUserId);
-                await this.likeServices.Save(like);
+                try
+                {
+                    await this.likeServices.Save(like);
+                    await this.unitOfWork.CommitAsync();
+                }
+                catch
+                {
+                    await unitOfWork.RollbackAsync();
+                    throw;
+                }
                 var type = like.Type.ToString();
                 await this.likeCacheServices.AddLikeCache($"like:{like.Type.ToString()}:{like.TargetId}:user:{like.UserId}", like.Id);
                 await this.rabbitMQProducer.Publish($"{type}Liked", 

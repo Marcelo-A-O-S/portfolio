@@ -15,13 +15,15 @@ namespace CommentService.Application.UseCases.Comments
         private readonly ICommentValidationService commentValidationService;
         private readonly IUserProjectionServices userProjectionServices;
         private readonly ILikeServices likeServices;
+        private readonly IUnitOfWork unitOfWork;
         public HardRemoveComment(
             ICommentServices _commentServices,
             ICommentCacheServices _commentCacheServices,
             IRabbitMQProducer _rabbitMQProducer,
             ICommentValidationService _commentValidationService,
             IUserProjectionServices _userProjectionServices,
-            ILikeServices _likeServices
+            ILikeServices _likeServices,
+            IUnitOfWork _unitOfWork
         )
         {
             this.commentServices = _commentServices;
@@ -30,6 +32,7 @@ namespace CommentService.Application.UseCases.Comments
             this.commentValidationService = _commentValidationService;
             this.userProjectionServices = _userProjectionServices;
             this.likeServices = _likeServices;
+            this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid authenticatedUserId,Guid commentId)
         {
@@ -46,12 +49,22 @@ namespace CommentService.Application.UseCases.Comments
         }
         private async Task DeleteCommentTree(Comment comment)
         {
-            foreach (var reply in comment.Replies)
+            foreach (var reply in comment.Replies.ToList())
             {
                 await DeleteCommentTree(reply);
             }
-            await this.likeServices.DeleteByCommentId(comment.Id);
-            await this.commentServices.DeleteById(comment.Id);
+            await this.unitOfWork.BeginAsync();
+            try
+            {
+                await this.likeServices.DeleteByCommentId(comment.Id);
+                await this.commentServices.DeleteById(comment.Id);
+                await this.unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
             var type = comment.Type.ToString();
             await this.commentCacheServices.RemoveCommentCache($"comment:{type}:exists:{comment.Id}");
             await this.rabbitMQProducer.Publish($"{type}CommentDeleted",
