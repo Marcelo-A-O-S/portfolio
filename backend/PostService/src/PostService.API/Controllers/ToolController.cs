@@ -84,7 +84,14 @@ namespace PostService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                await this.createTool.ExecuteAsync(toolRequest);
+                var providerId = User.FindFirst("ProviderId")?.Value;
+                if (providerId == null)
+                    return BadRequest(new { message = "Provider inválido." });
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var role = User.FindFirst(ClaimTypes.Role)?.Value;
+                if (userId == null || role == null)
+                    return Unauthorized(new { message = "Usuário não autorizado." });
+                await this.createTool.ExecuteAsync(Guid.Parse(userId), providerId, toolRequest);
                 return Ok(new { message = "Ferramenta salva com sucesso." });
             }
             var errors = ModelState.Values.Select(x => x.Errors);
@@ -96,6 +103,13 @@ namespace PostService.API.Controllers
         {
             if (ModelState.IsValid)
             {
+                var providerId = User.FindFirst("ProviderId")?.Value;
+                if (providerId == null)
+                    return BadRequest(new { message = "Provider inválido." });
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var role = User.FindFirst(ClaimTypes.Role)?.Value;
+                if (userId == null || role == null)
+                    return Unauthorized(new { message = "Usuário não autorizado." });
                 await this.updateTool.ExecuteAsync(Id, toolRequest);
                 return Ok(new { message = "Ferramenta atualizada com sucesso." });
             }

@@ -8,6 +8,7 @@ namespace PostService.Infrastructure.Context
         {
 
         }
+        public DbSet<Author> Authors { get; set; }
         public DbSet<MediaProjection> MediaProjections { get; set; }
         public DbSet<LikeProjection> LikeProjections { get; set; }
         public DbSet<Tool> Tools { get; set; }

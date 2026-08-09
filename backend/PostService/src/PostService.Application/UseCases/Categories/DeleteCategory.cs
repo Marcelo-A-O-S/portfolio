@@ -8,16 +8,29 @@ namespace PostService.Application.UseCases.Categories
     public class DeleteCategory : IDeleteCategory
     {
         private readonly ICategoryServices categoryServices;
+        private readonly IUnitOfWork unitOfWork;
         public DeleteCategory(
-            ICategoryServices _categoryServices
+            ICategoryServices _categoryServices,
+            IUnitOfWork _unitOfWork
         )
         {
             this.categoryServices = _categoryServices;
+            this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid Id)
         {
             var category = await GetCategory(Id);
-            await this.categoryServices.Delete(category);
+            await this.unitOfWork.BeginAsync();
+            try
+            {
+                await this.categoryServices.Delete(category);
+                await this.unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
         }
         private async Task<Category> GetCategory(Guid Id)
         {

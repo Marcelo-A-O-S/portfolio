@@ -16,13 +16,11 @@ namespace PostService.Infrastructure.Repositories
         public async Task Delete(T entity)
         {
             this.context.Set<T>().Remove(entity);
-            await this.context.SaveChangesAsync();
         }
         public async Task DeleteById(Guid Id)
         {
             var entity = await this.context.Set<T>().FindAsync(Id);
             this.context.Set<T>().Remove(entity);
-            await this.context.SaveChangesAsync();
         }
         public async Task<bool> Exists(Guid Id)
         {
@@ -56,7 +54,6 @@ namespace PostService.Infrastructure.Repositories
             try
             {
                 await this.context.AddAsync(entity);
-                await this.context.SaveChangesAsync();
             }
             catch (DbUpdateException ex)
             {
@@ -71,7 +68,6 @@ namespace PostService.Infrastructure.Repositories
         public async Task Update(T entity)
         {
             this.context.Update(entity);
-            await this.context.SaveChangesAsync();
         }
     }
 }

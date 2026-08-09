@@ -8,6 +8,8 @@ namespace PostService.Domain.Entities
         public Guid Id { get; protected set; }
         public Guid MediaProjectionId { get; protected set; }
         public MediaProjection MediaProjection { get; protected set; }
+        public Guid AuthorId { get; protected set; }
+        public Author Author { get; protected set; }
         public int LikeCount { get; protected set; }
         public int CommentCount { get; protected set; }
         public DateTime CreatedAt { get; protected set; }

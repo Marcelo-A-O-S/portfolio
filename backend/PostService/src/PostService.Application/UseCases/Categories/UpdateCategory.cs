@@ -12,20 +12,33 @@ namespace PostService.Application.UseCases.Categories
     {
         private readonly ICategoryServices categoryServices;
         private readonly ICategoryContentServices categoryContentServices;
+        private readonly IUnitOfWork unitOfWork;
         public UpdateCategory(
             ICategoryServices _categoryServices,
-            ICategoryContentServices _categoryContentServices
+            ICategoryContentServices _categoryContentServices,
+            IUnitOfWork _unitOfWork
         )
         {
             this.categoryServices = _categoryServices;
             this.categoryContentServices = _categoryContentServices;
+            this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid Id, CategoryRequest categoryRequest)
         {
             ValidateCategoryRequest(categoryRequest);
             var category = await this.categoryServices.GetForUpdate(Id);
             await ProcessCategories(category, categoryRequest.CategoryContents);
-            await this.categoryServices.Update(category);
+            await this.unitOfWork.BeginAsync();
+            try
+            {
+                await this.categoryServices.Update(category);
+                await this.unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
         }
         private static void ValidateCategoryRequest(CategoryRequest categoryRequest)
         {

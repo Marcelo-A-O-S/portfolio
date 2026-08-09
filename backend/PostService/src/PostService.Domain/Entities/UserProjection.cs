@@ -1,4 +1,4 @@
-namespace CommentService.Domain.Entities
+namespace PostService.Domain.Entities
 {
     public class UserProjection
     {

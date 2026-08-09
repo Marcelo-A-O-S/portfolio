@@ -10,16 +10,31 @@ namespace PostService.Application.UseCases.Languages
     public class CreateLanguage : ICreateLanguage
     {
         private readonly ILanguageServices languageServices;
-        public CreateLanguage(ILanguageServices _languageServices)
+        private readonly IUnitOfWork unitOfWork;
+        public CreateLanguage(
+            ILanguageServices _languageServices,
+            IUnitOfWork _unitOfWork
+            )
         {
             this.languageServices = _languageServices;
+            this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(LanguageRequest languageRequest)
         {
             ValidateLanguageRequest(languageRequest);
             await ValidateIfLanguageExists(languageRequest);
             var language = new Language(languageRequest.Code, languageRequest.Name);
-            await this.languageServices.Save(language);
+            await this.unitOfWork.BeginAsync();
+            try
+            {
+                await this.languageServices.Save(language);
+                await this.unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
         }
         private static void ValidateLanguageRequest(LanguageRequest languageRequest)
         {

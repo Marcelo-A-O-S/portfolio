@@ -1,45 +1,63 @@
 using System.Collections.Generic;
-using System.Collections.Generic;
 using PostService.Application.DTOs.Request;
 using PostService.Application.Exceptions;
 using PostService.Application.Interfaces;
 using PostService.Application.UseCases.Tools.Interfaces;
 using PostService.Application.Validations;
+using PostService.Application.Validators.Interfaces;
 using PostService.Domain.Entities;
 using PostService.Domain.Interfaces;
 namespace PostService.Application.UseCases.Tools
 {
     public class CreateTool : ICreateTool
     {
+        private readonly IToolValidationServices toolValidationServices;
         private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly IToolsServices toolsServices;
         private readonly ICategoryServices categoryServices;
         private readonly IToolContentServices toolContentServices;
         private readonly IRabbitMQProducer rabbitMQProducer;
+        private readonly IUnitOfWork unitOfWork;
         public CreateTool(
+            IToolValidationServices _toolValidationServices,
             IMediaProjectionServices _mediaProjectionServices,
             IToolsServices _toolsServices,
             ICategoryServices _categoryServices,
             IToolContentServices _toolContentServices,
-            IRabbitMQProducer _rabbitMQProducer
+            IRabbitMQProducer _rabbitMQProducer,
+            IUnitOfWork _unitOfWork
         )
         {
+            this.toolValidationServices = _toolValidationServices;
             this.mediaProjectionServices = _mediaProjectionServices;
             this.toolsServices = _toolsServices;
             this.categoryServices = _categoryServices;
             this.toolContentServices = _toolContentServices;
             this.rabbitMQProducer = _rabbitMQProducer;
+            this.unitOfWork = _unitOfWork;
         }
-        public async Task ExecuteAsync(ToolRequest request)
+        public async Task ExecuteAsync(Guid authenticatedUserId, string provider, ToolRequest request)
         {
             ValidateRequest(request);
+            await this.toolValidationServices.ValidateUserExists(authenticatedUserId);
+            await this.toolValidationServices.ValidateProviderExists(authenticatedUserId, provider);
             var mediasToDelete = new List<MediaProjection>();
             var mediasToCommit = new List<MediaProjection>();
             var tool = new Tool(request.Status);
             await ProcessToolContents(tool, request.ToolContents, mediasToCommit, mediasToDelete);
             await ProcessCategories(tool, request.Categories);
             await ProcessTumbnail(tool, request.Media, mediasToCommit);
-            await this.toolsServices.Save(tool);
+            await this.unitOfWork.BeginAsync();
+            try
+            {
+                await this.toolsServices.Save(tool);
+                await this.unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
             await CommitMedias(tool.Id, mediasToCommit);
             await DeleteMedias(mediasToDelete);
         }
@@ -95,7 +113,17 @@ namespace PostService.Application.UseCases.Tools
                     if (mediaContent == null)
                     {
                         var media = new MediaProjection(addImage.MediaId, addImage.Url);
-                        await this.mediaProjectionServices.Save(media);
+                        await this.unitOfWork.BeginAsync();
+                        try
+                        {
+                            await this.mediaProjectionServices.Save(media);
+                            await this.unitOfWork.CommitAsync();
+                        }
+                        catch
+                        {
+                            await unitOfWork.RollbackAsync();
+                            throw;
+                        }
                         if (!mediasToCommit.Any(m => m.MediaId == media.MediaId))
                         {
                             mediasToCommit.Add(media);
@@ -157,7 +185,17 @@ namespace PostService.Application.UseCases.Tools
                 return;
             }
             mediaContent = new MediaProjection(mediaRequest.MediaId, mediaRequest.Url);
-            await this.mediaProjectionServices.Save(mediaContent);
+            await this.unitOfWork.BeginAsync();
+            try
+            {
+                await this.mediaProjectionServices.Save(mediaContent);
+                await this.unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
             if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
             {
                 mediasToCommit.Add(mediaContent);

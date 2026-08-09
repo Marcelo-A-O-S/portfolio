@@ -1,6 +1,6 @@
-namespace CommentService.Domain.Entities
+namespace PostService.Domain.Entities
 {
-    public class UserProjection
+    public class Author
     {
         public Guid Id { get; private set; }
         public Guid UserId { get; private set; }
@@ -9,7 +9,7 @@ namespace CommentService.Domain.Entities
         public string ProviderId { get; private set; }
         public string Provider { get; private set; }
         public DateTime CreatedAt { get; private set; }
-        public UserProjection(Guid userId, string username, string profileUrl, string providerId, string provider)
+        public Author(Guid userId, string username, string profileUrl, string providerId, string provider)
         {
             this.UserId = userId;
             this.Username = username;

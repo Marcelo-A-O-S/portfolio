@@ -10,16 +10,31 @@ namespace PostService.Application.UseCases.Languages
     public class UpdateLanguage : IUpdateLanguage
     {
         private readonly ILanguageServices languageServices;
-        public UpdateLanguage(ILanguageServices _languageServices)
+        private readonly IUnitOfWork unitOfWork;
+        public UpdateLanguage(
+            ILanguageServices _languageServices,
+            IUnitOfWork _unitOfWork
+            )
         {
             this.languageServices = _languageServices;
+            this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid Id,LanguageRequest languageRequest)
         {
             ValidateLanguageRequest(languageRequest);
             var language = await GetById(Id);
             language.Update(languageRequest.Code, languageRequest.Name);
-            await this.languageServices.Update(language);
+            await this.unitOfWork.BeginAsync();
+            try
+            {
+                await this.languageServices.Update(language);
+                await this.unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
         }
         private static void ValidateLanguageRequest(LanguageRequest languageRequest)
         {
