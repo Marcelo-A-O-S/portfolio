@@ -10,6 +10,7 @@ namespace PostService.Domain.Entities
         public MediaProjection MediaProjection { get; protected set; }
         public Guid AuthorId { get; protected set; }
         public Author Author { get; protected set; }
+        public List<Link>? Links { get; protected set; }
         public int LikeCount { get; protected set; }
         public int CommentCount { get; protected set; }
         public DateTime CreatedAt { get; protected set; }

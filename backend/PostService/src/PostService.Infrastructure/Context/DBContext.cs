@@ -8,6 +8,8 @@ namespace PostService.Infrastructure.Context
         {
 
         }
+        public DbSet<Link> Links { get; set; }
+        public DbSet<LinkType> LinkTypes { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<MediaProjection> MediaProjections { get; set; }
         public DbSet<LikeProjection> LikeProjections { get; set; }
