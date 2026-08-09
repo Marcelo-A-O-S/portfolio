@@ -74,5 +74,9 @@ namespace PostService.Domain.Entities
             this.CommentCount--;
             this.UpdatedAt = DateTime.UtcNow;
         }
+        public void SetAuthorId(Guid authorId)
+        {
+            this.AuthorId = authorId;
+        }
     }
 }

@@ -5,6 +5,6 @@ namespace PostService.Application.UseCases.Tools.Interfaces
 {
     public interface IUpdateTool
     {
-        Task ExecuteAsync(Guid Id, ToolRequest toolRequest);
+        Task ExecuteAsync(Guid authenticatedUserId, string role, Guid Id, ToolRequest toolRequest);
     }
 }

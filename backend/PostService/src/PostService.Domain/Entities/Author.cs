@@ -18,5 +18,9 @@ namespace PostService.Domain.Entities
             this.Provider = provider;
             this.CreatedAt = DateTime.UtcNow;
         }
+        public void GenerateId()
+        {
+            this.Id = Guid.NewGuid();
+        }
     }
 }

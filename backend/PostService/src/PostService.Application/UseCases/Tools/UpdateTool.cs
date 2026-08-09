@@ -3,31 +3,39 @@ using PostService.Application.Exceptions;
 using PostService.Application.Interfaces;
 using PostService.Application.UseCases.Tools.Interfaces;
 using PostService.Application.Validations;
+using PostService.Application.Validators.Interfaces;
 using PostService.Domain.Entities;
 using PostService.Domain.Interfaces;
 namespace PostService.Application.UseCases.Tools
 {
     public class UpdateTool : IUpdateTool
     {
+        private readonly IUserServicesClient userServicesClient;
+        private readonly IToolValidationServices toolValidationServices;
         private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly IToolsServices toolsServices;
         private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly ICategoryServices categoryServices;
         public UpdateTool(
+            IUserServicesClient _userServicesClient,
+            IToolValidationServices _toolValidationServices,
             IToolsServices _toolsServices,
             IMediaProjectionServices _mediaProjectionServices,
             ICategoryServices _categoryServices,
             IRabbitMQProducer _rabbitMQProducer
         )
         {
+            this.userServicesClient = _userServicesClient;
+            this.toolValidationServices = _toolValidationServices;
             this.toolsServices = _toolsServices;
             this.mediaProjectionServices = _mediaProjectionServices;
             this.categoryServices = _categoryServices;
             this.rabbitMQProducer = _rabbitMQProducer;
         }
-        public async Task ExecuteAsync(Guid Id, ToolRequest request)
+        public async Task ExecuteAsync(Guid authenticatedUserId, string role, Guid Id, ToolRequest request)
         {
             ValidateRequest(request);
+            await this.toolValidationServices.ValidateUserExists(authenticatedUserId);
             var tool = await GetTool(Id);
             var mediasToCommit = new List<MediaProjection>();
             var mediasToDelete = new List<MediaProjection>();

@@ -110,7 +110,7 @@ namespace PostService.API.Controllers
                 var role = User.FindFirst(ClaimTypes.Role)?.Value;
                 if (userId == null || role == null)
                     return Unauthorized(new { message = "Usuário não autorizado." });
-                await this.updateTool.ExecuteAsync(Id, toolRequest);
+                await this.updateTool.ExecuteAsync(Guid.Parse(userId), role, Id, toolRequest);
                 return Ok(new { message = "Ferramenta atualizada com sucesso." });
             }
             var errors = ModelState.Values.Select(x => x.Errors);

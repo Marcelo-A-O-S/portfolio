@@ -13,5 +13,9 @@ namespace PostService.Domain.Entities
             this.MediaId = mediaId;
             this.Url = url;
         }
+        public void GenerateId()
+        {
+            this.Id = Guid.NewGuid();
+        }
     }
 }

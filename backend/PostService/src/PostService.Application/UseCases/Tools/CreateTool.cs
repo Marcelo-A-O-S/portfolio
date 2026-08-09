@@ -11,45 +11,52 @@ namespace PostService.Application.UseCases.Tools
 {
     public class CreateTool : ICreateTool
     {
+        private readonly IUserServicesClient userServicesClient;
         private readonly IToolValidationServices toolValidationServices;
         private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly IToolsServices toolsServices;
         private readonly ICategoryServices categoryServices;
         private readonly IToolContentServices toolContentServices;
+        private readonly IAuthorServices authorServices;
         private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly IUnitOfWork unitOfWork;
         public CreateTool(
+            IUserServicesClient _userServicesClient,
             IToolValidationServices _toolValidationServices,
             IMediaProjectionServices _mediaProjectionServices,
             IToolsServices _toolsServices,
             ICategoryServices _categoryServices,
             IToolContentServices _toolContentServices,
+            IAuthorServices _authorServices,
             IRabbitMQProducer _rabbitMQProducer,
             IUnitOfWork _unitOfWork
         )
         {
+            this.userServicesClient = _userServicesClient;
             this.toolValidationServices = _toolValidationServices;
             this.mediaProjectionServices = _mediaProjectionServices;
             this.toolsServices = _toolsServices;
             this.categoryServices = _categoryServices;
             this.toolContentServices = _toolContentServices;
+            this.authorServices = _authorServices;
             this.rabbitMQProducer = _rabbitMQProducer;
             this.unitOfWork = _unitOfWork;
         }
-        public async Task ExecuteAsync(Guid authenticatedUserId, string provider, ToolRequest request)
+        public async Task ExecuteAsync(Guid authenticatedUserId, string providerId, ToolRequest request)
         {
             ValidateRequest(request);
             await this.toolValidationServices.ValidateUserExists(authenticatedUserId);
-            await this.toolValidationServices.ValidateProviderExists(authenticatedUserId, provider);
+            await this.toolValidationServices.ValidateProviderExists(authenticatedUserId, providerId);
             var mediasToDelete = new List<MediaProjection>();
             var mediasToCommit = new List<MediaProjection>();
             var tool = new Tool(request.Status);
-            await ProcessToolContents(tool, request.ToolContents, mediasToCommit, mediasToDelete);
-            await ProcessCategories(tool, request.Categories);
-            await ProcessTumbnail(tool, request.Media, mediasToCommit);
             await this.unitOfWork.BeginAsync();
             try
             {
+                await ProcessAuthor(tool, authenticatedUserId, providerId);
+                await ProcessToolContents(tool, request.ToolContents, mediasToCommit, mediasToDelete);
+                await ProcessCategories(tool, request.Categories);
+                await ProcessTumbnail(tool, request.Media, mediasToCommit);
                 await this.toolsServices.Save(tool);
                 await this.unitOfWork.CommitAsync();
             }
@@ -113,17 +120,8 @@ namespace PostService.Application.UseCases.Tools
                     if (mediaContent == null)
                     {
                         var media = new MediaProjection(addImage.MediaId, addImage.Url);
-                        await this.unitOfWork.BeginAsync();
-                        try
-                        {
-                            await this.mediaProjectionServices.Save(media);
-                            await this.unitOfWork.CommitAsync();
-                        }
-                        catch
-                        {
-                            await unitOfWork.RollbackAsync();
-                            throw;
-                        }
+                        media.GenerateId();
+                        await this.mediaProjectionServices.Save(media);
                         if (!mediasToCommit.Any(m => m.MediaId == media.MediaId))
                         {
                             mediasToCommit.Add(media);
@@ -185,22 +183,23 @@ namespace PostService.Application.UseCases.Tools
                 return;
             }
             mediaContent = new MediaProjection(mediaRequest.MediaId, mediaRequest.Url);
-            await this.unitOfWork.BeginAsync();
-            try
-            {
-                await this.mediaProjectionServices.Save(mediaContent);
-                await this.unitOfWork.CommitAsync();
-            }
-            catch
-            {
-                await unitOfWork.RollbackAsync();
-                throw;
-            }
+            mediaContent.GenerateId();
+            await this.mediaProjectionServices.Save(mediaContent);
             if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
             {
                 mediasToCommit.Add(mediaContent);
             }
             tool.SetThumbnail(mediaContent.Id);
+        }
+        private async Task ProcessAuthor(Tool tool, Guid authenticatedUserId, string providerId)
+        {
+            var user = await this.userServicesClient.GetUserAsync(authenticatedUserId, providerId);
+            if(user == null)
+                throw new ValidationException("Erro ao buscar usuário.");
+            var author = new Author(user.Id, user.Name, user.ProfileUrl, user.ProviderId, user.Provider);
+            author.GenerateId();
+            await this.authorServices.Save(author);
+            tool.SetAuthorId(author.Id);
         }
         private async Task CommitMedias(Guid toolId, List<MediaProjection> mediasToCommit)
         {

@@ -8,14 +8,28 @@ namespace PostService.Application.UseCases.Languages
     public class DeleteLanguage : IDeleteLanguage
     {
         private readonly ILanguageServices languageServices;
-        public DeleteLanguage(ILanguageServices _languageServices)
+        private readonly IUnitOfWork unitOfWork;
+        public DeleteLanguage(
+            ILanguageServices _languageServices,
+            IUnitOfWork _unitOfWork)
         {
             this.languageServices = _languageServices;
+            this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid Id)
         {
             var language = await GetLanguageById(Id);
-            await this.languageServices.Delete(language);
+            await this.unitOfWork.BeginAsync();
+            try
+            {
+                await this.languageServices.Delete(language);
+                await this.unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
         }
         private async Task<Language> GetLanguageById(Guid Id)
         {
