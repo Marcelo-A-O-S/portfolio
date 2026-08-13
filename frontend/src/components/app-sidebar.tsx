@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar";
-import { Home, Package, Wrench, Globe, ChartBarStacked, FolderKanban, ShieldCheck } from "lucide-react";
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger } from "./ui/sidebar";
+import { Home, Package, Wrench, Globe, ChartBarStacked, FolderKanban, ShieldCheck, Link as LinkType } from "lucide-react";
 import Link from "next/link";
 import { headers } from "next/headers";
 const itemsMenager = [
@@ -25,6 +25,11 @@ const itemsMenager = [
         icon: Wrench
     },
     {
+        title: "Type Links",
+        url: "/dashboard",
+        icon: LinkType
+    },
+    {
         title: "Categories",
         url: "/dashboard",
         icon: ChartBarStacked
@@ -43,13 +48,14 @@ export async function AppSidebar() {
     if (!session?.user) {
         return
     }
-    if(session?.user.role !== "Administrador" && session?.user.role !== "Moderator"){
-        return;
-    }
+    // if(session?.user.role !== "Administrador" && session?.user.role !== "Moderator"){
+    //     return;
+    // }
     // return session?.user.role == "Administrador" || session?.user.role == "Moderator" && (
     return  (
         <>
-            <Sidebar collapsible="icon">
+            <SidebarTrigger className="fixed z-20 top-11" />
+            <Sidebar collapsible="icon" className="container">
                 <SidebarContent className="flex flex-col justify-center">
                     <SidebarGroup>
                         <SidebarGroupLabel>Application</SidebarGroupLabel>

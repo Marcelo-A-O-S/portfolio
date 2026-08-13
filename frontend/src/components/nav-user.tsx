@@ -11,7 +11,7 @@ type NavUserProps = {
 export default function NavUser({ session }: NavUserProps) {
     return (
         <>
-            <DropdownMenu >
+            <DropdownMenu modal={false}>
                 <DropdownMenuTrigger asChild>
                     <div className=" flex items-center justify-center gap-2 flex-row-reverse">
                         <Button variant="ghost" size="icon" className="rounded-full">
@@ -25,7 +25,7 @@ export default function NavUser({ session }: NavUserProps) {
                         </div>
                     </div>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="relative">
+                <DropdownMenuContent align="end" className="">
                     <DropdownMenuGroup>
                         <DropdownMenuItem>
                             <Link className="text-sm w-full" href={"/admin/dashboard"}>Gerenciador</Link>

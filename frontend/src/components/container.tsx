@@ -13,10 +13,14 @@ export default function Container({ children }: ContainerProps) {
     return (
         <>
             <Providers>
+                <SidebarProvider>
                 <Header />
+                <AppSidebar />
+                
                 <Toaster />
                 {children}
                 <Footer />
+                </SidebarProvider>
             </Providers>
         </>)
 }

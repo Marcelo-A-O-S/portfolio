@@ -26,11 +26,13 @@ export default function RootLayout({
   return (
     <html lang="pt-br" suppressHydrationWarning>
       <body suppressHydrationWarning
-        className={`bg-white dark:bg-black container ${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`bg-white dark:bg-black  ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-          <Container>
+        <div className="container">
+            <Container>
             {children}
           </Container>
+        </div>
       </body>
     </html>
   );
