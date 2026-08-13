@@ -3,7 +3,7 @@ import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGrou
 import { Home, Package, Wrench, Globe, ChartBarStacked, FolderKanban, ShieldCheck, Link as LinkType } from "lucide-react";
 import Link from "next/link";
 import { headers } from "next/headers";
-const itemsMenager = [
+const itemsManager = [
     {
         title: "Home",
         url: "/dashboard",
@@ -36,32 +36,29 @@ const itemsMenager = [
     },
     {
         title: "Languages",
-        url: "/dashboard",
+        url: "/admin/languages",
         icon: Globe
     }
 ]
 export async function AppSidebar() {
-    const headersList = await headers();
     const session = await getServerSession();
-    const pathname = headersList.get("x-invoke-path") || "";
-    console.log("Path: ",pathname);
     if (!session?.user) {
         return
     }
-    // if(session?.user.role !== "Administrador" && session?.user.role !== "Moderator"){
-    //     return;
-    // }
-    // return session?.user.role == "Administrador" || session?.user.role == "Moderator" && (
+    if(session?.user.role !== "Administrador" && session?.user.role !== "Moderator"){
+        console.log("User:", session.user)
+        return;
+    }
     return  (
         <>
             <SidebarTrigger className="fixed z-20 top-11" />
-            <Sidebar collapsible="icon" className="container">
+            <Sidebar collapsible="icon" className="container" variant="floating">
                 <SidebarContent className="flex flex-col justify-center">
                     <SidebarGroup>
                         <SidebarGroupLabel>Application</SidebarGroupLabel>
                         <SidebarGroupContent>
                             <SidebarMenu>
-                                {itemsMenager.map((item) => (
+                                {itemsManager.map((item) => (
                                     <SidebarMenuItem key={item.title}>
                                         <SidebarMenuButton asChild>
                                             <Link className="" href={item.url}>

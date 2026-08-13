@@ -13,7 +13,7 @@ export default function Container({ children }: ContainerProps) {
     return (
         <>
             <Providers>
-                <SidebarProvider>
+                <SidebarProvider defaultOpen={false}>
                 <Header />
                 <AppSidebar />
                 
