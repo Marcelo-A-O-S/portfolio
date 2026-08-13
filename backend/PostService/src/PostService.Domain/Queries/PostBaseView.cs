@@ -12,5 +12,6 @@ namespace PostService.Domain.Queries
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public Status Status { get; set; }
+        public AuthorView Author { get; set; }
     }
 }

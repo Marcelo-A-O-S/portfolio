@@ -1,6 +1,7 @@
 import z from "zod";
 import { categorySchema } from "./CategorySchema";
 import { mediaSchema } from "./MediaSchema";
+import { authorSchema } from "./AuthorSchema";
 export const Status = z.enum(["DRAFT", "PUBLISH", "ARCHIVED"]);
 export const postBaseSchema = z.object({
     id: z.uuid().optional(),
@@ -10,5 +11,8 @@ export const postBaseSchema = z.object({
     likes: z.number(),
     liked: z.boolean(),
     comments: z.number(),
-    status: Status
+    status: Status,
+    author: authorSchema.optional(),
+    createdAt: z.string().optional(),
+    updatedAt: z.string().optional()
 })

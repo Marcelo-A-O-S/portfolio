@@ -18,6 +18,7 @@ import { transformerCopyButton } from '@rehype-pretty/transformers'
 import { rehypePrefixImageHost } from "@/lib/utils";
 import { Heart, MessageCircle } from "lucide-react";
 import ToolComments from "../../components/tool-comments";
+import AuthorSection from "@/components/author-section";
 const hostBackend = process.env.BACKEND_SERVER!;
 type Props = {
     params: Promise<{ Id: string, language: string }>
@@ -29,6 +30,7 @@ async function getToolOrThrow(id: string) {
     }
     const result = await toolSchema.safeParseAsync(response.data);
     if (result.error) {
+        console.log("Error: ", result.error.message);
         notFound();
     }
     return result.data;
@@ -84,6 +86,7 @@ export default async function PageById({ params }: Props) {
     if (!toolContent) {
         return notFound();
     }
+
     const categories = tool.categories
         .map(c => {
             const categoryContent = c.categoryContents.find(
@@ -117,6 +120,7 @@ export default async function PageById({ params }: Props) {
     const currentUser = session?.user
         ? { id: session.user.email ?? "", name: session.user.name ?? "Usuário" }
         : null;
+    
     return (
         <>
             <main className="mx-auto flex min-h-screen w-full max-w-[1440px] justify-center  ">
@@ -158,6 +162,13 @@ export default async function PageById({ params }: Props) {
                                         <span>{tool.comments}</span>
                                     </button>
                                 </div>
+                            </div>
+                            <div className="max-w-full">
+                                {tool.author && (
+                                    <AuthorSection
+                                    author={tool.author}
+                                     />
+                                )}
                             </div>
                             <div className="max-w-full">
                                 <ToolComments

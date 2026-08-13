@@ -123,7 +123,6 @@ export const authOptions: AuthOptions = {
                     if (deviceId && refreshToken) {
                         const deviceName = await buildDeviceName();
                         const response = await refreshAsync(token.refreshTokenId, token.userId, token.providerId, refreshToken, deviceId, deviceName)
-                        console.log("Status: ", response.status);
                         if (response.status == 200 || response.status == 201) {
                             const data = await response.json();
                             const expireDate = Date.now() + data.expireIn * 1000;

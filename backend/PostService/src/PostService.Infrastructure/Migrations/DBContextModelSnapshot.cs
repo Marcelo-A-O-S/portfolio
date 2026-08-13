@@ -52,6 +52,39 @@ namespace PostService.Infrastructure.Migrations
                     b.ToTable("CategoryTool");
                 });
 
+            modelBuilder.Entity("PostService.Domain.Entities.Author", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ProfileUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Authors");
+                });
+
             modelBuilder.Entity("PostService.Domain.Entities.Category", b =>
                 {
                     b.Property<Guid>("Id")
@@ -150,6 +183,67 @@ namespace PostService.Infrastructure.Migrations
                     b.ToTable("LikeProjections");
                 });
 
+            modelBuilder.Entity("PostService.Domain.Entities.Link", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("LinkTypeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("ToolId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LinkTypeId");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("ToolId");
+
+                    b.ToTable("Links");
+                });
+
+            modelBuilder.Entity("PostService.Domain.Entities.LinkType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("BackgroundColor")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TextColor")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LinkTypes");
+                });
+
             modelBuilder.Entity("PostService.Domain.Entities.MediaProjection", b =>
                 {
                     b.Property<Guid>("Id")
@@ -187,6 +281,9 @@ namespace PostService.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("CommentCount")
                         .HasColumnType("integer");
 
@@ -207,6 +304,8 @@ namespace PostService.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
 
                     b.HasIndex("MediaProjectionId");
 
@@ -264,6 +363,9 @@ namespace PostService.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("CommentCount")
                         .HasColumnType("integer");
 
@@ -284,6 +386,8 @@ namespace PostService.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
 
                     b.HasIndex("MediaProjectionId");
 
@@ -403,6 +507,25 @@ namespace PostService.Infrastructure.Migrations
                     b.Navigation("Language");
                 });
 
+            modelBuilder.Entity("PostService.Domain.Entities.Link", b =>
+                {
+                    b.HasOne("PostService.Domain.Entities.LinkType", "LinkType")
+                        .WithMany()
+                        .HasForeignKey("LinkTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PostService.Domain.Entities.Post", null)
+                        .WithMany("Links")
+                        .HasForeignKey("PostId");
+
+                    b.HasOne("PostService.Domain.Entities.Tool", null)
+                        .WithMany("Links")
+                        .HasForeignKey("ToolId");
+
+                    b.Navigation("LinkType");
+                });
+
             modelBuilder.Entity("PostService.Domain.Entities.MediaProjection", b =>
                 {
                     b.HasOne("PostService.Domain.Entities.PostContent", null)
@@ -416,11 +539,19 @@ namespace PostService.Infrastructure.Migrations
 
             modelBuilder.Entity("PostService.Domain.Entities.Post", b =>
                 {
+                    b.HasOne("PostService.Domain.Entities.Author", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PostService.Domain.Entities.MediaProjection", "MediaProjection")
                         .WithMany()
                         .HasForeignKey("MediaProjectionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
 
                     b.Navigation("MediaProjection");
                 });
@@ -446,11 +577,19 @@ namespace PostService.Infrastructure.Migrations
 
             modelBuilder.Entity("PostService.Domain.Entities.Tool", b =>
                 {
+                    b.HasOne("PostService.Domain.Entities.Author", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PostService.Domain.Entities.MediaProjection", "MediaProjection")
                         .WithMany()
                         .HasForeignKey("MediaProjectionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
 
                     b.Navigation("MediaProjection");
                 });
@@ -496,6 +635,8 @@ namespace PostService.Infrastructure.Migrations
 
             modelBuilder.Entity("PostService.Domain.Entities.Post", b =>
                 {
+                    b.Navigation("Links");
+
                     b.Navigation("PostContents");
                 });
 
@@ -506,6 +647,8 @@ namespace PostService.Infrastructure.Migrations
 
             modelBuilder.Entity("PostService.Domain.Entities.Tool", b =>
                 {
+                    b.Navigation("Links");
+
                     b.Navigation("ToolContents");
                 });
 

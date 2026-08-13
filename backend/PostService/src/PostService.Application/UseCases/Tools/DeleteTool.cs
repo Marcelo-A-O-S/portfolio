@@ -10,15 +10,18 @@ namespace PostService.Application.UseCases.Tools
         private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly IToolsServices toolsServices;
         private readonly IRabbitMQProducer rabbitMQProducer;
+        private readonly IUnitOfWork unitOfWork;
         public DeleteTool(
             IMediaProjectionServices _mediaProjectionServices,
             IToolsServices _toolsServices,
-            IRabbitMQProducer _rabbitMQProducer
+            IRabbitMQProducer _rabbitMQProducer,
+            IUnitOfWork _unitOfWork
         )
         {
             this.mediaProjectionServices = _mediaProjectionServices;
             this.toolsServices = _toolsServices;
             this.rabbitMQProducer = _rabbitMQProducer;
+            this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid Id)
         {
@@ -26,7 +29,17 @@ namespace PostService.Application.UseCases.Tools
             var mediasToDelete = new List<MediaProjection>();
             await ProcessToolContents(tool, mediasToDelete);
             await ProcessTumbnail(tool, mediasToDelete);
-            await this.toolsServices.DeleteById(tool.Id);
+            await this.unitOfWork.BeginAsync();
+            try
+            {
+                await this.toolsServices.DeleteById(tool.Id);
+                await this.unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
             await DeleteMedias(mediasToDelete);
         }
         private async Task<Tool> GetTool(Guid Id)

@@ -3,9 +3,9 @@ import Link from "next/link";
 export default function Footer() {
     return (
         <>
-            <footer className="max-w-[1440px] w-full mx-auto ">
+            <footer className=" w-full mx-auto ">
                 <div
-                    className="container flex flex-col flex-wrap px-5 py-24 mx-auto md:items-center lg:items-start md:flex-row md:flex-no-wrap">
+                    className="flex flex-col flex-wrap px-5 py-24 mx-auto md:items-center lg:items-start md:flex-row md:flex-no-wrap">
                     <div className="flex-shrink-0 w-64 mx-auto text-center md:mx-0 md:text-left">
                         <p className="relative text-lg font-semibold uppercase">Marcelo.dev</p>
                         <p className="mt-2 text-sm ">Desenvolvendo o meu próprio futuro!</p>
@@ -71,7 +71,7 @@ export default function Footer() {
                     </div>
                 </div>
                 <div className="bg-gray-300">
-                    <div className="container px-5 py-4 mx-auto">
+                    <div className="px-5 py-4 mx-auto">
                         <p className="text-sm text-gray-700 capitalize xl:text-center">© 2020 All rights reserved </p>
                     </div>
                 </div>

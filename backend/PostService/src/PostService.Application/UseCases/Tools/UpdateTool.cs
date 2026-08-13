@@ -5,6 +5,7 @@ using PostService.Application.UseCases.Tools.Interfaces;
 using PostService.Application.Validations;
 using PostService.Application.Validators.Interfaces;
 using PostService.Domain.Entities;
+using PostService.Domain.Enums;
 using PostService.Domain.Interfaces;
 namespace PostService.Application.UseCases.Tools
 {
@@ -16,13 +17,15 @@ namespace PostService.Application.UseCases.Tools
         private readonly IToolsServices toolsServices;
         private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly ICategoryServices categoryServices;
+        private readonly IUnitOfWork unitOfWork;
         public UpdateTool(
             IUserServicesClient _userServicesClient,
             IToolValidationServices _toolValidationServices,
             IToolsServices _toolsServices,
             IMediaProjectionServices _mediaProjectionServices,
             ICategoryServices _categoryServices,
-            IRabbitMQProducer _rabbitMQProducer
+            IRabbitMQProducer _rabbitMQProducer,
+            IUnitOfWork _unitOfWork
         )
         {
             this.userServicesClient = _userServicesClient;
@@ -31,18 +34,33 @@ namespace PostService.Application.UseCases.Tools
             this.mediaProjectionServices = _mediaProjectionServices;
             this.categoryServices = _categoryServices;
             this.rabbitMQProducer = _rabbitMQProducer;
+            this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid authenticatedUserId, string role, Guid Id, ToolRequest request)
         {
             ValidateRequest(request);
+            if (!Enum.TryParse<UserRole>(role, true, out var userRole))
+                throw new ValidationException("Usuário inválido.");
+            if (userRole == UserRole.Client)
+                throw new ValidationException("Você não pode editar este comentário.");
             await this.toolValidationServices.ValidateUserExists(authenticatedUserId);
             var tool = await GetTool(Id);
             var mediasToCommit = new List<MediaProjection>();
             var mediasToDelete = new List<MediaProjection>();
-            await ProcessToolContents(tool, request.ToolContents, mediasToCommit, mediasToDelete);
-            await ProcessCategories(tool, request.Categories);
-            await ProcessTumbnail(tool, request.Media, mediasToCommit, mediasToDelete);
-            await this.toolsServices.Update(tool);
+            await this.unitOfWork.BeginAsync();
+            try
+            {
+                await ProcessToolContents(tool, request.ToolContents, mediasToCommit, mediasToDelete);
+                await ProcessCategories(tool, request.Categories);
+                await ProcessTumbnail(tool, request.Media, mediasToCommit, mediasToDelete);
+                await this.toolsServices.Update(tool);
+                await this.unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
             await CommitMedias(tool.Id, mediasToCommit);
             await DeleteMedias(mediasToDelete);
         }
@@ -133,6 +151,7 @@ namespace PostService.Application.UseCases.Tools
                 if (mediaContent == null)
                 {
                     var media = new MediaProjection(addImage.MediaId, addImage.Url);
+                    media.GenerateId();
                     await this.mediaProjectionServices.Save(media);
                     if (!mediasToCommit.Any(m => m.MediaId == media.MediaId))
                     {
@@ -199,6 +218,7 @@ namespace PostService.Application.UseCases.Tools
                 return;
             }
             mediaContent = new MediaProjection(mediaRequest.MediaId, mediaRequest.Url);
+            mediaContent.GenerateId();
             await this.mediaProjectionServices.Save(mediaContent);
             if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
             {

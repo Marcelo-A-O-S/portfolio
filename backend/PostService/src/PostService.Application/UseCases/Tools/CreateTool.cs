@@ -196,9 +196,13 @@ namespace PostService.Application.UseCases.Tools
             var user = await this.userServicesClient.GetUserAsync(authenticatedUserId, providerId);
             if(user == null)
                 throw new ValidationException("Erro ao buscar usuário.");
-            var author = new Author(user.Id, user.Name, user.ProfileUrl, user.ProviderId, user.Provider);
-            author.GenerateId();
-            await this.authorServices.Save(author);
+            var author = await this.authorServices.FindBy(a => a.UserId == user.Id && a.ProviderId == user.ProviderId);
+            if(author == null)
+            {
+                author = new Author(user.Id, user.Name, user.ProfileUrl, user.ProviderId, user.Provider);
+                author.GenerateId();
+                await this.authorServices.Save(author);
+            }
             tool.SetAuthorId(author.Id);
         }
         private async Task CommitMedias(Guid toolId, List<MediaProjection> mediasToCommit)

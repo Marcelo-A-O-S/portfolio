@@ -13,7 +13,7 @@ export default function NavUser({ session }: NavUserProps) {
         <>
             <DropdownMenu >
                 <DropdownMenuTrigger asChild>
-                    <div className="flex items-center justify-center gap-2 flex-row-reverse">
+                    <div className=" flex items-center justify-center gap-2 flex-row-reverse">
                         <Button variant="ghost" size="icon" className="rounded-full">
                             <Avatar>
                                 <AvatarImage src={session.user.image!} alt={session.user.name!} />
@@ -25,7 +25,7 @@ export default function NavUser({ session }: NavUserProps) {
                         </div>
                     </div>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-[200px]">
+                <DropdownMenuContent align="end" className="relative">
                     <DropdownMenuGroup>
                         <DropdownMenuItem>
                             <Link className="text-sm w-full" href={"/admin/dashboard"}>Gerenciador</Link>

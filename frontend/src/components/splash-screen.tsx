@@ -98,7 +98,7 @@ export default function SplashScreen() {
                     </div>
                 </div>
             </dialog>
-            <div ref={splashScreenRef} className="fixed mx-auto w-screen max-w-[1440px] h-svh z-20 flex flex-col justify-center bg-white dark:bg-black">
+            <div ref={splashScreenRef} className="container fixed mx-auto w-full  h-svh z-20 flex flex-col justify-center bg-white dark:bg-black">
                 <div className="relative flex justify-between w-full p-10">
                     <p className="leading-none text-sm md:text-lg font-semibold uppercase tracking-tighter">Marcelo.dev</p>
                 </div>

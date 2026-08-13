@@ -15,6 +15,9 @@ using PostService.Application.Caching.User;
 using PostService.Application.Caching.Post;
 using PostService.Application.UseCases.InternalTool.Interfaces;
 using PostService.Application.UseCases.InternalTool;
+using PostService.Application.Caching.Tools;
+using PostService.Application.Validators.Interfaces;
+using PostService.Application.Validators;
 namespace PostService.Application.Extensions
 {
     public static class DependencyInjectionExtension
@@ -32,9 +35,15 @@ namespace PostService.Application.Extensions
             services.AddScoped<ILanguageServices, LanguageServices>();
             services.AddScoped<IMediaProjectionServices, MediaProjectionServices>();
             services.AddScoped<ILikeProjectionServices, LikeProjectionServices>();
+            services.AddScoped<IAuthorServices, AuthorServices>();
+            services.AddScoped<ILinkServices, LinkServices>();
+            services.AddScoped<ILinkTypeServices, LinkTypeServices>();
 
             services.AddScoped<IUserCacheServices, UserCacheServices>();
             services.AddScoped<IPostCacheServices, PostCacheServices>();
+            services.AddScoped<IToolCacheServices, ToolCacheServices>();
+
+            services.AddScoped<IToolValidationServices, ToolValidationServices>();
 
             services.AddScoped<ICreateLanguage, CreateLanguage>();
             services.AddScoped<IUpdateLanguage, UpdateLanguage>();

@@ -33,6 +33,7 @@ namespace PostService.Infrastructure.Repositories
             var totalItems = await query.CountAsync();
             var items = await query
                 .OrderByDescending(t => t.CreatedAt)
+                .Include(t => t.Author)
                 .Include(t => t.ToolContents)
                     .ThenInclude(tl => tl.Language)
                 .Include(t => t.Categories)
@@ -54,6 +55,12 @@ namespace PostService.Infrastructure.Repositories
                     UpdatedAt = t.UpdatedAt,
                     Likes = t.LikeCount,
                     Comments = t.CommentCount,
+                    Author = new AuthorView
+                    {
+                        Username = t.Author.Username,
+                        Provider = t.Author.Provider,
+                        ProfileUrl = t.Author.ProfileUrl
+                    },
                     Liked = this.context.LikeProjections.Any(lp =>
                                 lp.TargetId == t.Id &&
                                 lp.UserId == authenticatedUserId),
@@ -148,6 +155,12 @@ namespace PostService.Infrastructure.Repositories
                     UpdatedAt = t.UpdatedAt,
                     Likes = t.LikeCount,
                     Comments = t.CommentCount,
+                    Author = new AuthorView
+                    {
+                        Username = t.Author.Username,
+                        Provider = t.Author.Provider,
+                        ProfileUrl = t.Author.ProfileUrl
+                    },
                     Liked = this.context.LikeProjections.Any(lp =>
                                 lp.TargetId == t.Id &&
                                 lp.UserId == authenticatedUserId),
@@ -219,6 +232,12 @@ namespace PostService.Infrastructure.Repositories
                     Status = t.Status,
                     CreatedAt = t.CreatedAt,
                     UpdatedAt = t.UpdatedAt,
+                    Author = new AuthorView
+                    {
+                        Username = t.Author.Username,
+                        Provider = t.Author.Provider,
+                        ProfileUrl = t.Author.ProfileUrl
+                    },
                     Categories = t.Categories.Select(c => new CategoryView
                     {
                         Id = c.Id,

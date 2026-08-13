@@ -5,6 +5,8 @@ using PostService.Infrastructure.Messaging.Handlers.Interfaces;
 using PostService.Infrastructure.Messaging.Handlers;
 using PostService.Infrastructure.Repositories;
 using PostService.Infrastructure.Workers;
+using PostService.Infrastructure.Persistence;
+using PostService.Application.Interfaces;
 namespace PostService.Infrastructure.Extensions
 {
     public static class DependencyInjectionExtension
@@ -13,6 +15,7 @@ namespace PostService.Infrastructure.Extensions
             this IServiceCollection services
         )
         {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IGenerics<Category>,Generics<Category>>();
             services.AddScoped<IGenerics<CategoryContent>, Generics<CategoryContent>>();
             services.AddScoped<IGenerics<Tool>, Generics<Tool>>();
@@ -22,6 +25,9 @@ namespace PostService.Infrastructure.Extensions
             services.AddScoped<IGenerics<Language>, Generics<Language>>();
             services.AddScoped<IGenerics<MediaProjection>, Generics<MediaProjection>>();
             services.AddScoped<IGenerics<LikeProjection>, Generics<LikeProjection>>();
+            services.AddScoped<IGenerics<Link>, Generics<Link>>();
+            services.AddScoped<IGenerics<LinkType>,Generics<LinkType>>();
+            services.AddScoped<IGenerics<Author>,Generics<Author>>();
 
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ICategoryContentRepository, CategoryContentRepository>();
@@ -32,6 +38,9 @@ namespace PostService.Infrastructure.Extensions
             services.AddScoped<ILanguageRepository, LanguageRepository>();
             services.AddScoped<IMediaProjectionRepository, MediaProjectionRepository>();
             services.AddScoped<ILikeProjectionRepository, LikeProjectionRepository>();
+            services.AddScoped<IAuthorRepository, AuthorRepository>();
+            services.AddScoped<ILinkRepository, LinkRepository>();
+            services.AddScoped<ILinkTypeRepository, LinkTypeRepository>();
             
             services.AddSingleton<IRabbitMQProducer, RabbitMQProducer>();
 
