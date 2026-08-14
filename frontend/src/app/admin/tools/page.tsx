@@ -6,10 +6,11 @@ import { usePaginationTool } from "@/hooks/Tool/usePaginationTool";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CardTool from "./components/card-tool";
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationEllipsis, PaginationLink, PaginationNext } from "@/components/ui/pagination";
 import { createPageURL, generatePagination } from "@/lib/utils";
+import { useDebounce } from "@/hooks/useDebounce";
 export default function ToolsPage() {
     const { data: session } = useSession();
     const router = useRouter();
@@ -17,6 +18,7 @@ export default function ToolsPage() {
     const page = Number(searchParams.get("page")) || 1;
     const search = searchParams.get("search") || undefined;
     const [searchInput, setSearchInput] = useState(search ?? "");
+    const debouncedSearch = useDebounce(searchInput, 500);
     const { data: languages } = useLanguages();
     const { data: tools } = usePaginationTool({
         page,
@@ -25,6 +27,15 @@ export default function ToolsPage() {
     const totalPages = tools?.totalPages || 1;
     const currentPage = tools?.currentPage || 1;
     const pages = generatePagination(currentPage, totalPages);
+    useEffect(() => {
+        const params = new URLSearchParams(searchParams)
+        if (debouncedSearch) {
+            params.set("search", debouncedSearch)
+        } else {
+            params.delete("search")
+        }
+        router.push(`?${params.toString()}`)
+    }, [debouncedSearch])
     return (
         <main className="relative mx-auto flex min-h-screen inset-0 w-full max-w-[1440px] justify-center  ">
             <section className="relative w-full min-h-screen px-10 py-20 flex flex-col">

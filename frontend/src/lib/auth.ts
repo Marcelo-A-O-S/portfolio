@@ -150,7 +150,6 @@ export const authOptions: AuthOptions = {
             session.user.username = token.username;
             session.user.id = token.userId;
             session.user.role = token.role;
-            console.log("Session: ", session.user);
             return session;
         }
     }

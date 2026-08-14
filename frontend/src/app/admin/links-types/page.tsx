@@ -1,33 +1,31 @@
 "use client";
+import { Input } from "@/components/ui/input";
+import FormLinkType from "./components/form-link-type";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { getLanguageColumns } from "./components/language-columns";
 import { useDebounce } from "@/hooks/useDebounce";
-import useGetLanguages from "@/hooks/Language/useGetLanguage";
-import { DataTable } from "@/components/data-table";
+import { usePaginationLinkType } from "@/hooks/LinkType/usePaginationLinkType";
+import { getLinkTypesColumns } from "./components/links-types-columns";
 import { Skeleton } from "@/components/ui/skeleton";
-import FormLanguage from "./components/form-language";
+import { DataTable } from "@/components/data-table";
 import { createPageURL, generatePagination } from "@/lib/utils";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-export default function LanguagePage() {
+export default function LinksTypesPage() {
     const { data: session } = useSession();
     const router = useRouter();
     const searchParams = useSearchParams();
     const page = Number(searchParams.get("page")) || 1;
     const search = searchParams.get("search") || undefined;
-    const code = searchParams.get("code") || undefined;
     const [searchInput, setSearchInput] = useState(search ?? "");
     const debouncedSearch = useDebounce(searchInput, 500);
-    const columns = useMemo(() => getLanguageColumns(), [])
-    const { data, isLoading, error } = useGetLanguages({
+    const columns = useMemo(() => getLinkTypesColumns(), [])
+    const { data: linkTypes, isLoading, error } = usePaginationLinkType({
         page,
-        search,
-        code
+        search
     })
-    const totalPages = data?.totalPages || 1;
-    const currentPage = data?.currentPage || 1;
+    const totalPages = linkTypes?.totalPages || 1;
+    const currentPage = linkTypes?.currentPage || 1;
     const pages = generatePagination(currentPage, totalPages);
     useEffect(() => {
         const params = new URLSearchParams(searchParams)
@@ -40,14 +38,14 @@ export default function LanguagePage() {
     }, [debouncedSearch])
     return (
         <>
-            <main className="mx-auto flex min-h-screen inset-0 w-full  justify-center ">
-                <section className="relative w-full h-svh px-10 py-18">
+            <main className="relative mx-auto flex min-h-screen inset-0 w-full justify-center ">
+                <section className="relative w-screen h-svh px-10 py-18">
                     <div className="flex flex-col gap-3 sm:flex-row  py-10 md:p-10 sm:items-center justify-between">
-                        <h1 className="text-3xl md:text-5xl font-semibold">Linguagens</h1>
+                        <h1 className="text-3xl md:text-5xl font-semibold">Links Types</h1>
                         <div className="flex gap-2">
-                            <FormLanguage />
+                            <FormLinkType />
                             <Input
-                                placeholder="Buscar linguagem..."
+                                placeholder={"Search type..."}
                                 value={searchInput}
                                 onChange={(e) => {
                                     setSearchInput(e.target.value);
@@ -59,7 +57,7 @@ export default function LanguagePage() {
                         {isLoading ? (
                             <Skeleton className="h-[400px] w-full" />
                         ) : (
-                            <DataTable columns={columns} data={data.items ?? []} />
+                            <DataTable columns={columns} data={linkTypes?.items ?? []} />
                         )}
                     </div>
                     <div className="relative bottom-0 ">

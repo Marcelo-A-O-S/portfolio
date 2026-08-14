@@ -1,4 +1,4 @@
-import { CategoriesFilters } from "@/domain/schemas/CategoriesFilters";
+import { categoriesFilters, CategoriesFilters } from "@/domain/schemas/CategoriesFilters";
 import { validateUserByRequest } from "@/services/server/auth-services";
 import { getCategoriesByPaginationService } from "@/services/server/category-services";
 import { NextRequest, NextResponse } from "next/server";
@@ -12,11 +12,20 @@ export async function GET(request: NextRequest) {
         language: searchParams.get("language") || undefined,
         search: searchParams.get("search") || undefined
     }
-    const response = await getCategoriesByPaginationService(filters);
-    if(response.status !== 200 && response.status !== 201){
+    const result = await categoriesFilters.safeParseAsync(filters);
+    if (!result.success) {
+        return NextResponse.json({
+            message: `Erro ao validar dados: ${result.error.message}`
+        }, {
+            status: 400
+        })
+    }
+    const data = result.data;
+    const response = await getCategoriesByPaginationService(data);
+    if (response.status !== 200 && response.status !== 201) {
         return NextResponse.json({
             message: response.data.message
-        },{
+        }, {
             status: response.status
         })
     }

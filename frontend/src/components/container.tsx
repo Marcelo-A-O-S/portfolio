@@ -5,6 +5,7 @@ import Providers from "./providers"
 import Footer from "./footer"
 import { SidebarProvider, SidebarTrigger } from "./ui/sidebar"
 import { AppSidebar } from "./app-sidebar"
+import SplashScreen from "./splash-screen"
 type ContainerProps = {
     children: ReactNode
 }
@@ -16,7 +17,7 @@ export default function Container({ children }: ContainerProps) {
                 <SidebarProvider defaultOpen={false}>
                 <Header />
                 <AppSidebar />
-                
+                <SplashScreen/>
                 <Toaster />
                 {children}
                 <Footer />

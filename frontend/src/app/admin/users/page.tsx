@@ -46,18 +46,8 @@ export default function UsersPage() {
         toast.error("Erro ao buscar usuários")
     }
    
-    // function updateFilter(key: string, value?: string) {
-    //     const params = new URLSearchParams(searchParams)
-    //     params.set("page", "1")
-    //     if (!value || value === "ALL") {
-    //         params.delete(key)
-    //     } else {
-    //         params.set(key, value)
-    //     }
-    //     router.push(`?${params.toString()}`)
-    // }
     return (
-        <main className="relative mx-auto flex min-h-screen inset-0 w-full max-w-[1440px] justify-center">
+        <main className="relative mx-auto flex min-h-screen inset-0 w-full justify-center">
             <section className="relative w-full min-h-screen px-10 py-20 flex flex-col">
                 <div className="flex flex-col gap-3 sm:flex-row  py-10 md:p-10 sm:items-center justify-between">
                     <h1 className="text-3xl md:text-5xl font-semibold">Usuários</h1>

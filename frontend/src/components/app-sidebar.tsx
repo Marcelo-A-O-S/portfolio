@@ -1,47 +1,53 @@
 import { getServerSession } from "next-auth";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger } from "./ui/sidebar";
-import { Home, Package, Wrench, Globe, ChartBarStacked, FolderKanban, ShieldCheck, Link as LinkType } from "lucide-react";
+import { Home, Package, Wrench, Globe, ChartBarStacked, FolderKanban, ShieldCheck, Link as LinkType, UsersRound, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { headers } from "next/headers";
+import { authOptions } from "@/lib/auth";
 const itemsManager = [
     {
-        title: "Home",
+        title: "Dashboard",
         url: "/dashboard",
-        icon: Home
+        icon: LayoutDashboard 
     },
     {
         title: "Certificates",
-        url: "/dashboard",
+        url: "/admin/certificates",
         icon: ShieldCheck
     },
     {
         title: "Projects",
-        url: "/dashboard",
+        url: "/admin/projects",
         icon: FolderKanban
     },
     {
         title: "Tools",
-        url: "/dashboard",
+        url: "/admin/tools",
         icon: Wrench
     },
     {
-        title: "Type Links",
-        url: "/dashboard",
+        title: "Links Types",
+        url: "/admin/links-types",
         icon: LinkType
     },
     {
         title: "Categories",
-        url: "/dashboard",
+        url: "/admin/categories",
         icon: ChartBarStacked
     },
     {
         title: "Languages",
         url: "/admin/languages",
         icon: Globe
+    },
+    {
+        title: "Users",
+        url: "/admin/users",
+        icon: UsersRound 
     }
 ]
 export async function AppSidebar() {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if (!session?.user) {
         return
     }

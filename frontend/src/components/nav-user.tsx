@@ -2,7 +2,7 @@ import { Session } from "next-auth";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { LogOutIcon } from "lucide-react";
+import { LogOutIcon, UserRound } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 type NavUserProps = {
@@ -27,26 +27,9 @@ export default function NavUser({ session }: NavUserProps) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="">
                     <DropdownMenuGroup>
-                        <DropdownMenuItem>
-                            <Link className="text-sm w-full" href={"/admin/dashboard"}>Gerenciador</Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <Link className="text-sm w-full" href={"/admin/projects"}>Projetos</Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <Link className="text-sm w-full" href={"/admin/certificates"}>Certificados</Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <Link className="text-sm w-full" href={"/admin/tools"}>Ferramentas</Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <Link className="text-sm w-full" href={"/admin/categories"}>Categorias</Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <Link className="text-sm w-full" href={"/admin/languages"}>Linguagens</Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <Link className="text-sm w-full" href={"/admin/users"}>Usuários</Link>
+                        <DropdownMenuItem className="cursor-pointer">
+                            <UserRound />
+                            <Link className="text-sm w-full" href={"/admin/dashboard"}>Profile</Link>
                         </DropdownMenuItem>
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />

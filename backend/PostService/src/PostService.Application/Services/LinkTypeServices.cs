@@ -38,6 +38,11 @@ namespace PostService.Application.Services
             return await this.linkTypeRepository.GetById(Id);
         }
 
+        public async Task<PaginatedResult<LinkType>> GetByPagination(int page, string? search, int itemsPage = 10)
+        {
+            return await this.linkTypeRepository.GetByPagination(page, search);
+        }
+
         public async Task<List<LinkType>> List()
         {
             return await this.linkTypeRepository.List();

@@ -49,9 +49,8 @@ export default function ToolsPage() {
     if (error) {
         toast.error("Erro ao buscar usuários")
     }
-    console.log(categories);
     return (
-        <main className="relative mx-auto flex min-h-screen inset-0 w-full max-w-[1440px] justify-center ">
+        <main className="relative mx-auto flex min-h-screen inset-0 w-full justify-center ">
             <section className="relative w-screen h-svh px-10 py-18">
                 <div className="flex flex-col gap-3 sm:flex-row  py-10 md:p-10 sm:items-center justify-between">
                     <h1 className="text-3xl md:text-5xl font-semibold">Categorias</h1>

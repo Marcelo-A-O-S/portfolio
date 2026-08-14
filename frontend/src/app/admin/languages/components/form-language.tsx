@@ -15,8 +15,8 @@ type FormLanguageProps = {
     language?: LanguageSchema
 }
 export default function FormLanguage({ language }: FormLanguageProps) {
-    const {mutateAsync: createLanguage } = useCreateLanguage();
-    const {mutateAsync: updateLanguage } = useUpdateLanguage();
+    const { mutateAsync: createLanguage } = useCreateLanguage();
+    const { mutateAsync: updateLanguage } = useUpdateLanguage();
     const { control, handleSubmit, reset } = useForm<LanguageSchema>({
         resolver: zodResolver(languageSchema),
         defaultValues: {
@@ -24,19 +24,19 @@ export default function FormLanguage({ language }: FormLanguageProps) {
             name: "",
         }
     })
-    useEffect(()=>{
-        if(language){
+    useEffect(() => {
+        if (language) {
             reset(language)
         }
-    },[language])
-    const onSubmit = async(data: LanguageSchema) =>{
-        if(language){
-            if(language.id == null)
+    }, [language])
+    const onSubmit = async (data: LanguageSchema) => {
+        if (language) {
+            if (language.id == null)
                 return toast.error("O identificador não pode ser nulo.");
-            await updateLanguage({id: language.id, language: data});
-        }else{
+            await updateLanguage({ id: language.id, data: data });
+        } else {
             await createLanguage(data);
-        } 
+        }
     }
     return (
         <>
@@ -51,6 +51,10 @@ export default function FormLanguage({ language }: FormLanguageProps) {
                     <form onSubmit={handleSubmit(onSubmit)} className="">
                         <DialogHeader>
                             <DialogTitle>{language ? "Update Language" : "Create Language"}</DialogTitle>
+                            <DialogDescription>
+                                {language ? `Make changes to your language here. Click save when you're
+                                done.`: `Add your language here. Click save when you're done.`}
+                            </DialogDescription>
                         </DialogHeader>
                         <FieldGroup>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 py-3 ">

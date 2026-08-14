@@ -18,6 +18,8 @@ using PostService.Application.UseCases.InternalTool;
 using PostService.Application.Caching.Tools;
 using PostService.Application.Validators.Interfaces;
 using PostService.Application.Validators;
+using PostService.Application.UseCases.LinkTypes.Interfaces;
+using PostService.Application.UseCases.LinkTypes;
 namespace PostService.Application.Extensions
 {
     public static class DependencyInjectionExtension
@@ -48,6 +50,9 @@ namespace PostService.Application.Extensions
             services.AddScoped<ICreateLanguage, CreateLanguage>();
             services.AddScoped<IUpdateLanguage, UpdateLanguage>();
             services.AddScoped<IDeleteLanguage, DeleteLanguage>();
+            services.AddScoped<ICreateLinkType, CreateLinkType>();
+            services.AddScoped<IUpdateLinkType, UpdateLinkType>();
+            services.AddScoped<IDeleteLinkType, DeleteLinkType>();
             services.AddScoped<ICreateCategory, CreateCategory>();
             services.AddScoped<IUpdateCategory, UpdateCategory>();
             services.AddScoped<IDeleteCategory, DeleteCategory>();
