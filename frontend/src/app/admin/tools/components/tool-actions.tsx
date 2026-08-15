@@ -24,6 +24,10 @@ export default function ToolActions({ tool }: ToolActionsProps) {
                     <DropdownMenuGroup>
                         <DropdownMenuItem className="cursor-pointer" 
                         >
+                            <Link href={`/admin/tools/manager-links?toolId=${tool.id}`}>Gerenciar Links</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer" 
+                        >
                             <Link href={`/admin/tools/manager?toolId=${tool.id}`}>Atualizar Ferramenta</Link>
                         </DropdownMenuItem>
                     </DropdownMenuGroup>

@@ -28,7 +28,7 @@ namespace PostService.Infrastructure.Repositories
             }
             var totalItems = await query.CountAsync();
             var items = await query
-                .OrderByDescending(c => c.CreatedAt)
+                .OrderByDescending(lt => lt.CreatedAt)
                 .Skip((page - 1) * itemsPage)
                 .Take(itemsPage)
                 .ToListAsync();

@@ -9,6 +9,8 @@ import ProjectActions from "./project-actions";
 import { Heart, MessageCircle } from "lucide-react";
 import { useAddLikePost } from "@/hooks/Post/useAddLikePost";
 import { useRemoveLikePost } from "@/hooks/Post/useRemoveLikePost";
+import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
 type CardProjectProps = {
     languages?: LanguageSchema[],
     item: PostSchema
@@ -37,12 +39,12 @@ export default function CardProject({ languages, item }: CardProjectProps) {
             return content;
         })
     const handleLike = async () => {
-        if(item.liked){
+        if (item.liked) {
             await removeLike({
                 targetId: item.id!,
                 type: "Post"
             });
-        }else{
+        } else {
             await addLike({
                 targetId: item.id!,
                 type: "Post"
@@ -60,9 +62,14 @@ export default function CardProject({ languages, item }: CardProjectProps) {
                                 <span className="font-bold text-primary truncate hover:underline cursor-pointer">
                                     {content?.title}
                                 </span>
-                                <span className="text-primary hover:underline cursor-pointer whitespace-nowrap text-xs">
-                                    3h
-                                </span>
+                                {item.createdAt && (
+                                    <time dateTime={item.createdAt} className="text-xs text-muted-foreground">
+                                        {formatDistanceToNow(new Date(item.createdAt), {
+                                            addSuffix: true,
+                                            locale: ptBR,
+                                        })}
+                                    </time>
+                                )}
                             </div>
                             <Select
                                 value={lang}

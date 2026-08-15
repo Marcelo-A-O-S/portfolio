@@ -31,7 +31,7 @@ namespace PostService.Application.UseCases.LinkTypes
             }
             catch
             {
-                await unitOfWork.RollbackAsync();
+                await this.unitOfWork.RollbackAsync();
                 throw;
             }
         }

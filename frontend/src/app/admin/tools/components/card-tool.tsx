@@ -9,6 +9,8 @@ import ToolActions from "./tool-actions"
 import Link from "next/link"
 import { useAddLikeTool } from "@/hooks/Tool/useAddLikeTool"
 import { useRemoveLikeTool } from "@/hooks/Tool/useRemoveLikeTool"
+import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
 type CardToolProps = {
     languages?: LanguageSchema[]
     item: ToolSchema
@@ -29,31 +31,37 @@ export default function CardTool({ languages, item }: CardToolProps) {
             return content;
         })
     const handleLike = async () => {
-        if(item.liked){
+        if (item.liked) {
             await removeLike({
                 targetId: item.id!,
                 type: "Tool"
             });
-        }else{
+        } else {
             await addLike({
                 targetId: item.id!,
                 type: "Tool"
             });
         }
     }
+    console.log("Ferramenta: ", item);
     return (
         <div className="bg-background border border-primary max-w-sm w-full max-h-[450px] h-full rounded-lg overflow-hidden shadow-sm
             hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col">
             <article className="p-4 flex flex-col space-x-3">
                 <div className="flex flex-col justify-between flex-1 min-w-0">
                     <div className="flex justify-between items-center mb-1">
-                        <div className="flex items-baseline space-x-1 text-sm min-w-0">
+                        <div className="flex flex-col items-baseline space-x-1 text-sm min-w-0">
                             <span className="font-bold text-primary truncate hover:underline cursor-pointer">
                                 {content?.title}
                             </span>
-                            <span className="text-primary hover:underline cursor-pointer whitespace-nowrap text-xs">
-                                3h
-                            </span>
+                            {item.createdAt && (
+                                <time dateTime={item.createdAt} className="text-xs text-muted-foreground">
+                                    {formatDistanceToNow(new Date(item.createdAt), {
+                                        addSuffix: true,
+                                        locale: ptBR,
+                                    })}
+                                </time>
+                            )}
                         </div>
                         <Select
                             value={lang}

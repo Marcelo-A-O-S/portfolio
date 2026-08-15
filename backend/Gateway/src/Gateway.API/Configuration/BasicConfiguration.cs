@@ -45,6 +45,24 @@ namespace Gateway.API.Configuration
                 },
                 new RouteConfig
                 {
+                    RouteId = "linkRoute",
+                    ClusterId = "postCluster",
+                    Match = new RouteMatch
+                    {
+                        Path = "/api/link/{**catch-all}"
+                    }
+                },
+                new RouteConfig
+                {
+                    RouteId = "linkTypeRoute",
+                    ClusterId = "postCluster",
+                    Match = new RouteMatch
+                    {
+                        Path = "/api/linkType/{**catch-all}"
+                    }
+                },
+                new RouteConfig
+                {
                     RouteId = "categoryRoute",
                     ClusterId = "postCluster",
                     Match = new RouteMatch

@@ -46,7 +46,7 @@ namespace PostService.API.Controllers
             if (ModelState.IsValid)
             {
                 await this.createLinkType.ExecuteAsync(request);
-                return Ok();
+                return Ok(new { message = "Tipo de Link salvo com sucesso." });
             }
             var erros = ModelState.Values.Select(e => e.Errors);
             return BadRequest(erros);
@@ -58,7 +58,7 @@ namespace PostService.API.Controllers
             if (ModelState.IsValid)
             {
                 await this.updateLinkType.ExecuteAsync(Id, request);
-                return Ok();
+                return Ok(new { message = "Tipo de Link atualizado com sucesso." });
             }
             var erros = ModelState.Values.Select(e => e.Errors);
             return BadRequest(erros);
@@ -70,7 +70,7 @@ namespace PostService.API.Controllers
             if (ModelState.IsValid)
             {
                 await this.deleteLinkType.ExecuteAsync(Id);
-                return Ok();
+                return Ok(new { message = "Tipo de Link deletado com sucesso." });
             }
             var erros = ModelState.Values.Select(e => e.Errors);
             return BadRequest(erros);

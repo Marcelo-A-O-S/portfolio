@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
             })
         }
         const data = result.data;
+        console.log("Buscando lista de tipo de links...")
         const response = await getLinkTypeByPagination(data);
         if (response.status !== 200 && response.status !== 201) {
             return NextResponse.json({

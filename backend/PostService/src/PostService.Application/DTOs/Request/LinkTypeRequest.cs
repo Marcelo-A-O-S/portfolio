@@ -1,9 +1,10 @@
 using System.ComponentModel.DataAnnotations;
-
+using PostService.Application.Validations;
 namespace PostService.Application.DTOs.Request
 {
     public class LinkTypeRequest
     {
+        public Guid? Id { get; set; }
         [Required( ErrorMessage = "O nome do tipo é obrigatório.")]
         public string Name { get; set; }
         [Required( ErrorMessage = "A cor do background é obrigatório.")]

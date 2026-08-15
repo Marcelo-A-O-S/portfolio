@@ -20,6 +20,8 @@ using PostService.Application.Validators.Interfaces;
 using PostService.Application.Validators;
 using PostService.Application.UseCases.LinkTypes.Interfaces;
 using PostService.Application.UseCases.LinkTypes;
+using PostService.Application.UseCases.Links.Interfaces;
+using PostService.Application.UseCases.Links;
 namespace PostService.Application.Extensions
 {
     public static class DependencyInjectionExtension
@@ -53,6 +55,9 @@ namespace PostService.Application.Extensions
             services.AddScoped<ICreateLinkType, CreateLinkType>();
             services.AddScoped<IUpdateLinkType, UpdateLinkType>();
             services.AddScoped<IDeleteLinkType, DeleteLinkType>();
+            services.AddScoped<ICreateLink, CreateLink>();
+            services.AddScoped<IUpdateLink, UpdateLink>();
+            services.AddScoped<IDeleteLink, DeleteLink>();
             services.AddScoped<ICreateCategory, CreateCategory>();
             services.AddScoped<IUpdateCategory, UpdateCategory>();
             services.AddScoped<IDeleteCategory, DeleteCategory>();
