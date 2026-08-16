@@ -1,7 +1,7 @@
 import { linkTypeSchema } from "@/domain/schemas/LinkTypeSchema";
 import { ApiErrorResponse } from "@/domain/types/ApiErrorResponse";
 import { validateUserByRequest } from "@/services/server/auth-services";
-import { addLinkType } from "@/services/server/link-type-services";
+import { addLinkType, getLinkTypes } from "@/services/server/link-type-services";
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
@@ -30,6 +30,36 @@ export async function POST(request: NextRequest) {
         }
         return NextResponse.json({ message: "Tipo de link salvo com sucesso!" });
     } catch(error) {
+        if (axios.isAxiosError<ApiErrorResponse>(error)) {
+            console.log(error.response?.data);
+            return NextResponse.json(
+                {
+                    message: error.response?.data?.message ?? "Erro no backend"
+                },
+                {
+                    status: error.response?.status ?? 500
+                }
+            );
+        }
+    }
+}
+export async function GET(request: NextRequest){
+    try{
+        const allowed = await validateUserByRequest(request, ["Administrador"]);
+        if (!allowed)
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+        console.log("Buscando os tipos de link ...")
+        const response = await getLinkTypes();
+        if (response.status !== 200 && response.status !== 201) {
+            console.log(`Erro: ${response.data.message}`)
+            return NextResponse.json({
+                message: response.data.message
+            }, {
+                status: response.status
+            });
+        }
+        return NextResponse.json(response.data);
+    }catch(error){
         if (axios.isAxiosError<ApiErrorResponse>(error)) {
             console.log(error.response?.data);
             return NextResponse.json(

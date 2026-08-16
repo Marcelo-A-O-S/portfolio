@@ -15,16 +15,25 @@ namespace PostService.API.Controllers
         private readonly ICreateTool createTool;
         private readonly IUpdateTool updateTool;
         private readonly IDeleteTool deleteTool;
+        private readonly IAddLinkTool addLinkTool;
+        private readonly IUpdateLinkTool updateLinkTool;
+        private readonly IDeleteLinkTool deleteLinkTool;
         public ToolController(
             IToolsServices _toolsServices,
             ICreateTool _createTool,
             IUpdateTool _updateTool,
-            IDeleteTool _deleteTool)
+            IDeleteTool _deleteTool,
+            IAddLinkTool _addLinkTool,
+            IUpdateLinkTool _updateLinkTool,
+            IDeleteLinkTool _deleteLinkTool)
         {
             this.toolsServices = _toolsServices;
             this.createTool = _createTool;
             this.updateTool = _updateTool;
             this.deleteTool = _deleteTool;
+            this.addLinkTool = _addLinkTool;
+            this.updateLinkTool = _updateLinkTool;
+            this.deleteLinkTool = _deleteLinkTool;
         }
         [HttpGet("GetTools")]
         [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
@@ -122,6 +131,42 @@ namespace PostService.API.Controllers
         {
             await this.deleteTool.ExecuteAsync(Id);
             return Ok(new { message = "Ferramenta deletada com sucesso." });
+        }
+        [HttpPost("Link")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
+        public async Task<IActionResult> AddLink([FromBody] LinkRequest request)
+        {
+            if (ModelState.IsValid)
+            {
+                await this.addLinkTool.ExecuteAsync(request);
+                return Ok(new { message = "Link vinculado a ferramenta com sucesso." });
+            }
+            var errors = ModelState.Values.Select(x => x.Errors);
+            return BadRequest(errors);
+        }
+        [HttpPut("Link/{Id}")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
+        public async Task<IActionResult> UpdateLink([FromRoute] Guid Id, [FromBody] LinkRequest request)
+        {
+            if (ModelState.IsValid)
+            {
+                await this.updateLinkTool.ExecuteAsync(Id,request);
+                return Ok(new { message = "Link vinculado a ferramenta atualizado com sucesso." });
+            }
+            var errors = ModelState.Values.Select(x => x.Errors);
+            return BadRequest(errors);
+        }
+        [HttpDelete("Link/{Id}")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
+        public async Task<IActionResult> DeleteLink([FromRoute] Guid Id)
+        {
+            if (ModelState.IsValid)
+            {
+                await this.deleteLinkTool.ExecuteAsync(Id);
+                return Ok(new { message = "Link vinculado a ferramenta removido com sucesso." });
+            }
+            var errors = ModelState.Values.Select(x => x.Errors);
+            return BadRequest(errors);
         }
     }
 }

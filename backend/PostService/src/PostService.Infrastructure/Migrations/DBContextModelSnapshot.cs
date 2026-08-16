@@ -233,6 +233,10 @@ namespace PostService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("BorderColor")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -524,15 +528,19 @@ namespace PostService.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PostService.Domain.Entities.Post", null)
+                    b.HasOne("PostService.Domain.Entities.Post", "Post")
                         .WithMany("Links")
                         .HasForeignKey("PostId");
 
-                    b.HasOne("PostService.Domain.Entities.Tool", null)
+                    b.HasOne("PostService.Domain.Entities.Tool", "Tool")
                         .WithMany("Links")
                         .HasForeignKey("ToolId");
 
                     b.Navigation("LinkType");
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Tool");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.MediaProjection", b =>

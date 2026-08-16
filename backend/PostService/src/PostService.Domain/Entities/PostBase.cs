@@ -1,6 +1,5 @@
 using PostService.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
-
 namespace PostService.Domain.Entities
 {
     public abstract class PostBase
@@ -10,7 +9,7 @@ namespace PostService.Domain.Entities
         public MediaProjection MediaProjection { get; protected set; }
         public Guid AuthorId { get; protected set; }
         public Author Author { get; protected set; }
-        public List<Link>? Links { get; protected set; }
+        public List<Link> Links { get; protected set; }
         public int LikeCount { get; protected set; }
         public int CommentCount { get; protected set; }
         public DateTime CreatedAt { get; protected set; }
@@ -78,6 +77,18 @@ namespace PostService.Domain.Entities
         public void SetAuthorId(Guid authorId)
         {
             this.AuthorId = authorId;
+        }
+        public void AddLink(Link link)
+        {
+            if(this.Links == null)
+                throw new ValidationException("Lista de links não inicializada");
+            this.Links.Add(link);
+        }
+        public void RemoveLink(Link link)
+        {
+            if(this.Links == null)
+                throw new ValidationException("Lista de links não inicializada");
+            this.Links.Remove(link);
         }
     }
 }

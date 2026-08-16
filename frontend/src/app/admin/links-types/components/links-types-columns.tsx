@@ -1,8 +1,9 @@
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { LinkTypeSchema } from "@/domain/schemas/LinkTypeSchema"
 import { ColumnDef } from "@tanstack/react-table"
 import Image from "next/image";
 import { LinkTypeActions } from "./links-types-actions";
+import Link from "next/link";
 
 export const getLinkTypesColumns = () => {
     const columns: ColumnDef<LinkTypeSchema>[] = [
@@ -19,6 +20,10 @@ export const getLinkTypesColumns = () => {
             header: "Cor do texto"
         },
         {
+            accessorKey: "borderColor",
+            header: "Borda"
+        },
+        {
             accessorKey: "icon",
             header: "Icone"
         },
@@ -27,16 +32,20 @@ export const getLinkTypesColumns = () => {
             cell: ({ row }) => {
                 const linkType = row.original;
                 return (
-                    <Button
-                    style={{ 
-                        backgroundColor: linkType.backgroundColor, 
-                        color: linkType.textColor 
-                    }} 
-                    className="cursor-pointer"
-                    type="button">
+                    <Link
+                        href={""}
+                        style={{
+                            backgroundColor: linkType.backgroundColor,
+                            color: linkType.textColor,
+                            borderColor: linkType.borderColor,
+                            border: "1px",
+                            borderStyle: "solid"
+                        }}
+                        className={`${buttonVariants({ variant: "default" })} cursor-pointer`}
+                    >
                         <Image src={linkType.icon} alt={linkType.name} width={20} height={20} />
                         {linkType.name}
-                    </Button>
+                    </Link>
                 )
             }
         },

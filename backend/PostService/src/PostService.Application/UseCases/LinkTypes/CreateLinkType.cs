@@ -22,7 +22,7 @@ namespace PostService.Application.UseCases.LinkTypes
         public async Task ExecuteAsync(LinkTypeRequest request)
         {
             await ValidateLinkTypeRequest(request);
-            var linkType = new LinkType(request.Name, request.BackgroundColor, request.TextColor, request.Icon);
+            var linkType = new LinkType(request.Name, request.BackgroundColor, request.TextColor, request.BorderColor, request.Icon);
             await this.unitOfWork.BeginAsync();
             try
             {

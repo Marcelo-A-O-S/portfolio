@@ -11,6 +11,7 @@ namespace PostService.Domain.Entities
             this.UpdatedAt = DateTime.UtcNow;
             this.Categories = new List<Category>();
             this.Tools = new List<Tool>();
+            this.Links = new List<Link>();
             this.PostContents = new List<PostContent>();
             this.Status = status;
         }

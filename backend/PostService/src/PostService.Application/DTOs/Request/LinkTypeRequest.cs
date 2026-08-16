@@ -11,6 +11,8 @@ namespace PostService.Application.DTOs.Request
         public string BackgroundColor { get; set; }
         [Required( ErrorMessage = "A cor do texto é obrigatório.")]
         public string TextColor { get; set; }
+        [Required( ErrorMessage = "A cor da borda é obrigatório.")]
+        public string BorderColor { get; set; }
         [Required( ErrorMessage = "O icone é obrigatório.")]
         public string Icon { get; set; }
     }

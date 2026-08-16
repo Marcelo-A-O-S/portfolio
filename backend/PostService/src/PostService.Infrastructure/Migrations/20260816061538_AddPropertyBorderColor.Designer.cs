@@ -12,8 +12,8 @@ using PostService.Infrastructure.Context;
 namespace PostService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20260815050320_AddPropertyToClassLink")]
-    partial class AddPropertyToClassLink
+    [Migration("20260816061538_AddPropertyBorderColor")]
+    partial class AddPropertyBorderColor
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -198,14 +198,14 @@ namespace PostService.Infrastructure.Migrations
                     b.Property<Guid>("LinkTypeId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("PostId")
+                    b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("ToolId")
+                    b.Property<Guid>("ToolId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -233,6 +233,10 @@ namespace PostService.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("BackgroundColor")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("BorderColor")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -527,15 +531,23 @@ namespace PostService.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PostService.Domain.Entities.Post", null)
+                    b.HasOne("PostService.Domain.Entities.Post", "Post")
                         .WithMany("Links")
-                        .HasForeignKey("PostId");
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("PostService.Domain.Entities.Tool", null)
+                    b.HasOne("PostService.Domain.Entities.Tool", "Tool")
                         .WithMany("Links")
-                        .HasForeignKey("ToolId");
+                        .HasForeignKey("ToolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("LinkType");
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Tool");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.MediaProjection", b =>

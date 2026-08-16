@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PostService.Domain.Entities;
 using PostService.Domain.Interfaces;
+using PostService.Domain.Queries;
 using PostService.Infrastructure.Context;
 namespace PostService.Infrastructure.Repositories
 {
@@ -31,6 +32,12 @@ namespace PostService.Infrastructure.Repositories
                 .Include(l => l.LinkType)
                 .Skip((page - 1) * itemsPage)
                 .Take(itemsPage)
+                .Select(l=> new LinkView
+                {
+                    Title = l.Title,
+                    Url = l.Url,
+                    
+                })
                 .ToListAsync();
             return new PaginatedResult<Link>
             {

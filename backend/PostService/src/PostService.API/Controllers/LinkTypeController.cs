@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using PostService.Application.DTOs.Request;
 using PostService.Application.Interfaces;
 using PostService.Application.UseCases.LinkTypes.Interfaces;
+using PostService.Domain.Entities;
 namespace PostService.API.Controllers
 {
     [ApiController]
@@ -28,6 +29,21 @@ namespace PostService.API.Controllers
             this.createLinkType = _createLinkType;
             this.updateLinkType = _updateLinkType;
             this.deleteLinkType = _deleteLinkType;
+        }
+        [HttpGet]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
+        public async Task<IActionResult> GetAll([FromQuery] int? page)
+        {
+            var linkTypes = new List<LinkType>();
+            if (page.HasValue)
+            {
+                linkTypes = await this.linkTypeServices.List(page ?? 1);
+            }
+            else
+            {
+                linkTypes = await this.linkTypeServices.List();
+            }
+            return Ok(linkTypes);
         }
         [HttpGet("GetByPagination")]
         [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]

@@ -11,6 +11,7 @@ namespace PostService.Domain.Entities
         {
             this.CreatedAt = DateTime.UtcNow;
             this.Posts = new List<Post>();
+            this.Links = new List<Link>();
             this.ToolContents = new List<ToolContent>();
             this.Categories = new List<Category>();
             this.Status = status;

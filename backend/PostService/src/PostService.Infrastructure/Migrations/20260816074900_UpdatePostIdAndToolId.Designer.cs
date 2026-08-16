@@ -12,8 +12,8 @@ using PostService.Infrastructure.Context;
 namespace PostService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20260814190941_UpdateTables")]
-    partial class UpdateTables
+    [Migration("20260816074900_UpdatePostIdAndToolId")]
+    partial class UpdatePostIdAndToolId
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -192,6 +192,9 @@ namespace PostService.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("LinkTypeId")
                         .HasColumnType("uuid");
 
@@ -204,6 +207,9 @@ namespace PostService.Infrastructure.Migrations
 
                     b.Property<Guid?>("ToolId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Url")
                         .IsRequired()
@@ -227,6 +233,10 @@ namespace PostService.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("BackgroundColor")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("BorderColor")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -521,15 +531,19 @@ namespace PostService.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PostService.Domain.Entities.Post", null)
+                    b.HasOne("PostService.Domain.Entities.Post", "Post")
                         .WithMany("Links")
                         .HasForeignKey("PostId");
 
-                    b.HasOne("PostService.Domain.Entities.Tool", null)
+                    b.HasOne("PostService.Domain.Entities.Tool", "Tool")
                         .WithMany("Links")
                         .HasForeignKey("ToolId");
 
                     b.Navigation("LinkType");
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Tool");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.MediaProjection", b =>

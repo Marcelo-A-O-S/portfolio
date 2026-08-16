@@ -11,6 +11,11 @@ export const getLinkTypeByPagination = async(filters: LinkTypeFilters) =>{
     const response = await api.get(`/api/admin/linkTypes/pagination?${params}`);
     return response;
 }
+export const getLinkTypes = async() => {
+    const api = await apiClient();
+    const response = await api.get(`/api/admin/linkTypes`);
+    return response;
+}
 export const addLinkType = async (data: LinkTypeSchema) => {
     const api = await apiClient();
     const response = await api.post("/api/admin/linkTypes", data);

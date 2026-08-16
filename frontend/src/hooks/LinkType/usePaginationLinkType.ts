@@ -10,9 +10,9 @@ export function usePaginationLinkType(filters: LinkTypeFilters) {
         queryFn: async () => {
             const response = await getLinkTypeByPagination(filters);
             if (response.status != 200) {
-                throw new Error(response.data.message)
+                throw new Error(response.data.message);
             }
-            return response.data
+            return response.data;
         }
     })
 }

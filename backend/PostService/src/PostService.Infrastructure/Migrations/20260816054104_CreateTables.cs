@@ -76,7 +76,8 @@ namespace PostService.Infrastructure.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     BackgroundColor = table.Column<string>(type: "text", nullable: false),
                     TextColor = table.Column<string>(type: "text", nullable: false),
-                    Icon = table.Column<string>(type: "text", nullable: false)
+                    Icon = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -156,8 +157,10 @@ namespace PostService.Infrastructure.Migrations
                     Url = table.Column<string>(type: "text", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: false),
                     LinkTypeId = table.Column<Guid>(type: "uuid", nullable: false),
-                    PostId = table.Column<Guid>(type: "uuid", nullable: true),
-                    ToolId = table.Column<Guid>(type: "uuid", nullable: true)
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ToolId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -475,14 +478,16 @@ namespace PostService.Infrastructure.Migrations
                 table: "Links",
                 column: "PostId",
                 principalTable: "Posts",
-                principalColumn: "Id");
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Links_Tools_ToolId",
                 table: "Links",
                 column: "ToolId",
                 principalTable: "Tools",
-                principalColumn: "Id");
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_MediaProjections_PostContents_PostContentId",

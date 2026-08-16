@@ -17,7 +17,7 @@ export function useUpdateLinkType(){
             toast.success(response.data.message);
         },
         onError:(error)=>{
-            toast.error(error.response?.data?.message ?? "Erro ao criar tipo de link");
+            toast.error(error.response?.data?.message ?? "Erro ao atualizar tipo de link");
         }
     })
 }

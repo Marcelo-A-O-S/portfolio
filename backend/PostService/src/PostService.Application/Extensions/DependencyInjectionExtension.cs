@@ -64,6 +64,9 @@ namespace PostService.Application.Extensions
             services.AddScoped<ICreateTool, CreateTool>();
             services.AddScoped<IUpdateTool, UpdateTool>();
             services.AddScoped<IDeleteTool, DeleteTool>();
+            services.AddScoped<IAddLinkTool, AddLinkTool>();
+            services.AddScoped<IUpdateLinkTool, UpdateLinkTool>();
+            services.AddScoped<IDeleteLinkTool, DeleteLinkTool>();
             services.AddScoped<IExistsByIdTool, ExistsByIdTool>();
             services.AddScoped<ICreateProject, CreateProject>();
             services.AddScoped<IUpdateProject, UpdateProject>();

@@ -23,7 +23,7 @@ namespace PostService.Application.UseCases.LinkTypes
         {
             await ValidateLinkTypeRequest(request);
             var linkType = await GetLinkTypeAsync(Id);
-            linkType.Update(request.Name, request.BackgroundColor, request.TextColor, request.Icon);
+            linkType.Update(request.Name, request.BackgroundColor, request.TextColor, request.BorderColor, request.Icon);
             await this.unitOfWork.BeginAsync();
             try
             {
@@ -45,7 +45,7 @@ namespace PostService.Application.UseCases.LinkTypes
         private async Task<LinkType> GetLinkTypeAsync(Guid Id)
         {
             var linkType = await this.linkTypeServices.GetById(Id);
-            if(linkType == null)
+            if (linkType == null)
                 throw new NotFoundException("Tipo de Link não encontrado.");
             return linkType;
         }

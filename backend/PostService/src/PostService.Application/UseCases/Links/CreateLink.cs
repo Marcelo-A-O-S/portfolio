@@ -24,9 +24,7 @@ namespace PostService.Application.UseCases.Links
         public async Task ExecuteAsync(LinkRequest request)
         {
             await ValidateLinkRequest(request);
-            if(request.LinkType.Id is not Guid linkTypeId)
-                throw new ValidationException("");
-            var linkType = await GetLinkTypeAsync(linkTypeId);
+            var linkType = await GetLinkTypeAsync(request.LinkTypeId);
             var link = new Link(request.Url, request.Title, linkType.Id);
             await this.unitOfWork.BeginAsync();
             try
@@ -50,7 +48,7 @@ namespace PostService.Application.UseCases.Links
         {
             var linkType = await this.linkTypeServices.GetById(linkTypeId);
             if(linkType == null)
-                throw new NotFoundException("");
+                throw new NotFoundException("Tipo de link não encontrado.");
             return linkType;
         }
     }

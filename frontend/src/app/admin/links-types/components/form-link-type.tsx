@@ -13,7 +13,8 @@ import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 type FormLinkTypeProps = {
-    linkType?: LinkTypeSchema
+    linkType?: LinkTypeSchema,
+    
 }
 export default function FormLinkType({ linkType }: FormLinkTypeProps) {
     const { mutateAsync: createLinkType } = useCreateLinkType();
@@ -93,6 +94,18 @@ export default function FormLinkType({ linkType }: FormLinkTypeProps) {
                                             <Input {...field}
                                                 type="color" />
                                             {errors.textColor && <span className="text-sm text-red-600 text-wrap text-justify">{errors.textColor?.message}</span>}
+                                        </Field>
+                                    )}
+                                />
+                                <Controller
+                                    name="borderColor"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Field className="w-full py-2">
+                                            <Label htmlFor="borderColor">Border Color</Label>
+                                            <Input {...field}
+                                                type="color" />
+                                            {errors.borderColor && <span className="text-sm text-red-600 text-wrap text-justify">{errors.borderColor?.message}</span>}
                                         </Field>
                                     )}
                                 />

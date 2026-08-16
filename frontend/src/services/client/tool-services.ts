@@ -4,6 +4,7 @@ import { ToolFilters } from "@/domain/schemas/ToolFilters";
 import { LikeSchema } from "@/domain/schemas/LikeSchema";
 import { CommentSchema } from "@/domain/schemas/CommentSchema";
 import { CommentFilters } from "@/domain/schemas/CommentFilters";
+import { LinkSchema } from "@/domain/schemas/LinkSchema";
 
 export const addToolService = async (tool: ToolSchema) => {
     const api = await apiClient();
@@ -154,5 +155,22 @@ export const getToolCommentsByPagination = async (filters: CommentFilters) => {
         throw new Error("Só é possivel buscar comentários de uma postagem de ferramenta");
     params.append("type", filters.type.toString());
     const response = await api.get(`/api/admin/tools/comments/pagination?${params}`);
+    return response;
+}
+export const addLinkTool = async(data: LinkSchema ) => {
+    const api = await apiClient();
+    const response = await api.post("/api/admin/tools/links",data);
+    return response;
+}
+export const updateLinkTool = async(id:string, data:LinkSchema) => {
+    const api = await apiClient();
+    const response = await api.put(`/api/admin/tools/links/${id}`,data);
+    return response;
+}
+export const deleteLinkTool = async(id:string, data: LinkSchema) => {
+    const api = await apiClient();
+    const response = await api.delete(`/api/admin/tools/links/${id}`,{
+        data: data
+    })
     return response;
 }
