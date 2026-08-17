@@ -10,5 +10,7 @@ namespace PostService.Application.Constants
             => $"user:exists:{userId}";
         public static string ProviderExists(string providerId)
             => $"provider:exists:{providerId}";
+        public static string LanguageExists(Guid languageId)
+            => $"language:exists:{languageId}";
     }
 }

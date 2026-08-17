@@ -6,17 +6,20 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { linkSchema, LinkSchema } from "@/domain/schemas/LinkSchema"
+import { useLanguages } from "@/hooks/Language/useLanguages";
 import { useCreateLink } from "@/hooks/Link/useCreateLink"
 import { useUpdateLink } from "@/hooks/Link/useUpdateLink";
 import { useGetLinkTypes } from "@/hooks/LinkType/useGetLinkTypes";
 import { useAddLinkTool } from "@/hooks/Tool/Link/useAddLinkTool";
 import { useUpdateLinkTool } from "@/hooks/Tool/Link/useUpdateLinkTool";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { XIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 type FormLinkProps = {
     link?: LinkSchema,
@@ -24,13 +27,24 @@ type FormLinkProps = {
 }
 export default function FormLinkTool({ link, toolId }: FormLinkProps) {
     const { data: linkTypes } = useGetLinkTypes();
+    const { data: languages } = useLanguages();
     const { mutateAsync: createLink, isPending: isAdding } = useAddLinkTool();
     const { mutateAsync: updateLink, isPending: isUpdating } = useUpdateLinkTool();
     const { control, handleSubmit, reset, formState: { errors } } = useForm<LinkSchema>({
         resolver: zodResolver(linkSchema),
         defaultValues: {
-            toolId: toolId
+            toolId: toolId,
+            descriptions: [
+                {
+                    title: "",
+                    languageId: ""
+                }
+            ]
         }
+    })
+    const { fields, append, remove, } = useFieldArray({
+        control,
+        name: "descriptions"
     })
     useEffect(() => {
         if (link) {
@@ -59,34 +73,24 @@ export default function FormLinkTool({ link, toolId }: FormLinkProps) {
                         :
                         <Button className="cursor-pointer">Add Link</Button>}
                 </DialogTrigger>
-                <DialogContent>
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <DialogHeader>
+                <DialogContent className="flex max-h-[85vh] w-[95vw] max-w-2xl flex-col gap-0 overflow-hidden p-0">
+                    <form onSubmit={handleSubmit(onSubmit)}
+                        className="flex min-h-0 flex-1 flex-col"
+                    >
+                        <DialogHeader className="shrink-0 border-b px-6 py-4">
                             <DialogTitle>{link ? "Edit Link" : "Add Link"}</DialogTitle>
                             <DialogDescription>
                                 {link ? `Make changes to your link here. Click save when you're
                                 done.`: `Add your link here. Click save when you're done.`}
                             </DialogDescription>
                         </DialogHeader>
-                        <FieldGroup>
-                            <div className="py-3">
-                                <Controller
-                                    name="title"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <Field className="w-full py-2">
-                                            <Label htmlFor="Title">Title</Label>
-                                            <Input {...field}
-                                                placeholder="Informe o titulo do link" />
-                                            {errors.title && <span className="text-sm text-red-600 text-wrap text-justify">{errors.title?.message}</span>}
-                                        </Field>
-                                    )}
-                                />
+                        <div className="grid min-h-0 flex-1 grid-cols-1 overflow-y-auto md:grid-cols-2">
+                            <FieldGroup className="gap-4 px-6 py-5">
                                 <Controller
                                     name="url"
                                     control={control}
                                     render={({ field }) => (
-                                        <Field className="w-full py-2">
+                                        <Field >
                                             <Label htmlFor="Url">Url</Label>
                                             <Input {...field}
                                                 placeholder="Informe o url do link" />
@@ -98,7 +102,7 @@ export default function FormLinkTool({ link, toolId }: FormLinkProps) {
                                     name={`linkTypeId`}
                                     control={control}
                                     render={({ field }) => (
-                                        <Field className="">
+                                        <Field >
                                             <Label htmlFor="linkType">Link Type</Label>
                                             <Select
                                                 onValueChange={(value) => field.onChange(value)}
@@ -134,9 +138,82 @@ export default function FormLinkTool({ link, toolId }: FormLinkProps) {
                                         </Field>
                                     )}
                                 />
+                            </FieldGroup>
+                            <Separator
+                                orientation="vertical"
+                                className="hidden md:block"
+                            />
+                            <Separator className="md:hidden" />
+                            <div className="flex min-h-0 flex-col px-6 py-5">
+                                <div className="mb-3 flex shrink-0 items-center justify-between">
+                                    <Label className="text-sm font-medium">Descriptions</Label>
+                                    <Button
+                                        type="button"
+                                        className="cursor-pointer"
+                                        onClick={() =>
+                                            append({
+                                                title: "",
+                                                languageId: ""
+                                            })
+                                        }
+                                    >
+                                        Add Description
+                                    </Button>
+                                </div>
+                                <div className="flex flex-col gap-2 overflow-y-auto rounded-xl border p-2">
+                                    {fields.map((item, index) => (
+                                        <>
+                                            <div className="bg-muted/30 flex items-start gap-2 rounded-lg border p-2">
+                                                <div className="grid min-w-0 flex-1 grid-cols-[7rem_1fr] gap-2">
+                                                    <Controller
+                                                        name={`descriptions.${index}.languageId`}
+                                                        control={control}
+                                                        render={({ field }) => (
+                                                            <Select
+                                                                onValueChange={(value) => field.onChange(value)}
+                                                                value={field.value}
+                                                            >
+                                                                <SelectTrigger className="w-full min-w-0">
+                                                                    <SelectValue placeholder="Selecione o idioma" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    <SelectGroup>
+                                                                        <SelectLabel>Idiomas</SelectLabel>
+                                                                        {languages?.map((item, index) => (
+                                                                            <SelectItem key={index} value={`${item.id}`}>{item.name}</SelectItem>
+                                                                        ))}
+                                                                    </SelectGroup>
+                                                                </SelectContent>
+                                                            </Select>
+                                                        )}
+                                                    />
+                                                    <Controller
+                                                        control={control}
+                                                        name={`descriptions.${index}.title`}
+                                                        render={({ field }) => (
+                                                            <Input {...field}
+                                                                className="min-w-0"
+                                                                placeholder="Informe o titulo" />
+                                                        )}
+                                                    />
+                                                </div>
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="text-muted-foreground hover:text-destructive size-8 shrink-0 cursor-pointer"
+                                                    onClick={() => remove(index)}
+                                                    disabled={fields.length === 1}
+                                                >
+                                                    <XIcon className="size-4" />
+                                                </Button>
+                                            </div>
+                                        </>
+                                    ))}
+                                </div>
                             </div>
-                        </FieldGroup>
-                        <DialogFooter>
+                        </div>
+                        <DialogFooter className="shrink-0 border-t px-6 py-4">
                             <DialogClose asChild>
                                 <Button className="cursor-pointer" variant="outline">Cancel</Button>
                             </DialogClose>

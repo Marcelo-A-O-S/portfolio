@@ -3,6 +3,7 @@ using PostService.Application.Exceptions;
 using PostService.Application.Interfaces;
 using PostService.Application.UseCases.Categories.Interfaces;
 using PostService.Application.Validations;
+using PostService.Application.Validators.Interfaces;
 using PostService.Domain.Entities;
 namespace PostService.Application.UseCases.Categories
 {
@@ -10,15 +11,18 @@ namespace PostService.Application.UseCases.Categories
     {
         private readonly ICategoryServices categoryServices;
         private readonly ICategoryContentServices categoryContentServices;
+        private readonly IValidationServices validationServices;
         private readonly IUnitOfWork unitOfWork;
         public CreateCategory(
             ICategoryServices _categoryServices,
             ICategoryContentServices _categoryContentServices,
+            IValidationServices _validationServices,
             IUnitOfWork _unitOfWork
         )
         {
             this.categoryServices = _categoryServices;
             this.categoryContentServices = _categoryContentServices;
+            this.validationServices = _validationServices;
             this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(CategoryRequest categoryRequest)
@@ -54,6 +58,7 @@ namespace PostService.Application.UseCases.Categories
                 var categoryContent = await this.categoryContentServices.FindBy(cc => cc.Slug == ccRequest.Slug && cc.LanguageId == ccRequest.LanguageId);
                 if (categoryContent != null)
                     throw new ValidationException("Erro ao validar dados!");
+                await this.validationServices.ValidateLanguageExists(ccRequest.LanguageId);
                 categoryContent = new CategoryContent(category.Id, ccRequest.LanguageId, ccRequest.Name, ccRequest.Slug);
                 category.AddCategoryContent(categoryContent);
             }

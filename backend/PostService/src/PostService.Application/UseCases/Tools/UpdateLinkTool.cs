@@ -12,21 +12,18 @@ namespace PostService.Application.UseCases.Tools
     {
         private readonly ILinkServices linkServices;
         private readonly ILinkTypeServices linkTypeServices;
-        private readonly IToolsServices toolsServices;
-        private readonly IToolValidationServices toolValidationServices;
+        private readonly IValidationServices validationServices;
         private readonly IUnitOfWork unitOfWork;
         public UpdateLinkTool(
             ILinkServices _linkServices,
             ILinkTypeServices _linkTypeServices,
-            IToolsServices _toolsServices,
-            IToolValidationServices _toolValidationServices,
+            IValidationServices _validationServices,
             IUnitOfWork _unitOfWork
         )
         {
             this.linkServices = _linkServices;
             this.linkTypeServices = _linkTypeServices;
-            this.toolsServices = _toolsServices;
-            this.toolValidationServices = _toolValidationServices;
+            this.validationServices = _validationServices;
             this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid Id, LinkRequest request)
@@ -34,11 +31,12 @@ namespace PostService.Application.UseCases.Tools
             await ValidateLinkRequest(request);
             if(request.ToolId is not Guid toolId)
                 throw new ValidationException("O Identificador da ferramenta é obrigatória.");
-            await this.toolValidationServices.ValidateToolExists(toolId);
+            await this.validationServices.ValidateToolExists(toolId);
             var linkType = await GetLinkTypeAsync(request.LinkTypeId);
             var link = await GetLinkAsync(Id);
             link.SetToolId(toolId);
-            link.Update(request.Url, request.Title, linkType.Id);
+            link.Update(request.Url, linkType.Id);
+            await ProcessDescriptions(link, request.Descriptions);
             await this.unitOfWork.BeginAsync();
             try
             {
@@ -66,10 +64,36 @@ namespace PostService.Application.UseCases.Tools
         }
         private async Task<Link> GetLinkAsync(Guid linkId)
         {
-            var link = await this.linkServices.GetById(linkId);
+            var link = await this.linkServices.GetFullDataById(linkId);
             if(link == null)
                 throw new NotFoundException("Link não encontrado.");
             return link;
+        }
+        private async Task ProcessDescriptions(Link link, List<LinkDescriptionRequest> linkDescriptionRequests)
+        {
+            var requestLinkDescriptionIds = linkDescriptionRequests
+                .Where(c => c.Id.HasValue)
+                .Select(c => c.Id!.Value);
+            link.ValidateDescriptions(requestLinkDescriptionIds);
+            foreach (var item in linkDescriptionRequests)
+            {
+                var validationError = ValidationHelper.Validate(item);
+                if (validationError.Count > 0)
+                    throw new ValidationException($"Erro ao validar dados: {validationError}");
+                await this.validationServices.ValidateLanguageExists(item.LanguageId);
+                if (item.Id.HasValue)
+                {
+                    var linkDescription = link.Descriptions.FirstOrDefault(tc => tc.Id == item.Id.Value);
+                    if (linkDescription == null)
+                        throw new NotFoundException("Descrição de link não encontrada.");
+                    linkDescription.Update(item.Title);
+                }
+                else
+                {
+                    var linkDescription = new LinkDescription(link.Id, item.LanguageId, item.Title);
+                    link.AddLinkDescription(linkDescription);
+                }
+            }
         }
     }
 }

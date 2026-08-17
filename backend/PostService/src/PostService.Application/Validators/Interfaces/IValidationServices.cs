@@ -6,5 +6,6 @@ namespace PostService.Application.Validators.Interfaces
         Task ValidateUserExists(Guid userId);
         Task ValidatePostExists(Guid postId);
         Task ValidateToolExists(Guid toolId);
+        Task ValidateLanguageExists(Guid languageId);
     }
 }

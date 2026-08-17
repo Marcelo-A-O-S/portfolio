@@ -198,10 +198,6 @@ namespace PostService.Infrastructure.Migrations
                     b.Property<Guid?>("PostId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<Guid?>("ToolId")
                         .HasColumnType("uuid");
 
@@ -221,6 +217,31 @@ namespace PostService.Infrastructure.Migrations
                     b.HasIndex("ToolId");
 
                     b.ToTable("Links");
+                });
+
+            modelBuilder.Entity("PostService.Domain.Entities.LinkDescription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("LanguageId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("LinkId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LanguageId");
+
+                    b.HasIndex("LinkId");
+
+                    b.ToTable("LinkDescriptions");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.LinkType", b =>
@@ -543,6 +564,25 @@ namespace PostService.Infrastructure.Migrations
                     b.Navigation("Tool");
                 });
 
+            modelBuilder.Entity("PostService.Domain.Entities.LinkDescription", b =>
+                {
+                    b.HasOne("PostService.Domain.Entities.Language", "Language")
+                        .WithMany()
+                        .HasForeignKey("LanguageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PostService.Domain.Entities.Link", "Link")
+                        .WithMany("Descriptions")
+                        .HasForeignKey("LinkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Language");
+
+                    b.Navigation("Link");
+                });
+
             modelBuilder.Entity("PostService.Domain.Entities.MediaProjection", b =>
                 {
                     b.HasOne("PostService.Domain.Entities.PostContent", null)
@@ -648,6 +688,11 @@ namespace PostService.Infrastructure.Migrations
             modelBuilder.Entity("PostService.Domain.Entities.Category", b =>
                 {
                     b.Navigation("CategoryContents");
+                });
+
+            modelBuilder.Entity("PostService.Domain.Entities.Link", b =>
+                {
+                    b.Navigation("Descriptions");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.Post", b =>

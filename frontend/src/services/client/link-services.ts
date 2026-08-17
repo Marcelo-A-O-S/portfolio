@@ -5,7 +5,12 @@ export const getLinksByPagination = async(filters: LinkFilters) =>{
     const api = await apiClient();
     const params = new URLSearchParams();
     params.append("page", filters.page.toString());
-    params.append("postBaseId", filters.postBaseId.toString())
+    if(filters.tooId){
+        params.append("toolId", filters.tooId.toString());
+    }
+    if(filters.postId){
+        params.append("postId", filters.postId.toString());
+    }
     if(filters.search){
         params.append("page", filters.search);
     }

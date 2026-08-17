@@ -11,21 +11,18 @@ namespace PostService.Application.UseCases.Tools
     {
         private readonly ILinkServices linkServices;
         private readonly ILinkTypeServices linkTypeServices;
-        private readonly IToolsServices toolsServices;
-        private readonly IToolValidationServices toolValidationServices;
+        private readonly IValidationServices validationServices;
         private readonly IUnitOfWork unitOfWork;
         public AddLinkTool(
             ILinkServices _linkServices,
             ILinkTypeServices _linkTypeServices,
-            IToolsServices _toolsServices,
-            IToolValidationServices _toolValidationServices,
+            IValidationServices _validationServices,
             IUnitOfWork _unitOfWork
         )
         {
             this.linkServices = _linkServices;
             this.linkTypeServices = _linkTypeServices;
-            this.toolsServices = _toolsServices;
-            this.toolValidationServices = _toolValidationServices;
+            this.validationServices = _validationServices;
             this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(LinkRequest request)
@@ -33,9 +30,10 @@ namespace PostService.Application.UseCases.Tools
             await ValidateLinkRequest(request);
             if(request.ToolId is not Guid toolId)
                 throw new ValidationException("O Identificador da ferramenta é obrigatória.");
-            await this.toolValidationServices.ValidateToolExists(toolId);
+            await this.validationServices.ValidateToolExists(toolId);
             var linkType = await GetLinkTypeAsync(request.LinkTypeId);
-            var link = new Link(request.Url, request.Title, linkType.Id);
+            var link = new Link(request.Url, linkType.Id);
+            await ProcessDescriptions(link, request.Descriptions);
             link.SetToolId(toolId);
             await this.unitOfWork.BeginAsync();
             try
@@ -61,6 +59,18 @@ namespace PostService.Application.UseCases.Tools
             if(linkType == null)
                 throw new NotFoundException("Tipo de link não encontrado.");
             return linkType;
+        }
+        private async Task ProcessDescriptions(Link link, List<LinkDescriptionRequest> descriptionRequests)
+        {
+            foreach (var item in descriptionRequests)
+            {
+                var validationError = ValidationHelper.Validate(item);
+                if (validationError.Count > 0)
+                    throw new ValidationException($"Erro ao validar dados: {validationError}");
+                await this.validationServices.ValidateLanguageExists(item.LanguageId);
+                var linkDescription = new LinkDescription(link.Id, item.LanguageId, item.Title);
+                link.AddLinkDescription(linkDescription);
+            }
         }
     }
 }

@@ -1,3 +1,5 @@
+using PostService.Application.Caching.Language;
+using PostService.Application.Constants;
 using PostService.Application.DTOs.Request;
 using PostService.Application.Exceptions;
 using PostService.Application.Interfaces;
@@ -10,13 +12,16 @@ namespace PostService.Application.UseCases.Languages
     public class CreateLanguage : ICreateLanguage
     {
         private readonly ILanguageServices languageServices;
+        private readonly ILanguageCacheServices languageCacheServices;
         private readonly IUnitOfWork unitOfWork;
         public CreateLanguage(
             ILanguageServices _languageServices,
+            ILanguageCacheServices _languageCacheServices,
             IUnitOfWork _unitOfWork
             )
         {
             this.languageServices = _languageServices;
+            this.languageCacheServices = _languageCacheServices;
             this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(LanguageRequest languageRequest)
@@ -35,6 +40,7 @@ namespace PostService.Application.UseCases.Languages
                 await unitOfWork.RollbackAsync();
                 throw;
             }
+            await this.languageCacheServices.AddLanguageCache(CacheKeys.LanguageExists(language.Id),language.Id);
         }
         private static void ValidateLanguageRequest(LanguageRequest languageRequest)
         {

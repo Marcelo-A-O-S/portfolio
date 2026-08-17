@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using PostService.Application.Interfaces;
 using PostService.Domain.Entities;
 using PostService.Domain.Interfaces;
+using PostService.Domain.Queries;
 namespace PostService.Application.Services
 {
     public class LinkServices : ILinkServices
@@ -38,9 +39,14 @@ namespace PostService.Application.Services
             return await this.linkRepository.GetById(Id);
         }
 
-        public async Task<PaginatedResult<Link>> GetByPagination(int page, string? search, int itemsPage = 10)
+        public async Task<PaginatedResult<LinkView>> GetByPagination(int page, Guid? toolId, Guid? postId, string? search, int itemsPage = 10)
         {
-            return await this.linkRepository.GetByPagination(page, search);
+            return await this.linkRepository.GetByPagination(page, toolId, postId, search);
+        }
+
+        public async Task<Link> GetFullDataById(Guid Id)
+        {
+            return await this.linkRepository.GetFullDataById(Id);
         }
 
         public async Task<List<Link>> List()

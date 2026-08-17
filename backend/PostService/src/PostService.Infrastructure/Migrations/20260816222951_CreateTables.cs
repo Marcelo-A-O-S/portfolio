@@ -76,6 +76,7 @@ namespace PostService.Infrastructure.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     BackgroundColor = table.Column<string>(type: "text", nullable: false),
                     TextColor = table.Column<string>(type: "text", nullable: false),
+                    BorderColor = table.Column<string>(type: "text", nullable: false),
                     Icon = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -150,15 +151,34 @@ namespace PostService.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LinkDescriptions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    LinkId = table.Column<Guid>(type: "uuid", nullable: false),
+                    LanguageId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LinkDescriptions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LinkDescriptions_Languages_LanguageId",
+                        column: x => x.LanguageId,
+                        principalTable: "Languages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Links",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Url = table.Column<string>(type: "text", nullable: false),
-                    Title = table.Column<string>(type: "text", nullable: false),
                     LinkTypeId = table.Column<Guid>(type: "uuid", nullable: false),
-                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ToolId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ToolId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -372,6 +392,16 @@ namespace PostService.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_LinkDescriptions_LanguageId",
+                table: "LinkDescriptions",
+                column: "LanguageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LinkDescriptions_LinkId",
+                table: "LinkDescriptions",
+                column: "LinkId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Links_LinkTypeId",
                 table: "Links",
                 column: "LinkTypeId");
@@ -474,20 +504,26 @@ namespace PostService.Infrastructure.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
+                name: "FK_LinkDescriptions_Links_LinkId",
+                table: "LinkDescriptions",
+                column: "LinkId",
+                principalTable: "Links",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_Links_Posts_PostId",
                 table: "Links",
                 column: "PostId",
                 principalTable: "Posts",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Links_Tools_ToolId",
                 table: "Links",
                 column: "ToolId",
                 principalTable: "Tools",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_MediaProjections_PostContents_PostContentId",
@@ -536,13 +572,16 @@ namespace PostService.Infrastructure.Migrations
                 name: "LikeProjections");
 
             migrationBuilder.DropTable(
-                name: "Links");
+                name: "LinkDescriptions");
 
             migrationBuilder.DropTable(
                 name: "PostTool");
 
             migrationBuilder.DropTable(
                 name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "Links");
 
             migrationBuilder.DropTable(
                 name: "LinkTypes");

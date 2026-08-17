@@ -6,6 +6,7 @@ namespace PostService.Domain.Queries
         public Guid Id { get; set; }
         public MediaView Media { get; set; }
         public ICollection<CategoryView> Categories { get; set; }
+        public ICollection<LinkView> Links { get; set; }
         public int Likes { get; set; }
         public int Comments { get; set; }
         public bool Liked { get; set; }

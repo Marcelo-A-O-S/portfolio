@@ -12,7 +12,7 @@ namespace PostService.Infrastructure.Repositories
         {
             this.context = _context;
         }
-        public async Task<PaginatedResult<Link>> GetByPagination(int page, string? search, int itemsPage = 10)
+        public async Task<PaginatedResult<LinkView>> GetByPagination(int page, Guid? toolId, Guid? postId, string? search, int itemsPage = 10)
         {
             var query = this.context.Links
                 .AsNoTracking()
@@ -21,10 +21,17 @@ namespace PostService.Infrastructure.Repositories
             if (!string.IsNullOrWhiteSpace(search))
             {
                 query = query.Where(l =>
-                        (
-                            string.IsNullOrWhiteSpace(search) ||
-                            EF.Functions.Like(l.Title, $"%{search}%")
+                        l.Descriptions.Any(d =>
+                            EF.Functions.Like(d.Title, $"%{search}%")
                         ));
+            }
+            if (toolId.HasValue)
+            {
+                query = query.Where(l => l.ToolId == toolId);
+            }
+            if (postId.HasValue)
+            {
+                query = query.Where(l => l.PostId == postId);
             }
             var totalItems = await query.CountAsync();
             var items = await query
@@ -34,18 +41,42 @@ namespace PostService.Infrastructure.Repositories
                 .Take(itemsPage)
                 .Select(l=> new LinkView
                 {
-                    Title = l.Title,
+                    Id = l.Id,
                     Url = l.Url,
-                    
+                    ToolId = l.ToolId,
+                    PostId = l.PostId,
+                    Descriptions = l.Descriptions.Select(d=> new LinkDescriptionView
+                    {
+                        Id = d.Id,
+                        Title = d.Title
+                    }).ToList(),
+                    LinkType = new LinkTypeView
+                    {
+                        Id = l.LinkType.Id,
+                        Name = l.LinkType.Name,
+                        TextColor = l.LinkType.TextColor,
+                        BackgroundColor = l.LinkType.BackgroundColor,
+                        BorderColor = l.LinkType.BorderColor,
+                        Icon = l.LinkType.Icon
+                    }
                 })
                 .ToListAsync();
-            return new PaginatedResult<Link>
+            return new PaginatedResult<LinkView>
             {
                 Items = items,
                 TotalItems = totalItems,
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling(totalItems / (double)itemsPage)
             };
+        }
+
+        public async Task<Link> GetFullDataById(Guid Id)
+        {
+            return await context.Links
+                .Include(l => l.Descriptions)
+                    .ThenInclude(d => d.Language)
+                .Include(l => l.LinkType)
+                .FirstOrDefaultAsync(t => t.Id == Id);
         }
     }
 }

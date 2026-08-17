@@ -13,6 +13,7 @@ namespace PostService.Application.UseCases.Tools
     {
         private readonly IUserServicesClient userServicesClient;
         private readonly IToolValidationServices toolValidationServices;
+        private readonly IValidationServices validationServices;
         private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly IToolsServices toolsServices;
         private readonly ICategoryServices categoryServices;
@@ -23,6 +24,7 @@ namespace PostService.Application.UseCases.Tools
         public CreateTool(
             IUserServicesClient _userServicesClient,
             IToolValidationServices _toolValidationServices,
+            IValidationServices _validationServices,
             IMediaProjectionServices _mediaProjectionServices,
             IToolsServices _toolsServices,
             ICategoryServices _categoryServices,
@@ -34,6 +36,7 @@ namespace PostService.Application.UseCases.Tools
         {
             this.userServicesClient = _userServicesClient;
             this.toolValidationServices = _toolValidationServices;
+            this.validationServices = _validationServices;
             this.mediaProjectionServices = _mediaProjectionServices;
             this.toolsServices = _toolsServices;
             this.categoryServices = _categoryServices;
@@ -45,8 +48,8 @@ namespace PostService.Application.UseCases.Tools
         public async Task ExecuteAsync(Guid authenticatedUserId, string providerId, ToolRequest request)
         {
             ValidateRequest(request);
-            await this.toolValidationServices.ValidateUserExists(authenticatedUserId);
-            await this.toolValidationServices.ValidateProviderExists(authenticatedUserId, providerId);
+            await this.validationServices.ValidateUserExists(authenticatedUserId);
+            await this.validationServices.ValidateProviderExists(authenticatedUserId, providerId);
             var mediasToDelete = new List<MediaProjection>();
             var mediasToCommit = new List<MediaProjection>();
             var tool = new Tool(request.Status);
@@ -90,6 +93,7 @@ namespace PostService.Application.UseCases.Tools
                 var toolContent = await this.toolContentServices.FindBy(tc => tc.Slug == item.Slug && tc.LanguageId == item.LanguageId);
                 if (toolContent != null)
                     throw new ValidationException("Erro ao validar dados!");
+                await this.validationServices.ValidateLanguageExists(item.LanguageId);
                 toolContent = new ToolContent(tool.Id, item.LanguageId, item.Name, item.Title, item.Description, item.Content, item.Slug);
                 var toRemoveImages = item.Images.Where(image => !item.Content.Contains(image.Url)).ToList();
                 foreach (var removeImage in toRemoveImages)

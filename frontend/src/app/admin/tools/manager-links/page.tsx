@@ -41,6 +41,7 @@ export default function ManagerLinksPage() {
         }
         router.push(`?${params.toString()}`)
     }, [debouncedSearch])
+    console.log("Links: ", data);
     return (
         <>
             <main className="mx-auto flex min-h-screen inset-0 w-full justify-center">

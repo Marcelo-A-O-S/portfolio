@@ -25,7 +25,7 @@ namespace PostService.Application.UseCases.Links
         {
             await ValidateLinkRequest(request);
             var linkType = await GetLinkTypeAsync(request.LinkTypeId);
-            var link = new Link(request.Url, request.Title, linkType.Id);
+            var link = new Link(request.Url, linkType.Id);
             await this.unitOfWork.BeginAsync();
             try
             {

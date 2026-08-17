@@ -33,10 +33,12 @@ namespace PostService.API.Controllers
         [Authorize(Roles="Administrador", AuthenticationSchemes ="UserJwt")]
         public async Task<IActionResult> GetByPagination(
             [FromQuery] int page,
+            [FromQuery] Guid? toolId,
+            [FromQuery] Guid? postId,
             [FromQuery] string? search
         )
         {
-            var result = await this.linkServices.GetByPagination(page, search);
+            var result = await this.linkServices.GetByPagination(page, toolId, postId, search);
             return Ok(result);
         }
         [HttpPost]

@@ -36,7 +36,6 @@ export default function ToolsPage() {
         }
         router.push(`?${params.toString()}`)
     }, [debouncedSearch])
-    console.log("Ferramentas: ", tools);
     return (
         <main className="relative mx-auto flex min-h-screen inset-0 w-full max-w-[1440px] justify-center  ">
             <section className="relative w-full min-h-screen px-10 py-20 flex flex-col">

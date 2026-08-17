@@ -24,10 +24,9 @@ namespace PostService.Application.UseCases.Links
         public async Task ExecuteAsync(Guid Id, LinkRequest request)
         {
             await ValidateLinkRequest(request);
-            
             var linkType = await GetLinkTypeAsync(request.LinkTypeId);
             var link = await GetLinkAsync(Id);
-            link.Update(request.Url, request.Title, linkType.Id);
+            link.Update(request.Url, linkType.Id);
             await this.unitOfWork.BeginAsync();
             try
             {

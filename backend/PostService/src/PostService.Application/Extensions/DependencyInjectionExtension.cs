@@ -22,6 +22,8 @@ using PostService.Application.UseCases.LinkTypes.Interfaces;
 using PostService.Application.UseCases.LinkTypes;
 using PostService.Application.UseCases.Links.Interfaces;
 using PostService.Application.UseCases.Links;
+using PostService.Domain.Interfaces;
+using PostService.Application.Caching.Language;
 namespace PostService.Application.Extensions
 {
     public static class DependencyInjectionExtension
@@ -42,12 +44,15 @@ namespace PostService.Application.Extensions
             services.AddScoped<IAuthorServices, AuthorServices>();
             services.AddScoped<ILinkServices, LinkServices>();
             services.AddScoped<ILinkTypeServices, LinkTypeServices>();
+            services.AddScoped<ILinkDescriptionServices, LinkDescriptionServices>();
 
             services.AddScoped<IUserCacheServices, UserCacheServices>();
             services.AddScoped<IPostCacheServices, PostCacheServices>();
             services.AddScoped<IToolCacheServices, ToolCacheServices>();
+            services.AddScoped<ILanguageCacheServices, LanguageCacheServices>();
 
             services.AddScoped<IToolValidationServices, ToolValidationServices>();
+            services.AddScoped<IValidationServices, ValidationServices>();
 
             services.AddScoped<ICreateLanguage, CreateLanguage>();
             services.AddScoped<IUpdateLanguage, UpdateLanguage>();
