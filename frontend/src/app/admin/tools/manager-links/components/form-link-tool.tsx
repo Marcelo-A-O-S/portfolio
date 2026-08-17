@@ -60,6 +60,7 @@ export default function FormLinkTool({ link, toolId }: FormLinkProps) {
             createLink(data)
         }
     }
+    const isSubmitting = isAdding || isUpdating;
     return (
         <>
             <Dialog
@@ -69,7 +70,9 @@ export default function FormLinkTool({ link, toolId }: FormLinkProps) {
             >
                 <DialogTrigger asChild>
                     {link ?
-                        <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="cursor-pointer">Update Link</DropdownMenuItem>
+                        <DropdownMenuItem
+                            onSelect={(e) => e.preventDefault()}
+                            className="cursor-pointer">Update Link</DropdownMenuItem>
                         :
                         <Button className="cursor-pointer">Add Link</Button>}
                 </DialogTrigger>
@@ -84,8 +87,8 @@ export default function FormLinkTool({ link, toolId }: FormLinkProps) {
                                 done.`: `Add your link here. Click save when you're done.`}
                             </DialogDescription>
                         </DialogHeader>
-                        <div className="grid min-h-0 flex-1 grid-cols-1 overflow-y-auto md:grid-cols-2">
-                            <FieldGroup className="gap-4 px-6 py-5">
+                        <div className="flex min-h-0 flex-1 flex-col md:flex-row gap-6 overflow-y-auto px-6 py-5">
+                            <FieldGroup className="">
                                 <Controller
                                     name="url"
                                     control={control}
@@ -138,15 +141,8 @@ export default function FormLinkTool({ link, toolId }: FormLinkProps) {
                                         </Field>
                                     )}
                                 />
-                            </FieldGroup>
-                            <Separator
-                                orientation="vertical"
-                                className="hidden md:block"
-                            />
-                            <Separator className="md:hidden" />
-                            <div className="flex min-h-0 flex-col px-6 py-5">
-                                <div className="mb-3 flex shrink-0 items-center justify-between">
-                                    <Label className="text-sm font-medium">Descriptions</Label>
+                                <div className="flex flex-col gap-2">
+                                    <Label>Descriptions</Label>
                                     <Button
                                         type="button"
                                         className="cursor-pointer"
@@ -160,64 +156,74 @@ export default function FormLinkTool({ link, toolId }: FormLinkProps) {
                                         Add Description
                                     </Button>
                                 </div>
-                                <div className="flex flex-col gap-2 overflow-y-auto rounded-xl border p-2">
-                                    {fields.map((item, index) => (
-                                        <>
-                                            <div className="bg-muted/30 flex items-start gap-2 rounded-lg border p-2">
-                                                <div className="grid min-w-0 flex-1 grid-cols-[7rem_1fr] gap-2">
-                                                    <Controller
-                                                        name={`descriptions.${index}.languageId`}
-                                                        control={control}
-                                                        render={({ field }) => (
-                                                            <Select
-                                                                onValueChange={(value) => field.onChange(value)}
-                                                                value={field.value}
-                                                            >
-                                                                <SelectTrigger className="w-full min-w-0">
-                                                                    <SelectValue placeholder="Selecione o idioma" />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    <SelectGroup>
-                                                                        <SelectLabel>Idiomas</SelectLabel>
-                                                                        {languages?.map((item, index) => (
-                                                                            <SelectItem key={index} value={`${item.id}`}>{item.name}</SelectItem>
-                                                                        ))}
-                                                                    </SelectGroup>
-                                                                </SelectContent>
-                                                            </Select>
-                                                        )}
-                                                    />
-                                                    <Controller
-                                                        control={control}
-                                                        name={`descriptions.${index}.title`}
-                                                        render={({ field }) => (
-                                                            <Input {...field}
-                                                                className="min-w-0"
-                                                                placeholder="Informe o titulo" />
-                                                        )}
-                                                    />
-                                                </div>
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="text-muted-foreground hover:text-destructive size-8 shrink-0 cursor-pointer"
-                                                    onClick={() => remove(index)}
-                                                    disabled={fields.length === 1}
-                                                >
-                                                    <XIcon className="size-4" />
-                                                </Button>
+                            </FieldGroup>
+                            <Separator
+                                orientation="vertical"
+                                className="hidden  md:block"
+                            />
+                            <FieldGroup className="flex flex-col gap-2 overflow-y-auto rounded-xl border p-2">
+                                {fields.map((item, index) => (
+                                    <>
+                                        <div className="bg-muted/30 flex items-start gap-2 rounded-lg border p-2">
+                                            <div className="flex flex-col gap-2">
+                                                <Controller
+                                                    name={`descriptions.${index}.languageId`}
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                        <Select
+                                                            onValueChange={(value) => field.onChange(value)}
+                                                            value={field.value}
+                                                        >
+                                                            <SelectTrigger className="w-full min-w-0">
+                                                                <SelectValue placeholder="Selecione o idioma" />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectGroup>
+                                                                    <SelectLabel>Idiomas</SelectLabel>
+                                                                    {languages?.map((item, index) => (
+                                                                        <SelectItem key={index} value={`${item.id}`}>{item.name}</SelectItem>
+                                                                    ))}
+                                                                </SelectGroup>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    )}
+                                                />
+                                                <Controller
+                                                    control={control}
+                                                    name={`descriptions.${index}.title`}
+                                                    render={({ field }) => (
+                                                        <Input {...field}
+                                                            className="min-w-0"
+                                                            placeholder="Informe o titulo" />
+                                                    )}
+                                                />
                                             </div>
-                                        </>
-                                    ))}
-                                </div>
-                            </div>
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon"
+                                                className="text-muted-foreground hover:text-destructive size-8 shrink-0 cursor-pointer"
+                                                onClick={() => remove(index)}
+                                                disabled={fields.length === 1}
+                                            >
+                                                <XIcon className="size-4" />
+                                            </Button>
+                                        </div>
+                                    </>
+                                ))}
+                            </FieldGroup>
                         </div>
                         <DialogFooter className="shrink-0 border-t px-6 py-4">
                             <DialogClose asChild>
                                 <Button className="cursor-pointer" variant="outline">Cancel</Button>
                             </DialogClose>
-                            <Button className="cursor-pointer" type="submit">Save changes</Button>
+                            <Button
+                                className="cursor-pointer"
+                                type="submit"
+                                disabled={isSubmitting}
+                            >
+                                {link?`Update`:`Save`}
+                            </Button>
                         </DialogFooter>
                     </form>
                 </DialogContent>
