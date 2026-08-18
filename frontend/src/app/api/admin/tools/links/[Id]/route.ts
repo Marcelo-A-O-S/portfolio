@@ -73,6 +73,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
             })
         }
         const link = result.data;
+        console.log("Atualizando link: ",link)
         const response = await updateLinkTool(Id, link);
         if (response.status !== 200 && response.status !== 201) {
             console.log(`Erro: ${response.data.message}`)

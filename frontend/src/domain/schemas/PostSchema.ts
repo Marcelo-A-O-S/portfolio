@@ -6,7 +6,9 @@ export const PostStatusEnum = z.enum(["DRAFT", "PUBLISH"])
 export const toolInPostSchema = toolSchema.omit({
     liked: true,
     comments: true,
-    likes: true
+    likes: true,
+    links: true,
+    author: true
 });
 export const postSchema = postBaseSchema.extend({
     postContents: z.array(postContentSchema).min(1, "É obrigatório ter pelo menos um conteudo relacionado ao projeto."),

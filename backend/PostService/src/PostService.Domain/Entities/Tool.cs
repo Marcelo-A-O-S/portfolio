@@ -10,6 +10,7 @@ namespace PostService.Domain.Entities
         public Tool(Status status)
         {
             this.CreatedAt = DateTime.UtcNow;
+            this.UpdatedAt = DateTime.UtcNow;
             this.Posts = new List<Post>();
             this.Links = new List<Link>();
             this.ToolContents = new List<ToolContent>();

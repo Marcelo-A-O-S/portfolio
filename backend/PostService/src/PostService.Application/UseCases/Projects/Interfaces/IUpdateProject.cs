@@ -3,6 +3,6 @@ namespace PostService.Application.UseCases.Projects.Interfaces
 {
     public interface IUpdateProject
     {
-        Task ExecuteAsync(Guid Id, PostRequest postRequest);
+        Task ExecuteAsync(Guid authenticatedUserId, string role, Guid Id, PostRequest postRequest);
     }
 }

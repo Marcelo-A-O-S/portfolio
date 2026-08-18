@@ -9,13 +9,13 @@ import DeleteConfirm from "./tool-comment-delete";
 import EditCommentForm from "./tool-comment-edit";
 import { ChevronDown, ChevronUp, Heart, MessageSquare, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import ReplyForm from "./tool-reply-form";
-import { useAddLikeCommentTool } from "@/hooks/Tool/useAddLikeCommentTool";
-import { useRemoveLikeCommentTool } from "@/hooks/Tool/useRemoveLikeCommentTool";
+import { useAddLikeCommentTool } from "@/hooks/Tool/Comment/useAddLikeCommentTool";
+import { useRemoveLikeCommentTool } from "@/hooks/Tool/Comment/useRemoveLikeCommentTool";
 import { useCommentPermissions } from "@/hooks/Comments/useCommentPermissions";
 import HardDeleteConfirm from "./tool-comment-hard-delete";
 import { useHardDeleteReplyTool } from "@/hooks/Tool/Comment/useHardDeleteReplyTool";
 export default function ReplyItem({ reply, toolId, commentId }: { reply: CommentSchema; toolId: string, commentId: string }) {
-    const { data: currentUser } = useSession()
+    const { data: currentUser } = useSession();
     const permissions = useCommentPermissions(reply);
     const { mutateAsync: addReplyTool, isPending: isReplying } = useAddReplyTool();
     const { mutateAsync: updateReplyTool, isPending: isUpdating } = useUpdateReplyTool();

@@ -12,7 +12,6 @@ namespace PostService.Application.UseCases.Tools
     public class CreateTool : ICreateTool
     {
         private readonly IUserServicesClient userServicesClient;
-        private readonly IToolValidationServices toolValidationServices;
         private readonly IValidationServices validationServices;
         private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly IToolsServices toolsServices;
@@ -23,7 +22,6 @@ namespace PostService.Application.UseCases.Tools
         private readonly IUnitOfWork unitOfWork;
         public CreateTool(
             IUserServicesClient _userServicesClient,
-            IToolValidationServices _toolValidationServices,
             IValidationServices _validationServices,
             IMediaProjectionServices _mediaProjectionServices,
             IToolsServices _toolsServices,
@@ -35,7 +33,6 @@ namespace PostService.Application.UseCases.Tools
         )
         {
             this.userServicesClient = _userServicesClient;
-            this.toolValidationServices = _toolValidationServices;
             this.validationServices = _validationServices;
             this.mediaProjectionServices = _mediaProjectionServices;
             this.toolsServices = _toolsServices;
@@ -61,6 +58,7 @@ namespace PostService.Application.UseCases.Tools
                 await ProcessCategories(tool, request.Categories);
                 await ProcessTumbnail(tool, request.Media, mediasToCommit);
                 await this.toolsServices.Save(tool);
+                await DeleteMedias(mediasToDelete);
                 await this.unitOfWork.CommitAsync();
             }
             catch
@@ -68,8 +66,7 @@ namespace PostService.Application.UseCases.Tools
                 await unitOfWork.RollbackAsync();
                 throw;
             }
-            await CommitMedias(tool.Id, mediasToCommit);
-            await DeleteMedias(mediasToDelete);
+            await PublishMedias(tool.Id, mediasToCommit, mediasToDelete);
         }
         private static void ValidateRequest(ToolRequest request)
         {
@@ -209,8 +206,17 @@ namespace PostService.Application.UseCases.Tools
             }
             tool.SetAuthorId(author.Id);
         }
-        private async Task CommitMedias(Guid toolId, List<MediaProjection> mediasToCommit)
+        private async Task PublishMedias(Guid toolId, List<MediaProjection> mediasToCommit, List<MediaProjection> mediasToDelete)
         {
+            foreach (var media in mediasToDelete)
+            {
+            
+                await this.rabbitMQProducer.Publish("ToolMediaDeleted", new
+                {
+                    MediaId = media.MediaId,
+                    OwnerType = "Tool"
+                });
+            }
             foreach (var media in mediasToCommit)
             {
                 await this.rabbitMQProducer.Publish("ToolMediaAttached", new
@@ -229,11 +235,6 @@ namespace PostService.Application.UseCases.Tools
                 {
                     await this.mediaProjectionServices.Delete(media);
                 }
-                await this.rabbitMQProducer.Publish("ToolMediaDeleted", new
-                {
-                    MediaId = media.MediaId,
-                    OwnerType = "Tool"
-                });
             }
         }
     }

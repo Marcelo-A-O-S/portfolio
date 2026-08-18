@@ -99,20 +99,24 @@ export const authOptions: AuthOptions = {
                 token.refreshTokenId = data.refreshTokenId;
                 token.expireIn = expireDate;
                 token.role = data.role;
-                cookieStore.set("DeviceId", deviceId, {
-                    httpOnly: true,
-                    sameSite: "lax",
-                    secure: true,
-                    path: "/",
-                    maxAge: 60 * 60 * 24 * 7
-                });
-                cookieStore.set("RefreshToken", data.refreshToken, {
-                    httpOnly: true,
-                    sameSite: "lax",
-                    secure: true,
-                    path: "/",
-                    maxAge: 60 * 60 * 24 * 7
-                });
+                try {
+                    cookieStore.set("DeviceId", deviceId, {
+                        httpOnly: true,
+                        sameSite: "lax",
+                        secure: true,
+                        path: "/",
+                        maxAge: 60 * 60 * 24 * 7
+                    });
+                    cookieStore.set("RefreshToken", data.refreshToken, {
+                        httpOnly: true,
+                        sameSite: "lax",
+                        secure: true,
+                        path: "/",
+                        maxAge: 60 * 60 * 24 * 7
+                    });
+                } catch {
+
+                }
             }
             if (token.expireIn && token.userId && token.refreshTokenId && token.providerId) {
                 const buffer = 35 * 1000;
@@ -131,13 +135,17 @@ export const authOptions: AuthOptions = {
                             token.refreshTokenId = data.refreshTokenId;
                             token.expireIn = expireDate;
                             token.role = data.role;
-                            cookieStore.set("RefreshToken", data.refreshToken, {
-                                httpOnly: true,
-                                sameSite: "lax",
-                                secure: true,
-                                path: "/",
-                                maxAge: 60 * 60 * 24 * 7
-                            });
+                            try {
+                                cookieStore.set("RefreshToken", data.refreshToken, {
+                                    httpOnly: true,
+                                    sameSite: "lax",
+                                    secure: true,
+                                    path: "/",
+                                    maxAge: 60 * 60 * 24 * 7
+                                });
+                            } catch {
+
+                            }
                             return token;
                         }
                         await logout(token.userId, deviceId);

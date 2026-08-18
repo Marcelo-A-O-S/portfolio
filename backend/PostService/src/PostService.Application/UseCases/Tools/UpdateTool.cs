@@ -11,16 +11,14 @@ namespace PostService.Application.UseCases.Tools
 {
     public class UpdateTool : IUpdateTool
     {
-        private readonly IUserServicesClient userServicesClient;
-        private readonly IToolValidationServices toolValidationServices;
+        private readonly IValidationServices validationServices;
         private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly IToolsServices toolsServices;
         private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly ICategoryServices categoryServices;
         private readonly IUnitOfWork unitOfWork;
         public UpdateTool(
-            IUserServicesClient _userServicesClient,
-            IToolValidationServices _toolValidationServices,
+            IValidationServices _validationServices,
             IToolsServices _toolsServices,
             IMediaProjectionServices _mediaProjectionServices,
             ICategoryServices _categoryServices,
@@ -28,8 +26,7 @@ namespace PostService.Application.UseCases.Tools
             IUnitOfWork _unitOfWork
         )
         {
-            this.userServicesClient = _userServicesClient;
-            this.toolValidationServices = _toolValidationServices;
+            this.validationServices = _validationServices;
             this.toolsServices = _toolsServices;
             this.mediaProjectionServices = _mediaProjectionServices;
             this.categoryServices = _categoryServices;
@@ -42,18 +39,20 @@ namespace PostService.Application.UseCases.Tools
             if (!Enum.TryParse<UserRole>(role, true, out var userRole))
                 throw new ValidationException("Usuário inválido.");
             if (userRole == UserRole.Client)
-                throw new ValidationException("Você não pode editar este comentário.");
-            await this.toolValidationServices.ValidateUserExists(authenticatedUserId);
+                throw new ValidationException("Você não pode editar esta ferramenta.");
+            await this.validationServices.ValidateUserExists(authenticatedUserId);
             var tool = await GetTool(Id);
             var mediasToCommit = new List<MediaProjection>();
             var mediasToDelete = new List<MediaProjection>();
             await this.unitOfWork.BeginAsync();
             try
             {
+                tool.Update(request.Status);
                 await ProcessToolContents(tool, request.ToolContents, mediasToCommit, mediasToDelete);
                 await ProcessCategories(tool, request.Categories);
                 await ProcessTumbnail(tool, request.Media, mediasToCommit, mediasToDelete);
                 await this.toolsServices.Update(tool);
+                await DeleteMedias(mediasToDelete);
                 await this.unitOfWork.CommitAsync();
             }
             catch
@@ -61,8 +60,7 @@ namespace PostService.Application.UseCases.Tools
                 await unitOfWork.RollbackAsync();
                 throw;
             }
-            await CommitMedias(tool.Id, mediasToCommit);
-            await DeleteMedias(mediasToDelete);
+            await PublishMedias(tool.Id, mediasToCommit, mediasToDelete);
         }
         private static void ValidateRequest(ToolRequest toolRequest)
         {
@@ -105,6 +103,7 @@ namespace PostService.Application.UseCases.Tools
                 var validationError = ValidationHelper.Validate(item);
                 if (validationError.Count > 0)
                     throw new ValidationException($"Erro ao validar dados: {validationError}");
+                await this.validationServices.ValidateLanguageExists(item.LanguageId);
                 if (item.Id.HasValue)
                 {
                     var toolContent = tool.ToolContents.FirstOrDefault(tc => tc.Id == item.Id.Value);
@@ -226,8 +225,16 @@ namespace PostService.Application.UseCases.Tools
             }
             tool.SetThumbnail(mediaContent.Id);
         }
-        private async Task CommitMedias(Guid toolId, List<MediaProjection> mediasToCommit)
+        private async Task PublishMedias(Guid toolId, List<MediaProjection> mediasToCommit, List<MediaProjection> mediasToDelete)
         {
+            foreach (var media in mediasToDelete)
+            {
+                await this.rabbitMQProducer.Publish("ToolMediaDeleted", new
+                {
+                    MediaId = media.MediaId,
+                    OwnerType = "Tool"
+                });
+            }
             foreach (var media in mediasToCommit)
             {
                 await this.rabbitMQProducer.Publish("ToolMediaAttached", new
@@ -246,11 +253,6 @@ namespace PostService.Application.UseCases.Tools
                 {
                     await this.mediaProjectionServices.Delete(media);
                 }
-                await this.rabbitMQProducer.Publish("ToolMediaDeleted", new
-                {
-                    MediaId = media.MediaId,
-                    OwnerType = "Tool"
-                });
             }
         }
     }

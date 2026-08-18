@@ -47,7 +47,8 @@ export default function ToolCreatePage() {
             ],
             liked: false,
             likes: 0,
-            comments: 0
+            comments: 0,
+            links: undefined
         }
     });
     useEffect(() => {

@@ -19,6 +19,7 @@ import { rehypePrefixImageHost } from "@/lib/utils";
 import { Heart, MessageCircle } from "lucide-react";
 import ToolComments from "../../components/tool-comments";
 import AuthorSection from "@/components/author-section";
+import LinkSection from "@/components/link-section";
 const hostBackend = process.env.BACKEND_SERVER!;
 type Props = {
     params: Promise<{ Id: string, language: string }>
@@ -95,6 +96,7 @@ export default async function PageById({ params }: Props) {
             return categoryContent?.name;
         })
         .filter((c): c is string => Boolean(c));
+    
     const [renderedContent, commentsResponse] = await Promise.all([
         unified()
             .use(remarkParse)
@@ -162,6 +164,11 @@ export default async function PageById({ params }: Props) {
                                         <span>{tool.comments}</span>
                                     </button>
                                 </div>
+                            </div>
+                            <div className="">
+                                {tool.links?.map((link,index)=>(
+                                    <LinkSection key={index} link={link} language={language}/>
+                                ))}
                             </div>
                             <div className="max-w-full">
                                 {tool.author && (

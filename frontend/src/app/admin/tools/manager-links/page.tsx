@@ -6,7 +6,7 @@ import { createPageURL, generatePagination } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { getLinksColumns } from "./components/links-columns";
+import { getLinksToolColumns } from "./components/links-tool-columns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DataTable } from "@/components/data-table";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
@@ -21,7 +21,7 @@ export default function ManagerLinksPage() {
     const search = searchParams.get("search") || undefined;
     const [searchInput, setSearchInput] = useState(search ?? "");
     const debouncedSearch = useDebounce(searchInput, 500);
-    const columns = useMemo(() => getLinksColumns(), [])
+    const columns = useMemo(() => getLinksToolColumns(), [])
     if(toolId == undefined)
         notFound();
     const { data, isLoading, error } = usePaginationLink({
@@ -41,7 +41,6 @@ export default function ManagerLinksPage() {
         }
         router.push(`?${params.toString()}`)
     }, [debouncedSearch])
-    console.log("Links: ", data);
     return (
         <>
             <main className="mx-auto flex min-h-screen inset-0 w-full justify-center">

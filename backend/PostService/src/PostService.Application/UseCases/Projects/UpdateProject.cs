@@ -1,51 +1,74 @@
+using System.Collections.Generic;
 using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 using PostService.Application.DTOs.Deserialize;
 using PostService.Application.DTOs.Request;
 using PostService.Application.Exceptions;
 using PostService.Application.Interfaces;
 using PostService.Application.UseCases.Projects.Interfaces;
 using PostService.Application.Validations;
+using PostService.Application.Validators.Interfaces;
 using PostService.Domain.Entities;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
+using PostService.Domain.Enums;
 using PostService.Domain.Interfaces;
-
 namespace PostService.Application.UseCases.Projects
 {
     public class UpdateProject : IUpdateProject
     {
+        private readonly IValidationServices validationServices;
         private readonly IPostServices postServices;
         private readonly ICategoryServices categoryServices;
         private readonly IToolsServices toolsServices;
         private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly IRabbitMQProducer rabbitMQProducer;
+        private readonly IUnitOfWork unitOfWork;
         public UpdateProject(
+            IValidationServices _validationServices,
             IPostServices _postServices,
             ICategoryServices _categoryServices,
             IToolsServices _toolsServices,
             IMediaProjectionServices _mediaProjectionServices,
-            IRabbitMQProducer _rabbitMQProducer
+            IRabbitMQProducer _rabbitMQProducer,
+            IUnitOfWork _unitOfWork
         )
         {
+            this.validationServices = _validationServices;
             this.postServices = _postServices;
             this.categoryServices = _categoryServices;
             this.toolsServices = _toolsServices;
             this.mediaProjectionServices = _mediaProjectionServices;
             this.rabbitMQProducer = _rabbitMQProducer;
+            this.unitOfWork = _unitOfWork;
         }
-        public async Task ExecuteAsync(Guid Id, PostRequest request)
+        public async Task ExecuteAsync(Guid authenticatedUserId, string role, Guid Id, PostRequest request)
         {
             ValidateRequest(request);
+            if (!Enum.TryParse<UserRole>(role, true, out var userRole))
+                throw new ValidationException("Usuário inválido.");
+            if (userRole == UserRole.Client)
+                throw new ValidationException("Você não pode editar esta publicação.");
+            await this.validationServices.ValidateUserExists(authenticatedUserId);
             var post = await GetPostById(Id);
             var mediasToCommit = new List<MediaProjection>();
             var mediasToDelete = new List<MediaProjection>();
-            await ProcessCategories(post, request.Categories);
-            await ProcessTools(post, request.Tools);
-            await ProcessPostContents(post, request.PostContents, mediasToCommit, mediasToDelete);
-            await ProcessTumbnail(post, request.Media, mediasToCommit, mediasToDelete);
-            await this.postServices.Update(post);
-            await CommitMedias(Id,mediasToCommit);
-            await DeleteMedias(mediasToDelete);
+            await this.unitOfWork.BeginAsync();
+            try
+            {
+                post.Update(request.Status);
+                await ProcessCategories(post, request.Categories);
+                await ProcessTools(post, request.Tools);
+                await ProcessPostContents(post, request.PostContents, mediasToCommit, mediasToDelete);
+                await ProcessTumbnail(post, request.Media, mediasToCommit, mediasToDelete);
+                await this.postServices.Update(post);
+                await DeleteMedias(mediasToDelete);
+                await this.unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
+            await PublishMedias(Id, mediasToCommit, mediasToDelete);
         }
         private static void ValidateRequest(PostRequest request)
         {
@@ -103,24 +126,25 @@ namespace PostService.Application.UseCases.Projects
                 .Select(pc => pc.Id!.Value);
             var removedContents = post.PostContents
                 .Where(pc => !requestPostContentIds.Contains(pc.Id));
-            post.ValidatePostContents(requestPostContentIds);  
-            foreach(var item in removedContents)
+            post.ValidatePostContents(requestPostContentIds);
+            foreach (var item in removedContents)
             {
                 foreach (var removeImage in item.Images)
                 {
                     var image = await this.mediaProjectionServices.FindBy(img => img.MediaId == removeImage.MediaId && img.Id == removeImage.Id);
-                    if(image != null)
+                    if (image != null)
                     {
                         mediasToDelete.Add(image);
                     }
                 }
                 post.RemovePostContent(item);
             }
-            foreach(var item in postContentRequests)
+            foreach (var item in postContentRequests)
             {
                 var validationError = ValidationHelper.Validate(item);
                 if (validationError.Count > 0)
                     throw new ValidationException($"Erro ao validar dados: {validationError}");
+                await this.validationServices.ValidateLanguageExists(item.LanguageId);
                 if (item.Id.HasValue)
                 {
                     var postContent = post.PostContents.FirstOrDefault(tc => tc.Id == item.Id.Value);
@@ -136,13 +160,13 @@ namespace PostService.Application.UseCases.Projects
                 }
             }
         }
-        private async Task ProcessPostContentImages(PostContent postContent, PostContentRequest item , List<MediaProjection> mediasToCommit, List<MediaProjection> mediasToDelete)
+        private async Task ProcessPostContentImages(PostContent postContent, PostContentRequest item, List<MediaProjection> mediasToCommit, List<MediaProjection> mediasToDelete)
         {
             var toRemoveImages = postContent.Images.Where(media => !item.Content.Contains(media.Url)).ToList();
-            foreach(var removeImage in toRemoveImages)
+            foreach (var removeImage in toRemoveImages)
             {
                 var mediaContent = await this.mediaProjectionServices.GetByUrl(removeImage.Url);
-                if(mediaContent != null)
+                if (mediaContent != null)
                 {
                     if (!mediasToDelete.Any(m => m.MediaId == mediaContent.MediaId))
                     {
@@ -160,12 +184,13 @@ namespace PostService.Application.UseCases.Projects
                 postContent.RemoveImage(removeImage);
             }
             var toAddImages = item.Images.Where(image => item.Content.Contains(image.Url)).ToList();
-            foreach(var addImage in toAddImages)
+            foreach (var addImage in toAddImages)
             {
                 var mediaContent = await this.mediaProjectionServices.GetByUrl(addImage.Url);
                 if (mediaContent == null)
                 {
                     var media = new MediaProjection(addImage.MediaId, addImage.Url);
+                    media.GenerateId();
                     await this.mediaProjectionServices.Save(media);
                     if (!mediasToCommit.Any(m => m.MediaId == media.MediaId))
                     {
@@ -204,7 +229,7 @@ namespace PostService.Application.UseCases.Projects
                 mediasToDelete.Add(post.MediaProjection);
             }
             var mediaContent = await this.mediaProjectionServices.GetByUrl(mediaRequest.Url);
-            if(mediaContent != null)
+            if (mediaContent != null)
             {
                 if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
                 {
@@ -214,6 +239,7 @@ namespace PostService.Application.UseCases.Projects
                 return;
             }
             mediaContent = new MediaProjection(mediaRequest.MediaId, mediaRequest.Url);
+            mediaContent.GenerateId();
             await this.mediaProjectionServices.Save(mediaContent);
             if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
             {
@@ -221,8 +247,16 @@ namespace PostService.Application.UseCases.Projects
             }
             post.SetThumbnail(mediaContent.Id);
         }
-        private async Task CommitMedias(Guid postId, List<MediaProjection> mediasToCommit)
+        private async Task PublishMedias(Guid postId, List<MediaProjection> mediasToCommit, List<MediaProjection> mediasToDelete)
         {
+            foreach (var media in mediasToDelete)
+            {
+                await this.rabbitMQProducer.Publish("PostMediaDeleted", new
+                {
+                    MediaId = media.MediaId,
+                    OwnerType = "Post"
+                });
+            }
             foreach (var media in mediasToCommit)
             {
                 await this.rabbitMQProducer.Publish("PostMediaAttached", new
@@ -237,30 +271,11 @@ namespace PostService.Application.UseCases.Projects
         {
             foreach (var media in mediasToDelete)
             {
-                if(media.Id != Guid.Empty)
+                if (media.Id != Guid.Empty)
                 {
                     await this.mediaProjectionServices.Delete(media);
                 }
-                await this.rabbitMQProducer.Publish("PostMediaDeleted",new
-                {
-                    MediaId = media.MediaId,
-                    OwnerType = "Post"
-                });
             }
         }
-        // private async Task UpdateImage(Post post, IFormFile? imgFile, List<MediaFile> mediasToCommit, List<MediaFile> mediasToDelete)
-        // {
-        //     if (imgFile != null)
-        //     {
-        //         var mediaFileTool = await this.mediaFileServices.SaveImageAsync(imgFile, "media/tools");
-        //         if (mediaFileTool is null)
-        //             throw new Exception("Erro ao atualizar a imagem.");
-        //         var searchMediaToolCurrent = await this.mediaFileServices.GetByPath(post.ImgUrl);
-        //         if (searchMediaToolCurrent != null)
-        //             mediasToDelete.Add(searchMediaToolCurrent);
-        //         post.AddImgUrl(mediaFileTool.Path);
-        //         mediasToCommit.Add(mediaFileTool);
-        //     }
-        // }
     }
 }

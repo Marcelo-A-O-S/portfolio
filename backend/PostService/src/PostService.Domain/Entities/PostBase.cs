@@ -16,11 +16,10 @@ namespace PostService.Domain.Entities
         public DateTime? UpdatedAt { get; protected set; }
         public Status Status { get; protected set; }
         public ICollection<Category> Categories { get; protected set; }
-        public void Update(Guid mediaProjectId, Status status)
+        public void Update( Status status)
         {
             this.UpdatedAt = DateTime.UtcNow;
             this.Status = status;
-            this.MediaProjectionId = mediaProjectId;
         }
         public void SetThumbnail(Guid mediaProjectId)
         {

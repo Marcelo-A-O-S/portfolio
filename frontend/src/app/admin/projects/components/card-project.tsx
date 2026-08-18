@@ -53,13 +53,13 @@ export default function CardProject({ languages, item }: CardProjectProps) {
     }
     return (
         <>
-            <div className="bg-background border border-primary max-w-sm w-full max-h-[580px] h-full rounded-lg overflow-hidden shadow-sm
+            <div className="bg-background border border-primary max-w-sm w-full h-full rounded-lg overflow-hidden shadow-sm
                 hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col">
                 <article className="p-4 flex flex-col space-x-3">
-                    <div className="flex flex-col flex-1 min-w-0">
+                    <div className="flex flex-col justify-between flex-1 min-w-0">
                         <div className="flex justify-between items-center mb-1">
-                            <div className="flex items-baseline space-x-1 text-sm min-w-0">
-                                <span className="font-bold text-primary truncate hover:underline cursor-pointer">
+                            <div className="flex flex-col items-baseline  text-sm min-w-0 flex-1">
+                                <span className="font-bold text-primary truncate hover:underline cursor-pointer w-full">
                                     {content?.title}
                                 </span>
                                 {item.createdAt && (
@@ -75,7 +75,7 @@ export default function CardProject({ languages, item }: CardProjectProps) {
                                 value={lang}
                                 onValueChange={(value) => setLang(value)}
                             >
-                                <SelectTrigger className="w-[90px] max-w-48 text-xs">
+                                <SelectTrigger className="w-[90px] max-w-48">
                                     <SelectValue placeholder="Selecione o idioma" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -88,12 +88,9 @@ export default function CardProject({ languages, item }: CardProjectProps) {
                                 </SelectContent>
                             </Select>
                         </div>
-                        <p className="text-primary text-sm line-clamp-4 mb-2 ">
+                        <p className="text-primary text-sm line-clamp-4 mb-2">
                             {content?.description}
                         </p>
-                        <div className="flex flex-col">
-
-                        </div>
                         <div className="flex flex-col">
                             <div className="flex flex-nowrap overflow-x-auto scrollbar-hide gap-2 py-1">
                                 {categories.slice(0, 3).map((cc, index) => (
@@ -139,7 +136,6 @@ export default function CardProject({ languages, item }: CardProjectProps) {
                             <div>
                                 <ProjectActions project={item} />
                             </div>
-
                         </div>
                         <Link className={buttonVariants({ variant: "default" }) + ` w-full mt-3`} href={`/admin/projects/${item.id}/${lang}`}>View Project</Link>
                     </div>

@@ -76,6 +76,9 @@ namespace PostService.Application.Extensions
             services.AddScoped<ICreateProject, CreateProject>();
             services.AddScoped<IUpdateProject, UpdateProject>();
             services.AddScoped<IDeleteProject, DeleteProject>();
+            services.AddScoped<IAddLinkProject, AddLinkProject>();
+            services.AddScoped<IUpdateLinkProject, UpdateLinkProject>();
+            services.AddScoped<IDeleteLinkProject, DeleteLinkProject>();
             services.AddScoped<IExistsByIdProject, ExistsByIdProject>();
             
             return services;

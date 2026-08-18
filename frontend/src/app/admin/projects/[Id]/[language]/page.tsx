@@ -1,10 +1,13 @@
 import OnThisPage from "@/app/admin/tools/components/on-this-page";
+import AuthorSection from "@/components/author-section";
+import LinkSection from "@/components/link-section";
 import MaxWidthWrapper from "@/components/max-width-wrapper";
 import { Badge } from "@/components/ui/badge";
 import { postSchema } from "@/domain/schemas/PostSchema";
 import { rehypePrefixImageHost } from "@/lib/utils";
-import { getPostByIdService } from "@/services/server/post-services";
+import { getPostByIdService, getPostCommentsByPagination } from "@/services/server/post-services";
 import { transformerCopyButton } from "@rehype-pretty/transformers";
+import { Heart, MessageCircle } from "lucide-react";
 import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
@@ -17,6 +20,7 @@ import remarkGfm from "remark-gfm";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
+import PostComments from "../../components/post-comments";
 const hostBackend = process.env.BACKEND_SERVER!;
 type Props = {
     params: Promise<{ Id: string, language: string }>
@@ -111,30 +115,34 @@ export default async function PageById({ params }: Props) {
             return categoryContent?.name;
         })
         .filter((c): c is string => Boolean(c));
-    const result = (await unified()
-        .use(remarkParse)
-        .use(remarkGfm)
-        .use(remarkRehype, { allowDangerousHtml: true })
-        .use(rehypePrettyCode, {
-            theme: "tokyo-night",
-            transformers: [
-                transformerCopyButton({
-                    visibility: 'always',
-                    feedbackDuration: 3_000,
-                }),
-            ],
-        })
-        .use(rehypePrefixImageHost(hostBackend))
-        .use(rehypeSlug)
-        .use(rehypeAutolinkHeadings)
-        .use(rehypeStringify)
-        .process(postContent.content)).toString()
+    const [renderedContent, commentsResponse] = await Promise.all([
+        unified()
+            .use(remarkParse)
+            .use(remarkGfm)
+            .use(remarkRehype, { allowDangerousHtml: true })
+            .use(rehypePrettyCode, {
+                theme: "tokyo-night",
+                transformers: [
+                    transformerCopyButton({
+                        visibility: 'always',
+                        feedbackDuration: 3_000,
+                    }),
+                ],
+            })
+            .use(rehypePrefixImageHost(hostBackend))
+            .use(rehypeSlug)
+            .use(rehypeAutolinkHeadings)
+            .use(rehypeStringify)
+            .process(postContent.content)
+            .then((r) => r.toString()),
+        getPostCommentsByPagination({ targetId: Id, type: "Post", page: 1 })
+    ])
     return (
         <>
-            <main className="relative mx-auto flex min-h-screen inset-0 w-screen max-w-[1440px] justify-center bg-white dark:bg-black ">
-                <MaxWidthWrapper className="prose prose-neutral dark:prose-invert px-10 py-20">
-                    <div className="flex px-12 gap-8">
-                        <div className="">
+            <main className="mx-auto flex min-h-screen w-full max-w-[1440px] justify-center ">
+                <MaxWidthWrapper className="prose prose-neutral dark:prose-invert px-4 md:px-10 py-20">
+                    <div className="flex md:px-12 gap-8">
+                        <article className="min-w-0 prose prose-neutral dark:prose-invert md:max-w-none">
                             <h1 className="text-5xl font-bold">{postContent.title}</h1>
                             <div className="flex flex-col">
                                 <p>Ferramentas</p>
@@ -154,12 +162,48 @@ export default async function PageById({ params }: Props) {
 
                             </div>
                             <div>
-                                <img src={`${hostBackend}/${post.media?.url}`} alt={postContent.title} className="object-cover w-full" />
+                                <img src={`${hostBackend}/${post.media?.url}`}
+                                    alt={postContent.title}
+                                    loading="eager"
+                                    className="max-w-full w-full rounded-lg object-cover" />
                             </div>
-                            <div dangerouslySetInnerHTML={{ __html: result }} />
-                        </div>
+                            <div dangerouslySetInnerHTML={{ __html: renderedContent }} />
+                            <div className="flex items-center justify-between mt-4 text-primary text-xs sm:text-sm">
+                                <div className="flex">
+                                    <button
+                                        className="flex items-center space-x-1 p-2 rounded-full cursor-pointer">
+                                        <Heart
+                                            className={post.liked ? "fill-current" : ""}
+                                        />
+                                        <span>{post.likes}</span>
+                                    </button>
+                                    <button className="flex items-center space-x-1 p-2 rounded-full cursor-pointer">
+                                        <MessageCircle />
+                                        <span>{post.comments}</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="">
+                                {post.links?.map((link, index) => (
+                                    <LinkSection key={index} link={link} language={language} />
+                                ))}
+                            </div>
+                            <div className="max-w-full">
+                                {post.author && (
+                                    <AuthorSection
+                                        author={post.author}
+                                    />
+                                )}
+                            </div>
+                            <div className="max-w-full">
+                                <PostComments
+                                    postId={Id}
+                                    initialItems={commentsResponse.data.items}
+                                />
+                            </div>
+                        </article>
                         <div className="hidden md:block md:w-full lg:w-[50%]">
-                            <OnThisPage htmlContent={result} />
+                            <OnThisPage htmlContent={renderedContent} />
                         </div>
                     </div>
                 </MaxWidthWrapper>

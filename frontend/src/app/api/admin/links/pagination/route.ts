@@ -12,12 +12,12 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         const searchParams = request.nextUrl.searchParams;
         const page = Number(searchParams.get("page")) || 1;
+        const postId = searchParams.get("postId") || undefined;
         const toolId = searchParams.get("toolId") || undefined;
         const search = searchParams.get("search") || undefined;
-        if (toolId == undefined)
-            return NextResponse.json({ message: "Identificador da ferramenta é obrigatório" }, { status: 400 });
         const data = {
             page,
+            postId,
             toolId,
             search
         }

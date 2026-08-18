@@ -18,7 +18,6 @@ export default function ToolComments({ toolId, initialItems }: ToolCommentProps)
         page: page
     })
     const items = paginatedResult?.items ?? initialItems;
-    console.log("Comentários: ", items)
     return (
         <>
             <section aria-labelledby="comments-heading" className="mt-8">

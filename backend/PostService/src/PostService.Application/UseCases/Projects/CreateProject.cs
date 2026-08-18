@@ -3,47 +3,73 @@ using PostService.Application.Exceptions;
 using PostService.Application.Interfaces;
 using PostService.Application.UseCases.Projects.Interfaces;
 using PostService.Application.Validations;
+using PostService.Application.Validators.Interfaces;
 using PostService.Domain.Entities;
 using PostService.Domain.Interfaces;
 namespace PostService.Application.UseCases.Projects
 {
     public class CreateProject : ICreateProject
     {
+        private readonly IUserServicesClient userServicesClient;
+        private readonly IValidationServices validationServices;
         private readonly ICategoryServices categoryServices;
         private readonly IToolsServices toolsServices;
         private readonly IPostContentServices postContentServices;
         private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly IPostServices postServices;
+        private readonly IAuthorServices authorServices;
         private readonly IRabbitMQProducer rabbitMQProducer;
+        private readonly IUnitOfWork unitOfWork;
         public CreateProject(
+            IUserServicesClient _userServicesClient,
+            IValidationServices _validationServices,
             ICategoryServices _categoryServices,
             IToolsServices _toolsServices,
             IPostContentServices _postContentServices,
             IMediaProjectionServices _mediaProjectionServices,
             IPostServices _postServices,
-            IRabbitMQProducer _rabbitMQProducer
+            IAuthorServices _authorServices,
+            IRabbitMQProducer _rabbitMQProducer,
+            IUnitOfWork _unitOfWork
         )
         {
+            this.userServicesClient = _userServicesClient;
+            this.validationServices = _validationServices;
             this.categoryServices = _categoryServices;
             this.toolsServices = _toolsServices;
             this.postContentServices = _postContentServices;
             this.mediaProjectionServices = _mediaProjectionServices;
             this.postServices = _postServices;
+            this.authorServices = _authorServices;
             this.rabbitMQProducer = _rabbitMQProducer;
+            this.unitOfWork = _unitOfWork;
         }
-        public async Task ExecuteAsync(PostRequest request)
+        public async Task ExecuteAsync(Guid authenticatedUserId, string providerId, PostRequest request)
         {
             ValidateRequest(request);
+            await this.validationServices.ValidateUserExists(authenticatedUserId);
+            await this.validationServices.ValidateProviderExists(authenticatedUserId, providerId);
             var post = new Post(request.Status);
             var mediasToCommit = new List<MediaProjection>();
             var mediasToDelete = new List<MediaProjection>();
-            await ProcessPostContents(post, request.PostContents, mediasToCommit, mediasToDelete);
-            await ProcessCategories(post, request.Categories);
-            await ProcessTools(post, request.Tools);
-            await ProcessTumbnail(post, request.Media, mediasToCommit);
-            await this.postServices.Save(post);
-            await CommitMedias(post.Id, mediasToCommit);
-            await DeleteMedias(mediasToDelete);
+            await this.unitOfWork.BeginAsync();
+            try
+            {
+                await ProcessAuthor(post, authenticatedUserId, providerId);
+                await ProcessPostContents(post, request.PostContents, mediasToCommit, mediasToDelete);
+                await ProcessCategories(post, request.Categories);
+                await ProcessTools(post, request.Tools);
+                await ProcessTumbnail(post, request.Media, mediasToCommit);
+                await this.postServices.Save(post);
+                await DeleteMedias(mediasToDelete);
+                await this.unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
+            await PublishMedias(post.Id, mediasToCommit, mediasToDelete);
         }
         private static void ValidateRequest(PostRequest request)
         {
@@ -53,6 +79,20 @@ namespace PostService.Application.UseCases.Projects
                 var errors = string.Join(", ", validationError.Select(e => e.ErrorMessage));
                 throw new ValidationException($"Erro ao validar dados: {errors}");
             }
+        }
+        private async Task ProcessAuthor(Post post, Guid authenticatedUserId, string providerId)
+        {
+            var user = await this.userServicesClient.GetUserAsync(authenticatedUserId, providerId);
+            if(user == null)
+                throw new ValidationException("Erro ao buscar usuário.");
+            var author = await this.authorServices.FindBy(a => a.UserId == user.Id && a.ProviderId == user.ProviderId);
+            if(author == null)
+            {
+                author = new Author(user.Id, user.Name, user.ProfileUrl, user.ProviderId, user.Provider);
+                author.GenerateId();
+                await this.authorServices.Save(author);
+            }
+            post.SetAuthorId(author.Id);
         }
         private async Task ProcessCategories(Post post, List<CategoryRequest> categoriesRequest)
         {
@@ -103,7 +143,8 @@ namespace PostService.Application.UseCases.Projects
                 var postContent = await this.postContentServices.FindBy(pc => pc.Slug == item.Slug && pc.LanguageId == item.LanguageId);
                 if (postContent != null)
                     throw new ValidationException("Erro ao validar dados!");
-                postContent = new PostContent(post.Id,item.LanguageId,item.Title, item.Description,item.Content, item.Slug);
+                await this.validationServices.ValidateLanguageExists(item.LanguageId);
+                postContent = new PostContent(post.Id, item.LanguageId, item.Title, item.Description, item.Content, item.Slug);
                 var toRemoveImages = item.Images.Where(image => !item.Content.Contains(image.Url)).ToList();
                 foreach (var removeImage in toRemoveImages)
                 {
@@ -133,6 +174,7 @@ namespace PostService.Application.UseCases.Projects
                     if (mediaContent == null)
                     {
                         var media = new MediaProjection(addImage.MediaId, addImage.Url);
+                        media.GenerateId();
                         await this.mediaProjectionServices.Save(media);
                         if (!mediasToCommit.Any(m => m.MediaId == media.MediaId))
                         {
@@ -177,6 +219,7 @@ namespace PostService.Application.UseCases.Projects
                 return;
             }
             mediaContent = new MediaProjection(mediaRequest.MediaId, mediaRequest.Url);
+            mediaContent.GenerateId();
             await this.mediaProjectionServices.Save(mediaContent);
             if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
             {
@@ -184,8 +227,16 @@ namespace PostService.Application.UseCases.Projects
             }
             post.SetThumbnail(mediaContent.Id);
         }
-        private async Task CommitMedias(Guid postId, List<MediaProjection> mediasToCommit)
+        private async Task PublishMedias(Guid postId, List<MediaProjection> mediasToCommit, List<MediaProjection> mediasToDelete)
         {
+            foreach (var media in mediasToDelete)
+            {
+                await this.rabbitMQProducer.Publish("PostMediaDeleted", new
+                {
+                    MediaId = media.MediaId,
+                    OwnerType = "Post"
+                });
+            }
             foreach (var media in mediasToCommit)
             {
                 await this.rabbitMQProducer.Publish("PostMediaAttached", new
@@ -204,11 +255,6 @@ namespace PostService.Application.UseCases.Projects
                 {
                     await this.mediaProjectionServices.Delete(media);
                 }
-                await this.rabbitMQProducer.Publish("PostMediaDeleted", new
-                {
-                    MediaId = media.MediaId,
-                    OwnerType = "Post"
-                });
             }
         }
     }

@@ -141,6 +141,9 @@ namespace PostService.Infrastructure.Repositories
                 .Include(t => t.Categories)
                     .ThenInclude(c => c.CategoryContents)
                         .ThenInclude(cc => cc.Language)
+                .Include(t => t.Links)
+                    .ThenInclude(l => l.Descriptions)
+                        .ThenInclude(d => d.Language)
                 .Select(t => new ToolView
                 {
                     Id = t.Id,
@@ -202,6 +205,34 @@ namespace PostService.Infrastructure.Repositories
                             Id = tc.Language.Id,
                             Code = tc.Language.Code,
                             Name = tc.Language.Name
+                        }
+                    }).ToList(),
+                    Links = t.Links.Select(l => new LinkView
+                    {
+                        Id = l.Id,
+                        Url = l.Url,
+                        ToolId = l.ToolId,
+                        Descriptions = l.Descriptions.Select(d => new LinkDescriptionView
+                        {
+                            Id = d.Id,
+                            Title = d.Title,
+                            LanguageId = d.LanguageId,
+                            Language = new LanguageView
+                            {
+                                Id = d.Language.Id,
+                                Name = d.Language.Name,
+                                Code = d.Language.Code
+                            }
+                        }).ToList(),
+                        LinkTypeId = l.LinkTypeId,
+                        LinkType = new LinkTypeView
+                        {
+                            Id = l.LinkType.Id,
+                            Name = l.LinkType.Name,
+                            TextColor = l.LinkType.TextColor,
+                            BackgroundColor = l.LinkType.BackgroundColor,
+                            BorderColor = l.LinkType.BorderColor,
+                            Icon = l.LinkType.Icon
                         }
                     }).ToList(),
                 })

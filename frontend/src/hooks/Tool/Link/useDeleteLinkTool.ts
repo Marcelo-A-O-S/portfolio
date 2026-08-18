@@ -17,7 +17,7 @@ export function useDeleteLinkTool(){
             toast.success(response.data.message);
         },
         onError: (error) =>{
-            toast.error(error.response?.data?.message ?? "Erro ao atualizar link");
+            toast.error(error.response?.data?.message ?? "Erro ao deletar link");
         }
     })
 }

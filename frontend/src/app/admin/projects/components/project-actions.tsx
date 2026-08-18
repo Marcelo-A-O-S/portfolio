@@ -4,8 +4,6 @@ import { PostSchema } from "@/domain/schemas/PostSchema"
 import { useDeleteProject } from "@/hooks/Post/useDeleteProject"
 import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
-
-
 type ProjectActionsProps = {
     project: PostSchema
 }
@@ -23,6 +21,10 @@ export default function ProjectActions({ project }: ProjectActionsProps) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-[200px]">
                     <DropdownMenuGroup>
+                        <DropdownMenuItem className="cursor-pointer"
+                        >
+                            <Link href={`/admin/projects/manager-links?postId=${project.id}`}>Gerenciar Links</Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer"
                         >
                             <Link href={`/admin/projects/manager?postId=${project.id}`}>Atualizar Projeto</Link>

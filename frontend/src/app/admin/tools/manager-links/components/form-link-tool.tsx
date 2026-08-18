@@ -34,6 +34,7 @@ export default function FormLinkTool({ link, toolId }: FormLinkProps) {
         resolver: zodResolver(linkSchema),
         defaultValues: {
             toolId: toolId,
+            postId: undefined,
             descriptions: [
                 {
                     title: "",
@@ -48,10 +49,14 @@ export default function FormLinkTool({ link, toolId }: FormLinkProps) {
     })
     useEffect(() => {
         if (link) {
-            reset(link);
+            reset({
+                ...link,
+                postId: undefined
+            });
         }
     }, [link, reset]);
     const onSubmit = async (data: LinkSchema) => {
+        console.log("Dados: ", data);
         if (link) {
             if (!link.id)
                 return toast.error("O identificador não pode ser nulo.");
@@ -77,7 +82,10 @@ export default function FormLinkTool({ link, toolId }: FormLinkProps) {
                         <Button className="cursor-pointer">Add Link</Button>}
                 </DialogTrigger>
                 <DialogContent className="flex max-h-[85vh] w-[95vw] max-w-2xl flex-col gap-0 overflow-hidden p-0">
-                    <form onSubmit={handleSubmit(onSubmit)}
+                    <form onSubmit={handleSubmit(onSubmit, (errors) => {
+                        console.log("Erros RHF:");
+                        console.dir(errors, { depth: null });
+                    })}
                         className="flex min-h-0 flex-1 flex-col"
                     >
                         <DialogHeader className="shrink-0 border-b px-6 py-4">
@@ -87,7 +95,7 @@ export default function FormLinkTool({ link, toolId }: FormLinkProps) {
                                 done.`: `Add your link here. Click save when you're done.`}
                             </DialogDescription>
                         </DialogHeader>
-                        <div className="flex min-h-0 flex-1 flex-col md:flex-row gap-6 overflow-y-auto px-6 py-5">
+                        <div className="flex min-h-0 flex-1 flex-col gap-3 md:flex-row  overflow-y-auto px-6 py-5">
                             <FieldGroup className="">
                                 <Controller
                                     name="url"
@@ -157,15 +165,13 @@ export default function FormLinkTool({ link, toolId }: FormLinkProps) {
                                     </Button>
                                 </div>
                             </FieldGroup>
-                            <Separator
-                                orientation="vertical"
-                                className="hidden  md:block"
-                            />
                             <FieldGroup className="flex flex-col gap-2 overflow-y-auto rounded-xl border p-2">
                                 {fields.map((item, index) => (
                                     <>
-                                        <div className="bg-muted/30 flex items-start gap-2 rounded-lg border p-2">
-                                            <div className="flex flex-col gap-2">
+                                        <div
+                                            key={index}
+                                            className="bg-muted/30 flex items-start gap-2 rounded-lg border p-2">
+                                            <div className="flex w-full min-w-0 flex-1 flex-col gap-2">
                                                 <Controller
                                                     name={`descriptions.${index}.languageId`}
                                                     control={control}
@@ -222,7 +228,7 @@ export default function FormLinkTool({ link, toolId }: FormLinkProps) {
                                 type="submit"
                                 disabled={isSubmitting}
                             >
-                                {link?`Update`:`Save`}
+                                {link ? `Update` : `Save`}
                             </Button>
                         </DialogFooter>
                     </form>

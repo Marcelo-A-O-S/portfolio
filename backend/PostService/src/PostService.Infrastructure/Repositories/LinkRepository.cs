@@ -48,8 +48,16 @@ namespace PostService.Infrastructure.Repositories
                     Descriptions = l.Descriptions.Select(d=> new LinkDescriptionView
                     {
                         Id = d.Id,
-                        Title = d.Title
+                        Title = d.Title,
+                        LanguageId = d.LanguageId,
+                        Language = new LanguageView
+                        {
+                            Id = d.Language.Id,
+                            Name = d.Language.Name,
+                            Code = d.Language.Code
+                        }
                     }).ToList(),
+                    LinkTypeId = l.LinkTypeId,
                     LinkType = new LinkTypeView
                     {
                         Id = l.LinkType.Id,

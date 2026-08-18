@@ -8,7 +8,7 @@ import FormLinkTool from "./form-link-tool";
 type LinkToolActionsProps = {
     link: LinkSchema
 }
-export function LinkToolActions({ link } : LinkToolActionsProps) {
+export function LinkToolActions({ link }: LinkToolActionsProps) {
     const { mutate } = useDeleteLinkTool();
     return (
         <>
@@ -30,7 +30,7 @@ export function LinkToolActions({ link } : LinkToolActionsProps) {
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className="cursor-pointer" onClick={() =>
-                        link.id ? mutate({ id: link.id, data: link }) : console.log("Identificador não informado")
+                        link.id ? mutate({ id: link.id, data: { ...link, postId: undefined } }) : console.log("Identificador não informado")
                     }>
                         Delete link
                     </DropdownMenuItem>

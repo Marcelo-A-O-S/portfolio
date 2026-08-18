@@ -15,17 +15,26 @@ namespace PostService.API.Controllers
         private readonly ICreateProject createProject;
         private readonly IUpdateProject updateProject;
         private readonly IDeleteProject deleteProject;
+        private readonly IAddLinkProject addLinkProject;
+        private readonly IUpdateLinkProject updateLinkProject;
+        private readonly IDeleteLinkProject deleteLinkProject;
         public PostController(
             IPostServices _postServices,
             ICreateProject _createProject,
             IUpdateProject _updateProject,
-            IDeleteProject _deleteProject
+            IDeleteProject _deleteProject,
+            IAddLinkProject _addLinkProject,
+            IUpdateLinkProject _updateLinkProject,
+            IDeleteLinkProject _deleteLinkProject
             )
         {
             this.postServices = _postServices;
             this.createProject = _createProject;
             this.updateProject = _updateProject;
             this.deleteProject = _deleteProject;
+            this.addLinkProject = _addLinkProject;
+            this.updateLinkProject = _updateLinkProject;
+            this.deleteLinkProject = _deleteLinkProject;
         }
         [HttpGet]
         [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
@@ -80,7 +89,14 @@ namespace PostService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                await this.createProject.ExecuteAsync(postRequest);
+                var providerId = User.FindFirst("ProviderId")?.Value;
+                if (providerId == null)
+                    return BadRequest(new { message = "Provider inválido." });
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var role = User.FindFirst(ClaimTypes.Role)?.Value;
+                if (userId == null || role == null)
+                    return Unauthorized(new { message = "Usuário não autorizado." });
+                await this.createProject.ExecuteAsync(Guid.Parse(userId), providerId, postRequest);
                 return Ok(new { message = "Projeto salvo com sucesso!" });
             }
             var errors = ModelState.Values.Select(e => e.Errors);
@@ -92,7 +108,14 @@ namespace PostService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                await this.updateProject.ExecuteAsync(Id, postRequest);
+                var providerId = User.FindFirst("ProviderId")?.Value;
+                if (providerId == null)
+                    return BadRequest(new { message = "Provider inválido." });
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var role = User.FindFirst(ClaimTypes.Role)?.Value;
+                if (userId == null || role == null)
+                    return Unauthorized(new { message = "Usuário não autorizado." });
+                await this.updateProject.ExecuteAsync(Guid.Parse(userId), role, Id, postRequest);
                 return Ok(new { message = "Postagem atualizada com sucesso!" });
             }
             var errors = ModelState.Values.Select(e => e.Errors);
@@ -104,6 +127,42 @@ namespace PostService.API.Controllers
         {
             await this.deleteProject.ExecuteAsync(Id);
             return Ok(new { message = "Postagem deletada com sucesso!" });
+        }
+        [HttpPost("Link")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
+        public async Task<IActionResult> AddLink([FromBody] LinkRequest request)
+        {
+            if (ModelState.IsValid)
+            {
+                await this.addLinkProject.ExecuteAsync(request);
+                return Ok(new { message = "Link vinculado ao projeto com sucesso." });
+            }
+            var errors = ModelState.Values.Select(x => x.Errors);
+            return BadRequest(errors);
+        }
+        [HttpPut("Link/{Id}")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
+        public async Task<IActionResult> UpdateLink([FromRoute] Guid Id, [FromBody] LinkRequest request)
+        {
+            if (ModelState.IsValid)
+            {
+                await this.updateLinkProject.ExecuteAsync(Id,request);
+                return Ok(new { message = "Link vinculado ao projeto atualizado com sucesso." });
+            }
+            var errors = ModelState.Values.Select(x => x.Errors);
+            return BadRequest(errors);
+        }
+        [HttpDelete("Link/{Id}")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
+        public async Task<IActionResult> DeleteLink([FromRoute] Guid Id)
+        {
+            if (ModelState.IsValid)
+            {
+                await this.deleteLinkProject.ExecuteAsync(Id);
+                return Ok(new { message = "Link vinculado ao projeto removido com sucesso." });
+            }
+            var errors = ModelState.Values.Select(x => x.Errors);
+            return BadRequest(errors);
         }
     }
 }

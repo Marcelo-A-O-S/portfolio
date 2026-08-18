@@ -93,7 +93,7 @@ export const hardRemoveToolComment = async(id:string, data: CommentSchema) => {
     const api = await apiClient();
     if(data.type != "Tool")
         throw new Error("Só é possivel remover comentários de uma postagem de uma ferramenta.")
-    const response = await api.delete(`/api/admin/tools/hard/comments/${id}`,{
+    const response = await api.delete(`/api/admin/tools/comments/hard/${id}`,{
         data: data
     });
     return response;
@@ -125,7 +125,7 @@ export const hardRemoveToolReply = async(ownerId: string,id:string, data: Commen
     const api = await apiClient();
     if(data.type != "Tool")
         throw new Error("Só é possivel remover comentários de uma postagem de uma ferramenta.")
-    const response = await api.delete(`/api/admin/tools/hard/comments/replies/${ownerId}/${id}`,{
+    const response = await api.delete(`/api/admin/tools/comments/hard/replies/${ownerId}/${id}`,{
         data: data
     });
     return response;

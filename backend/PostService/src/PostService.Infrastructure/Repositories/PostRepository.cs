@@ -172,6 +172,10 @@ namespace PostService.Infrastructure.Repositories
                 .Include(p => p.Tools)
                     .ThenInclude(t => t.ToolContents)
                         .ThenInclude(tl => tl.Language)
+                .Include(p => p.Author)
+                .Include(t => t.Links)
+                    .ThenInclude(l => l.Descriptions)
+                        .ThenInclude(d => d.Language)
                 .Select(p => new PostView
                 {
                     Id = p.Id,
@@ -182,6 +186,12 @@ namespace PostService.Infrastructure.Repositories
                         Url = p.MediaProjection.Url
                     },
                     Status = p.Status,
+                    Author = new AuthorView
+                    {
+                        Username = p.Author.Username,
+                        Provider = p.Author.Provider,
+                        ProfileUrl = p.Author.ProfileUrl
+                    },
                     CreatedAt = p.CreatedAt,
                     UpdatedAt = p.UpdatedAt,
                     Likes = p.LikeCount,
@@ -213,6 +223,8 @@ namespace PostService.Infrastructure.Repositories
                     Tools = p.Tools.Select(t => new ToolView
                     {
                         Id = t.Id,
+                        CreatedAt = t.CreatedAt,
+                        UpdatedAt = t.UpdatedAt,
                         Media = new MediaView
                         {
                             Id = p.MediaProjectionId,
@@ -278,6 +290,34 @@ namespace PostService.Infrastructure.Repositories
                             }
                         }).ToList()
                     }).ToList(),
+                    Links = p.Links.Select(l => new LinkView
+                    {
+                        Id = l.Id,
+                        Url = l.Url,
+                        ToolId = l.ToolId,
+                        Descriptions = l.Descriptions.Select(d => new LinkDescriptionView
+                        {
+                            Id = d.Id,
+                            Title = d.Title,
+                            LanguageId = d.LanguageId,
+                            Language = new LanguageView
+                            {
+                                Id = d.Language.Id,
+                                Name = d.Language.Name,
+                                Code = d.Language.Code
+                            }
+                        }).ToList(),
+                        LinkTypeId = l.LinkTypeId,
+                        LinkType = new LinkTypeView
+                        {
+                            Id = l.LinkType.Id,
+                            Name = l.LinkType.Name,
+                            TextColor = l.LinkType.TextColor,
+                            BackgroundColor = l.LinkType.BackgroundColor,
+                            BorderColor = l.LinkType.BorderColor,
+                            Icon = l.LinkType.Icon
+                        }
+                    }).ToList()
                 })
                 .FirstOrDefaultAsync();
             return item;
@@ -303,7 +343,7 @@ namespace PostService.Infrastructure.Repositories
         {
             await this.context.Posts
                 .Where(p => p.Id == postId)
-                .ExecuteUpdateAsync(setters => 
+                .ExecuteUpdateAsync(setters =>
                     setters.SetProperty(
                         p => p.CommentCount,
                         p => p.CommentCount + 1
@@ -315,7 +355,7 @@ namespace PostService.Infrastructure.Repositories
         {
             await this.context.Posts
                 .Where(p => p.Id == postId)
-                .ExecuteUpdateAsync(setters => 
+                .ExecuteUpdateAsync(setters =>
                     setters.SetProperty(
                         p => p.LikeCount,
                         p => p.LikeCount + 1
@@ -326,7 +366,7 @@ namespace PostService.Infrastructure.Repositories
         {
             await this.context.Posts
                 .Where(p => p.Id == postId)
-                .ExecuteUpdateAsync(setters => 
+                .ExecuteUpdateAsync(setters =>
                     setters.SetProperty(
                         p => p.CommentCount,
                         p => p.CommentCount - 1
@@ -338,7 +378,7 @@ namespace PostService.Infrastructure.Repositories
         {
             await this.context.Posts
                 .Where(p => p.Id == postId)
-                .ExecuteUpdateAsync(setters => 
+                .ExecuteUpdateAsync(setters =>
                     setters.SetProperty(
                         p => p.LikeCount,
                         p => p.LikeCount - 1

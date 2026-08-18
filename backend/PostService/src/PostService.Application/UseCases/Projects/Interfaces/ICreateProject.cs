@@ -4,6 +4,6 @@ namespace PostService.Application.UseCases.Projects.Interfaces
 {
     public interface ICreateProject
     {
-        Task ExecuteAsync(PostRequest postRequest);
+        Task ExecuteAsync(Guid authenticatedUserId, string providerId, PostRequest postRequest);
     }
 }
