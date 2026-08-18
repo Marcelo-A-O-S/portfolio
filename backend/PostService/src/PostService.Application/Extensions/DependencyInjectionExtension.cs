@@ -45,6 +45,7 @@ namespace PostService.Application.Extensions
             services.AddScoped<ILinkServices, LinkServices>();
             services.AddScoped<ILinkTypeServices, LinkTypeServices>();
             services.AddScoped<ILinkDescriptionServices, LinkDescriptionServices>();
+            services.AddScoped<IContributorServices, ContributorServices>();
 
             services.AddScoped<IUserCacheServices, UserCacheServices>();
             services.AddScoped<IPostCacheServices, PostCacheServices>();

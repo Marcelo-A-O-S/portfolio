@@ -29,6 +29,7 @@ namespace PostService.Infrastructure.Extensions
             services.AddScoped<IGenerics<LinkType>,Generics<LinkType>>();
             services.AddScoped<IGenerics<Author>,Generics<Author>>();
             services.AddScoped<IGenerics<LinkDescription>, Generics<LinkDescription>>();
+            services.AddScoped<IGenerics<Contributor>, Generics<Contributor>>();
 
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ICategoryContentRepository, CategoryContentRepository>();
@@ -43,6 +44,7 @@ namespace PostService.Infrastructure.Extensions
             services.AddScoped<ILinkRepository, LinkRepository>();
             services.AddScoped<ILinkTypeRepository, LinkTypeRepository>();
             services.AddScoped<ILinkDescriptionRepository, LinkDescriptionRepository>();
+            services.AddScoped<IContributorRepository, ContributorRepository>();
             
             services.AddSingleton<IRabbitMQProducer, RabbitMQProducer>();
 

@@ -4,8 +4,10 @@ namespace PostService.Domain.Entities
     {
         public Guid Id { get; private set; }
         public Guid? UserId { get; private set; }
+        public Guid PostId { get; private set; }
+        public Post Post { get; private set; }
         public string Name { get; private set; }
-        public string Description { get; private set; }
-        public string ProfileUrl { get; private set;} 
+        public string? Description { get; private set; }
+        public string? ProfileUrl { get; private set;} 
     }
 }
