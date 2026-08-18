@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PostService.Application.DTOs.Request;
 using PostService.Application.Interfaces;
+using PostService.Application.UseCases.Contributors.Interfaces;
 using PostService.Application.UseCases.Projects.Interfaces;
 using PostService.Domain.Entities;
 namespace PostService.API.Controllers
@@ -18,6 +19,9 @@ namespace PostService.API.Controllers
         private readonly IAddLinkProject addLinkProject;
         private readonly IUpdateLinkProject updateLinkProject;
         private readonly IDeleteLinkProject deleteLinkProject;
+        private readonly IAddContributor addContributor;
+        private readonly IUpdateContributor updateContributor;
+        private readonly IDeleteContributor deleteContributor;
         public PostController(
             IPostServices _postServices,
             ICreateProject _createProject,
@@ -25,7 +29,10 @@ namespace PostService.API.Controllers
             IDeleteProject _deleteProject,
             IAddLinkProject _addLinkProject,
             IUpdateLinkProject _updateLinkProject,
-            IDeleteLinkProject _deleteLinkProject
+            IDeleteLinkProject _deleteLinkProject,
+            IAddContributor _addContributor,
+            IUpdateContributor _updateContributor,
+            IDeleteContributor _deleteContributor
             )
         {
             this.postServices = _postServices;
@@ -35,6 +42,9 @@ namespace PostService.API.Controllers
             this.addLinkProject = _addLinkProject;
             this.updateLinkProject = _updateLinkProject;
             this.deleteLinkProject = _deleteLinkProject;
+            this.addContributor = _addContributor;
+            this.updateContributor = _updateContributor;
+            this.deleteContributor = _deleteContributor;
         }
         [HttpGet]
         [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
@@ -146,7 +156,7 @@ namespace PostService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                await this.updateLinkProject.ExecuteAsync(Id,request);
+                await this.updateLinkProject.ExecuteAsync(Id, request);
                 return Ok(new { message = "Link vinculado ao projeto atualizado com sucesso." });
             }
             var errors = ModelState.Values.Select(x => x.Errors);
@@ -160,6 +170,42 @@ namespace PostService.API.Controllers
             {
                 await this.deleteLinkProject.ExecuteAsync(Id);
                 return Ok(new { message = "Link vinculado ao projeto removido com sucesso." });
+            }
+            var errors = ModelState.Values.Select(x => x.Errors);
+            return BadRequest(errors);
+        }
+        [HttpGet("Contributor")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
+        public async Task<IActionResult> AddContributor([FromBody] ContributorRequest request)
+        {
+            if (ModelState.IsValid)
+            {
+                await this.addContributor.ExecuteAsync(request);
+                return Ok(new { message = "Contribuidor vinculado ao projeto com sucesso." });
+            }
+            var errors = ModelState.Values.Select(x => x.Errors);
+            return BadRequest(errors);
+        }
+        [HttpPut("Contributor/{Id}")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
+        public async Task<IActionResult> UpdateContributor([FromRoute] Guid Id, [FromBody] ContributorRequest request)
+        {
+            if (ModelState.IsValid)
+            {
+                await this.updateContributor.ExecuteAsync(Id, request);
+                return Ok(new { message = "Contribuidor vinculado ao projeto atualizado com sucesso." });
+            }
+            var errors = ModelState.Values.Select(x => x.Errors);
+            return BadRequest(errors);
+        }
+        [HttpDelete("Contributor/{Id}")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
+        public async Task<IActionResult> DeleteContributor([FromRoute] Guid Id)
+        {
+            if (ModelState.IsValid)
+            {
+                await this.deleteContributor.ExecuteAsync(Id);
+                return Ok(new { message = "Contribuidor vinculado ao projeto removido com sucesso." });
             }
             var errors = ModelState.Values.Select(x => x.Errors);
             return BadRequest(errors);

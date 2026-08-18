@@ -24,6 +24,8 @@ using PostService.Application.UseCases.Links.Interfaces;
 using PostService.Application.UseCases.Links;
 using PostService.Domain.Interfaces;
 using PostService.Application.Caching.Language;
+using PostService.Application.UseCases.Contributors.Interfaces;
+using PostService.Application.UseCases.Contributors;
 namespace PostService.Application.Extensions
 {
     public static class DependencyInjectionExtension
@@ -81,6 +83,9 @@ namespace PostService.Application.Extensions
             services.AddScoped<IUpdateLinkProject, UpdateLinkProject>();
             services.AddScoped<IDeleteLinkProject, DeleteLinkProject>();
             services.AddScoped<IExistsByIdProject, ExistsByIdProject>();
+            services.AddScoped<IAddContributor, AddContributor>();
+            services.AddScoped<IUpdateContributor, UpdateContributor>();
+            services.AddScoped<IDeleteContributor, DeleteContributor>();
             
             return services;
         }
