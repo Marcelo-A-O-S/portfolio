@@ -1,8 +1,7 @@
 import { linkSchema } from "@/domain/schemas/LinkSchema";
-import { ApiErrorResponse } from "@/domain/types/ApiErrorResponse";
+import { handleApiError } from "@/lib/api-error";
 import { validateUserByRequest } from "@/services/server/auth-services";
 import { addLinkPost } from "@/services/server/post-services";
-import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -29,18 +28,8 @@ export async function POST(request: NextRequest) {
                 status: response.status
             });
         }
-        return NextResponse.json({ message: "Link vinculado a ferramenta com sucesso!" })
+        return NextResponse.json({ message: "Link vinculado ao projeto com sucesso!" })
     } catch (error) {
-        if (axios.isAxiosError<ApiErrorResponse>(error)) {
-            console.log(error.response?.data);
-            return NextResponse.json(
-                {
-                    message: error.response?.data?.message ?? "Erro no backend"
-                },
-                {
-                    status: error.response?.status ?? 500
-                }
-            );
-        }
+        return handleApiError(error);
     }
 }

@@ -1,8 +1,7 @@
 import { linkTypeSchema } from "@/domain/schemas/LinkTypeSchema";
-import { ApiErrorResponse } from "@/domain/types/ApiErrorResponse";
+import { handleApiError } from "@/lib/api-error";
 import { validateUserByRequest } from "@/services/server/auth-services";
 import { addLinkType, getLinkTypes } from "@/services/server/link-type-services";
-import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
     try {
@@ -30,17 +29,7 @@ export async function POST(request: NextRequest) {
         }
         return NextResponse.json({ message: "Tipo de link salvo com sucesso!" });
     } catch(error) {
-        if (axios.isAxiosError<ApiErrorResponse>(error)) {
-            console.log(error.response?.data);
-            return NextResponse.json(
-                {
-                    message: error.response?.data?.message ?? "Erro no backend"
-                },
-                {
-                    status: error.response?.status ?? 500
-                }
-            );
-        }
+        return handleApiError(error);
     }
 }
 export async function GET(request: NextRequest){
@@ -60,16 +49,6 @@ export async function GET(request: NextRequest){
         }
         return NextResponse.json(response.data);
     }catch(error){
-        if (axios.isAxiosError<ApiErrorResponse>(error)) {
-            console.log(error.response?.data);
-            return NextResponse.json(
-                {
-                    message: error.response?.data?.message ?? "Erro no backend"
-                },
-                {
-                    status: error.response?.status ?? 500
-                }
-            );
-        }
+        return handleApiError(error);
     }
 }

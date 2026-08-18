@@ -1,8 +1,7 @@
 import { languageFilters } from "@/domain/schemas/LanguageFilters";
-import { ApiErrorResponse } from "@/domain/types/ApiErrorResponse";
+import { handleApiError } from "@/lib/api-error";
 import { validateUserByRequest } from "@/services/server/auth-services";
 import { getLanguagesByPagination } from "@/services/server/language-services";
-import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -37,18 +36,7 @@ export async function GET(request: NextRequest) {
             });
         }
         return NextResponse.json(response.data);
-    } catch (error: unknown) {
-        if (axios.isAxiosError<ApiErrorResponse>(error)) {
-            console.log("Erro backend:", error.response?.data);
-
-            return NextResponse.json(
-                {
-                    message: error.response?.data?.message ?? "Erro no backend"
-                },
-                {
-                    status: error.response?.status ?? 500
-                }
-            );
-        }
+    } catch (error) {
+        return handleApiError(error);
     }
 }

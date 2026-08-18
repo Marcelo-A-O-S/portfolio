@@ -1,12 +1,8 @@
 import { categorySchema } from "@/domain/schemas/CategorySchema";
+import { handleApiError } from "@/lib/api-error";
 import { validateUserByRequest } from "@/services/server/auth-services";
 import { updateCategoryService, deleteCategoryByRouteService } from "@/services/server/category-services";
-import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
-type ApiErrorResponse = {
-    message?: string;
-    statusCode?: number;
-};
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ Id: string }> }) {
     try {
         const allowed = await validateUserByRequest(request, ["Administrador"]);
@@ -35,18 +31,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         }
         return NextResponse.json({ message: "Categoria atualizada com sucesso!" })
     } catch (error) {
-        if (axios.isAxiosError<ApiErrorResponse>(error)) {
-            console.log("Erro backend:", error.response?.data);
-            console.log("Erro backend:", error.response);
-            return NextResponse.json(
-                {
-                    message: error.response?.data?.message ?? "Erro no backend"
-                },
-                {
-                    status: error.response?.status ?? 500
-                }
-            );
-        }
+        return handleApiError(error);
     }
 }
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ Id: string }> }) {
@@ -66,18 +51,6 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
         }
         return NextResponse.json({ message: "Categoria deletada com sucesso!" })
     } catch (error) {
-        if (axios.isAxiosError<ApiErrorResponse>(error)) {
-            console.log("Erro backend:", error.response?.status);
-            console.log("Erro backend:", error.response?.statusText);
-            return NextResponse.json(
-                {
-                    message: error.response?.data?.message ?? "Erro no backend"
-                },
-                {
-                    status: error.response?.status ?? 500
-                }
-            );
-        }
+        return handleApiError(error);
     }
-
 }

@@ -1,8 +1,7 @@
 import { postSchema } from "@/domain/schemas/PostSchema";
-import { ApiErrorResponse } from "@/domain/types/ApiErrorResponse";
+import { handleApiError } from "@/lib/api-error";
 import { validateUserByRequest } from "@/services/server/auth-services";
 import { addPostService, getPosts } from "@/services/server/post-services";
-import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -33,17 +32,7 @@ export async function POST(request: NextRequest) {
             message: "Postagem salva com sucesso"
         })
     } catch (error) {
-        if (axios.isAxiosError<ApiErrorResponse>(error)) {
-            console.log(error.response?.data);
-            return NextResponse.json(
-                {
-                    message: error.response?.data?.message ?? "Erro no backend"
-                },
-                {
-                    status: error.response?.status ?? 500
-                }
-            );
-        }
+        return handleApiError(error);
     }
 }
 export async function GET(request: NextRequest) {

@@ -1,5 +1,6 @@
 import { categorySchema } from "@/domain/schemas/CategorySchema";
 import { ApiErrorResponse } from "@/domain/types/ApiErrorResponse";
+import { handleApiError } from "@/lib/api-error";
 import { validateUserByRequest } from "@/services/server/auth-services";
 import { addCategoryService, getCategories, getCategoriesByLanguage } from "@/services/server/category-services";
 import axios from "axios";
@@ -29,37 +30,32 @@ export async function POST(request: NextRequest) {
         }
         return NextResponse.json({ message: "Categoria salva com sucesso." })
     } catch (error: unknown) {
-        if (axios.isAxiosError<ApiErrorResponse>(error)) {
-            console.log("Erro backend:", error.response?.data);
-            return NextResponse.json(
-                {
-                    message: error.response?.data?.message ?? "Erro no backend"
-                },
-                {
-                    status: error.response?.status ?? 500
-                }
-            );
-        }
+        return handleApiError(error);
     }
 }
 export async function GET(request: NextRequest) {
-    const allowed = await validateUserByRequest(request, ["Administrador"]);
-    if (!allowed)
-        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    const searchParams = request.nextUrl.searchParams;
-    const language = searchParams.get("language");
-    let response = null;
-    if (language) {
-        response = await getCategoriesByLanguage(language);
-    } else {
-        response = await getCategories();
+    try {
+        const allowed = await validateUserByRequest(request, ["Administrador"]);
+        if (!allowed)
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+        const searchParams = request.nextUrl.searchParams;
+        const language = searchParams.get("language");
+        let response = null;
+        if (language) {
+            response = await getCategoriesByLanguage(language);
+        } else {
+            response = await getCategories();
+        }
+        if (response.status !== 200 && response.status !== 201) {
+            return NextResponse.json({
+                message: response.data.message
+            }, {
+                status: response.status
+            });
+        }
+        return NextResponse.json(response.data);
+    } catch (error) {
+        return handleApiError(error);
     }
-    if (response.status !== 200 && response.status !== 201) {
-        return NextResponse.json({
-            message: response.data.message
-        }, {
-            status: response.status
-        });
-    }
-    return NextResponse.json(response.data);
+
 }

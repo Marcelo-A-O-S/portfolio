@@ -27,9 +27,9 @@ namespace PostService.Application.UseCases.Projects
         }
         public async Task ExecuteAsync(Guid Id, LinkRequest request)
         {
-            await ValidateLinkRequest(request);
+            ValidateLinkRequest(request);
             if(request.PostId is not Guid postId)
-                throw new ValidationException("O Identificador da ferramenta é obrigatória.");
+                throw new ValidationException("O Identificador do projeto é obrigatório.");
             await this.validationServices.ValidatePostExists(postId);
             var linkType = await GetLinkTypeAsync(request.LinkTypeId);
             var link = await GetLinkAsync(Id);
@@ -48,7 +48,7 @@ namespace PostService.Application.UseCases.Projects
                 throw;
             }
         }
-        private async Task ValidateLinkRequest(LinkRequest request)
+        private static void ValidateLinkRequest(LinkRequest request)
         {
             var validationError = ValidationHelper.Validate(request);
             if (validationError.Count > 0)

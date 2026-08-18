@@ -1,5 +1,6 @@
 import { linkTypeSchema } from "@/domain/schemas/LinkTypeSchema";
 import { ApiErrorResponse } from "@/domain/types/ApiErrorResponse";
+import { handleApiError } from "@/lib/api-error";
 import { validateUserByRequest } from "@/services/server/auth-services";
 import { deleteLinkType, updateLinkType } from "@/services/server/link-type-services";
 import axios from "axios";
@@ -39,17 +40,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         }
         return NextResponse.json({ message: "Tipo de link atualizado com sucesso!" });
     } catch (error) {
-        if (axios.isAxiosError<ApiErrorResponse>(error)) {
-            console.log(error.response?.data);
-            return NextResponse.json(
-                {
-                    message: error.response?.data?.message ?? "Erro no backend"
-                },
-                {
-                    status: error.response?.status ?? 500
-                }
-            );
-        }
+        return handleApiError(error);
     }
 }
 export async function DELETE(request:NextRequest, { params }: { params: Promise<{ Id: string }> }){
@@ -86,16 +77,6 @@ export async function DELETE(request:NextRequest, { params }: { params: Promise<
         }
         return NextResponse.json({ message: "Tipo de link atualizado com sucesso!" });
     }catch(error){
-        if (axios.isAxiosError<ApiErrorResponse>(error)) {
-            console.log(error.response?.data);
-            return NextResponse.json(
-                {
-                    message: error.response?.data?.message ?? "Erro no backend"
-                },
-                {
-                    status: error.response?.status ?? 500
-                }
-            );
-        }
+        return handleApiError(error);
     }
 }

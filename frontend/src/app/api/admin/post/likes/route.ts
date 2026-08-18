@@ -1,9 +1,7 @@
-import { likePostSchema } from "@/domain/schemas/LikePostSchema";
 import { likeSchema } from "@/domain/schemas/LikeSchema";
-import { ApiErrorResponse } from "@/domain/types/ApiErrorResponse";
+import { handleApiError } from "@/lib/api-error";
 import { validateUserByRequest } from "@/services/server/auth-services";
 import { addLikePost, removeLikePost } from "@/services/server/post-services";
-import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
     try {
@@ -33,23 +31,7 @@ export async function POST(request: NextRequest) {
         console.log("Curtida adicionada com sucesso:", response.data);
         return NextResponse.json(response.data);
     } catch (error) {
-        if (axios.isAxiosError<ApiErrorResponse>(error)) {
-            console.log(error.response?.data);
-            return NextResponse.json(
-                {
-                    message: error.response?.data?.message ?? "Erro no backend"
-                },
-                {
-                    status: error.response?.status ?? 500
-                }
-            );
-        }
-        console.error(error);
-        return NextResponse.json({
-            message: "Erro interno do servidor do client"
-        }, {
-            status: 500
-        })
+        return handleApiError(error);
     }
 }
 export async function DELETE(request: NextRequest) {
@@ -80,22 +62,6 @@ export async function DELETE(request: NextRequest) {
         console.log("Curtida removida com sucesso:", response.data);
         return NextResponse.json(response.data);
     } catch (error) {
-        if (axios.isAxiosError<ApiErrorResponse>(error)) {
-            console.log("Erro critico ao remover curtida:", error.response?.data);
-            return NextResponse.json(
-                {
-                    message: error.response?.data?.message ?? "Erro no backend"
-                },
-                {
-                    status: error.response?.status ?? 500
-                }
-            );
-        }
-        console.error("Erro critico ao remover curtida:", error);
-        return NextResponse.json({
-            message: "Erro interno do servidor do client"
-        }, {
-            status: 500
-        })
+        return handleApiError(error);
     }
 }

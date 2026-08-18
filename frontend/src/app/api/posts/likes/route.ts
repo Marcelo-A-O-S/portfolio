@@ -1,5 +1,6 @@
 import { likeSchema } from "@/domain/schemas/LikeSchema";
 import { ApiErrorResponse } from "@/domain/types/ApiErrorResponse";
+import { handleApiError } from "@/lib/api-error";
 import { validateUserByRequest } from "@/services/server/auth-services";
 import { addLikePost, removeLikePost } from "@/services/server/post-services";
 import axios from "axios";
@@ -31,17 +32,7 @@ export async function POST(request: NextRequest){
         }
         return NextResponse.json({ message: "Curtida adicionada com sucesso!" })
     }catch(error){
-        if (axios.isAxiosError<ApiErrorResponse>(error)) {
-            console.log(error.response?.data);
-            return NextResponse.json(
-                {
-                    message: error.response?.data?.message ?? "Erro no backend"
-                },
-                {
-                    status: error.response?.status ?? 500
-                }
-            );
-        }
+        return handleApiError(error);
     }
 }
 export async function DELETE(request: NextRequest){
@@ -70,16 +61,6 @@ export async function DELETE(request: NextRequest){
         }
         return NextResponse.json({ message: "Curtida removida com sucesso" })
     }catch(error){
-        if (axios.isAxiosError<ApiErrorResponse>(error)) {
-            console.log(error.response?.data);
-            return NextResponse.json(
-                {
-                    message: error.response?.data?.message ?? "Erro no backend"
-                },
-                {
-                    status: error.response?.status ?? 500
-                }
-            );
-        }
+        return handleApiError(error);
     }
 }

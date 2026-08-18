@@ -28,7 +28,7 @@ namespace PostService.Application.UseCases.Projects
         }
         public async Task ExecuteAsync(LinkRequest request)
         {
-            await ValidateLinkRequest(request);
+            ValidateLinkRequest(request);
             if(request.PostId is not Guid postId)
                 throw new ValidationException("O Identificador do projeto é obrigatório.");
             await this.validationServices.ValidatePostExists(postId);
@@ -48,7 +48,7 @@ namespace PostService.Application.UseCases.Projects
                 throw;
             }
         }
-        private async Task ValidateLinkRequest(LinkRequest request)
+        private static void ValidateLinkRequest(LinkRequest request)
         {
             var validationError = ValidationHelper.Validate(request);
             if (validationError.Count > 0)

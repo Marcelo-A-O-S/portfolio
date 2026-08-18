@@ -1,8 +1,7 @@
 import { commentSchema } from "@/domain/schemas/CommentSchema";
-import { ApiErrorResponse } from "@/domain/types/ApiErrorResponse";
+import { handleApiError } from "@/lib/api-error";
 import { validateUserByRequest } from "@/services/server/auth-services";
 import { hardRemovePostReply } from "@/services/server/post-services";
-import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ ownerId: string, Id: string }> }) {
@@ -32,16 +31,6 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
         }
         return NextResponse.json({ message: "Resposta do comentário removido com sucesso!" })
     } catch (error) {
-        if (axios.isAxiosError<ApiErrorResponse>(error)) {
-            console.log(error.response?.data);
-            return NextResponse.json(
-                {
-                    message: error.response?.data?.message ?? "Erro no backend"
-                },
-                {
-                    status: error.response?.status ?? 500
-                }
-            );
-        }
+        return handleApiError(error);
     }
 }
