@@ -3,12 +3,14 @@ namespace PostService.Domain.Entities
 {
     public class Post : PostBase
     {
+        public ICollection<Contributor> Contributors { get; private set; }
         public ICollection<Tool> Tools { get; private set; }
         public ICollection<PostContent> PostContents { get; private set; }
         public Post(Status status)
         {
             this.CreatedAt = DateTime.UtcNow;
             this.UpdatedAt = DateTime.UtcNow;
+            this.Contributors = new List<Contributor>();
             this.Categories = new List<Category>();
             this.Tools = new List<Tool>();
             this.Links = new List<Link>();

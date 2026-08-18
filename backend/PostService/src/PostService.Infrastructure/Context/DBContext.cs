@@ -8,6 +8,7 @@ namespace PostService.Infrastructure.Context
         {
 
         }
+        public DbSet<Contributor> Contributors { get; set; }
         public DbSet<Link> Links { get; set; }
         public DbSet<LinkDescription> LinkDescriptions { get; set; }
         public DbSet<LinkType> LinkTypes { get; set; }
