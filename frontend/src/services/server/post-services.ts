@@ -1,11 +1,12 @@
 import { PostSchema } from "@/domain/schemas/PostSchema";
 import { apiServer } from "./api-server";
 import { PostsFilters } from "@/domain/schemas/PostsFilters";
-import { LikePostSchema } from "@/domain/schemas/LikePostSchema";
 import { LikeSchema } from "@/domain/schemas/LikeSchema";
 import { LinkSchema } from "@/domain/schemas/LinkSchema";
 import { CommentSchema } from "@/domain/schemas/CommentSchema";
 import { CommentFilters } from "@/domain/schemas/CommentFilters";
+import { ContributorSchema } from "@/domain/schemas/ContributorSchema";
+import { contributorFilters } from "@/domain/schemas/ContributorFilters";
 
 export const addPostService = async (post: PostSchema) => {
     const api = await apiServer();
@@ -172,5 +173,33 @@ export const deleteLinkPost = async(id:string, data: LinkSchema) => {
     const response = await api.delete(`/api/Post/Link/${id}`,{
         data: data
     })
+    return response;
+}
+export const addContributorPost = async(data: ContributorSchema) =>{
+    const api = await apiServer();
+    const response = await api.post(`/api/Post/Contributor`,data);
+    return response;
+}
+export const updateContributorPost = async(id: string, data: ContributorSchema) =>{
+    const api = await apiServer();
+    const response = await api.put(`/api/Post/Contributor/${id}`,data);
+    return response;
+}
+export const deleteContributorPost = async(id:string, data: ContributorSchema) => {
+    const api = await apiServer();
+    const response = await api.delete(`/api/Post/Contributor/${id}`,{
+        data: data
+    })
+    return response;
+}
+export const getContributorsPagination = async(filters: contributorFilters) => {
+    const api = await apiServer();
+    const params = new URLSearchParams();
+    params.append(`page`, filters.page.toString());
+    params.append(`postId`, filters.postId.toString())
+    if (filters.search) {
+        params.append("search", filters.search)
+    }
+    const response = await api.get(`/api/Contributor/GetByPagination?${params}`);
     return response;
 }

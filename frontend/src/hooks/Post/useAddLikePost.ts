@@ -9,7 +9,6 @@ export function useAddLikePost() {
     return useMutation<AxiosResponse<ApiResponse>, AxiosError<ApiResponse>, LikeSchema>({
         mutationFn: addLikePost,
         onSuccess: (response) =>{
-            console.log("INVALIDANDO QUERY - Curtindo postagem");
             queryClient.invalidateQueries({
                 queryKey: ["project-pagination"]
             })

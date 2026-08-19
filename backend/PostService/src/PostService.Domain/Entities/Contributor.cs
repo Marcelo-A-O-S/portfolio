@@ -8,13 +8,15 @@ namespace PostService.Domain.Entities
         public Post Post { get; private set; }
         public string Name { get; private set; }
         public string? Description { get; private set; }
-        public string? ProfileUrl { get; private set;} 
+        public string? ProfileUrl { get; private set; }
+        public DateTime CreatedAt { get; private set;}
         public Contributor(Guid postId, string name, string? description, string? profileUrl)
         {
             this.PostId = postId;
             this.Name = name;
             this.Description = description;
             this.ProfileUrl = profileUrl;
+            this.CreatedAt = DateTime.UtcNow;
         }
         public void SetUserId(Guid userId)
         {

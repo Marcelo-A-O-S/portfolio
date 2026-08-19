@@ -317,7 +317,16 @@ namespace PostService.Infrastructure.Repositories
                             BorderColor = l.LinkType.BorderColor,
                             Icon = l.LinkType.Icon
                         }
-                    }).ToList()
+                    }).ToList(),
+                    Contributors = p.Contributors.Select(c => new ContributorView
+                    {
+                        Id = c.Id,
+                        UserId = c.UserId,
+                        PostId = c.PostId,
+                        Name = c.Name,
+                        Description = c.Description,
+                        ProfileUrl = c.ProfileUrl
+                    }).ToList(),
                 })
                 .FirstOrDefaultAsync();
             return item;

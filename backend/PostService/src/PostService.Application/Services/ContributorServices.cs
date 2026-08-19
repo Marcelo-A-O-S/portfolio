@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using PostService.Application.Interfaces;
 using PostService.Domain.Entities;
 using PostService.Domain.Interfaces;
+using PostService.Domain.Queries;
 namespace PostService.Application.Services
 {
     public class ContributorServices : IContributorServices
@@ -36,6 +37,11 @@ namespace PostService.Application.Services
         public async Task<Contributor> GetById(Guid Id)
         {
             return await this.contributorRepository.GetById(Id);
+        }
+
+        public async Task<PaginatedResult<ContributorView>> GetByPagination(int page, Guid postId, string? search, int itemsPage = 10)
+        {
+            return await this.contributorRepository.GetByPagination(page, postId, search, itemsPage);
         }
 
         public async Task<List<Contributor>> List()
