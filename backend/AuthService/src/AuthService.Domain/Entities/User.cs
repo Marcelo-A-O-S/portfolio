@@ -11,21 +11,27 @@ namespace AuthService.Domain.Entities
         public string Name { get; private set; }
         public Role Role { get; private set; }
         public DateTime CreatedAt { get; private set; }
+        public string? Description { get; private set; }
+        public string? ProfileUrl { get; private set; }
         public ICollection<SocialAccount> SocialAccounts { get; private set; }
         public UserStatus Status { get; private set; }
-        public User(string email, string name)
+        public User(string email, string name, string? description, string? profileUrl)
         {
             this.Id = Guid.Empty;
             this.Email = email;
             this.Name = name;
+            this.Description = description;
+            this.ProfileUrl = profileUrl;
             this.Role = Role.Client;
             this.CreatedAt = DateTime.UtcNow;
             this.Status = UserStatus.ACTIVE;
         }
-        public void Update(string email, string name, Role role, DateTime dateTime)
+        public void Update(string email, string name, Role role, DateTime dateTime, string? description, string? profileUrl)
         {
             this.Email = email;
             this.Name = name;
+            this.Description = description;
+            this.ProfileUrl = profileUrl;
             this.Role = role;
             this.CreatedAt = dateTime;
         }

@@ -11,6 +11,7 @@ declare module "next-auth" {
             username?: string;
             provider?: string;
             role?:string;
+            
         }
     }
 }
@@ -39,5 +40,6 @@ declare module "next-auth"{
         name?:string;
         email?:string;
         image?:string;
+        bio?:string;
     }
 }

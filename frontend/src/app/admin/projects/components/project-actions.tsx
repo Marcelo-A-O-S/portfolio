@@ -23,6 +23,10 @@ export default function ProjectActions({ project }: ProjectActionsProps) {
                     <DropdownMenuGroup>
                         <DropdownMenuItem className="cursor-pointer"
                         >
+                            <Link href={`/admin/projects/contributors?postId=${project.id}`}>Gerenciar Contribuidores</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer"
+                        >
                             <Link href={`/admin/projects/manager-links?postId=${project.id}`}>Gerenciar Links</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer"

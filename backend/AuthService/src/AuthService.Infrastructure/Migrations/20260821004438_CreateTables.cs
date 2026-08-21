@@ -20,6 +20,8 @@ namespace AuthService.Infrastructure.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     Role = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    ProfileUrl = table.Column<string>(type: "text", nullable: true),
                     Status = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>

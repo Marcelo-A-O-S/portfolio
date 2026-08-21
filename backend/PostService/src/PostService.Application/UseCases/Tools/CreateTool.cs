@@ -200,7 +200,7 @@ namespace PostService.Application.UseCases.Tools
             var author = await this.authorServices.FindBy(a => a.UserId == user.Id && a.ProviderId == user.ProviderId);
             if(author == null)
             {
-                author = new Author(user.Id, user.Name, user.ProfileUrl, user.ProviderId, user.Provider);
+                author = new Author(user.Id, user.Name, user.ProfileUrl, user.ProviderId, user.Provider, user.Description);
                 author.GenerateId();
                 await this.authorServices.Save(author);
             }

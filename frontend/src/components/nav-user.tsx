@@ -13,7 +13,7 @@ export default function NavUser({ session }: NavUserProps) {
         <>
             <DropdownMenu modal={false}>
                 <DropdownMenuTrigger asChild>
-                    <div className=" flex items-center justify-center gap-2 flex-row-reverse">
+                    <div className=" flex items-center justify-center gap-2 min-w-0 flex-1 flex-row-reverse">
                         <Button variant="ghost" size="icon" className="rounded-full">
                             <Avatar>
                                 <AvatarImage src={session.user.image!} alt={session.user.name!} />
@@ -21,7 +21,7 @@ export default function NavUser({ session }: NavUserProps) {
                             </Avatar>
                         </Button>
                         <div>
-                            <p className="hidden md:flex text-sm font-semibold">{session.user.name!}</p>
+                            <p className="hidden md:flex text-sm truncate w-full font-semibold">{session.user.name!}</p>
                         </div>
                     </div>
                 </DropdownMenuTrigger>

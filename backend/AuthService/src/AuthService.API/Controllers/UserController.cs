@@ -44,6 +44,15 @@ namespace AuthService.API.Controllers
             }
             return Ok(users);
         }
+        [HttpGet("GetAll")]
+        [Authorize(AuthenticationSchemes="UserJwt", Roles = "Administrador")]
+        public async Task<IActionResult> GetAll(
+            [FromQuery] string? search
+        )
+        {
+            var result = await this.userServices.GetAll(search);
+            return Ok(result);
+        }
         [HttpGet("{Id}")]
         [Authorize(AuthenticationSchemes="UserJwt", Roles = "Administrador")]
         [EnableRateLimiting("read")]

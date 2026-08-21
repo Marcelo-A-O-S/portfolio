@@ -60,7 +60,12 @@ namespace AuthService.Application.UseCases.Auth
             var user = await this.userServices.FindBy(x => x.Email == providerUserData.Email);
             if (user == null)
             {
-                user = new User(providerUserData.Email, providerUserData.Name);
+                user = new User(
+                    providerUserData.Email,
+                    providerUserData.Name,
+                    providerUserData.Description,
+                    providerUserData.PictureUrl
+                    );
             }
             return user;
         }
@@ -84,7 +89,7 @@ namespace AuthService.Application.UseCases.Auth
             }
             return socialAccount;
         }
-        private async Task SaveSocial( SocialAccount socialAccount)
+        private async Task SaveSocial(SocialAccount socialAccount)
         {
             if (socialAccount.Id == Guid.Empty)
                 await socialAccountServices.Save(socialAccount);

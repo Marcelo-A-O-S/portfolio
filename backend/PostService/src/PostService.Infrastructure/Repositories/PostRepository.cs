@@ -190,7 +190,8 @@ namespace PostService.Infrastructure.Repositories
                     {
                         Username = p.Author.Username,
                         Provider = p.Author.Provider,
-                        ProfileUrl = p.Author.ProfileUrl
+                        ProfileUrl = p.Author.ProfileUrl,
+                        Description = p.Author.Description
                     },
                     CreatedAt = p.CreatedAt,
                     UpdatedAt = p.UpdatedAt,

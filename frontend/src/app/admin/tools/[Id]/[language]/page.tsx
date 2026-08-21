@@ -170,7 +170,7 @@ export default async function PageById({ params }: Props) {
                                     <LinkSection key={index} link={link} language={language}/>
                                 ))}
                             </div>
-                            <div className="max-w-full">
+                            <div className="max-w-full p-1">
                                 {tool.author && (
                                     <AuthorSection
                                     author={tool.author}

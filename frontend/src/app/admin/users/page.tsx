@@ -8,10 +8,11 @@ import { useSession } from "next-auth/react";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import { useGetUsers } from "@/hooks/useGetUsers";
 import { createPageURL, generatePagination, updateFilter } from "@/lib/utils";
 import { useDebounce } from "@/hooks/useDebounce";
 import { SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem, Select } from "@/components/ui/select";
+import { useGetUsersByPagination } from "@/hooks/useGetUsersByPagination";
+
 export default function UsersPage() {
     const { data: session } = useSession()
     const router = useRouter();
@@ -23,7 +24,7 @@ export default function UsersPage() {
     const [searchInput, setSearchInput] = useState(search ?? "");
     const debouncedSearch = useDebounce(searchInput, 500);
     const columns = useMemo(() => getUsersColumns(), []);
-    const { data, isLoading, error } = useGetUsers({
+    const { data, isLoading, error } = useGetUsersByPagination({
         page,
         search,
         role,

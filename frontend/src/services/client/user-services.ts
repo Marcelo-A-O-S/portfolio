@@ -16,9 +16,9 @@ export const getUsersByPaginationService = async(filters: UsersFilters) =>{
     const response = await api.get(`/api/admin/users/pagination?${params}`);
     return response;
 }
-export const getUsersService = async(page:number) =>{
+export const getUsersService = async(search?: string) =>{
     const api = await apiClient();
-    const response = await api.get(`/api/admin/users?page=${page}`);
+    const response = await api.get(`/api/admin/users?search=${search}`);
     return response;
 }
 export const modifyRoleService = async(Id:string, role: string)=>{

@@ -36,6 +36,15 @@ namespace Gateway.API.Configuration
                 },
                 new RouteConfig
                 {
+                    RouteId = "contributorRoute",
+                    ClusterId = "postCluster",
+                    Match = new RouteMatch
+                    {
+                        Path = "/api/contributor/{**catch-all}"
+                    }
+                },
+                new RouteConfig
+                {
                     RouteId = "toolRoute",
                     ClusterId = "postCluster",
                     Match = new RouteMatch

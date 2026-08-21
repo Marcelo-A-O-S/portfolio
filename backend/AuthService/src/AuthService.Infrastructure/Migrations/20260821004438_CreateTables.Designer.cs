@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AuthService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20260527052826_CreateTables")]
+    [Migration("20260821004438_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -108,12 +108,18 @@ namespace AuthService.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProfileUrl")
                         .HasColumnType("text");
 
                     b.Property<string>("Role")

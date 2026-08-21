@@ -12,7 +12,7 @@ using PostService.Infrastructure.Context;
 namespace PostService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20260816222951_CreateTables")]
+    [Migration("20260821004636_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -63,6 +63,9 @@ namespace PostService.Infrastructure.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
 
                     b.Property<string>("ProfileUrl")
                         .IsRequired()
@@ -137,6 +140,38 @@ namespace PostService.Infrastructure.Migrations
                     b.HasIndex("Slug");
 
                     b.ToTable("CategoriesContents");
+                });
+
+            modelBuilder.Entity("PostService.Domain.Entities.Contributor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ProfileUrl")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("Contributors");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.Language", b =>
@@ -544,6 +579,17 @@ namespace PostService.Infrastructure.Migrations
                     b.Navigation("Language");
                 });
 
+            modelBuilder.Entity("PostService.Domain.Entities.Contributor", b =>
+                {
+                    b.HasOne("PostService.Domain.Entities.Post", "Post")
+                        .WithMany("Contributors")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+                });
+
             modelBuilder.Entity("PostService.Domain.Entities.Link", b =>
                 {
                     b.HasOne("PostService.Domain.Entities.LinkType", "LinkType")
@@ -700,6 +746,8 @@ namespace PostService.Infrastructure.Migrations
 
             modelBuilder.Entity("PostService.Domain.Entities.Post", b =>
                 {
+                    b.Navigation("Contributors");
+
                     b.Navigation("Links");
 
                     b.Navigation("PostContents");

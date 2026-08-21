@@ -26,7 +26,11 @@ namespace AuthService.Infrastructure.Providers
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await this.client.SendAsync(request);
             if (!response.IsSuccessStatusCode)
+            {
+                var messageError = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("Error: " + messageError);
                 throw new UnauthorizedAccessException("Token do Linkedin inválido");
+            }
             var content = await response.Content.ReadAsStringAsync();
             var user = JsonSerializer.Deserialize<LinkedinResponse>(content, JsonOptions);
             if(user == null)
@@ -40,7 +44,8 @@ namespace AuthService.Infrastructure.Providers
                 Name = user.Name,
                 Username = user.Name,
                 PictureUrl = user.Picture,
-                VerifiedAccount = true
+                VerifiedAccount = true,
+                
             };
         }
     }

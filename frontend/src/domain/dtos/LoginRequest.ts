@@ -3,6 +3,7 @@ export type LoginRequest = {
     username?: string,
     email?: string,
     profileUrl?: string,
+    description?:string,
     provider: string,
     providerId: string,
     deviceId: string,

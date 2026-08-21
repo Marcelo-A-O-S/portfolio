@@ -1,4 +1,3 @@
-
 import type { AuthOptions } from "next-auth";
 import { LoginRequest } from "@/domain/dtos/LoginRequest";
 import { buildDeviceName } from "@/lib/build-device-name";
@@ -7,7 +6,6 @@ import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import LinkedIn from "next-auth/providers/linkedin";
 import { cookies } from "next/headers";
-const hostNext = process.env.NEXT_BACKEND_API!;
 const githubId = process.env.GITHUB_ID!;
 const githubSecret = process.env.GITHUB_SECRET!;
 const githubIssuer = process.env.GITHUB_ISSUER!;
@@ -26,12 +24,14 @@ export const authOptions: AuthOptions = {
             checks: ["state"],
             issuer: githubIssuer,
             profile(profile) {
+                //bio
                 return {
                     id: profile.id.toString(),
                     name: profile.name,
                     username: profile.login,
                     email: profile.email,
-                    image: profile.avatar_url
+                    image: profile.avatar_url,
+                    bio: profile.bio
                 }
             }
         }),
@@ -78,13 +78,27 @@ export const authOptions: AuthOptions = {
                     deviceId = crypto.randomUUID();
                 }
                 const deviceName = await buildDeviceName();
+                const provider = account.provider.toLowerCase();
+                let providerToken : string | undefined = undefined;
+                switch(provider){
+                    case "github":
+                        providerToken = account.access_token
+                        break;
+                    case "linkedin":
+                        providerToken = account.access_token
+                        break;
+                    case "google":
+                        providerToken = account.id_token
+                        break;
+                }
                 const loginRequest: LoginRequest = {
                     name: user.name,
                     email: user.email,
                     profileUrl: user.image,
+                    description: user.bio ?? "",
                     provider: account.provider,
                     providerId: account.providerAccountId,
-                    providerToken: account.id_token ?? account.access_token,
+                    providerToken: providerToken,
                     username: user.username,
                     deviceId,
                     deviceName

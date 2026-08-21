@@ -1,9 +1,9 @@
 using AuthService.Domain.Entities;
 using AuthService.Domain.Enums;
 using AuthService.Domain.Interfaces;
+using AuthService.Domain.Queries;
 using AuthService.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
-
 namespace AuthService.Infrastructure.Repositories
 {
     public class UserRepository : Generics<User>, IUserRepository
@@ -24,7 +24,8 @@ namespace AuthService.Infrastructure.Repositories
             {
                 query = query.Where(u =>
                     EF.Functions.Like(u.Name, $"%{search}%") ||
-                    EF.Functions.Like(u.Email, $"%{search}%")
+                    EF.Functions.Like(u.Email, $"%{search}%") ||
+                    EF.Functions.Like(u.Description, $"%{search}%")
                 );
             }
             if (!string.IsNullOrWhiteSpace(role) &&
@@ -54,6 +55,31 @@ namespace AuthService.Infrastructure.Repositories
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling(totalItems / (double)itemsPage)
             };
+        }
+        public async Task<List<UserView>> GetAll(string? search)
+        {
+            var query = this.context.Users
+                .AsNoTracking()
+                .AsSplitQuery()
+                .AsQueryable();
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(u =>
+                    EF.Functions.Like(u.Name, $"%{search}%") ||
+                    EF.Functions.Like(u.Email, $"%{search}%") ||
+                    EF.Functions.Like(u.Description, $"%{search}%")
+                );
+            }
+            var items = await query
+                .OrderByDescending(u => u.CreatedAt)
+                .Select(u => new UserView
+                {
+                    Id = u.Id,
+                    ProfileUrl = u.ProfileUrl,
+                    Name = u.Name,
+                    Description = u.Description
+                }).ToListAsync();
+            return items;
         }
 
         public async Task<User> GetFullById(Guid id)

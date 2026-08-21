@@ -22,6 +22,7 @@ namespace AuthService.Infrastructure.Providers
                 var user = await this.client.User.Current();
                 if (user == null)
                     throw new UnauthorizedAccessException("Token do Github inválido");
+                
                 var emails = await this.client.User.Email.GetAll();
                 var primaryEmail = emails.FirstOrDefault(x => x.Primary && x.Verified)?.Email;
                 if (string.IsNullOrWhiteSpace(primaryEmail))
@@ -33,6 +34,7 @@ namespace AuthService.Infrastructure.Providers
                     Name = user.Name ?? user.Login,
                     Username = user.Login,
                     PictureUrl = user.AvatarUrl,
+                    Description = user.Bio,
                     VerifiedAccount = true
                 };
             }

@@ -5,12 +5,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
     try {
-        const allowed = await validateUserByRequest(request, ["Administrador", "Client"]);
+        const allowed = await validateUserByRequest(request, ["Administrador"]);
         if (!allowed)
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         const searchParams = request.nextUrl.searchParams;
-        const page = Number(searchParams.get("page")) || 1
-        const response = await getUsersService(page);;
+        const search = searchParams.get("search") || "";
+        const response = await getUsersService(search);
         if (response.status !== 200 && response.status !== 201) {
             return NextResponse.json({
                 message: response.data.message

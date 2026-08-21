@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
 using AuthService.Domain.Interfaces;
+using AuthService.Domain.Queries;
 namespace AuthService.Application.Services
 {
     public class UserServices : IUserServices
@@ -63,6 +64,11 @@ namespace AuthService.Application.Services
         public async Task<User> GetFullById(Guid id)
         {
             return await this.userRepository.GetFullById(id);
+        }
+
+        public async Task<List<UserView>> GetAll(string? search)
+        {
+            return await this.userRepository.GetAll(search);
         }
     }
 }

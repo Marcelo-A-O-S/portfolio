@@ -21,6 +21,7 @@ namespace PostService.Infrastructure.Migrations
                     ProfileUrl = table.Column<string>(type: "text", nullable: false),
                     ProviderId = table.Column<string>(type: "text", nullable: false),
                     Provider = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -148,6 +149,23 @@ namespace PostService.Infrastructure.Migrations
                         principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Contributors",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    ProfileUrl = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Contributors", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -381,6 +399,11 @@ namespace PostService.Infrastructure.Migrations
                 column: "ToolsId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Contributors_PostId",
+                table: "Contributors",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Languages_Code",
                 table: "Languages",
                 column: "Code");
@@ -504,6 +527,14 @@ namespace PostService.Infrastructure.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
+                name: "FK_Contributors_Posts_PostId",
+                table: "Contributors",
+                column: "PostId",
+                principalTable: "Posts",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_LinkDescriptions_Links_LinkId",
                 table: "LinkDescriptions",
                 column: "LinkId",
@@ -567,6 +598,9 @@ namespace PostService.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "CategoryTool");
+
+            migrationBuilder.DropTable(
+                name: "Contributors");
 
             migrationBuilder.DropTable(
                 name: "LikeProjections");

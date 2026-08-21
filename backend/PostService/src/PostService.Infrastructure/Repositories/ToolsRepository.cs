@@ -59,7 +59,8 @@ namespace PostService.Infrastructure.Repositories
                     {
                         Username = t.Author.Username,
                         Provider = t.Author.Provider,
-                        ProfileUrl = t.Author.ProfileUrl
+                        ProfileUrl = t.Author.ProfileUrl,
+                        Description = t.Author.Description
                     },
                     Liked = this.context.LikeProjections.Any(lp =>
                                 lp.TargetId == t.Id &&
@@ -162,7 +163,8 @@ namespace PostService.Infrastructure.Repositories
                     {
                         Username = t.Author.Username,
                         Provider = t.Author.Provider,
-                        ProfileUrl = t.Author.ProfileUrl
+                        ProfileUrl = t.Author.ProfileUrl,
+                        Description = t.Author.Description
                     },
                     Liked = this.context.LikeProjections.Any(lp =>
                                 lp.TargetId == t.Id &&
