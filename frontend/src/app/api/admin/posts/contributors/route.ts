@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
             })
         }
         const contributor = result.data;
+        console.log("Adicionando o contribuidor ao projeto...")
         const response = await addContributorPost(contributor);
         if (response.status !== 200 && response.status !== 201) {
             return NextResponse.json({

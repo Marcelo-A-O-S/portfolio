@@ -2,6 +2,7 @@ import z from "zod";
 import { toolSchema } from "./ToolSchema";
 import { postContentSchema } from "./PostContentSchema";
 import { postBaseSchema } from "./PostBaseSchema";
+import { contributorSchema } from "./ContributorSchema";
 export const PostStatusEnum = z.enum(["DRAFT", "PUBLISH"])
 export const toolInPostSchema = toolSchema.omit({
     liked: true,
@@ -14,5 +15,6 @@ export const postSchema = postBaseSchema.extend({
     postContents: z.array(postContentSchema).min(1, "É obrigatório ter pelo menos um conteudo relacionado ao projeto."),
     tools: z.array(toolInPostSchema).min(1, "É obrigatório ter pelo menos uma ferramenta relacionada ao projeto."),
     status: PostStatusEnum,
+    contributors: z.array(contributorSchema).optional()
 })
 export type PostSchema = z.infer<typeof postSchema>

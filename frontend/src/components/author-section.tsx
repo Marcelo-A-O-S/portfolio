@@ -14,7 +14,7 @@ export default function AuthorSection({ author }: AuthorProps) {
                         src={author.profileUrl}
                         alt={author.username}
                     />
-                    <div className="flex flex-col min-w-0 justify-start">
+                    <div className="min-w-0 w-fit">
                         <p className="m-0 text-2xl font-medium leading-none">
                             {author.username}
                         </p>

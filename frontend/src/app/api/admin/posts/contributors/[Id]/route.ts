@@ -19,6 +19,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         const data = await request.json();
         const result = await contributorSchema.safeParseAsync(data);
         if (!result.success) {
+            console.log("Erro ao validar dados: ", result.error.message)
             return NextResponse.json({
                 message: `Erro ao validar dados: ${result.error.message}`
             }, {

@@ -41,6 +41,7 @@ export default function ContributorsPage() {
         }
         router.push(`?${params.toString()}`)
     }, [debouncedSearch])
+    console.log("Contribuidores: ", data);
     return (
         <>
             <main className="mx-auto flex min-h-screen inset-0 w-full justify-center">

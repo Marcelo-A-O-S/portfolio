@@ -2,7 +2,7 @@ import z from "zod";
 
 export const contributorSchema = z.object({
     id: z.uuid().optional(),
-    userId: z.uuid().optional(),
+    userId: z.uuid().optional().nullable(),
     postId: z.uuid(),
     name: z.string().nonempty(),
     description: z.string().optional(),

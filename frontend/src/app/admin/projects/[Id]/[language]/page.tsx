@@ -21,6 +21,7 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 import PostComments from "../../components/post-comments";
+import ContributorsSection from "@/components/contributors-section";
 const hostBackend = process.env.BACKEND_SERVER!;
 type Props = {
     params: Promise<{ Id: string, language: string }>
@@ -192,6 +193,13 @@ export default async function PageById({ params }: Props) {
                                 {post.author && (
                                     <AuthorSection
                                         author={post.author}
+                                    />
+                                )}
+                            </div>
+                            <div className="max-w-full">
+                                {post.contributors && (
+                                    <ContributorsSection
+                                        contributors={post.contributors}
                                     />
                                 )}
                             </div>

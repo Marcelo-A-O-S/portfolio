@@ -174,7 +174,7 @@ namespace PostService.API.Controllers
             var errors = ModelState.Values.Select(x => x.Errors);
             return BadRequest(errors);
         }
-        [HttpGet("Contributor")]
+        [HttpPost("Contributor")]
         [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> AddContributor([FromBody] ContributorRequest request)
         {

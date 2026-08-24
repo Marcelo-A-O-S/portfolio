@@ -25,16 +25,20 @@ export default function FormContributorPost({ postId, contributor }: FormContrib
     const { data: users, isLoading, error } = useGetUsers(searchInput);
     const { mutateAsync: createContributor, isPending: isAdding } = useAddContributorPost();
     const { mutateAsync: updateContributor, isPending: isUpdating } = useUpdateContributorPost();
-    const { control, handleSubmit, reset, formState: { errors } } = useForm<ContributorSchema>({
+    const { control, handleSubmit, reset, setValue, formState: { errors } } = useForm<ContributorSchema>({
         resolver: zodResolver(contributorSchema),
         defaultValues: {
+            userId: undefined,
             postId: postId,
             name: ""
         }
     })
     useEffect(() => {
         if (contributor) {
-            reset(contributor);
+            reset({
+                ...contributor,
+                userId:undefined
+            });
         }
     }, [contributor, reset]);
     const onSubmit = async (data: ContributorSchema) => {
@@ -95,10 +99,19 @@ export default function FormContributorPost({ postId, contributor }: FormContrib
                                     control={control}
                                     render={({ field }) => (
                                         <Field className="">
-                                            <Label htmlFor="language">Language</Label>
+                                            <Label htmlFor="language">User</Label>
                                             <Select
-                                                onValueChange={(value) => field.onChange(value)}
+                                                onValueChange={(value) => {
+                                                    field.onChange(value);
+                                                    const selectedUser = users?.find((user) => `${user.id}` === value);
+                                                    if (selectedUser) {
+                                                        setValue("name", selectedUser.name ?? "", { shouldValidate: true, shouldDirty: true });
+                                                        setValue("profileUrl", selectedUser.profileUrl ?? "", { shouldValidate: true, shouldDirty: true });
+                                                        setValue("description", selectedUser.description ?? "", { shouldValidate: true, shouldDirty: true });
+                                                    }
+                                                }}
                                                 value={field.value}
+
                                             >
                                                 <SelectTrigger className="">
                                                     <SelectValue placeholder="Selecione o idioma" />

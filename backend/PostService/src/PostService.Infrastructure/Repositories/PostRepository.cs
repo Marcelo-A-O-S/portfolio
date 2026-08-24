@@ -32,6 +32,7 @@ namespace PostService.Infrastructure.Repositories
             var totalItems = await query.CountAsync();
             var items = await query
                 .OrderByDescending(p => p.CreatedAt)
+                .Include(p => p.Contributors)
                 .Include(p => p.PostContents)
                     .ThenInclude(pt => pt.Language)
                 .Include(p => p.Categories)
@@ -56,6 +57,15 @@ namespace PostService.Infrastructure.Repositories
                     UpdatedAt = p.UpdatedAt,
                     Likes = p.LikeCount,
                     Comments = p.CommentCount,
+                    Contributors = p.Contributors.Select(c => new ContributorView
+                    {
+                        Id = c.Id,
+                        UserId = c.UserId,
+                        PostId = c.PostId,
+                        Name = c.Name,
+                        Description = c.Description,
+                        ProfileUrl = c.ProfileUrl
+                    }).ToList(),
                     Liked = this.context.LikeProjections.Any(lp =>
                                 lp.TargetId == p.Id &&
                                 lp.UserId == authenticatedUserId),
