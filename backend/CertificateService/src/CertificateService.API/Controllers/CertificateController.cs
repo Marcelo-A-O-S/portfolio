@@ -3,8 +3,6 @@ using CertificateService.Application.Interfaces;
 using CertificateService.Application.UseCases.Certificates.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-
 namespace CertificateService.API.Controllers
 {
     [ApiController]
