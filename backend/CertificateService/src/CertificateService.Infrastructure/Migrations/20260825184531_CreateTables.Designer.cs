@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CertificateService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20260712152725_CreateTables")]
+    [Migration("20260825184531_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -45,10 +45,6 @@ namespace CertificateService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("ImgUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Institution")
                         .IsRequired()
                         .HasColumnType("text");
@@ -56,7 +52,7 @@ namespace CertificateService.Infrastructure.Migrations
                     b.Property<DateTime>("IssuerDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("MediaFileId")
+                    b.Property<Guid>("MediaProjectionId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Status")
@@ -77,6 +73,8 @@ namespace CertificateService.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MediaProjectionId");
 
                     b.ToTable("Certificates");
                 });
@@ -134,20 +132,47 @@ namespace CertificateService.Infrastructure.Migrations
                     b.ToTable("MediaFiles");
                 });
 
+            modelBuilder.Entity("CertificateService.Domain.Entities.MediaProjection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MediaId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Url", "MediaId")
+                        .IsUnique();
+
+                    b.ToTable("MediaProjections");
+                });
+
+            modelBuilder.Entity("CertificateService.Domain.Entities.Certificate", b =>
+                {
+                    b.HasOne("CertificateService.Domain.Entities.MediaProjection", "MediaProjection")
+                        .WithMany()
+                        .HasForeignKey("MediaProjectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MediaProjection");
+                });
+
             modelBuilder.Entity("CertificateService.Domain.Entities.CertificatePost", b =>
                 {
                     b.HasOne("CertificateService.Domain.Entities.Certificate", "certificate")
-                        .WithMany("Posts")
+                        .WithMany()
                         .HasForeignKey("CertificateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("certificate");
-                });
-
-            modelBuilder.Entity("CertificateService.Domain.Entities.Certificate", b =>
-                {
-                    b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618
         }

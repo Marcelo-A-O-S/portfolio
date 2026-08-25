@@ -14,14 +14,12 @@ namespace CertificateService.Infrastructure.Repositories
         public async Task Delete(T entity)
         {
             this.context.Set<T>().Remove(entity);
-            await this.context.SaveChangesAsync();
         }
 
         public async Task DeleteById(Guid Id)
         {
             var entity = await this.context.Set<T>().FindAsync(Id);
             this.context.Set<T>().Remove(entity);
-            await this.context.SaveChangesAsync();
         }
 
         public async Task<T> FindBy(Expression<Func<T, bool>> predicate)
@@ -51,13 +49,11 @@ namespace CertificateService.Infrastructure.Repositories
         public async Task Save(T entity)
         {
             await this.context.Set<T>().AddAsync(entity);
-            await this.context.SaveChangesAsync();
         }
 
         public async Task Update(T entity)
         {
             this.context.Set<T>().Update(entity);
-            await this.context.SaveChangesAsync();
         }
     }
 }
