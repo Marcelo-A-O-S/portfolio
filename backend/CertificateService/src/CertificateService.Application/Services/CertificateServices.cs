@@ -31,6 +31,11 @@ namespace CertificateService.Application.Services
             return await this.certificateRepository.GetById(Id);
         }
 
+        public async Task<PaginatedResult<Certificate>> GetByPagination(int page, string? search, int itemsPage = 10)
+        {
+            return await this.certificateRepository.GetByPagination(page,search,itemsPage);
+        }
+
         public async Task<List<Certificate>> List()
         {
             return await this.certificateRepository.List();
