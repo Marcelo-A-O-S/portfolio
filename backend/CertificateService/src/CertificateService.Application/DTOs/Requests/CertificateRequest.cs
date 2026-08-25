@@ -10,12 +10,8 @@ namespace CertificateService.Application.DTOs.Requests
         public string Title { get; set;}
         [Required( ErrorMessage = "A descrição do certificado é obrigatório")]
         public string Description { get; set;}
-        [Required( ErrorMessage ="A imagem principal do projeto é obrigatório.")]
-        public string? ImgUrl { get; set; }
-        [MaxFileSize(2 * 1024 * 1024, ErrorMessage = "O tamanho maximo aceito de imagem é 2 MB.")]
-        [AllowedExtension(new[] { ".jpg", ".png", ".jpeg" })]
-        [ValidationImage]
-        public IFormFile? ImgFile { get; set; }
+        [Required( ErrorMessage ="A imagem principal é obrigatória.")]
+        public MediaRequest Media { get; set; }
         public string? CredentialId { get; set; }
         public string? VerificationUrl { get; set; }
         [Required( ErrorMessage ="A nome da instituição do certificado é obrigatório.")]

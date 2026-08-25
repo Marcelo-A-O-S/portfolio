@@ -1,35 +1,33 @@
-using CertificateService.Domain.Enums;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Runtime.ConstrainedExecution;
+using CertificateService.Domain.Enums;
 namespace CertificateService.Domain.Entities
 {
     public class Certificate
     {
-        public Guid Id { get; private set;}
-        public string Title { get; private set;}
-        public string Description { get; private set;}
-        public string ImgUrl { get; private set; }
-        public Guid? MediaFileId { get; private set; }
-        public DateTime CreatedAt { get; private set;}
+        public Guid Id { get; private set; }
+        public Guid MediaProjectionId { get; private set; }
+        public MediaProjection MediaProjection { get; private set; }
+        public string Title { get; private set; }
+        public string Description { get; private set; }
+        public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public DateTime IssuerDate { get; private set; }
         public string? CredentialId { get; private set; }
         public string? VerificationUrl { get; private set; }
-        public string Institution { get; private set;}
+        public string Institution { get; private set; }
         public int? WorkLoadHours { get; private set; }
-        public Status Status { get; private set;}
+        public Status Status { get; private set; }
         public CertificateType CertificateType { get; private set; }
-        public ICollection<CertificatePost>? Posts { get; private set; }
         public Certificate(
-            string title, 
-            string description, 
-            string institution, 
-            Status status, 
-            CertificateType certificateType, 
-            DateTime issuerDate,
+            string title,
+            string description,
+            string institution,
             string? credentialId,
             string? verificationUrl,
-            int? workLoadHours)
+            int? workLoadHours,
+            Status status,
+            CertificateType certificateType,
+            DateTime issuerDate)
         {
             this.Title = title;
             this.Description = description;
@@ -43,17 +41,17 @@ namespace CertificateService.Domain.Entities
             this.CreatedAt = DateTime.UtcNow;
             this.UpdatedAt = DateTime.UtcNow;
         }
-        public void AddImgUrl(string imgUrl, Guid mediaId)
+        public void AddImgUrl(Guid mediaProjectId)
         {
-            this.ImgUrl = imgUrl;
-            this.MediaFileId = mediaId;
+            this.MediaProjectionId = mediaProjectId;
+            this.UpdatedAt = DateTime.UtcNow;
         }
         public void Update(
-            string title, 
-            string description, 
-            string institution, 
-            Status status, 
-            CertificateType certificateType, 
+            string title,
+            string description,
+            string institution,
+            Status status,
+            CertificateType certificateType,
             DateTime issuerDate,
             string? credentialId,
             string? verificationUrl,

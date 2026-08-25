@@ -1,52 +1,70 @@
+using System.Runtime.ConstrainedExecution;
 using CertificateService.Application.DTOs.Requests;
+using CertificateService.Application.Exceptions;
 using CertificateService.Application.Interfaces;
 using CertificateService.Application.UseCases.Certificates.Interfaces;
 using CertificateService.Application.Validations;
 using CertificateService.Domain.Entities;
-using CertificateService.Application.Exceptions;
+using CertificateService.Domain.Interfaces;
 namespace CertificateService.Application.UseCases.Certificates
 {
     public class UpdateCertificate : IUpdateCertificate
     {
-        private readonly IMediaFilesServices mediaFilesServices;
+        private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly ICertificateServices certificateServices;
         private readonly ICertificateCacheServices certificateCacheServices;
+        private readonly IRabbitMQProducer rabbitMQProducer;
+        private readonly IUnitOfWork unitOfWork;
         public UpdateCertificate(
-            IMediaFilesServices _mediaFilesServices,
+            IMediaProjectionServices _mediaProjectionServices,
             ICertificateServices _certificateServices,
-            ICertificateCacheServices _certificateCacheServices
+            ICertificateCacheServices _certificateCacheServices,
+            IRabbitMQProducer _rabbitMQProducer,
+            IUnitOfWork _unitOfWork
         )
         {
-            this.mediaFilesServices = _mediaFilesServices;
+            this.mediaProjectionServices = _mediaProjectionServices;
             this.certificateServices = _certificateServices;
             this.certificateCacheServices = _certificateCacheServices;
+            this.rabbitMQProducer = _rabbitMQProducer;
+            this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid certificateId, CertificateRequest certificateRequest)
         {
             ValidateRequest(certificateRequest);
             var certificate = await GetCertificateById(certificateId);
-            var mediasToDelete = new List<MediaFile>();
-            var mediasToCommit = new List<MediaFile>();
-            certificate.Update(
-                certificateRequest.Title, 
-                certificateRequest.Description, 
-                certificateRequest.Institution,
-                certificateRequest.Status,
-                certificateRequest.CertificateType,
-                certificateRequest.IssueDate,
-                certificateRequest.CredentialId,
-                certificateRequest.VerificationUrl,
-                certificateRequest.WorkloadHours
-            );
-            await UpdateImageCertificate(certificate, certificateRequest, mediasToCommit, mediasToDelete);
-            await this.certificateServices.Update(certificate);
-            await CommitMedias(mediasToCommit);
-            await DeleteMedias(mediasToDelete);
+            var mediasToDelete = new List<MediaProjection>();
+            var mediasToCommit = new List<MediaProjection>();
+            await this.unitOfWork.BeginAsync();
+            try
+            {
+                certificate.Update(
+                    certificateRequest.Title,
+                    certificateRequest.Description,
+                    certificateRequest.Institution,
+                    certificateRequest.Status,
+                    certificateRequest.CertificateType,
+                    certificateRequest.IssueDate,
+                    certificateRequest.CredentialId,
+                    certificateRequest.VerificationUrl,
+                    certificateRequest.WorkloadHours
+                );
+                await ProcessImage(certificate, certificateRequest.Media, mediasToCommit, mediasToDelete);
+                await this.certificateServices.Update(certificate);
+                await DeleteMedias(mediasToDelete);
+                await this.unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
+            await PublishMedias(certificate.Id, mediasToCommit, mediasToDelete);
         }
         private static void ValidateRequest(CertificateRequest certificateRequest)
         {
             var validationError = ValidationHelper.Validate(certificateRequest);
-            if(validationError.Count > 0)
+            if (validationError.Count > 0)
             {
                 var errors = string.Join(", ", validationError.Select(e => e.ErrorMessage));
                 throw new ValidationException($"Erro ao validar dados: {errors}");
@@ -54,43 +72,72 @@ namespace CertificateService.Application.UseCases.Certificates
         }
         private async Task<Certificate> GetCertificateById(Guid certificateId)
         {
-            var certificate =  await this.certificateServices.GetById(certificateId);
-            if(certificate == null)
+            var certificate = await this.certificateServices.GetById(certificateId);
+            if (certificate == null)
                 throw new NotFoundException("Certificado não encontrado.");
             return certificate;
         }
-        private async Task UpdateImageCertificate(Certificate certificate, CertificateRequest request, List<MediaFile> mediasToCommit, List<MediaFile> mediasToDelete)
+        private async Task ProcessImage(Certificate certificate, MediaRequest mediaRequest, List<MediaProjection> mediasToCommit, List<MediaProjection> mediasToDelete)
         {
-            if(certificate.ImgUrl != request.ImgUrl)
+            var validationError = ValidationHelper.Validate(mediaRequest);
+            if (validationError.Count > 0)
             {
-                if(certificate.MediaFileId is Guid mediaFileId)
-                {
-                    var media = await this.mediaFilesServices.GetById(mediaFileId);
-                    if(media != null)
-                    {
-                        mediasToDelete.Add(media);
-                    }
-                }
-                if(request.ImgFile == null)
-                    throw new ValidationException("O arquivo de imagem é obrigatório.");
-                var newMedia = await this.mediaFilesServices.SaveImageAsync(request.ImgFile!, "media/certificates");
-                certificate.AddImgUrl(newMedia!.Path, newMedia.Id);
-                mediasToCommit.Add(newMedia);
+                var errors = string.Join(", ", validationError.Select(e => e.ErrorMessage));
+                throw new ValidationException($"Erro ao validar dados: {errors}");
             }
+            if (certificate.MediaProjectionId == mediaRequest.Id)
+                return;
+            if (!mediasToDelete.Any(m => m.MediaId == certificate.MediaProjection.MediaId))
+            {
+                mediasToDelete.Add(certificate.MediaProjection);
+            }
+            var mediaContent = await this.mediaProjectionServices.GetByUrl(mediaRequest.Url);
+            if (mediaContent != null)
+            {
+                if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
+                {
+                    mediasToCommit.Add(mediaContent);
+                }
+                certificate.AddImgUrl(mediaContent.Id);
+                return;
+            }
+            mediaContent = new MediaProjection(mediaRequest.MediaId, mediaRequest.Url);
+            mediaContent.GenerateId();
+            await this.mediaProjectionServices.Save(mediaContent);
+            if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
+            {
+                mediasToCommit.Add(mediaContent);
+            }
+            certificate.AddImgUrl(mediaContent.Id);
         }
-        private async Task CommitMedias(List<MediaFile> mediasToCommit)
+        private async Task PublishMedias(Guid certificateId, List<MediaProjection> mediasToCommit, List<MediaProjection> mediasToDelete)
         {
+            foreach (var media in mediasToDelete)
+            {
+                await this.rabbitMQProducer.Publish("CertificateMediaDeleted", new
+                {
+                    MediaId = media.MediaId,
+                    OwnerType = "Certificate"
+                });
+            }
             foreach (var media in mediasToCommit)
             {
-                media.Commit();
-                await this.mediaFilesServices.Update(media);
+                await this.rabbitMQProducer.Publish("CertificateMediaAttached", new
+                {
+                    MediaId = media.MediaId,
+                    OwnerId = certificateId,
+                    OwnerType = "Certificate"
+                });
             }
         }
-        private async Task DeleteMedias(List<MediaFile> mediasToDelete)
+        private async Task DeleteMedias(List<MediaProjection> mediasToDelete)
         {
-            foreach (var mediaDelete in mediasToDelete)
+            foreach (var media in mediasToDelete)
             {
-                await this.mediaFilesServices.DeleteImageAsync(mediaDelete);
+                if (media.Id != Guid.Empty)
+                {
+                    await this.mediaProjectionServices.Delete(media);
+                }
             }
         }
     }
