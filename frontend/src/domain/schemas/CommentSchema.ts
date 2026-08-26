@@ -7,7 +7,7 @@ const commentBaseSchema = z.object({
     id: z.uuid().optional(),
     targetId: z.uuid(),
     type: commentTypeSchema,
-    content: z.string({}),
+    content: z.string().nonempty(),
     user: userSchema.optional(),
     likes: z.number().optional(),
     liked: z.boolean().optional(),

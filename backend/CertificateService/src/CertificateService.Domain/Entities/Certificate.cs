@@ -5,19 +5,19 @@ namespace CertificateService.Domain.Entities
     public class Certificate
     {
         public Guid Id { get; private set; }
-        public Guid MediaProjectionId { get; private set; }
-        public MediaProjection MediaProjection { get; private set; }
+        public Guid? MediaProjectionId { get; private set; }
+        public MediaProjection? MediaProjection { get; private set; }
         public string Title { get; private set; }
         public string Description { get; private set; }
-        public DateTime CreatedAt { get; private set; }
-        public DateTime UpdatedAt { get; private set; }
-        public DateTime IssuerDate { get; private set; }
         public string? CredentialId { get; private set; }
         public string? VerificationUrl { get; private set; }
         public string Institution { get; private set; }
         public int? WorkLoadHours { get; private set; }
         public Status Status { get; private set; }
         public CertificateType CertificateType { get; private set; }
+        public DateTime CreatedAt { get; private set; }
+        public DateTime UpdatedAt { get; private set; }
+        public DateTime IssuerDate { get; private set; }
         public Certificate(
             string title,
             string description,
@@ -41,11 +41,6 @@ namespace CertificateService.Domain.Entities
             this.CreatedAt = DateTime.UtcNow;
             this.UpdatedAt = DateTime.UtcNow;
         }
-        public void AddImgUrl(Guid mediaProjectId)
-        {
-            this.MediaProjectionId = mediaProjectId;
-            this.UpdatedAt = DateTime.UtcNow;
-        }
         public void Update(
             string title,
             string description,
@@ -67,6 +62,11 @@ namespace CertificateService.Domain.Entities
             this.CredentialId = credentialId;
             this.VerificationUrl = verificationUrl;
             this.WorkLoadHours = workLoadHours;
+        }
+        public void AddMedia(Guid mediaProjectId)
+        {
+            this.MediaProjectionId = mediaProjectId;
+            this.UpdatedAt = DateTime.UtcNow;
         }
     }
 }

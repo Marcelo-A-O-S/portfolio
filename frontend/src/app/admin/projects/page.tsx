@@ -11,6 +11,7 @@ import CardProject from "./components/card-project";
 import { createPageURL, generatePagination } from "@/lib/utils";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
 export default function ProjectPage() {
     const { data: session } = useSession();
     const router = useRouter();
@@ -20,7 +21,7 @@ export default function ProjectPage() {
     const [searchInput, setSearchInput] = useState(search ?? "");
     const debouncedSearch = useDebounce(searchInput, 500);
     const { data: languages } = useLanguages();
-    const { data: projects } = usePaginationProject({
+    const { data: projects, isLoading, error } = usePaginationProject({
         page,
         search
     })
@@ -56,13 +57,17 @@ export default function ProjectPage() {
                     <div className="flex md:px-10 gap-2">
                     </div>
                     <div className="flex justify-center py-10 md:p-10">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
-                            {projects?.items.map((item, index) => (
-                                <CardProject key={index} item={item} languages={languages} />
-                            ))}
-                        </div>
+                        {isLoading? (
+                            <Skeleton className="h-[400px] w-full" />
+                        ):(
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
+                                {projects?.items.map((item, index) => (
+                                    <CardProject key={index} item={item} languages={languages} />
+                                ))}
+                            </div>
+                        )}
                     </div>
-                    <div className="relative bottom-0 ">
+                    <div className="relative bottom-0">
                         <Pagination>
                             <PaginationContent>
                                 <PaginationItem>

@@ -3,7 +3,7 @@ import { languageSchema } from "./LanguageSchema";
 
 export const linkDescriptionSchema = z.object({
     id: z.uuid().optional(),
-    title: z.string(),
+    title: z.string().nonempty(),
     languageId: z.uuid(),
     language: languageSchema.optional()
 })

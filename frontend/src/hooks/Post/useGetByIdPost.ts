@@ -9,7 +9,7 @@ export function useGetByIdPost(postId?: string){
         queryFn: async() => {
             const response = await getPostByIdService(postId!);
             if(response.status != 200){
-                return toast(response.data.message)
+                return toast.error(response.data.message)
             }
             return response.data;
         }

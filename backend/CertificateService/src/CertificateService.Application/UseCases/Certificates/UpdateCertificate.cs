@@ -98,7 +98,7 @@ namespace CertificateService.Application.UseCases.Certificates
                 {
                     mediasToCommit.Add(mediaContent);
                 }
-                certificate.AddImgUrl(mediaContent.Id);
+                certificate.AddMedia(mediaContent.Id);
                 return;
             }
             mediaContent = new MediaProjection(mediaRequest.MediaId, mediaRequest.Url);
@@ -108,7 +108,7 @@ namespace CertificateService.Application.UseCases.Certificates
             {
                 mediasToCommit.Add(mediaContent);
             }
-            certificate.AddImgUrl(mediaContent.Id);
+            certificate.AddMedia(mediaContent.Id);
         }
         private async Task PublishMedias(Guid certificateId, List<MediaProjection> mediasToCommit, List<MediaProjection> mediasToDelete)
         {

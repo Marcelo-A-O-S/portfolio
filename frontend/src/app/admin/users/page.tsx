@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { createPageURL, generatePagination, updateFilter } from "@/lib/utils";
 import { useDebounce } from "@/hooks/useDebounce";
 import { SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem, Select } from "@/components/ui/select";
-import { useGetUsersByPagination } from "@/hooks/useGetUsersByPagination";
+import { useGetUsersByPagination } from "@/hooks/User/useGetUsersByPagination";
 
 export default function UsersPage() {
     const { data: session } = useSession()

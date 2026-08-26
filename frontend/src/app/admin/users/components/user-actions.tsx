@@ -1,7 +1,7 @@
 "use client"
 import DialogAccounts from "@/app/admin/users/components/dialog-accounts"
 import { User } from "@/domain/types/User"
-import { useModifyRole } from "@/hooks/useModifyRole"
+import { useModifyRole } from "@/hooks/User/useModifyRole"
 import { MoreHorizontal } from "lucide-react"
 import Link from "next/link"
 import { Button } from "../../../../components/ui/button"

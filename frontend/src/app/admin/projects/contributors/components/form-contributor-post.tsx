@@ -10,7 +10,7 @@ import { contributorSchema, ContributorSchema } from "@/domain/schemas/Contribut
 import { useAddContributorPost } from "@/hooks/Post/Contributor/useAddContributorPost";
 import { useUpdateContributorPost } from "@/hooks/Post/Contributor/useUpdateContributorPost";
 import { useDebounce } from "@/hooks/useDebounce";
-import { useGetUsers } from "@/hooks/useGetUsers";
+import { useGetUsers } from "@/hooks/User/useGetUsers";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";

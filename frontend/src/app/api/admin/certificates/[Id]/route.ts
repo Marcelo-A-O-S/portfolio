@@ -1,7 +1,7 @@
-import { postSchema } from "@/domain/schemas/PostSchema";
+import { certificateSchema } from "@/domain/schemas/CertificateSchema";
 import { handleApiError } from "@/lib/api-error";
 import { validateUserByRequest } from "@/services/server/auth-services";
-import { deletePostByRouteService, getPostByIdService, updatePostService } from "@/services/server/post-services";
+import { deleteCertificateByRouteService, deleteCertificateService, getCertificateByIdService, updateCertificateService } from "@/services/server/certificate-services";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ Id: string }> }) {
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
                 status: 400
             });
         }
-        const response = await getPostByIdService(Id);
+        const response = await getCertificateByIdService(Id);
         if (response.status !== 200) {
             return NextResponse.json({
                 message: response.data.message
@@ -44,16 +44,16 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
             });
         }
         const data = await request.json();
-        const result = await postSchema.safeParseAsync(data);
-        if (result.error) {
+        const result = await certificateSchema.safeParseAsync(data);
+        if (!result.success) {
             return NextResponse.json({
                 message: `Erro ao validar dados: ${result.error.message}`
             }, {
                 status: 400
             });
         }
-        const post = result.data;
-        const response = await updatePostService(Id, post);
+        const certificate = result.data;
+        const response = await updateCertificateService(Id, certificate);
         if (response.status !== 200) {
             return NextResponse.json({
                 message: response.data.message
@@ -61,7 +61,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
                 status: response.data
             })
         }
-        return NextResponse.json({ message: "Postagem atualizada com sucesso." })
+        return NextResponse.json({ message: "Certificado atualizado com sucesso." })
     } catch (error) {
         return handleApiError(error);
     }
@@ -79,7 +79,17 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
                 status: 400
             });
         }
-        const response = await deletePostByRouteService(Id);
+        const data = await request.json();
+        const result = await certificateSchema.safeParseAsync(data);
+        if (!result.success) {
+            return NextResponse.json({
+                message: `Erro ao validar dados: ${result.error.message}`
+            }, {
+                status: 400
+            });
+        }
+        const certificate = result.data;
+        const response = await deleteCertificateService(Id, certificate);
         if (response.status !== 200) {
             return NextResponse.json({
                 message: response.data.message
@@ -87,9 +97,8 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
                 status: response.data
             })
         }
-        return NextResponse.json({ message: "Postagem deletada com sucesso." })
+        return NextResponse.json({ message: "Certificado deletado com sucesso." })
     } catch (error) {
         return handleApiError(error);
     }
-
 }
