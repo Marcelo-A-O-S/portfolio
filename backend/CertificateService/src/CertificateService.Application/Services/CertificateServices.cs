@@ -36,6 +36,11 @@ namespace CertificateService.Application.Services
             return await this.certificateRepository.GetByPagination(page,search,itemsPage);
         }
 
+        public async Task<Certificate> GetCertificateById(Guid certificateId)
+        {
+            return await this.certificateRepository.GetCertificateById(certificateId);
+        }
+
         public async Task<List<Certificate>> List()
         {
             return await this.certificateRepository.List();

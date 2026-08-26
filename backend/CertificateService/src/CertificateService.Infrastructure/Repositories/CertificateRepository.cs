@@ -38,5 +38,16 @@ namespace CertificateService.Infrastructure.Repositories
                 TotalPages = (int)Math.Ceiling(totalItems / (double)itemsPage)
             };
         }
+
+        public async Task<Certificate> GetCertificateById(Guid certificateId)
+        {
+            var item = await this.context.Certificates
+                .AsNoTracking()
+                .AsSplitQuery()
+                .Where(c => c.Id == certificateId)
+                .Include(c => c.MediaProjection)
+                .FirstOrDefaultAsync();
+            return item;
+        }
     }
 }

@@ -35,6 +35,15 @@ namespace CertificateService.API.Controllers
             var result = await this.certificateServices.GetByPagination(page,search);
             return Ok(result);
         }
+        [HttpGet("GetPostById/{Id}")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
+        public async Task<IActionResult> GetCertificateById([FromRoute] Guid Id)
+        {
+            var certificate = await certificateServices.GetCertificateById(Id);
+            if(certificate == null)
+                return NotFound();
+            return Ok(certificate);
+        }
         [HttpPost]
         [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> CreateCertificate([FromForm] CertificateRequest certificateRequest)
