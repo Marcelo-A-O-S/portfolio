@@ -29,23 +29,25 @@ export default function CertificateCreate() {
         resolver: zodResolver(certificateSchema),
         defaultValues: {
             status: "DRAFT",
+            media: undefined
         }
     })
-    useEffect(()=>{
+    useEffect(() => {
         if (!certificate) return;
         reset({
             ...certificate
         })
-    },[certificate, reset])
+    }, [certificate, reset])
     const onSubmit = async (data: CertificateSchema) => {
+        console.log(data);
         if(certificate){
             if(certificate.id != null)
-                await updateCertificate({id:certificate.id, data:certificate });
+                await updateCertificate({id:certificate.id, data:data });
         }else{
-            await createCertificate(certificate);
+            await createCertificate(data);
         }
     }
-    const handleImage = async (e: React.ChangeEvent<HTMLInputElement>, field: ControllerRenderProps<CertificateSchema, `media.url`>) => {
+    const handleImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
         const response = await addMediaService({
@@ -73,7 +75,7 @@ export default function CertificateCreate() {
             <main className="relative mx-auto flex min-h-full inset-0 w-full max-w-[1440px] justify-center">
                 <section className="relative w-full min-h-screen px-10 py-20 flex flex-col">
                     <div className="flex flex-col gap-3 sm:flex-row py-10 md:p-10 sm:items-center justify-between">
-                        <h1 className="text-3xl md:text-5xl font-semibold">{certificate? `Update Certificate`: `Create Certificate`}</h1>
+                        <h1 className="text-3xl md:text-5xl font-semibold">{certificate ? `Update Certificate` : `Create Certificate`}</h1>
                     </div>
                     <div className="flex md:p-10">
                         <form onSubmit={handleSubmit(onSubmit,
@@ -83,7 +85,7 @@ export default function CertificateCreate() {
                             })} className="flex-1 flex flex-col gap-2 min-h-0">
                             <Card className="">
                                 <CardHeader className="flex flex-col md:flex-row md:items-center justify-between">
-                                    <CardTitle>{certificate? `Update Certificate`: `Write Certificate`}</CardTitle>
+                                    <CardTitle>{certificate ? `Update Certificate` : `Write Certificate`}</CardTitle>
                                     <div className="flex gap-2">
                                         <Controller
                                             name="status"
@@ -140,23 +142,18 @@ export default function CertificateCreate() {
                                         </div>
                                     </div>
                                     <div className="py-2">
-                                        <Controller
-                                            name={`media.url`}
-                                            control={control}
-                                            render={({ field }) => (
-                                                <div className="grid gap-2">
-                                                    <div className="flex flex-col gap-2">
-                                                        <Label htmlFor="imgFile">Imagem</Label>
-                                                        <Input
-                                                            onChange={(e) => handleImage(e, field)}
-                                                            type="file"
-                                                            className="cursor-pointer"
-                                                        />
-                                                    </div>
-                                                    {errors.media && <span className="text-wrap text-red-600 text-sm">{errors.media.message}</span>}
-                                                </div>
-                                            )}
-                                        />
+                                        <div className="grid gap-2">
+                                            <div className="flex flex-col gap-2">
+                                                <Label htmlFor="imgFile">Imagem</Label>
+                                                <Input
+                                                    id="imgFile"
+                                                    type="file"
+                                                    className="cursor-pointer"
+                                                    onChange={handleImage}
+                                                />
+                                            </div>
+                                            {errors.media && <span className="text-wrap text-red-600 text-sm">{errors.media.message}</span>}
+                                        </div>
                                     </div>
                                     <div className="py-2">
                                         <Controller
@@ -212,7 +209,7 @@ export default function CertificateCreate() {
                                             )}
                                         />
                                     </div>
-                                    <div className="py-2">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 py-2">
                                         <Controller
                                             name={`verificationUrl`}
                                             control={control}
@@ -226,24 +223,6 @@ export default function CertificateCreate() {
                                                         />
                                                     </div>
                                                     {errors.verificationUrl && <span className="text-wrap text-red-600 text-sm">{errors.verificationUrl.message}</span>}
-                                                </Field>
-                                            )}
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 py-2">
-                                        <Controller
-                                            name={`credentialId`}
-                                            control={control}
-                                            render={({ field }) => (
-                                                <Field className="grid gap-2">
-                                                    <div className="flex flex-col gap-2">
-                                                        <Label htmlFor="credential">Credential</Label>
-                                                        <Input
-                                                            {...field}
-                                                            placeholder="Informe a instituição..."
-                                                        />
-                                                    </div>
-                                                    {errors.credentialId && <span className="text-wrap text-red-600 text-sm">{errors.credentialId.message}</span>}
                                                 </Field>
                                             )}
                                         />
@@ -277,6 +256,55 @@ export default function CertificateCreate() {
                                                         </Select>
                                                     </div>
                                                     {errors.certificateType && <span className="text-wrap text-red-600 text-sm">{errors.certificateType.message}</span>}
+                                                </Field>
+                                            )}
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 py-2">
+                                        <Controller
+                                            name={`credentialId`}
+                                            control={control}
+                                            render={({ field }) => (
+                                                <Field className="grid gap-2">
+                                                    <div className="flex flex-col gap-2">
+                                                        <Label htmlFor="credential">Credential</Label>
+                                                        <Input
+                                                            {...field}
+                                                            placeholder="Informe a instituição..."
+                                                        />
+                                                    </div>
+                                                    {errors.credentialId && <span className="text-wrap text-red-600 text-sm">{errors.credentialId.message}</span>}
+                                                </Field>
+                                            )}
+                                        />
+                                        <Controller
+                                            name={`issuerDate`}
+                                            control={control}
+                                            render={({ field }) => (
+                                                <Field className="grid gap-2">
+                                                    <div className="flex flex-col gap-2">
+                                                        <Label htmlFor="credential">Issuer Date *</Label>
+                                                        <Input
+                                                            value={
+                                                                field.value
+                                                                    ? field.value.toISOString().split("T")[0]
+                                                                    : ""
+                                                            }
+                                                            onChange={(event) => {
+                                                                field.onChange(
+                                                                    event.target.value
+                                                                        ? new Date(event.target.value)
+                                                                        : null
+                                                                );
+                                                            }}
+                                                            name={field.name}
+                                                            ref={field.ref}
+                                                            onBlur={field.onBlur}
+                                                            type="date"
+                                                            placeholder="Informe a instituição..."
+                                                        />
+                                                    </div>
+                                                    {errors.credentialId && <span className="text-wrap text-red-600 text-sm">{errors.credentialId.message}</span>}
                                                 </Field>
                                             )}
                                         />

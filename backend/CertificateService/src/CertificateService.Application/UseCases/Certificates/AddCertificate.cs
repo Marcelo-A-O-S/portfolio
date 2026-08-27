@@ -44,12 +44,13 @@ namespace CertificateService.Application.UseCases.Certificates
                 request.WorkloadHours,
                 request.Status,
                 request.CertificateType,
-                request.IssueDate
+                request.IssuerDate
             );
             await this.unitOfWork.BeginAsync();
             try
             {
-                await ProcessImage(certificate, request.Media, mediasToCommit);
+                if(request.Media != null)
+                    await ProcessImage(certificate, request.Media, mediasToCommit);
                 await this.certificateServices.Save(certificate);
                 await this.unitOfWork.CommitAsync();
             }

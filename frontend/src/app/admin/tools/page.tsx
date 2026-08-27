@@ -11,6 +11,7 @@ import CardTool from "./components/card-tool";
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationEllipsis, PaginationLink, PaginationNext } from "@/components/ui/pagination";
 import { createPageURL, generatePagination } from "@/lib/utils";
 import { useDebounce } from "@/hooks/useDebounce";
+import { Skeleton } from "@/components/ui/skeleton";
 export default function ToolsPage() {
     const { data: session } = useSession();
     const router = useRouter();
@@ -20,7 +21,7 @@ export default function ToolsPage() {
     const [searchInput, setSearchInput] = useState(search ?? "");
     const debouncedSearch = useDebounce(searchInput, 500);
     const { data: languages } = useLanguages();
-    const { data: tools } = usePaginationTool({
+    const { data: tools, isLoading, error } = usePaginationTool({
         page,
         search
     });
@@ -56,11 +57,15 @@ export default function ToolsPage() {
 
                 </div>
                 <div className="flex justify-center py-10 md:p-10">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
-                        {tools?.items.map((item, index) => (
-                            <CardTool key={index} item={item} languages={languages} />
-                        ))}
-                    </div>
+                    {isLoading ? (
+                        <Skeleton className="h-[400px] w-full" />
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
+                            {tools?.items.map((item, index) => (
+                                <CardTool key={index} item={item} languages={languages} />
+                            ))}
+                        </div>
+                    )}
                 </div>
                 <div className="relative bottom-0 ">
                     <Pagination>

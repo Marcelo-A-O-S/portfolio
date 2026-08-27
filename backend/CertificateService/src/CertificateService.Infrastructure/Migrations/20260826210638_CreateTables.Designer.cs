@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CertificateService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20260825221326_UpdateTableCertificate")]
-    partial class UpdateTableCertificate
+    [Migration("20260826210638_CreateTables")]
+    partial class CreateTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

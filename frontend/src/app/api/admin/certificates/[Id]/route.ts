@@ -79,17 +79,19 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
                 status: 400
             });
         }
-        const data = await request.json();
-        const result = await certificateSchema.safeParseAsync(data);
-        if (!result.success) {
-            return NextResponse.json({
-                message: `Erro ao validar dados: ${result.error.message}`
-            }, {
-                status: 400
-            });
-        }
-        const certificate = result.data;
-        const response = await deleteCertificateService(Id, certificate);
+        // const data = await request.json();
+        // console.log("Dados: ",data);
+        // const result = await certificateSchema.safeParseAsync(data);
+        // if (!result.success) {
+        //     console.log(`Erro ao validar dados: ${result.error.message}`)
+        //     return NextResponse.json({
+        //         message: `Erro ao validar dados: ${result.error.message}`
+        //     }, {
+        //         status: 400
+        //     });
+        // }
+        // const certificate = result.data;
+        const response = await deleteCertificateByRouteService(Id);
         if (response.status !== 200) {
             return NextResponse.json({
                 message: response.data.message

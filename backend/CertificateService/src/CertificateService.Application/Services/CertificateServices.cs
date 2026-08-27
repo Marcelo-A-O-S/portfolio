@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using CertificateService.Application.Interfaces;
 using CertificateService.Domain.Entities;
 using CertificateService.Domain.Interfaces;
+using CertificateService.Domain.Queries;
 namespace CertificateService.Application.Services
 {
     public class CertificateServices : ICertificateServices
@@ -31,7 +32,7 @@ namespace CertificateService.Application.Services
             return await this.certificateRepository.GetById(Id);
         }
 
-        public async Task<PaginatedResult<Certificate>> GetByPagination(int page, string? search, int itemsPage = 10)
+        public async Task<PaginatedResult<CertificateView>> GetByPagination(int page, string? search, int itemsPage = 10)
         {
             return await this.certificateRepository.GetByPagination(page,search,itemsPage);
         }

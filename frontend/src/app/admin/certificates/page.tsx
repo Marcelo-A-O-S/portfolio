@@ -2,13 +2,16 @@
 import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
 import { usePaginationCertificate } from "@/hooks/Certificate/usePaginationCertificate";
 import { useDebounce } from "@/hooks/useDebounce";
 import { createPageURL, generatePagination } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { getCertificateColumns } from "./components/certificate-columns";
+import { DataTable } from "@/components/data-table";
 
 export default function CertificatePage() {
     const { data: session } = useSession();
@@ -18,6 +21,7 @@ export default function CertificatePage() {
     const search = searchParams.get("search") || undefined;
     const [searchInput, setSearchInput] = useState(search ?? "");
     const debouncedSearch = useDebounce(searchInput, 500);
+    const columns = useMemo(() => getCertificateColumns(), [])
     const { data: certificates, isLoading, error } = usePaginationCertificate({
         page,
         search
@@ -34,6 +38,7 @@ export default function CertificatePage() {
         }
         router.push(`?${params.toString()}`)
     }, [debouncedSearch])
+    console.log("Certificados: ", certificates)
     return (
         <>
             <main className="relative mx-auto flex min-h-screen inset-0 w-full justify-center">
@@ -54,7 +59,11 @@ export default function CertificatePage() {
                     <div className="flex md:px-10 gap-2">
                     </div>
                     <div className="flex justify-center py-10 md:p-10">
-
+                        {isLoading?(
+                            <Skeleton className="h-[400px] w-full" />
+                        ):(
+                            <DataTable columns={columns} data={certificates?.items ?? []} />
+                        )}
                     </div>
                     <div className="relative bottom-0">
                         <Pagination>

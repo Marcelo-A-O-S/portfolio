@@ -36,6 +36,6 @@ export const deleteCertificateService = async (id: string, data: CertificateSche
 }
 export const getCertificateByIdService = async(id: string) => {
     const api = await apiServer();
-    const response = await api.get(`/api/Certificate/${id}`);
+    const response = await api.get(`/api/Certificate/GetCertificateById/${id}`);
     return response;
 }

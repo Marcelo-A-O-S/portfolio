@@ -10,8 +10,7 @@ namespace CertificateService.Application.DTOs.Requests
         public string Title { get; set;}
         [Required( ErrorMessage = "A descrição do certificado é obrigatório")]
         public string Description { get; set;}
-        [Required( ErrorMessage ="A imagem principal é obrigatória.")]
-        public MediaRequest Media { get; set; }
+        public MediaRequest? Media { get; set; }
         public string? CredentialId { get; set; }
         public string? VerificationUrl { get; set; }
         [Required( ErrorMessage ="A nome da instituição do certificado é obrigatório.")]
@@ -22,7 +21,7 @@ namespace CertificateService.Application.DTOs.Requests
         [Required( ErrorMessage ="A tipo do certificado é obrigatório.")]
         public CertificateType  CertificateType { get; set; }
         [Required( ErrorMessage ="A data de emissão do certificado é obrigatório.")]
-        public DateTime IssueDate { get; set; }
+        public DateTime IssuerDate { get; set; }
         
     }
 }

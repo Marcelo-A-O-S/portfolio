@@ -35,7 +35,7 @@ namespace CertificateService.API.Controllers
             var result = await this.certificateServices.GetByPagination(page,search);
             return Ok(result);
         }
-        [HttpGet("GetPostById/{Id}")]
+        [HttpGet("GetCertificateById/{Id}")]
         [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> GetCertificateById([FromRoute] Guid Id)
         {
@@ -46,24 +46,24 @@ namespace CertificateService.API.Controllers
         }
         [HttpPost]
         [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
-        public async Task<IActionResult> CreateCertificate([FromForm] CertificateRequest certificateRequest)
+        public async Task<IActionResult> CreateCertificate([FromBody] CertificateRequest certificateRequest)
         {
             if (ModelState.IsValid)
             {
                 await this.addCertificate.ExecuteAsync(certificateRequest);
-                return Ok();
+                return Ok(new { message = "Certificado criado com sucesso!" });
             }
             var errors = ModelState.Values.Select(e => e.Errors);
             return BadRequest(errors);
         }
         [HttpPut("{Id}")]
         [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
-        public async Task<IActionResult> UpdateCertificate([FromRoute] Guid Id, [FromForm] CertificateRequest certificateRequest)
+        public async Task<IActionResult> UpdateCertificate([FromRoute] Guid Id, [FromBody] CertificateRequest certificateRequest)
         {
             if (ModelState.IsValid)
             {
                 await this.updateCertificate.ExecuteAsync(Id, certificateRequest);
-                return Ok();
+                return Ok(new { message = "Certificado atualizado com sucesso!" });
             }
             var errors = ModelState.Values.Select(e => e.Errors);
             return BadRequest(errors);
@@ -75,7 +75,7 @@ namespace CertificateService.API.Controllers
             if (ModelState.IsValid)
             {
                 await this.removeCertificate.ExecuteAsync(Id);
-                return Ok();
+                return Ok(new { message = "Certificado deletado com sucesso!" });
             }
             var errors = ModelState.Values.Select(e => e.Errors);
             return BadRequest(errors);

@@ -8,7 +8,7 @@ import { toast } from "sonner";
 export function useCreateCertificate() {
     const queryClient = useQueryClient();
     return useMutation<AxiosResponse<ApiResponse>, AxiosError<ApiResponse>, CertificateSchema>({
-        mutationFn: (data: CertificateSchema) => addCertificateService(data),
+        mutationFn: addCertificateService,
         onSuccess: (response) => {
             queryClient.invalidateQueries({
                 queryKey: ["certificate-pagination"]

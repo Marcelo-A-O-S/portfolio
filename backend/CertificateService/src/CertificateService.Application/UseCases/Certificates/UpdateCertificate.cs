@@ -29,9 +29,9 @@ namespace CertificateService.Application.UseCases.Certificates
             this.rabbitMQProducer = _rabbitMQProducer;
             this.unitOfWork = _unitOfWork;
         }
-        public async Task ExecuteAsync(Guid certificateId, CertificateRequest certificateRequest)
+        public async Task ExecuteAsync(Guid certificateId, CertificateRequest request)
         {
-            ValidateRequest(certificateRequest);
+            ValidateRequest(request);
             var certificate = await GetCertificateById(certificateId);
             var mediasToDelete = new List<MediaProjection>();
             var mediasToCommit = new List<MediaProjection>();
@@ -39,17 +39,18 @@ namespace CertificateService.Application.UseCases.Certificates
             try
             {
                 certificate.Update(
-                    certificateRequest.Title,
-                    certificateRequest.Description,
-                    certificateRequest.Institution,
-                    certificateRequest.Status,
-                    certificateRequest.CertificateType,
-                    certificateRequest.IssueDate,
-                    certificateRequest.CredentialId,
-                    certificateRequest.VerificationUrl,
-                    certificateRequest.WorkloadHours
+                    request.Title,
+                    request.Description,
+                    request.Institution,
+                    request.Status,
+                    request.CertificateType,
+                    request.IssuerDate,
+                    request.CredentialId,
+                    request.VerificationUrl,
+                    request.WorkloadHours
                 );
-                await ProcessImage(certificate, certificateRequest.Media, mediasToCommit, mediasToDelete);
+                if(request.Media != null)
+                    await ProcessImage(certificate, request.Media, mediasToCommit, mediasToDelete);
                 await this.certificateServices.Update(certificate);
                 await DeleteMedias(mediasToDelete);
                 await this.unitOfWork.CommitAsync();

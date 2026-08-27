@@ -1,5 +1,7 @@
 using CertificateService.Domain.Entities;
+using CertificateService.Domain.Enums;
 using CertificateService.Domain.Interfaces;
+using CertificateService.Domain.Queries;
 using CertificateService.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 namespace CertificateService.Infrastructure.Repositories
@@ -12,7 +14,7 @@ namespace CertificateService.Infrastructure.Repositories
             this.context = _context;
         }
 
-        public async Task<PaginatedResult<Certificate>> GetByPagination(int page, string? search, int itemsPage = 10)
+        public async Task<PaginatedResult<CertificateView>> GetByPagination(int page, string? search, int itemsPage = 10)
         {
             var query = this.context.Certificates
                 .AsNoTracking()
@@ -29,8 +31,28 @@ namespace CertificateService.Infrastructure.Repositories
             var items = await query
                 .OrderByDescending(c => c.CreatedAt)
                 .Include(c => c.MediaProjection)
+                .Select(c => new CertificateView
+                {
+                    Id = c.Id,
+                    Media = new MediaView
+                    {
+                        Id = c.MediaProjection.Id,
+                        Url = c.MediaProjection.Url
+                    },
+                    Title = c.Title,
+                    Description = c.Description,
+                    CredentialId = c.CredentialId,
+                    VerificationUrl = c.VerificationUrl,
+                    Institution = c.Institution,
+                    WorkLoadHours = c.WorkLoadHours,
+                    Status = c.Status,
+                    CertificateType = c.CertificateType,
+                    CreatedAt = c.CreatedAt,
+                    UpdatedAt = c.UpdatedAt,
+                    IssuerDate = c.IssuerDate
+                })
                 .ToListAsync();
-            return new PaginatedResult<Certificate>
+            return new PaginatedResult<CertificateView>
             {
                 Items = items,
                 TotalItems = totalItems,

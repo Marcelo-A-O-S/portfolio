@@ -34,7 +34,8 @@ namespace CertificateService.Application.UseCases.Certificates
         {
             var certificate = await GetCertificateById(certificateId);
             var mediasToDelete = new List<MediaProjection>();
-            await ProcessImage(certificate, mediasToDelete);
+            if(certificate.MediaProjection != null)
+                await ProcessImage(certificate, mediasToDelete);
             await this.unitOfWork.BeginAsync();
             try
             {

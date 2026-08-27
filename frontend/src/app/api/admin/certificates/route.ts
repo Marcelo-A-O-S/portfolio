@@ -10,8 +10,13 @@ export async function POST(request: NextRequest) {
         if (!allowed)
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         const data = await request.json();
-        const result = await certificateSchema.safeParseAsync(data);
+        const parsedData = {
+            ...data,
+            issuerDate: new Date(data.issuerDate)
+        }
+        const result = await certificateSchema.safeParseAsync(parsedData);
         if(!result.success){
+            console.log(`Erro ao validar dados: ${result.error.message}`)
             return NextResponse.json({
                 message: `Erro ao validar dados: ${result.error.message}`
             }, {
@@ -19,6 +24,8 @@ export async function POST(request: NextRequest) {
             });
         }
         const certificate = result.data;
+        console.log("Dados do Certificado: ",certificate)
+        console.log("Salvando certificado...")
         const response = await addCertificateService(certificate);
         if (response.status !== 200 && response.status !== 201) {
             return NextResponse.json({
