@@ -22,7 +22,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             return NextResponse.json({
                 message: response.data.message
             }, {
-                status: response.data
+                status: response.status
             })
         }
         return NextResponse.json(response.data);
@@ -58,7 +58,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
             return NextResponse.json({
                 message: response.data.message
             }, {
-                status: response.data
+                status: response.status
             })
         }
         return NextResponse.json({ message: "Certificado atualizado com sucesso." })
@@ -96,7 +96,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
             return NextResponse.json({
                 message: response.data.message
             }, {
-                status: response.data
+                status: response.status
             })
         }
         return NextResponse.json({ message: "Certificado deletado com sucesso." })
