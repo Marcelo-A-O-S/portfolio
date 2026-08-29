@@ -22,6 +22,11 @@ namespace CertificateService.Application.Services
             await this.certificateRepository.DeleteById(Id);
         }
 
+        public async Task<bool> Exists(Guid Id)
+        {
+            return await this.certificateRepository.Exists(Id);
+        }
+
         public async Task<Certificate> FindBy(Expression<Func<Certificate, bool>> predicate)
         {
             return await this.certificateRepository.FindBy(predicate);

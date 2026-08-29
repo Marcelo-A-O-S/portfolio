@@ -1,4 +1,4 @@
-using PostService.Application.Caching.Language;
+using PostService.Application.Caching.Interfaces;
 using PostService.Application.Constants;
 using PostService.Application.DTOs.Request;
 using PostService.Application.Exceptions;

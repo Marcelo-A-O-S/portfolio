@@ -24,6 +24,11 @@ namespace CertificateService.Application.Services
             await this.mediaProjectionRepository.DeleteById(Id);
         }
 
+        public async Task<bool> Exists(Guid Id)
+        {
+            return await this.mediaProjectionRepository.Exists(Id);
+        }
+
         public async Task<MediaProjection> FindBy(Expression<Func<MediaProjection, bool>> predicate)
         {
             return await this.mediaProjectionRepository.FindBy(predicate);

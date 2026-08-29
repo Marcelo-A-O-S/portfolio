@@ -1,3 +1,4 @@
+using CertificateService.Application.Caching.Interfaces;
 using CertificateService.Application.Constants;
 using CertificateService.Application.Exceptions;
 using CertificateService.Application.Interfaces;
@@ -10,14 +11,12 @@ namespace CertificateService.Application.UseCases.Certificates
     {
         private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly ICertificateServices certificateServices;
-        private readonly IMediaFilesServices mediaFilesServices;
         private readonly ICertificateCacheServices certificateCacheServices;
         private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly IUnitOfWork unitOfWork;
         public RemoveCertificate(
             IMediaProjectionServices _mediaProjectionServices,
             ICertificateServices _certificateServices,
-            IMediaFilesServices _mediaFilesServices,
             ICertificateCacheServices _certificateCacheServices,
             IRabbitMQProducer _rabbitMQProducer,
             IUnitOfWork _unitOfWork
@@ -25,7 +24,6 @@ namespace CertificateService.Application.UseCases.Certificates
         {
             this.mediaProjectionServices = _mediaProjectionServices;
             this.certificateServices = _certificateServices;
-            this.mediaFilesServices = _mediaFilesServices;
             this.certificateCacheServices = _certificateCacheServices;
             this.rabbitMQProducer = _rabbitMQProducer;
             this.unitOfWork = _unitOfWork;

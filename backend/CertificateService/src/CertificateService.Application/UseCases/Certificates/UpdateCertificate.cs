@@ -1,4 +1,5 @@
 using System.Runtime.ConstrainedExecution;
+using CertificateService.Application.Caching.Interfaces;
 using CertificateService.Application.DTOs.Requests;
 using CertificateService.Application.Exceptions;
 using CertificateService.Application.Interfaces;

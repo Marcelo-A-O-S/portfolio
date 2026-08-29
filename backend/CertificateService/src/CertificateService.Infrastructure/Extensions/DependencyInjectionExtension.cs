@@ -15,13 +15,9 @@ namespace CertificateService.Infrastructure.Extensions
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IGenerics<Certificate>, Generics<Certificate>>();
-            services.AddScoped<IGenerics<CertificatePost>, Generics<CertificatePost>>();
-            services.AddScoped<IGenerics<MediaFile>, Generics<MediaFile>>();
             services.AddScoped<IGenerics<MediaProjection>, Generics<MediaProjection>>();
 
             services.AddScoped<ICertificateRepository, CertificateRepository>();
-            services.AddScoped<ICertificatePostsRepository, CertificatePostsRepository>();
-            services.AddScoped<IMediaFilesRepository, MediaFilesRepository>();
             services.AddScoped<IMediaProjectionRepository, MediaProjectionRepository>();
 
             services.AddSingleton<IRabbitMQProducer, RabbitMQProducer>();

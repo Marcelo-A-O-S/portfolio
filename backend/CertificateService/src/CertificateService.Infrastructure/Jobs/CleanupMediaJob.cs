@@ -2,7 +2,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using CertificateService.Domain.Interfaces;
-
 namespace CertificateService.Infrastructure.Jobs
 {
     public class CleanupMediaJob : BackgroundService
@@ -25,8 +24,8 @@ namespace CertificateService.Infrastructure.Jobs
                 {
                     this.logger.LogInformation("Iniciando limpeza de imagens não utilizadas...");
                     using var scope = this.serviceProvider.CreateScope();
-                    var cleanupMedia = scope.ServiceProvider.GetRequiredService<IMediaFilesRepository>();
-                    await cleanupMedia.DeleteExpiredPendingMediaAsync();
+                    // var cleanupMedia = scope.ServiceProvider.GetRequiredService<IMediaFilesRepository>();
+                    // await cleanupMedia.DeleteExpiredPendingMediaAsync();
                     this.logger.LogInformation("Limpeza de imagens não utilizadas realizada com sucesso!");
                 }
                 catch (Exception ex)

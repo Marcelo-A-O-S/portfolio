@@ -1,11 +1,8 @@
 using PostService.Application.Validators.Interfaces;
-using PostService.Application.Caching.User;
 using PostService.Application.Interfaces;
-using PostService.Application.Caching.Post;
-using PostService.Application.Caching.Tools;
 using PostService.Application.Constants;
 using PostService.Application.Exceptions;
-using PostService.Application.Caching.Language;
+using PostService.Application.Caching.Interfaces;
 
 namespace PostService.Application.Validators
 {

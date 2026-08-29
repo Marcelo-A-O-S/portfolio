@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.ConstrainedExecution;
 using CertificateService.Domain.Enums;
 namespace CertificateService.Domain.Entities
@@ -7,6 +8,7 @@ namespace CertificateService.Domain.Entities
         public Guid Id { get; private set; }
         public Guid? MediaProjectionId { get; private set; }
         public MediaProjection? MediaProjection { get; private set; }
+        public ICollection<PostProjection> PostProjections  { get; private set;}
         public string Title { get; private set; }
         public string Description { get; private set; }
         public string? CredentialId { get; private set; }
@@ -40,6 +42,7 @@ namespace CertificateService.Domain.Entities
             this.WorkLoadHours = workLoadHours;
             this.CreatedAt = DateTime.UtcNow;
             this.UpdatedAt = DateTime.UtcNow;
+            this.PostProjections = new List<PostProjection>();
         }
         public void Update(
             string title,
@@ -67,6 +70,12 @@ namespace CertificateService.Domain.Entities
         {
             this.MediaProjectionId = mediaProjectId;
             this.UpdatedAt = DateTime.UtcNow;
+        }
+        public void AddPostProjection(PostProjection postProjection)
+        {
+            if(this.PostProjections == null)
+                throw new ValidationException("Lista de postagens não inicializada.");
+            this.PostProjections.Add(postProjection);
         }
     }
 }

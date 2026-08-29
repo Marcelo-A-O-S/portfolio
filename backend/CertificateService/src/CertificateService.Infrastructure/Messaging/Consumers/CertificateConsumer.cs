@@ -6,6 +6,7 @@ using CertificateService.Infrastructure.Workers;
 using System.Text.Json;
 using CertificateService.Application.Interfaces;
 using CertificateService.Infrastructure.Messaging.Events;
+using CertificateService.Application.Caching.Interfaces;
 namespace CertificateService.Infrastructure.Messaging.Consumers
 {
     public class CertificateConsumer : BackgroundService

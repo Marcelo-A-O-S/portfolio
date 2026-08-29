@@ -11,11 +11,8 @@ using PostService.Application.UseCases.Projects.Interfaces;
 using PostService.Application.UseCases.Projects;
 using PostService.Application.UseCases.InternalProject.Interfaces;
 using PostService.Application.UseCases.InternalProject;
-using PostService.Application.Caching.User;
-using PostService.Application.Caching.Post;
 using PostService.Application.UseCases.InternalTool.Interfaces;
 using PostService.Application.UseCases.InternalTool;
-using PostService.Application.Caching.Tools;
 using PostService.Application.Validators.Interfaces;
 using PostService.Application.Validators;
 using PostService.Application.UseCases.LinkTypes.Interfaces;
@@ -23,9 +20,10 @@ using PostService.Application.UseCases.LinkTypes;
 using PostService.Application.UseCases.Links.Interfaces;
 using PostService.Application.UseCases.Links;
 using PostService.Domain.Interfaces;
-using PostService.Application.Caching.Language;
 using PostService.Application.UseCases.Contributors.Interfaces;
 using PostService.Application.UseCases.Contributors;
+using PostService.Application.Caching.Interfaces;
+using PostService.Application.Caching;
 namespace PostService.Application.Extensions
 {
     public static class DependencyInjectionExtension
@@ -54,7 +52,6 @@ namespace PostService.Application.Extensions
             services.AddScoped<IToolCacheServices, ToolCacheServices>();
             services.AddScoped<ILanguageCacheServices, LanguageCacheServices>();
 
-            services.AddScoped<IToolValidationServices, ToolValidationServices>();
             services.AddScoped<IValidationServices, ValidationServices>();
 
             services.AddScoped<ICreateLanguage, CreateLanguage>();

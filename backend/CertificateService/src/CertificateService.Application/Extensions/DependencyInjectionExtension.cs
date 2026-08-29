@@ -1,10 +1,11 @@
+using CertificateService.Application.Caching.Interfaces;
 using CertificateService.Application.Interfaces;
 using CertificateService.Application.Services;
 using CertificateService.Application.UseCases.Certificates;
 using CertificateService.Application.UseCases.Certificates.Interfaces;
 using CertificateService.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
-
+using CertificateService.Application.Caching;
 namespace CertificateService.Application.Extensions
 {
     public static class DependencyInjectionExtension
@@ -14,12 +15,9 @@ namespace CertificateService.Application.Extensions
         )
         {
             services.AddScoped<ICertificateServices, CertificateServices>();
-            services.AddScoped<ICertificatePostsServices, CertificatePostsServices>();
-            services.AddScoped<IMediaFilesServices, MediaFilesServices>();
             services.AddScoped<IMediaProjectionServices, MediaProjectionServices>();
 
             services.AddScoped<ICertificateCacheServices, CertificateCacheServices>();
-            services.AddScoped<ICertificatePostsCacheServices, CertificatePostCacheServices>();
             services.AddScoped<IPostCacheServices, PostCacheServices>();
 
             services.AddScoped<IAddCertificate, AddCertificate>();
