@@ -9,8 +9,7 @@ namespace CertificateService.Domain.Entities
         public Guid? MediaProjectionId { get; private set; }
         public MediaProjection? MediaProjection { get; private set; }
         public ICollection<PostProjection> PostProjections  { get; private set;}
-        public string Title { get; private set; }
-        public string Description { get; private set; }
+        public ICollection<CertificateContent> CertificateContents { get; private set; }
         public string? CredentialId { get; private set; }
         public string? VerificationUrl { get; private set; }
         public string Institution { get; private set; }
@@ -21,8 +20,6 @@ namespace CertificateService.Domain.Entities
         public DateTime UpdatedAt { get; private set; }
         public DateTime IssuerDate { get; private set; }
         public Certificate(
-            string title,
-            string description,
             string institution,
             string? credentialId,
             string? verificationUrl,
@@ -31,8 +28,6 @@ namespace CertificateService.Domain.Entities
             CertificateType certificateType,
             DateTime issuerDate)
         {
-            this.Title = title;
-            this.Description = description;
             this.Institution = institution;
             this.Status = status;
             this.CertificateType = certificateType;
@@ -43,10 +38,9 @@ namespace CertificateService.Domain.Entities
             this.CreatedAt = DateTime.UtcNow;
             this.UpdatedAt = DateTime.UtcNow;
             this.PostProjections = new List<PostProjection>();
+            this.CertificateContents = new List<CertificateContent>();
         }
         public void Update(
-            string title,
-            string description,
             string institution,
             Status status,
             CertificateType certificateType,
@@ -55,8 +49,6 @@ namespace CertificateService.Domain.Entities
             string? verificationUrl,
             int? workLoadHours)
         {
-            this.Title = title;
-            this.Description = description;
             this.Institution = institution;
             this.Status = status;
             this.CertificateType = certificateType;
@@ -74,8 +66,31 @@ namespace CertificateService.Domain.Entities
         public void AddPostProjection(PostProjection postProjection)
         {
             if(this.PostProjections == null)
-                throw new ValidationException("Lista de postagens não inicializada.");
+                throw new ValidationException("Lista de conteudo não inicializada.");
             this.PostProjections.Add(postProjection);
+        }
+        public void AddCertificateContent(CertificateContent certificateContent)
+        {
+            if(this.CertificateContents == null)
+                throw new ValidationException("Lista de conteudo não inicializada.");
+            this.CertificateContents.Add(certificateContent);
+        }
+        public void RemoveCertificateContent(CertificateContent certificateContent)
+        {
+            if(this.CertificateContents == null)
+                throw new ValidationException("Lista de conteudo não inicializada.");
+            this.CertificateContents.Remove(certificateContent);
+        }
+        public void ValidateCertificateContents(IEnumerable<Guid> certificateContentIds)
+        {
+            if(this.CertificateContents == null)
+                throw new ValidationException("Lista de conteudo não inicializada.");
+            var ids = certificateContentIds.ToHashSet();
+            var toRemove = this.CertificateContents
+                .Where(tc => !ids.Contains(tc.Id))
+                .ToList();
+            foreach(var certificateContent in toRemove)
+                this.CertificateContents.Remove(certificateContent);
         }
     }
 }

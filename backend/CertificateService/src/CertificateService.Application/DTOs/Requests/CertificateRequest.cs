@@ -6,10 +6,8 @@ namespace CertificateService.Application.DTOs.Requests
 {
     public class CertificateRequest
     {
-        [Required(ErrorMessage = "O titulo para o certificado é obrigatório")]
-        public string Title { get; set; }
-        [Required(ErrorMessage = "A descrição do certificado é obrigatório")]
-        public string Description { get; set; }
+        public Guid? Id { get; set; }
+        public List<CertificateContentRequest> CertificateContents { get; set; }
         public MediaRequest? Media { get; set; }
         public string? CredentialId { get; set; }
         public string? VerificationUrl { get; set; }

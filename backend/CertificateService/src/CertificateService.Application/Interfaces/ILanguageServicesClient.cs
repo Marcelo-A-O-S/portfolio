@@ -1,10 +1,8 @@
 using CertificateService.Application.DTOs.Responses;
 namespace CertificateService.Application.Interfaces
 {
-    public interface IPostServicesClient
+    public interface ILanguageServicesClient
     {
-        Task<bool> PostExistsAsync(Guid postId);
-        Task<PostResponse> GetPostAsync(Guid postId);
         Task<LanguageResponse> GetLanguageAsync(Guid languageId);
     }
 }

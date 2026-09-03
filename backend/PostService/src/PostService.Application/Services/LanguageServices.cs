@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using PostService.Application.Interfaces;
 using PostService.Domain.Entities;
 using PostService.Domain.Interfaces;
+using PostService.Domain.Queries;
 
 namespace PostService.Application.Services
 {
@@ -35,6 +36,11 @@ namespace PostService.Application.Services
         public async Task<Language> GetById(Guid Id)
         {
             return await this.languageRepository.GetById(Id);
+        }
+
+        public async Task<LanguageView> GetByLanguageView(Guid Id)
+        {
+            return await this.languageRepository.GetByLanguageView(Id);
         }
 
         public async Task<PaginatedResult<Language>> GetPagination(int page, string? search, string? code)

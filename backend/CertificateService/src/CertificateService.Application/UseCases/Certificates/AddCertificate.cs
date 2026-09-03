@@ -15,12 +15,18 @@ namespace CertificateService.Application.UseCases.Certificates
     {
         private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly ICertificateServices certificateServices;
+        private readonly ICertificateContentServices certificateContentServices;
+        private readonly ILanguageProjectionServices languageProjectionServices;
+        private readonly ILanguageServicesClient languageServicesClient;
         private readonly ICertificateCacheServices certificateCacheServices;
         private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly IUnitOfWork unitOfWork;
         public AddCertificate(
             IMediaProjectionServices _mediaProjectionServices,
             ICertificateServices _certificateServices,
+            ICertificateContentServices _certificateContentServices,
+            ILanguageProjectionServices _languageProjectionServices,
+            ILanguageServicesClient _languageServicesClient,
             ICertificateCacheServices _certificateCacheServices,
             IRabbitMQProducer _rabbitMQProducer,
             IUnitOfWork _unitOfWork
@@ -28,6 +34,9 @@ namespace CertificateService.Application.UseCases.Certificates
         {
             this.mediaProjectionServices = _mediaProjectionServices;
             this.certificateServices = _certificateServices;
+            this.certificateContentServices = _certificateContentServices;
+            this.languageProjectionServices = _languageProjectionServices;
+            this.languageServicesClient = _languageServicesClient;
             this.certificateCacheServices = _certificateCacheServices;
             this.rabbitMQProducer = _rabbitMQProducer;
             this.unitOfWork = _unitOfWork;
@@ -37,8 +46,6 @@ namespace CertificateService.Application.UseCases.Certificates
             ValidateRequest(request);
             var mediasToCommit = new List<MediaProjection>();
             var certificate = new Certificate(
-                request.Title,
-                request.Description,
                 request.Institution,
                 request.CredentialId,
                 request.VerificationUrl,
@@ -52,6 +59,7 @@ namespace CertificateService.Application.UseCases.Certificates
             {
                 if(request.Media != null)
                     await ProcessImage(certificate, request.Media, mediasToCommit);
+                await ProcessCertificateContents(certificate, request.CertificateContents);
                 await this.certificateServices.Save(certificate);
                 await this.unitOfWork.CommitAsync();
             }
@@ -98,6 +106,24 @@ namespace CertificateService.Application.UseCases.Certificates
                 mediasToCommit.Add(mediaContent);
             }
             certificate.AddMedia(mediaContent.Id);
+        }
+        private async Task ProcessCertificateContents(Certificate certificate, List<CertificateContentRequest> certificateContentRequests)
+        {
+            foreach (var item in certificateContentRequests)
+            {
+                var languageProjection = await this.languageProjectionServices.GetByLanguageId(item.LanguageId);
+                if(languageProjection == null)
+                {
+                    var languageResponse = await this.languageServicesClient.GetLanguageAsync(item.LanguageId);
+                    if(languageResponse == null)
+                        throw new NotFoundException("Idioma não encontrado");
+                    languageProjection = new LanguageProjection(languageResponse.Id, languageResponse.Code, languageResponse.Name);
+                    languageProjection.GenerateId();
+                    await this.languageProjectionServices.Save(languageProjection);
+                }
+                var certificateContent = new CertificateContent(languageProjection.Id, item.Title, item.Description);
+                certificate.AddCertificateContent(certificateContent);
+            }
         }
         private async Task PublishMedias(Guid certificateId, List<MediaProjection> mediasToCommit)
         {

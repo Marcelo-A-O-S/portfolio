@@ -39,6 +39,11 @@ namespace CertificateService.Application.Services
             return await this.languageProjectionRepository.GetById(Id);
         }
 
+        public async Task<LanguageProjection> GetByLanguageId(Guid languageId)
+        {
+            return await this.languageProjectionRepository.GetByLanguageId(languageId);
+        }
+
         public async Task<List<LanguageProjection>> List()
         {
             return await this.languageProjectionRepository.List();

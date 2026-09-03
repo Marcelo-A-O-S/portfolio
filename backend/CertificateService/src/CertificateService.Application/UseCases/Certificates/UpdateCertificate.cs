@@ -40,8 +40,6 @@ namespace CertificateService.Application.UseCases.Certificates
             try
             {
                 certificate.Update(
-                    request.Title,
-                    request.Description,
                     request.Institution,
                     request.Status,
                     request.CertificateType,
@@ -111,6 +109,13 @@ namespace CertificateService.Application.UseCases.Certificates
                 mediasToCommit.Add(mediaContent);
             }
             certificate.AddMedia(mediaContent.Id);
+        }
+        private async Task ProcessCertificateContents(Certificate certificate, List<CertificateContentRequest> certificateContentRequests)
+        {
+            foreach (var item in certificateContentRequests)
+            {
+                
+            }
         }
         private async Task PublishMedias(Guid certificateId, List<MediaProjection> mediasToCommit, List<MediaProjection> mediasToDelete)
         {

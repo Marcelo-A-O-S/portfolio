@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PostService.Domain.Entities;
 using PostService.Domain.Interfaces;
+using PostService.Domain.Queries;
 using PostService.Infrastructure.Context;
 namespace PostService.Infrastructure.Repositories
 {
@@ -11,6 +12,19 @@ namespace PostService.Infrastructure.Repositories
         {
             this.context = _context;
         }
+
+        public async Task<LanguageView> GetByLanguageView(Guid Id)
+        {
+            return await this.context.Languages
+                .Select(l => new LanguageView
+                {
+                    Id = l.Id,
+                    Code = l.Code,
+                    Name = l.Name
+                })
+                .FirstOrDefaultAsync(l => l.Id == Id);
+        }
+
         public async Task<PaginatedResult<Language>> GetPagination(int page, string? search, string? code, int itemsPage = 10)
         {
             var query = this.context.Languages

@@ -1,9 +1,9 @@
-using CertificateService.Application.DTOs.Responses;
-using CertificateService.Application.Exceptions;
-using CertificateService.Application.Interfaces;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using CertificateService.Application.DTOs.Responses;
+using CertificateService.Application.Exceptions;
+using CertificateService.Application.Interfaces;
 namespace CertificateService.Infrastructure.Integrations
 {
     public class PostServicesClient : IPostServicesClient
@@ -19,6 +19,32 @@ namespace CertificateService.Infrastructure.Integrations
             this.http = _http;
         }
 
+        public async Task<LanguageResponse> GetLanguageAsync(Guid languageId)
+        {
+            try
+            {
+                var token = await authClient.GetToken();
+                if (token == null)
+                    throw new UnauthorizedException("Usuário não autorizado");
+                var request = new HttpRequestMessage(
+                    HttpMethod.Get, $"/api/InternalPost/Language/{languageId}");
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var response = await this.http.SendAsync(request);
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    throw new UnauthorizedException("Token interno inválido");
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                    throw new NotFoundException("Publicação não encontrada");
+                if (response.StatusCode == HttpStatusCode.Forbidden)
+                    throw new ForbiddenException("Permissões insuficientes");
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<LanguageResponse>();
+            }
+            catch (HttpRequestException)
+            {
+                throw new Exception("Serviço de postagens indisponivel");
+            }
+        }
+
         public async Task<PostResponse> GetPostAsync(Guid postId)
         {
             try
@@ -27,7 +53,7 @@ namespace CertificateService.Infrastructure.Integrations
                 if (token == null)
                     throw new UnauthorizedException("Usuário não autorizado");
                 var request = new HttpRequestMessage(
-                    HttpMethod.Get,$"/api/InternalPost/{postId}");
+                    HttpMethod.Get, $"/api/InternalPost/{postId}");
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = await this.http.SendAsync(request);
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -39,7 +65,7 @@ namespace CertificateService.Infrastructure.Integrations
                 response.EnsureSuccessStatusCode();
                 return await response.Content.ReadFromJsonAsync<PostResponse>();
             }
-            catch(HttpRequestException)
+            catch (HttpRequestException)
             {
                 throw new Exception("Serviço de postagens indisponivel");
             }
@@ -53,7 +79,7 @@ namespace CertificateService.Infrastructure.Integrations
                 if (token == null)
                     throw new UnauthorizedException("Usuário não autorizado");
                 var request = new HttpRequestMessage(
-                    HttpMethod.Get,$"/api/InternalPost/{postId}/exists");
+                    HttpMethod.Get, $"/api/InternalPost/{postId}/exists");
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var response = await this.http.SendAsync(request);
                 if (response.StatusCode == HttpStatusCode.Unauthorized)

@@ -9,5 +9,15 @@ namespace CertificateService.Domain.Entities
         public string Description { get; private set; }
         public Guid LanguageProjectionId { get; private set; }
         public LanguageProjection LanguageProjection { get; private set; }
+        public CertificateContent(
+            Guid languageProjectionId,
+            string title,
+            string description
+        )
+        {
+            this.LanguageProjectionId = languageProjectionId;
+            this.Title = title;
+            this.Description = description;
+        }
     }
 }

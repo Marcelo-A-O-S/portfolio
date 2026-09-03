@@ -10,13 +10,13 @@ namespace CertificateService.Domain.Entities
         public string Description { get; private set; }
         public PostContentProjection(
             Guid postContentId,
-            Guid languageId,
+            Guid LanguageProjectionId,
             string title,
             string description
         )
         {
             this.PostContentId = postContentId;
-            this.LanguageProjectionId = languageId;
+            this.LanguageProjectionId = LanguageProjectionId;
             this.Title = title;
             this.Description = description;
         }

@@ -23,13 +23,15 @@ namespace CertificateService.Infrastructure.Repositories
             if (!string.IsNullOrWhiteSpace(search))
             {
                 query = query.Where(c =>
-                        EF.Functions.Like(c.Title, $"%{search}%") ||
-                        EF.Functions.Like(c.Description, $"%{search}%")||
+                        c.CertificateContents.Any(cc =>
+                            EF.Functions.Like(cc.Title, $"%{search}%") ||
+                            EF.Functions.Like(cc.Description, $"%{search}%")) ||
                         EF.Functions.Like(c.Institution, $"%{search}%"));
             }
             var totalItems = await query.CountAsync();
             var items = await query
                 .OrderByDescending(c => c.CreatedAt)
+                .Include(c=> c.CertificateContents)
                 .Include(c => c.MediaProjection)
                 .Select(c => new CertificateView
                 {
@@ -39,8 +41,8 @@ namespace CertificateService.Infrastructure.Repositories
                         Id = c.MediaProjection.Id,
                         Url = c.MediaProjection.Url
                     },
-                    Title = c.Title,
-                    Description = c.Description,
+                    // Title = c.Title,
+                    // Description = c.Description,
                     CredentialId = c.CredentialId,
                     VerificationUrl = c.VerificationUrl,
                     Institution = c.Institution,
