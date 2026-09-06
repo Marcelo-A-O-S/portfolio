@@ -57,6 +57,7 @@ namespace PostService.Application.Extensions
             services.AddScoped<ICreateLanguage, CreateLanguage>();
             services.AddScoped<IUpdateLanguage, UpdateLanguage>();
             services.AddScoped<IDeleteLanguage, DeleteLanguage>();
+            services.AddScoped<IGetByIdLanguage, GetByIdLanguage>();
             services.AddScoped<ICreateLinkType, CreateLinkType>();
             services.AddScoped<IUpdateLinkType, UpdateLinkType>();
             services.AddScoped<IDeleteLinkType, DeleteLinkType>();

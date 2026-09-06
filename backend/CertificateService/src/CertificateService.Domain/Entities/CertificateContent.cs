@@ -19,5 +19,15 @@ namespace CertificateService.Domain.Entities
             this.Title = title;
             this.Description = description;
         }
+        public void Update(
+            Guid languageProjectionId,
+            string title,
+            string description
+        )
+        {
+            this.LanguageProjectionId = languageProjectionId;
+            this.Title = title;
+            this.Description = description;
+        }
     }
 }

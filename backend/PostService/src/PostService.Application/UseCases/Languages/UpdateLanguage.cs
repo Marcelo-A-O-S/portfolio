@@ -4,19 +4,23 @@ using PostService.Application.UseCases.Languages.Interfaces;
 using PostService.Application.Validations;
 using PostService.Domain.Entities;
 using PostService.Application.Exceptions;
+using PostService.Domain.Interfaces;
 
 namespace PostService.Application.UseCases.Languages
 {
     public class UpdateLanguage : IUpdateLanguage
     {
         private readonly ILanguageServices languageServices;
+        private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly IUnitOfWork unitOfWork;
         public UpdateLanguage(
             ILanguageServices _languageServices,
+            IRabbitMQProducer _rabbitMQProducer,
             IUnitOfWork _unitOfWork
             )
         {
             this.languageServices = _languageServices;
+            this.rabbitMQProducer = _rabbitMQProducer;
             this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid Id,LanguageRequest languageRequest)
@@ -29,6 +33,12 @@ namespace PostService.Application.UseCases.Languages
             {
                 await this.languageServices.Update(language);
                 await this.unitOfWork.CommitAsync();
+                await this.rabbitMQProducer.Publish("LanguageUpdated", new
+                {
+                    LanguageId = Id,
+                    Name = language.Name,
+                    Code = language.Code
+                });
             }
             catch
             {

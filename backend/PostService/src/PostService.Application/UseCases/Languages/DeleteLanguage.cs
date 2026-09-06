@@ -4,6 +4,7 @@ using PostService.Application.Exceptions;
 using PostService.Application.Interfaces;
 using PostService.Application.UseCases.Languages.Interfaces;
 using PostService.Domain.Entities;
+using PostService.Domain.Interfaces;
 
 namespace PostService.Application.UseCases.Languages
 {
@@ -11,14 +12,17 @@ namespace PostService.Application.UseCases.Languages
     {
         private readonly ILanguageServices languageServices;
         private readonly ILanguageCacheServices languageCacheServices;
+        private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly IUnitOfWork unitOfWork;
         public DeleteLanguage(
             ILanguageServices _languageServices,
             ILanguageCacheServices _languageCacheServices,
+            IRabbitMQProducer _rabbitMQProducer,
             IUnitOfWork _unitOfWork)
         {
             this.languageServices = _languageServices;
             this.languageCacheServices = _languageCacheServices;
+            this.rabbitMQProducer = _rabbitMQProducer;
             this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid Id)
@@ -29,6 +33,10 @@ namespace PostService.Application.UseCases.Languages
             {
                 await this.languageServices.Delete(language);
                 await this.unitOfWork.CommitAsync();
+                await this.rabbitMQProducer.Publish("LanguageDeleted", new
+                {
+                    LanguageId = Id
+                });
             }
             catch
             {

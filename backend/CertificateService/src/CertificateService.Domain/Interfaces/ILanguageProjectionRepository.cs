@@ -4,5 +4,6 @@ namespace CertificateService.Domain.Interfaces
     public interface ILanguageProjectionRepository : IGenerics<LanguageProjection>
     {
         Task<LanguageProjection> GetByLanguageId(Guid languageId);
+        Task DeleteByLanguageId(Guid languageId);
     }
 }

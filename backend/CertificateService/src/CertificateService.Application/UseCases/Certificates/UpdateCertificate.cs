@@ -13,20 +13,29 @@ namespace CertificateService.Application.UseCases.Certificates
     {
         private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly ICertificateServices certificateServices;
+        private readonly ICertificateContentServices certificateContentServices;
         private readonly ICertificateCacheServices certificateCacheServices;
+        private readonly ILanguageProjectionServices languageProjectionServices;
+        private readonly ILanguageServicesClient languageServicesClient;
         private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly IUnitOfWork unitOfWork;
         public UpdateCertificate(
             IMediaProjectionServices _mediaProjectionServices,
             ICertificateServices _certificateServices,
+            ICertificateContentServices _certificateContentServices,
             ICertificateCacheServices _certificateCacheServices,
+            ILanguageProjectionServices _languageProjectionServices,
+            ILanguageServicesClient _languageServicesClient,
             IRabbitMQProducer _rabbitMQProducer,
             IUnitOfWork _unitOfWork
         )
         {
             this.mediaProjectionServices = _mediaProjectionServices;
             this.certificateServices = _certificateServices;
+            this.certificateContentServices = _certificateContentServices;
             this.certificateCacheServices = _certificateCacheServices;
+            this.languageProjectionServices = _languageProjectionServices;
+            this.languageServicesClient = _languageServicesClient;
             this.rabbitMQProducer = _rabbitMQProducer;
             this.unitOfWork = _unitOfWork;
         }
@@ -50,6 +59,7 @@ namespace CertificateService.Application.UseCases.Certificates
                 );
                 if(request.Media != null)
                     await ProcessImage(certificate, request.Media, mediasToCommit, mediasToDelete);
+                await ProcessCertificateContents(certificate, request.CertificateContents);
                 await this.certificateServices.Update(certificate);
                 await DeleteMedias(mediasToDelete);
                 await this.unitOfWork.CommitAsync();
@@ -112,9 +122,34 @@ namespace CertificateService.Application.UseCases.Certificates
         }
         private async Task ProcessCertificateContents(Certificate certificate, List<CertificateContentRequest> certificateContentRequests)
         {
+            var requestCertificateContentIds = certificateContentRequests
+                .Where(c => c.Id.HasValue)
+                .Select(c => c.Id!.Value);
+            var removedContents = certificate.CertificateContents
+                .Where(cc => !requestCertificateContentIds.Contains(cc.Id));
+            certificate.ValidateCertificateContents(requestCertificateContentIds);
             foreach (var item in certificateContentRequests)
             {
-                
+                var languageProjection = await this.languageProjectionServices.GetByLanguageId(item.LanguageId);
+                if(languageProjection == null)
+                {
+                    var languageResponse = await this.languageServicesClient.GetLanguageAsync(item.LanguageId);
+                    if(languageResponse == null)
+                        throw new NotFoundException("Idioma não encontrado");
+                    languageProjection = new LanguageProjection(languageResponse.Id, languageResponse.Code, languageResponse.Name);
+                    languageProjection.GenerateId();
+                    await this.languageProjectionServices.Save(languageProjection);
+                }
+                if (item.Id.HasValue)
+                {
+                    var certificateContent = await this.certificateContentServices.GetById(item.Id!.Value);
+                    certificateContent.Update(languageProjection.Id, item.Title, item.Description);
+                }
+                else
+                {
+                    var certificateContent = new CertificateContent(languageProjection.Id, item.Title, item.Description);
+                    certificate.AddCertificateContent(certificateContent);
+                }
             }
         }
         private async Task PublishMedias(Guid certificateId, List<MediaProjection> mediasToCommit, List<MediaProjection> mediasToDelete)

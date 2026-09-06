@@ -24,6 +24,11 @@ namespace CertificateService.Application.Services
             await this.languageProjectionRepository.DeleteById(Id);
         }
 
+        public async Task DeleteByLanguageId(Guid languageId)
+        {
+            await this.languageProjectionRepository.DeleteByLanguageId(languageId);
+        }
+
         public async Task<bool> Exists(Guid Id)
         {
             return await this.languageProjectionRepository.Exists(Id);

@@ -20,5 +20,10 @@ namespace CertificateService.Domain.Entities
         {
             this.Id = Guid.NewGuid();
         }
+        public void Update(string code, string name)
+        {
+            this.Code = code;
+            this.Name = name;
+        }
     }
 }
