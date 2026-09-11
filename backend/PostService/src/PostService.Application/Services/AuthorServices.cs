@@ -39,6 +39,11 @@ namespace PostService.Application.Services
             return await this.authorRepository.GetById(Id);
         }
 
+        public async Task<Author> GetByUserId(Guid userId)
+        {
+            return await this.authorRepository.GetByUserId(userId);
+        }
+
         public async Task<List<Author>> List()
         {
             return await this.authorRepository.List();

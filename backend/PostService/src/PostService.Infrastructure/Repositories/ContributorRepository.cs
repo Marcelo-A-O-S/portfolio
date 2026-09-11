@@ -47,5 +47,11 @@ namespace PostService.Infrastructure.Repositories
                 TotalPages = (int)Math.Ceiling(totalItems / (double)itemsPage)
             };
         }
+
+        public async Task<Contributor> GetByUserId(Guid userId)
+        {
+            return await this.context.Contributors
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+        }
     }
 }

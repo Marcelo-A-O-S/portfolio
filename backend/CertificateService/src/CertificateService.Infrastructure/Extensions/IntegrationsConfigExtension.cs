@@ -33,7 +33,16 @@ namespace CertificateService.Infrastructure.Extensions
                 policy.WaitAndRetryAsync(3,
                     retryAttempt => TimeSpan.FromMilliseconds(
                         200 * retryAttempt)));
+            services.AddHttpClient<ILanguageServicesClient, LanguageServicesClient>(client =>
+            {
+                client.BaseAddress = new Uri(postAddress);
+                client.Timeout = TimeSpan.FromSeconds(3);
+            }).AddTransientHttpErrorPolicy(policy =>
+                policy.WaitAndRetryAsync(3,
+                    retryAttempt => TimeSpan.FromMilliseconds(
+                        200 * retryAttempt)));
             return services;
+            
         }
     }
 }

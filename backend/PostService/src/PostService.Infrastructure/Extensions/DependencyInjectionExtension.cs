@@ -50,6 +50,7 @@ namespace PostService.Infrastructure.Extensions
 
             services.AddSingleton<ICommentProjectionHandler, CommentProjectionHandler>();
             services.AddSingleton<ILikeProjectionHandler, LikeProjectionHandler>();
+            services.AddSingleton<IUserProjectionHandler, UserProjectionHandler>();
             return services;
         }
     }

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CertificateService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20260829032615_CreateTables")]
+    [Migration("20260911224352_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -41,10 +41,6 @@ namespace CertificateService.Infrastructure.Migrations
                     b.Property<string>("CredentialId")
                         .HasColumnType("text");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Institution")
                         .IsRequired()
                         .HasColumnType("text");
@@ -56,10 +52,6 @@ namespace CertificateService.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -79,7 +71,7 @@ namespace CertificateService.Infrastructure.Migrations
                     b.ToTable("Certificates");
                 });
 
-            modelBuilder.Entity("CertificateService.Domain.Entities.CertificatePost", b =>
+            modelBuilder.Entity("CertificateService.Domain.Entities.CertificateContent", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -88,17 +80,24 @@ namespace CertificateService.Infrastructure.Migrations
                     b.Property<Guid>("CertificateId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<Guid>("PostId")
+                    b.Property<Guid>("LanguageProjectionId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CertificateId");
 
-                    b.ToTable("CertificatePosts");
+                    b.HasIndex("LanguageProjectionId");
+
+                    b.ToTable("CertificateContents");
                 });
 
             modelBuilder.Entity("CertificateService.Domain.Entities.LanguageProjection", b =>
@@ -111,6 +110,9 @@ namespace CertificateService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("LanguageId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -121,37 +123,6 @@ namespace CertificateService.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("LanguageProjections");
-                });
-
-            modelBuilder.Entity("CertificateService.Domain.Entities.MediaFile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("CommittedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsCommitted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("MimeType")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Path")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long>("Size")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MediaFiles");
                 });
 
             modelBuilder.Entity("CertificateService.Domain.Entities.MediaProjection", b =>
@@ -185,7 +156,10 @@ namespace CertificateService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("LanguageId")
+                    b.Property<Guid>("LanguageProjectionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PostContentId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("PostProjectionId")
@@ -197,7 +171,7 @@ namespace CertificateService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LanguageId");
+                    b.HasIndex("LanguageProjectionId");
 
                     b.HasIndex("PostProjectionId");
 
@@ -222,6 +196,9 @@ namespace CertificateService.Infrastructure.Migrations
                     b.Property<Guid>("MediaProjectionId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CertificateId");
@@ -240,22 +217,30 @@ namespace CertificateService.Infrastructure.Migrations
                     b.Navigation("MediaProjection");
                 });
 
-            modelBuilder.Entity("CertificateService.Domain.Entities.CertificatePost", b =>
+            modelBuilder.Entity("CertificateService.Domain.Entities.CertificateContent", b =>
                 {
-                    b.HasOne("CertificateService.Domain.Entities.Certificate", "certificate")
-                        .WithMany()
+                    b.HasOne("CertificateService.Domain.Entities.Certificate", "Certificate")
+                        .WithMany("CertificateContents")
                         .HasForeignKey("CertificateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("certificate");
+                    b.HasOne("CertificateService.Domain.Entities.LanguageProjection", "LanguageProjection")
+                        .WithMany()
+                        .HasForeignKey("LanguageProjectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Certificate");
+
+                    b.Navigation("LanguageProjection");
                 });
 
             modelBuilder.Entity("CertificateService.Domain.Entities.PostContentProjection", b =>
                 {
-                    b.HasOne("CertificateService.Domain.Entities.LanguageProjection", "Language")
+                    b.HasOne("CertificateService.Domain.Entities.LanguageProjection", "LanguageProjection")
                         .WithMany()
-                        .HasForeignKey("LanguageId")
+                        .HasForeignKey("LanguageProjectionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -263,7 +248,7 @@ namespace CertificateService.Infrastructure.Migrations
                         .WithMany("PostContents")
                         .HasForeignKey("PostProjectionId");
 
-                    b.Navigation("Language");
+                    b.Navigation("LanguageProjection");
                 });
 
             modelBuilder.Entity("CertificateService.Domain.Entities.PostProjection", b =>
@@ -287,6 +272,8 @@ namespace CertificateService.Infrastructure.Migrations
 
             modelBuilder.Entity("CertificateService.Domain.Entities.Certificate", b =>
                 {
+                    b.Navigation("CertificateContents");
+
                     b.Navigation("PostProjections");
                 });
 

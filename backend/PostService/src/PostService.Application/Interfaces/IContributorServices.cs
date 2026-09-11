@@ -5,5 +5,6 @@ namespace PostService.Application.Interfaces
     public interface IContributorServices : IServices<Contributor>
     {
         Task<PaginatedResult<ContributorView>> GetByPagination(int page, Guid postId, string? search, int itemsPage = 10);
+        Task<Contributor> GetByUserId(Guid userId);
     }
 }

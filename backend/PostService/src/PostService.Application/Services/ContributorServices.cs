@@ -44,6 +44,11 @@ namespace PostService.Application.Services
             return await this.contributorRepository.GetByPagination(page, postId, search, itemsPage);
         }
 
+        public async Task<Contributor> GetByUserId(Guid userId)
+        {
+            return await this.contributorRepository.GetByUserId(userId);
+        }
+
         public async Task<List<Contributor>> List()
         {
             return await this.contributorRepository.List();

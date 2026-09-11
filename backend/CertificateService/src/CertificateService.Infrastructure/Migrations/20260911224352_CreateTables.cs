@@ -16,6 +16,7 @@ namespace CertificateService.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    LanguageId = table.Column<Guid>(type: "uuid", nullable: false),
                     Code = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false)
                 },
@@ -24,35 +25,18 @@ namespace CertificateService.Infrastructure.Migrations
                     table.PrimaryKey("PK_LanguageProjections", x => x.Id);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "MediaFiles",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Path = table.Column<string>(type: "text", nullable: false),
-                    MimeType = table.Column<string>(type: "text", nullable: false),
-                    Size = table.Column<long>(type: "bigint", nullable: false),
-                    IsCommitted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CommittedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MediaFiles", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MediaProjections",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    MediaId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Url = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MediaProjections", x => x.Id);
-                });
+            // migrationBuilder.CreateTable(
+            //     name: "MediaProjections",
+            //     columns: table => new
+            //     {
+            //         Id = table.Column<Guid>(type: "uuid", nullable: false),
+            //         MediaId = table.Column<Guid>(type: "uuid", nullable: false),
+            //         Url = table.Column<string>(type: "text", nullable: false)
+            //     },
+            //     constraints: table =>
+            //     {
+            //         table.PrimaryKey("PK_MediaProjections", x => x.Id);
+            //     });
 
             migrationBuilder.CreateTable(
                 name: "Certificates",
@@ -60,8 +44,6 @@ namespace CertificateService.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     MediaProjectionId = table.Column<Guid>(type: "uuid", nullable: true),
-                    Title = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
                     CredentialId = table.Column<string>(type: "text", nullable: true),
                     VerificationUrl = table.Column<string>(type: "text", nullable: true),
                     Institution = table.Column<string>(type: "text", nullable: false),
@@ -83,21 +65,28 @@ namespace CertificateService.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CertificatePosts",
+                name: "CertificateContents",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     CertificateId = table.Column<Guid>(type: "uuid", nullable: false),
-                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    LanguageProjectionId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CertificatePosts", x => x.Id);
+                    table.PrimaryKey("PK_CertificateContents", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CertificatePosts_Certificates_CertificateId",
+                        name: "FK_CertificateContents_Certificates_CertificateId",
                         column: x => x.CertificateId,
                         principalTable: "Certificates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CertificateContents_LanguageProjections_LanguageProjectionId",
+                        column: x => x.LanguageProjectionId,
+                        principalTable: "LanguageProjections",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -107,6 +96,7 @@ namespace CertificateService.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
                     CertificateId = table.Column<Guid>(type: "uuid", nullable: false),
                     MediaProjectionId = table.Column<Guid>(type: "uuid", nullable: false),
                     LikeCount = table.Column<int>(type: "integer", nullable: false),
@@ -134,17 +124,18 @@ namespace CertificateService.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    PostContentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    LanguageProjectionId = table.Column<Guid>(type: "uuid", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    LanguageId = table.Column<Guid>(type: "uuid", nullable: false),
                     PostProjectionId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PostContentProjections", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PostContentProjections_LanguageProjections_LanguageId",
-                        column: x => x.LanguageId,
+                        name: "FK_PostContentProjections_LanguageProjections_LanguageProjecti~",
+                        column: x => x.LanguageProjectionId,
                         principalTable: "LanguageProjections",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -156,9 +147,14 @@ namespace CertificateService.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_CertificatePosts_CertificateId",
-                table: "CertificatePosts",
+                name: "IX_CertificateContents_CertificateId",
+                table: "CertificateContents",
                 column: "CertificateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CertificateContents_LanguageProjectionId",
+                table: "CertificateContents",
+                column: "LanguageProjectionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Certificates_MediaProjectionId",
@@ -171,16 +167,16 @@ namespace CertificateService.Infrastructure.Migrations
                 column: "Code",
                 unique: true);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_MediaProjections_Url_MediaId",
-                table: "MediaProjections",
-                columns: new[] { "Url", "MediaId" },
-                unique: true);
+            // migrationBuilder.CreateIndex(
+            //     name: "IX_MediaProjections_Url_MediaId",
+            //     table: "MediaProjections",
+            //     columns: new[] { "Url", "MediaId" },
+            //     unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PostContentProjections_LanguageId",
+                name: "IX_PostContentProjections_LanguageProjectionId",
                 table: "PostContentProjections",
-                column: "LanguageId");
+                column: "LanguageProjectionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PostContentProjections_PostProjectionId",
@@ -202,10 +198,7 @@ namespace CertificateService.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CertificatePosts");
-
-            migrationBuilder.DropTable(
-                name: "MediaFiles");
+                name: "CertificateContents");
 
             migrationBuilder.DropTable(
                 name: "PostContentProjections");

@@ -6,21 +6,25 @@ using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using System.Text.Json;
 using PostService.Application.Caching.Interfaces;
+using PostService.Infrastructure.Messaging.Handlers.Interfaces;
 namespace PostService.Infrastructure.Messaging.Consumers
 {
     public class UserConsumer : BackgroundService
     {
+        private readonly IUserProjectionHandler userProjectionHandler;
         private readonly IConnectionFactory factory;
         private readonly IServiceScopeFactory scopeFactory;
         private readonly ILogger<UserConsumer> logger;
         private IConnection? connection;
         private RabbitMQConsumer? consumer;
         public UserConsumer(
+            IUserProjectionHandler _userProjectionHandler,
             IConnectionFactory _factory,
             IServiceScopeFactory _scopeFactory,
             ILogger<UserConsumer> _logger
         )
         {
+            this.userProjectionHandler = _userProjectionHandler;
             this.factory = _factory;
             this.scopeFactory = _scopeFactory;
             this.logger = _logger;
@@ -32,7 +36,7 @@ namespace PostService.Infrastructure.Messaging.Consumers
                 this.logger.LogInformation("Iniciando conexão com o RabbitMQ...");
                 this.connection = await this.factory.CreateConnectionAsync();
                 this.consumer = new RabbitMQConsumer(this.connection);
-                this.consumer.RegisterHandler("UserDeleted", async message => { await this.RemoveUserCache(message); });
+                this.consumer.RegisterHandler("UserDeleted", async message => { await this.userProjectionHandler.RemoveUserCache(message); });
                 await consumer.Start();
                 this.logger.LogInformation("Consumer dos Usuários do serviço de Postagens do RabbitMQ iniciado e aguardando mensagens...");
             }
