@@ -114,6 +114,7 @@ namespace CertificateService.Application.UseCases.Certificates
                 var languageProjection = await this.languageProjectionServices.GetByLanguageId(item.LanguageId);
                 if(languageProjection == null)
                 {
+                    Console.WriteLine($"Language Id: {item.LanguageId}");
                     var languageResponse = await this.languageServicesClient.GetLanguageAsync(item.LanguageId);
                     if(languageResponse == null)
                         throw new NotFoundException("Idioma não encontrado");

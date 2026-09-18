@@ -6,8 +6,7 @@ namespace CertificateService.Domain.Queries
     {
         public Guid? Id { get; set; }
         public MediaView Media { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
+        public ICollection<CertificateContentView> CertificateContents { get; set; }
         public string? CredentialId { get; set; }
         public string? VerificationUrl { get; set; }
         public string Institution { get; set; }

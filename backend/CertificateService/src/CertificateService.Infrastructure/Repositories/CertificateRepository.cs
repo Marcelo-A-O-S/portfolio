@@ -32,6 +32,7 @@ namespace CertificateService.Infrastructure.Repositories
             var items = await query
                 .OrderByDescending(c => c.CreatedAt)
                 .Include(c=> c.CertificateContents)
+                    .ThenInclude(cc => cc.LanguageProjection)
                 .Include(c => c.MediaProjection)
                 .Select(c => new CertificateView
                 {
@@ -41,8 +42,18 @@ namespace CertificateService.Infrastructure.Repositories
                         Id = c.MediaProjection.Id,
                         Url = c.MediaProjection.Url
                     },
-                    // Title = c.Title,
-                    // Description = c.Description,
+                    CertificateContents = c.CertificateContents.Select(cc => new CertificateContentView
+                    {
+                        Id = cc.Id,
+                        Title = cc.Title,
+                        Description = cc.Description,
+                        LanguageProjection = new LanguageProjectionView
+                        {
+                            Id = cc.LanguageProjection.Id,
+                            Code = cc.LanguageProjection.Code,
+                            Name = cc.LanguageProjection.Name
+                        }
+                    }).ToList(),
                     CredentialId = c.CredentialId,
                     VerificationUrl = c.VerificationUrl,
                     Institution = c.Institution,

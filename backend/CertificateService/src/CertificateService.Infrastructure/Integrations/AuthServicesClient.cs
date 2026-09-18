@@ -6,15 +6,15 @@ using Microsoft.Extensions.Options;
 
 namespace CertificateService.Infrastructure.Integrations
 {
-    public class InternalAuthClient : IInternalAuthClient
+    public class AuthServicesClient : IAuthServicesClient
     {
         private readonly HttpClient http;
         private readonly ICacheServices cacheServices;
-        private readonly InternalClient internalOptions;
-        public InternalAuthClient(
+        private readonly InternalClientOptions internalOptions;
+        public AuthServicesClient(
             HttpClient _http,
             ICacheServices _cacheServices,
-            IOptions<InternalClient> _internalOptions
+            IOptions<InternalClientOptions> _internalOptions
         )
         {
             this.http = _http;
@@ -23,16 +23,17 @@ namespace CertificateService.Infrastructure.Integrations
         }
         public async Task<string> GetToken()
         {
+            var client = this.internalOptions.InternalClients["AuthService"];
             const string CACHE_KEY = "internal:certificateservice:token";
             string cached = await this.cacheServices.GetAsync(CACHE_KEY);
             if(!string.IsNullOrWhiteSpace(cached))
                 return cached;
-            if(string.IsNullOrEmpty(this.internalOptions.ClientId) || string.IsNullOrEmpty(this.internalOptions.ClientSecret))
+            if(string.IsNullOrEmpty(client.ClientId) || string.IsNullOrEmpty(client.ClientSecret))
                 throw new Exception("Chaves de validação internas não configuradas");
-            var response = await this.http.PostAsJsonAsync("/api/InternalAuth/internal/token",new
+            var response = await this.http.PostAsJsonAsync("/api/InternalAuth/token",new
             {
-                ClientId = this.internalOptions.ClientId,
-                ClientSecret= this.internalOptions.ClientSecret
+                ClientId = client.ClientId,
+                ClientSecret= client.ClientSecret
             });
             response.EnsureSuccessStatusCode();
             var tokenResponse =  await response.Content.ReadFromJsonAsync<TokenResponse>();

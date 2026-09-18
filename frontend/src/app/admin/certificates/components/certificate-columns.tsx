@@ -43,8 +43,12 @@ export const getCertificateColumns = () => {
                 return (
                     <>
                         <div>
-                            <p>{certificate.title}</p>
-                            <p>{certificate.description}</p>
+                            {certificate.certificateContents.map((item, index) => (
+                                <div key={index}>
+                                    <p>{item.title}</p>
+                                    <p>{item.description}</p>
+                                </div>
+                            ))}
                         </div>
                     </>
                 )

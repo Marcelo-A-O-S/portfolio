@@ -1,6 +1,7 @@
 import z from "zod";
 import { mediaSchema } from "./MediaSchema";
 import { Status } from "./PostBaseSchema";
+import { certificateContentSchema } from "./CertificateContentSchema";
 export const CertificateType = z.enum([
     "TechnicalCourse",
     "HigherEducation",
@@ -15,8 +16,7 @@ export const certificateSchema = z.object({
     id: z.string().optional(),
     mediaId: z.string().optional(),
     media: mediaSchema.optional(),
-    title: z.string("O titulo é obrigatório.").nonempty("O titulo é obrigatório."),
-    description: z.string("A descrição é obrigatória.").nonempty("A descrição é obrigatória."),
+    certificateContents: z.array(certificateContentSchema),
     credentialId: z.string().optional(),
     verificationUrl: z.string().optional(),
     institution: z.string("A instituição é obrigatória.").nonempty("A instituição é obrigatória."),

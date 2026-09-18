@@ -10,10 +10,10 @@ namespace CertificateService.Infrastructure.Integrations
     public class LanguageServicesClient : ILanguageServicesClient
     {
         private readonly HttpClient http;
-        private readonly IInternalAuthClient authClient;
+        private readonly IAuthServicesClient authClient;
         public LanguageServicesClient(
             HttpClient _http,
-            IInternalAuthClient _authClient
+            IAuthServicesClient _authClient
         )
         {
             this.authClient = _authClient;

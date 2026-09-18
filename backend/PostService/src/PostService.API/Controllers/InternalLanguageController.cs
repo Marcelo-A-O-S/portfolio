@@ -30,7 +30,7 @@ namespace PostService.API.Controllers
             var result = await this.getByIdLanguage.ExecuteAsync(Id);
             if(result == null)
                 return NotFound();
-            return Ok();
+            return Ok(result);
         }
     }
 }

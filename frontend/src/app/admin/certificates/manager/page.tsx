@@ -10,18 +10,20 @@ import { MediaSchema } from "@/domain/schemas/MediaSchema";
 import { useCreateCertificate } from "@/hooks/Certificate/useCreateCertificate";
 import { useGetByIdCertificate } from "@/hooks/Certificate/useGetByIdCertificate";
 import { useUpdateCertificate } from "@/hooks/Certificate/useUpdateCertificate";
+import { useLanguages } from "@/hooks/Language/useLanguages";
 import { addMediaService } from "@/services/client/media-services";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ImageIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Controller, ControllerRenderProps, useForm } from "react-hook-form";
+import { Controller, ControllerRenderProps, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 export default function CertificateCreate() {
     const searchParams = useSearchParams();
     const certificateId = searchParams.get("certificateId") || undefined;
     const { data: certificate } = useGetByIdCertificate(certificateId);
+    const { data: languages } = useLanguages();
     const { mutateAsync: createCertificate } = useCreateCertificate();
     const { mutateAsync: updateCertificate } = useUpdateCertificate();
     const [certificatePreview, setCertificatePreview] = useState<string | null>(null);
@@ -29,8 +31,18 @@ export default function CertificateCreate() {
         resolver: zodResolver(certificateSchema),
         defaultValues: {
             status: "DRAFT",
-            media: undefined
+            media: undefined,
+            certificateContents: [
+                {
+                    title: "",
+                    description: ""
+                }
+            ]
         }
+    })
+    const { fields: fieldCertificateContents, append, remove: removeCertificateContent } = useFieldArray({
+        control,
+        name: "certificateContents"
     })
     useEffect(() => {
         if (!certificate) return;
@@ -39,11 +51,11 @@ export default function CertificateCreate() {
         })
     }, [certificate, reset])
     const onSubmit = async (data: CertificateSchema) => {
-        console.log(data);
-        if(certificate){
-            if(certificate.id != null)
-                await updateCertificate({id:certificate.id, data:data });
-        }else{
+        console.log("Certificate: ", data);
+        if (certificate) {
+            if (certificate.id != null)
+                await updateCertificate({ id: certificate.id, data: data });
+        } else {
             await createCertificate(data);
         }
     }
@@ -76,6 +88,17 @@ export default function CertificateCreate() {
                 <section className="relative w-full min-h-screen px-10 py-20 flex flex-col">
                     <div className="flex flex-col gap-3 sm:flex-row py-10 md:p-10 sm:items-center justify-between">
                         <h1 className="text-3xl md:text-5xl font-semibold">{certificate ? `Update Certificate` : `Create Certificate`}</h1>
+                        <div className="flex gap-2 items-center">
+                            <Button type="button"
+                                className="cursor-pointer"
+                                onClick={() =>
+                                    append({
+                                        languageId: "",
+                                        title: "",
+                                        description: ""
+                                    })
+                                } >Add translation</Button>
+                        </div>
                     </div>
                     <div className="flex md:p-10">
                         <form onSubmit={handleSubmit(onSubmit,
@@ -154,42 +177,6 @@ export default function CertificateCreate() {
                                             </div>
                                             {errors.media && <span className="text-wrap text-red-600 text-sm">{errors.media.message}</span>}
                                         </div>
-                                    </div>
-                                    <div className="py-2">
-                                        <Controller
-                                            name={`title`}
-                                            control={control}
-                                            render={({ field }) => (
-                                                <Field className="grid gap-2">
-                                                    <div className="flex flex-col gap-2">
-                                                        <Label htmlFor="title">Title</Label>
-                                                        <Input
-                                                            {...field}
-                                                            placeholder="Informe o titulo..."
-                                                        />
-                                                    </div>
-                                                    {errors.title && <span className="text-wrap text-red-600 text-sm">{errors.title.message}</span>}
-                                                </Field>
-                                            )}
-                                        />
-                                    </div>
-                                    <div className="py-2">
-                                        <Controller
-                                            name={`description`}
-                                            control={control}
-                                            render={({ field }) => (
-                                                <Field className="grid gap-2">
-                                                    <div className="flex flex-col gap-2">
-                                                        <Label htmlFor="description">Description</Label>
-                                                        <Input
-                                                            {...field}
-                                                            placeholder="Informe a descrição..."
-                                                        />
-                                                    </div>
-                                                    {errors.description && <span className="text-wrap text-red-600 text-sm">{errors.description.message}</span>}
-                                                </Field>
-                                            )}
-                                        />
                                     </div>
                                     <div className="py-2">
                                         <Controller
@@ -316,9 +303,13 @@ export default function CertificateCreate() {
                                                     <div className="flex flex-col gap-2">
                                                         <Label htmlFor="institution">Horas trabalhadas</Label>
                                                         <Input
-                                                            {...field}
-                                                            type="number"
-                                                            placeholder="Informe as horas..."
+                                                            {...field} 
+                                                            type="number" 
+                                                            placeholder="Informe as horas..." 
+                                                            value={field.value ?? ""} 
+                                                            onChange={(event) => { 
+                                                                field.onChange(event.target.value === "" ? undefined : Number(event.target.value)); 
+                                                            }}
                                                         />
                                                     </div>
                                                     {errors.workLoadHours && <span className="text-wrap text-red-600 text-sm">{errors.workLoadHours.message}</span>}
@@ -326,6 +317,76 @@ export default function CertificateCreate() {
                                             )}
                                         />
                                     </div>
+                                    {fieldCertificateContents.map((item, index) => (
+                                        <div key={item.id} className="border-t">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 md:gap-2 py-2">
+                                                <Controller
+                                                    name={`certificateContents.${index}.title`}
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                        <Field className="grid gap-2">
+                                                            <div className="flex flex-col gap-2">
+                                                                <Label htmlFor="title">Title</Label>
+                                                                <Input
+                                                                    {...field}
+                                                                    placeholder="Informe o titulo..."
+                                                                />
+                                                            </div>
+                                                            {errors.certificateContents?.[index]?.title && <span className="text-wrap text-red-600 text-sm">{errors.certificateContents?.[index]?.title.message}</span>}
+                                                        </Field>
+                                                    )}
+                                                />
+                                                <Controller
+                                                    name={`certificateContents.${index}.languageId`}
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                        <Field className="grid gap-2">
+                                                            <div className="flex flex-col gap-2">
+                                                                <Label htmlFor="language">Language</Label>
+                                                                <Select
+
+                                                                    onValueChange={(value) => field.onChange(value)}
+                                                                    value={field.value}
+                                                                >
+                                                                    <SelectTrigger className="w-full ">
+                                                                        <SelectValue placeholder="Selecione o idioma" />
+                                                                    </SelectTrigger>
+                                                                    <SelectContent>
+                                                                        <SelectGroup>
+                                                                            <SelectLabel>Idiomas</SelectLabel>
+                                                                            {languages?.map((item, index) => (
+                                                                                <SelectItem key={index} value={`${item.id}`}>{item.name}</SelectItem>
+                                                                            ))}
+                                                                        </SelectGroup>
+                                                                    </SelectContent>
+                                                                </Select>
+                                                                {errors.certificateContents?.[index]?.languageId && <span className="text-wrap text-red-600 text-sm">{errors.certificateContents?.[index]?.languageId?.message}</span>}
+                                                            </div>
+
+                                                        </Field>
+                                                    )}
+                                                />
+                                            </div>
+                                            <div className="py-2">
+                                                <Controller
+                                                    name={`certificateContents.${index}.description`}
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                        <Field className="grid gap-2">
+                                                            <div className="flex flex-col gap-2">
+                                                                <Label htmlFor="description">Description</Label>
+                                                                <Input
+                                                                    {...field}
+                                                                    placeholder="Informe a descrição..."
+                                                                />
+                                                            </div>
+                                                            {errors.certificateContents?.[index]?.description && <span className="text-wrap text-red-600 text-sm">{errors.certificateContents?.[index]?.description.message}</span>}
+                                                        </Field>
+                                                    )}
+                                                />
+                                            </div>
+                                        </div>
+                                    ))}
                                 </CardContent>
                             </Card>
                         </form>
