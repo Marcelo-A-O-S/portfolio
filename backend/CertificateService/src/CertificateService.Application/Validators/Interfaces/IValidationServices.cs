@@ -4,5 +4,6 @@ namespace CertificateService.Application.Validators.Interfaces
     {
         Task ValidatePostExists(Guid postId);
         Task ValidateCertificateExists(Guid certificateId);
+        Task ValidatePostProjectionExists(Guid postProjectionId);
     }
 }

@@ -69,7 +69,7 @@ namespace CertificateService.Application.UseCases.Certificates
                 await unitOfWork.RollbackAsync();
                 throw;
             }
-            await this.rabbitMQProducer.Publish("Certificate", new
+            await this.rabbitMQProducer.Publish("PostCertificateAdd", new
             {
                 CertificateId = certificateId,
                 PostId = postId

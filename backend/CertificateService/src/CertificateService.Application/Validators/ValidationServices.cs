@@ -11,17 +11,20 @@ namespace CertificateService.Application.Validators
         private readonly ICertificateCacheServices certificateCacheServices;
         private readonly IPostServicesClient postServicesClient;
         private readonly IPostCacheServices postCacheServices;
+        private readonly IPostProjectionServices postProjectionServices;
         public ValidationServices(
             ICertificateServices _certificateServices,
             ICertificateCacheServices _certificateCacheServices,
             IPostServicesClient _postServicesClient,
-            IPostCacheServices _postCacheServices
+            IPostCacheServices _postCacheServices,
+            IPostProjectionServices _postProjectionServices
         )
         {
             this.certificateServices = _certificateServices;
             this.certificateCacheServices = _certificateCacheServices;
             this.postServicesClient = _postServicesClient;
             this.postCacheServices = _postCacheServices;
+            this.postProjectionServices = _postProjectionServices;
         }
         public async Task ValidateCertificateExists(Guid certificateId)
         {
@@ -34,7 +37,6 @@ namespace CertificateService.Application.Validators
                 await this.certificateCacheServices.AddCertificateCache(CacheKeys.CertificateExists(certificateId), certificateId);
             }
         }
-
         public async Task ValidatePostExists(Guid postId)
         {
             var postCache = await this.postCacheServices.GetPostCache(CacheKeys.PostExists(postId));
@@ -45,6 +47,11 @@ namespace CertificateService.Application.Validators
                     throw new NotFoundException("Projeto não encontrado");
                 await this.postCacheServices.AddPostCache(CacheKeys.PostExists(postId), postId);
             }
+        }
+        public Task ValidatePostProjectionExists(Guid postProjectionId)
+        {
+            
+            throw new NotImplementedException();
         }
     }
 }
