@@ -2,7 +2,8 @@ using CertificateService.Application.Interfaces;
 using CertificateService.Application.UseCases.Certificates.Interfaces;
 using CertificateService.Application.Validators.Interfaces;
 using CertificateService.Domain.Interfaces;
-
+using CertificateService.Application.Exceptions;
+using System.Runtime.ConstrainedExecution;
 namespace CertificateService.Application.UseCases.Certificates
 {
     public class RemovePostProjectionCertificate : IRemovePostProjectionCertificate
@@ -25,18 +26,25 @@ namespace CertificateService.Application.UseCases.Certificates
         }
         public async Task ExecuteAsync(Guid certificateId, Guid postProjectionId)
         {
-            var postProjection = await this.postProjectionServices.FindBy()
+            var postProjection = await this.postProjectionServices.GetById(postProjectionId);
+            if(postProjection == null)
+                throw new NotFoundException("Relacionamento entre certificado e projeto não encontrado!");
             await this.unitOfWork.BeginAsync();
             try
             {
-
+                await this.postProjectionServices.DeleteById(postProjection.Id);
+                await this.unitOfWork.CommitAsync();
             }
             catch
             {
                 await this.unitOfWork.RollbackAsync();
                 throw;
             }
-            throw new NotImplementedException();
+            await this.rabbitMQProducer.Publish("RemovePostCertificate", new
+            {
+                PostId = postProjection.PostId,
+                CertificateId = postProjection.CertificateId
+            });
         }
     }
 }

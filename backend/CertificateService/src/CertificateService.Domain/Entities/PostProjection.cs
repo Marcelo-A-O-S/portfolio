@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-
 namespace CertificateService.Domain.Entities
 {
     public class PostProjection
