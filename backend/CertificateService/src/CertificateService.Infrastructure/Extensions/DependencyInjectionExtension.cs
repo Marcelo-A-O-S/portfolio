@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using CertificateService.Domain.Entities;
 using CertificateService.Application.Interfaces;
 using CertificateService.Infrastructure.Persistence;
+using CertificateService.Infrastructure.Messaging.Handlers.Interfaces;
+using CertificateService.Infrastructure.Messaging.Handlers;
 namespace CertificateService.Infrastructure.Extensions
 {
     public static class DependencyInjectionExtension
@@ -28,6 +30,8 @@ namespace CertificateService.Infrastructure.Extensions
             services.AddScoped<IMediaProjectionRepository, MediaProjectionRepository>();
 
             services.AddSingleton<IRabbitMQProducer, RabbitMQProducer>();
+
+            services.AddSingleton<ILanguageProjectionHandler, LanguageProjectionHandler>();
             return services;
         }
     }

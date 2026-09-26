@@ -31,6 +31,7 @@ namespace CertificateService.Application.Extensions
             services.AddScoped<IUpdateCertificate, UpdateCertificate>();
             services.AddScoped<IRemoveCertificate, RemoveCertificate>();
             services.AddScoped<IAddPostProjectionCertificate, AddPostProjectionCertificate>();
+            services.AddScoped<IRemovePostProjectionCertificate, RemovePostProjectionCertificate>();
             return services;
         }
     }
