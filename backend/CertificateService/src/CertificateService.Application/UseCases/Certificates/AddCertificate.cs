@@ -123,6 +123,7 @@ namespace CertificateService.Application.UseCases.Certificates
                     await this.languageProjectionServices.Save(languageProjection);
                 }
                 var certificateContent = new CertificateContent(languageProjection.Id, item.Title, item.Description);
+                certificateContent.GenerateId();
                 certificate.AddCertificateContent(certificateContent);
             }
         }

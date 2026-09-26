@@ -29,5 +29,9 @@ namespace CertificateService.Domain.Entities
             this.Title = title;
             this.Description = description;
         }
+        public void GenerateId()
+        {
+            this.Id = Guid.NewGuid();
+        }
     }
 }
