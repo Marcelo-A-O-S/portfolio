@@ -26,7 +26,7 @@ namespace CertificateService.Application.UseCases.Certificates
         }
         public async Task ExecuteAsync(Guid certificateId, Guid postProjectionId)
         {
-            var postProjection = await this.postProjectionServices.GetById(postProjectionId);
+            var postProjection = await this.postProjectionServices.FindBy(pp => pp.Id == postProjectionId && pp.CertificateId == certificateId);
             if(postProjection == null)
                 throw new NotFoundException("Relacionamento entre certificado e projeto não encontrado!");
             await this.unitOfWork.BeginAsync();
