@@ -33,7 +33,7 @@ namespace CertificateService.Application.Validators
             {
                 var exists = await this.certificateServices.Exists(certificateId);
                 if (!exists)
-                    throw new NotFoundException("Projeto não encontrado");
+                    throw new NotFoundException("Certificado não encontrado");
                 await this.certificateCacheServices.AddCertificateCache(CacheKeys.CertificateExists(certificateId), certificateId);
             }
         }
@@ -50,7 +50,6 @@ namespace CertificateService.Application.Validators
         }
         public Task ValidatePostProjectionExists(Guid postProjectionId)
         {
-            
             throw new NotImplementedException();
         }
     }

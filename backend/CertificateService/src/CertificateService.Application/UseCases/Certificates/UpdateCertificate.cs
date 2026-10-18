@@ -82,7 +82,7 @@ namespace CertificateService.Application.UseCases.Certificates
         }
         private async Task<Certificate> GetCertificateById(Guid certificateId)
         {
-            var certificate = await this.certificateServices.GetById(certificateId);
+            var certificate = await this.certificateServices.GetCertificateById(certificateId);
             if (certificate == null)
                 throw new NotFoundException("Certificado não encontrado.");
             return certificate;
@@ -125,8 +125,6 @@ namespace CertificateService.Application.UseCases.Certificates
             var requestCertificateContentIds = certificateContentRequests
                 .Where(c => c.Id.HasValue)
                 .Select(c => c.Id!.Value);
-            var removedContents = certificate.CertificateContents
-                .Where(cc => !requestCertificateContentIds.Contains(cc.Id));
             certificate.ValidateCertificateContents(requestCertificateContentIds);
             foreach (var item in certificateContentRequests)
             {

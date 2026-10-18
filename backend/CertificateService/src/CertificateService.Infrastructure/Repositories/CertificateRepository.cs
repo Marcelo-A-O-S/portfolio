@@ -80,6 +80,8 @@ namespace CertificateService.Infrastructure.Repositories
                 .AsNoTracking()
                 .AsSplitQuery()
                 .Where(c => c.Id == certificateId)
+                .Include(c=> c.CertificateContents)
+                    .ThenInclude(cc => cc.LanguageProjection)
                 .Include(c => c.MediaProjection)
                 .FirstOrDefaultAsync();
             return item;
