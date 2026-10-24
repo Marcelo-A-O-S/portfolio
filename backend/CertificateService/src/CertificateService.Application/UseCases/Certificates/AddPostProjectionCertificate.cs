@@ -72,7 +72,8 @@ namespace CertificateService.Application.UseCases.Certificates
             await this.rabbitMQProducer.Publish("PostCertificateAdd", new
             {
                 CertificateId = certificateId,
-                PostId = postId
+                PostId = postId,
+                CertificateContents = certificate.CertificateContents
             });
         }
         private async Task ProcessPostContentProjections(PostProjection postProjection, List<PostContentResponse> postContentResponses)

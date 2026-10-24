@@ -84,7 +84,8 @@ namespace PostService.Application.UseCases.Tools
                 .Where(c => c.Id.HasValue)
                 .Select(c => c.Id!.Value);
             var removedContents = tool.ToolContents
-                .Where(tc => !requestToolContentIds.Contains(tc.Id));
+                .Where(tc => !requestToolContentIds.Contains(tc.Id))
+                .ToList();
             tool.ValidateToolContents(requestToolContentIds);
             foreach (var item in removedContents)
             {

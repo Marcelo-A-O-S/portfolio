@@ -125,7 +125,14 @@ namespace CertificateService.Application.UseCases.Certificates
             var requestCertificateContentIds = certificateContentRequests
                 .Where(c => c.Id.HasValue)
                 .Select(c => c.Id!.Value);
+            var removedContents = certificate.CertificateContents
+                .Where(cc => !requestCertificateContentIds.Contains(cc.Id))
+                .ToList();
             certificate.ValidateCertificateContents(requestCertificateContentIds);
+            foreach (var removedContent in removedContents)
+            {
+                await this.certificateContentServices.Delete(removedContent);
+            }
             foreach (var item in certificateContentRequests)
             {
                 var languageProjection = await this.languageProjectionServices.GetByLanguageId(item.LanguageId);

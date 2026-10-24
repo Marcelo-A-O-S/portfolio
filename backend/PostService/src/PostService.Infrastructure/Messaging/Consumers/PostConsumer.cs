@@ -9,6 +9,7 @@ namespace PostService.Infrastructure.Messaging.Consumers
     {
         private readonly ILikeProjectionHandler likeProjectionHandler;
         private readonly ICommentProjectionHandler commentProjectionHandler;
+        private readonly ICertificateProjectionHandler certificateProjectionHandler;
         private readonly IConnectionFactory factory;
         private readonly ILogger<PostConsumer> logger;
         private IConnection? connection;
@@ -17,13 +18,15 @@ namespace PostService.Infrastructure.Messaging.Consumers
             IConnectionFactory _factory,
             ILogger<PostConsumer> _logger,
             ILikeProjectionHandler _likeProjectionHandler,
-            ICommentProjectionHandler _commentProjectionHandler
+            ICommentProjectionHandler _commentProjectionHandler,
+            ICertificateProjectionHandler _certificateProjectionHandler
         )
         {
             this.factory = _factory;
             this.logger = _logger;
             this.likeProjectionHandler = _likeProjectionHandler;
             this.commentProjectionHandler = _commentProjectionHandler;
+            this.certificateProjectionHandler = _certificateProjectionHandler;
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -36,6 +39,7 @@ namespace PostService.Infrastructure.Messaging.Consumers
                 this.consumer.RegisterHandler("PostUnliked", async message => { await this.likeProjectionHandler.HandleLikeRemoved(message); });
                 this.consumer.RegisterHandler("PostCommentCreated", async message => { await this.commentProjectionHandler.HandleCommentAdded(message); });
                 this.consumer.RegisterHandler("PostCommentDeleted", async message => { await this.commentProjectionHandler.HandleCommentRemoved(message); });
+                this.consumer.RegisterHandler("PostCertificateAdd", async message => { await this.certificateProjectionHandler.HandleCertificateAdded(message);});
                 await consumer.Start();
                 this.logger.LogInformation("Consumer dos Projetos do serviço de Postagens do RabbitMQ iniciado e aguardando mensagens...");
             }
