@@ -6,6 +6,7 @@ namespace PostService.Domain.Entities
         public ICollection<Contributor> Contributors { get; private set; }
         public ICollection<Tool> Tools { get; private set; }
         public ICollection<PostContent> PostContents { get; private set; }
+        public ICollection<CertificateProjection>? CertificateProjections { get; set; }
         public Post(Status status)
         {
             this.CreatedAt = DateTime.UtcNow;

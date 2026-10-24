@@ -22,6 +22,8 @@ namespace PostService.Infrastructure.Context
         public DbSet<Post> Posts { get; set; }
         public DbSet<PostContent> PostContents { get; set; }
         public DbSet<Language> Languages { get; set; }
+        public DbSet<CertificateProjection> CertificateProjections { get; set; }
+        public DbSet<CertificateContentProjection> CertificateContentProjections { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Post>().Property(p => p.Status).HasConversion<string>();

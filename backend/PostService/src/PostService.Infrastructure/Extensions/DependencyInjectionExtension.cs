@@ -30,6 +30,8 @@ namespace PostService.Infrastructure.Extensions
             services.AddScoped<IGenerics<Author>,Generics<Author>>();
             services.AddScoped<IGenerics<LinkDescription>, Generics<LinkDescription>>();
             services.AddScoped<IGenerics<Contributor>, Generics<Contributor>>();
+            services.AddScoped<IGenerics<CertificateProjection>, Generics<CertificateProjection>>();
+            services.AddScoped<IGenerics<CertificateContentProjection>, Generics<CertificateContentProjection>>();
 
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ICategoryContentRepository, CategoryContentRepository>();
@@ -45,12 +47,15 @@ namespace PostService.Infrastructure.Extensions
             services.AddScoped<ILinkTypeRepository, LinkTypeRepository>();
             services.AddScoped<ILinkDescriptionRepository, LinkDescriptionRepository>();
             services.AddScoped<IContributorRepository, ContributorRepository>();
+            services.AddScoped<ICertificateProjectionRepository, CertificateProjectionRepository>();
+            services.AddScoped<ICertificateContentProjectionRepository, CertificateContentProjectionRepository>();
             
             services.AddSingleton<IRabbitMQProducer, RabbitMQProducer>();
 
             services.AddSingleton<ICommentProjectionHandler, CommentProjectionHandler>();
             services.AddSingleton<ILikeProjectionHandler, LikeProjectionHandler>();
             services.AddSingleton<IUserProjectionHandler, UserProjectionHandler>();
+            services.AddSingleton<ICertificateProjectionHandler, CertificateProjectionHandler>();
             return services;
         }
     }
