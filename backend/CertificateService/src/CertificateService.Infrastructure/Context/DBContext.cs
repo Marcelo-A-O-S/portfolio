@@ -20,6 +20,12 @@ namespace CertificateService.Infrastructure.Context
             modelBuilder.Entity<Certificate>().Property(c => c.CertificateType).HasConversion<string>();
             modelBuilder.Entity<MediaProjection>().HasIndex(mp => new { mp.Url, mp.MediaId }).IsUnique();
             modelBuilder.Entity<LanguageProjection>().HasIndex(lp => new { lp.Code }).IsUnique();
+            modelBuilder.Entity<CertificateContent>().HasOne(cc => cc.LanguageProjection)
+                .WithMany().HasForeignKey(cc => cc.LanguageProjectionId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<PostContentProjection>().HasOne(cc => cc.LanguageProjection)
+                .WithMany().HasForeignKey(pc => pc.LanguageProjectionId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
