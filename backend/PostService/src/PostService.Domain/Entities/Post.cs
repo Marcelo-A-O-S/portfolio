@@ -1,4 +1,5 @@
 using PostService.Domain.Enums;
+using System.Runtime.ConstrainedExecution;
 namespace PostService.Domain.Entities
 {
     public class Post : PostBase
@@ -6,7 +7,7 @@ namespace PostService.Domain.Entities
         public ICollection<Contributor> Contributors { get; private set; }
         public ICollection<Tool> Tools { get; private set; }
         public ICollection<PostContent> PostContents { get; private set; }
-        public ICollection<CertificateProjection>? CertificateProjections { get; set; }
+        public ICollection<CertificateProjection> CertificateProjections { get; set; }
         public Post(Status status)
         {
             this.CreatedAt = DateTime.UtcNow;
@@ -16,6 +17,7 @@ namespace PostService.Domain.Entities
             this.Tools = new List<Tool>();
             this.Links = new List<Link>();
             this.PostContents = new List<PostContent>();
+            this.CertificateProjections = new List<CertificateProjection>();
             this.Status = status;
         }
         public void AddTool(Tool tool)

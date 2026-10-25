@@ -4,7 +4,7 @@ using PostService.Infrastructure.Messaging.Events;
 using PostService.Infrastructure.Messaging.Handlers.Interfaces;
 using Microsoft.Extensions.Logging;
 using PostService.Application.Interfaces;
-
+using PostService.Domain.Entities;
 namespace PostService.Infrastructure.Messaging.Handlers
 {
     public class CertificateProjectionHandler : ICertificateProjectionHandler
@@ -25,10 +25,43 @@ namespace PostService.Infrastructure.Messaging.Handlers
             using var scope = this.scopeFactory.CreateScope();
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             var certificateProjectionServices = scope.ServiceProvider.GetRequiredService<ICertificateProjectionServices>();
+            var languageServices = scope.ServiceProvider.GetRequiredService<ILanguageServices>();
             if(payload == null)
                 return;
-            
-            throw new NotImplementedException();
+            var certificateProjection = await certificateProjectionServices.FindBy(cp => cp.PostId == payload.PostId && cp.CertificateId == payload.CertificateId);
+            if(certificateProjection != null)
+            {
+                this.logger.LogWarning("Evento recebido para certificado já associado. CertificateId: {CertificateId}", payload.CertificateId);
+                return;
+            }
+            await unitOfWork.BeginAsync();
+            try
+            {
+                certificateProjection = new CertificateProjection(
+                    payload.CertificateId,
+                    payload.PostId
+                );
+                foreach (var dataContent in payload.CertificateContents)
+                {
+                    if(dataContent.Language?.Id is not Guid languageId)
+                        return;
+                    var language = await languageServices.GetById(languageId);
+                    if(language == null)
+                        return;
+                    var certificateContentProjection = new CertificateContentProjection(
+                        dataContent.Title,
+                        languageId
+                    );
+                    certificateProjection.AddCertificateContentProjection(certificateContentProjection);
+                }
+                await certificateProjectionServices.Save(certificateProjection);
+                await unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task HandleCertificateRemoved(string message)
