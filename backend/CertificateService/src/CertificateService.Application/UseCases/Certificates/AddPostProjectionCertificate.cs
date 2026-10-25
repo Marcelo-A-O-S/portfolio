@@ -48,7 +48,7 @@ namespace CertificateService.Application.UseCases.Certificates
             await this.unitOfWork.BeginAsync();
             try
             {
-                var postProjection = await this.postProjectionServices.GetById(postId);
+                var postProjection = await this.postProjectionServices.FindBy(pp => pp.PostId == postId && pp.CertificateId == certificateId);
                 if (postProjection == null)
                 {
                     var postResponse = await this.postServicesClient.GetPostAsync(postId);
