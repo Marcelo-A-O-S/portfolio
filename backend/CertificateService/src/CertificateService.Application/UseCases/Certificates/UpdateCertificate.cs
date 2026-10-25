@@ -70,6 +70,11 @@ namespace CertificateService.Application.UseCases.Certificates
                 throw;
             }
             await PublishMedias(certificate.Id, mediasToCommit, mediasToDelete);
+            await this.rabbitMQProducer.Publish("CertificateUpdate", new
+            {
+                CertificateId = certificateId,
+                CertificateContents = certificate.CertificateContents
+            });
         }
         private static void ValidateRequest(CertificateRequest certificateRequest)
         {

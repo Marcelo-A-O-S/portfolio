@@ -40,6 +40,11 @@ namespace PostService.Infrastructure.Messaging.Handlers
                 );
             foreach (var dataContent in payload.CertificateContents)
             {
+                if(dataContent.Id is not Guid certificateContentId)
+                {
+                    this.logger.LogWarning("Evento de certificado sem identificador de conteudo válido. CertificateId: {CertificateId}", payload.CertificateId);
+                    return;
+                }
                 if (dataContent.Language?.Id is not Guid languageId)
                 {
                     this.logger.LogWarning("Evento de certificado sem Language.Id válido. CertificateId: {CertificateId}", payload.CertificateId);
@@ -52,6 +57,7 @@ namespace PostService.Infrastructure.Messaging.Handlers
                     return;
                 }     
                 var certificateContentProjection = new CertificateContentProjection(
+                    certificateContentId,
                     dataContent.Title,
                     languageId
                 );
@@ -88,6 +94,51 @@ namespace PostService.Infrastructure.Messaging.Handlers
             try
             {
                 await certificateProjectionServices.Delete(certificateProjection);
+                await unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
+        }
+
+        public async Task HandleCertificateUpdated(string message)
+        {
+            var payload = JsonSerializer.Deserialize<CertificateUpdatedEvent>(message);
+            using var scope = this.scopeFactory.CreateScope();
+            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+            var certificateProjectionServices = scope.ServiceProvider.GetRequiredService<ICertificateProjectionServices>();
+            var certificateContentProjectionServices = scope.ServiceProvider.GetRequiredService<ICertificateContentProjectionServices>();
+            var languageServices = scope.ServiceProvider.GetRequiredService<ILanguageServices>();
+            if (payload == null)
+                return;
+            var certificateProjection = await certificateProjectionServices.FindBy(cp => cp.CertificateId == payload.CertificateId);
+            if (certificateProjection == null)
+            {
+                this.logger.LogWarning("Evento recebido para certificado inexistente. CertificateId: {CertificateId}", payload.CertificateId);
+                return;
+            }
+
+            foreach (var item in payload.CertificateContents)
+            {
+                if(item.Id is not Guid certificateContentId)
+                {
+                    this.logger.LogWarning("Evento de certificado sem identificador de conteudo válido. CertificateId: {CertificateId}", payload.CertificateId);
+                    return;
+                }
+                var certificateContentProjection = certificateProjection.CertificateContents.FirstOrDefault(ccp => ccp.LanguageId == item.Language.Id && ccp.CertificateContentId == certificateContentId);
+                if(certificateContentProjection == null)
+                {
+                    this.logger.LogWarning("Evento recebido para certificado inexistente. CertificateId: {CertificateId}", payload.CertificateId);
+                    return;
+                }
+                certificateContentProjection.Update(item.Title);
+            }
+            await unitOfWork.BeginAsync();
+            try
+            {
+                await certificateProjectionServices.Update(certificateProjection);
                 await unitOfWork.CommitAsync();
             }
             catch
