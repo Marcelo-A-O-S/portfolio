@@ -2,11 +2,11 @@ namespace PostService.Domain.Entities
 {
     public class CertificateContentProjection
     {
-        public Guid Id { get; set; }
-        public Guid CertificateContentId { get; set; }
-        public string Title { get; set; }
-        public Guid LanguageId { get; set; }
-        public Language Language { get; set; }
+        public Guid Id { get; private set; }
+        public Guid CertificateContentId { get; private set; }
+        public string Title { get; private set; }
+        public Guid LanguageId { get; private set; }
+        public Language Language { get; private set; }
         public CertificateContentProjection(
             Guid _certificateContentId,
             string _title,

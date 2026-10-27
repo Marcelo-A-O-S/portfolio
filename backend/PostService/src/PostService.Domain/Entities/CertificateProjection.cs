@@ -3,11 +3,11 @@ namespace PostService.Domain.Entities
 {
     public class CertificateProjection
     {
-        public Guid Id { get; set; }
-        public Guid CertificateId { get; set; }
-        public Guid PostId { get; set; }
-        public Post Post { get; set; }
-        public ICollection<CertificateContentProjection> CertificateContents { get; set; }
+        public Guid Id { get; private set; }
+        public Guid CertificateId { get; private set; }
+        public Guid PostId { get; private set; }
+        public Post Post { get; private set; }
+        public ICollection<CertificateContentProjection> CertificateContents { get; private set; }
         public CertificateProjection(
             Guid _certificateId,
             Guid _postId

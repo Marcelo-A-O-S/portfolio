@@ -113,7 +113,7 @@ namespace PostService.Infrastructure.Messaging.Handlers
             var languageServices = scope.ServiceProvider.GetRequiredService<ILanguageServices>();
             if (payload == null)
                 return;
-            var certificateProjection = await certificateProjectionServices.FindBy(cp => cp.CertificateId == payload.CertificateId);
+            var certificateProjection = await certificateProjectionServices.FindWithContentBy(cp => cp.CertificateId == payload.CertificateId);
             if (certificateProjection == null)
             {
                 this.logger.LogWarning("Evento recebido para certificado inexistente. CertificateId: {CertificateId}", payload.CertificateId);
