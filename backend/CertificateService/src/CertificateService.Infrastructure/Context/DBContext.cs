@@ -14,6 +14,7 @@ namespace CertificateService.Infrastructure.Context
         public DbSet<Certificate> Certificates { get; set; }
         public DbSet<MediaProjection> MediaProjections { get; set; }
         public DbSet<CertificateContent> CertificateContents { get; set; }
+        public DbSet<OutboxMessage> OutboxMessages { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Certificate>().Property(c => c.Status).HasConversion<string>();

@@ -84,6 +84,10 @@ namespace PostService.Infrastructure.Messaging.Handlers
                 {
                     await certificateProjectionServices.Save(certificateProjection);
                 }
+                else
+                {
+                    await certificateProjectionServices.Update(certificateProjection);
+                }
                 await unitOfWork.CommitAsync();
             }
             catch
@@ -98,6 +102,8 @@ namespace PostService.Infrastructure.Messaging.Handlers
             using var scope = this.scopeFactory.CreateScope();
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             var certificateProjectionServices = scope.ServiceProvider.GetRequiredService<ICertificateProjectionServices>();
+            if(payload == null)
+                return;
             var certificateProjection = await certificateProjectionServices.FindWithContentBy(cp => cp.CertificateId == payload.CertificateId);
             if (certificateProjection == null)
             {
@@ -233,6 +239,7 @@ namespace PostService.Infrastructure.Messaging.Handlers
                     certificateProjection.RemoveCertificateContentProjection(content);
                     await certificateContentProjectionServices.Delete(content);
                 }
+                await certificateProjectionServices.Update(certificateProjection);
                 await unitOfWork.CommitAsync();
             }
             catch

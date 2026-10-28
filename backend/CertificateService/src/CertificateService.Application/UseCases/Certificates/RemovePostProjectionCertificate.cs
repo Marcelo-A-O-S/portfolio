@@ -40,7 +40,7 @@ namespace CertificateService.Application.UseCases.Certificates
                 await this.unitOfWork.RollbackAsync();
                 throw;
             }
-            await this.rabbitMQProducer.Publish("RemovePostCertificate", new
+            await this.rabbitMQProducer.Publish("PostCertificateRemoved", new
             {
                 PostId = postProjection.PostId,
                 CertificateId = postProjection.CertificateId

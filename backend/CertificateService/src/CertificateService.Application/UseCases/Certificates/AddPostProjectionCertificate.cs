@@ -6,7 +6,6 @@ using CertificateService.Application.Validators.Interfaces;
 using CertificateService.Domain.Entities;
 using CertificateService.Domain.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
-
 namespace CertificateService.Application.UseCases.Certificates
 {
     public class AddPostProjectionCertificate : IAddPostProjectionCertificate
@@ -16,6 +15,7 @@ namespace CertificateService.Application.UseCases.Certificates
         private readonly ILanguageProjectionServices languageProjectionServices;
         private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly IPostServicesClient postServicesClient;
+        private readonly IOutboxMessageServices outboxMessageServices;
         private readonly IValidationServices validationServices;
         private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly IUnitOfWork unitOfWork;
@@ -25,6 +25,7 @@ namespace CertificateService.Application.UseCases.Certificates
             ILanguageProjectionServices _languageProjectionServices,
             IMediaProjectionServices _mediaProjectionServices,
             IPostServicesClient _postServicesClient,
+            IOutboxMessageServices _outboxMessageServices,
             IValidationServices _validationServices,
             IRabbitMQProducer _rabbitMQProducer,
             IUnitOfWork _unitOfWork
@@ -35,6 +36,7 @@ namespace CertificateService.Application.UseCases.Certificates
             this.languageProjectionServices = _languageProjectionServices;
             this.mediaProjectionServices = _mediaProjectionServices;
             this.postServicesClient = _postServicesClient;
+            this.outboxMessageServices = _outboxMessageServices;
             this.validationServices = _validationServices;
             this.rabbitMQProducer = _rabbitMQProducer;
             this.unitOfWork = _unitOfWork;
@@ -62,6 +64,16 @@ namespace CertificateService.Application.UseCases.Certificates
                 }
                 certificate.AddPostProjection(postProjection);
                 await this.certificateServices.Update(certificate);
+                var outboxMessage = new OutboxMessage(
+                    "PostCertificateAdd",
+                    System.Text.Json.JsonSerializer.Serialize(new
+                    {
+                        CertificateId = certificateId,
+                        PostId = postId,
+                        CertificateContents = certificate.CertificateContents
+                    })
+                );
+                await this.outboxMessageServices.Save(outboxMessage);
                 await this.unitOfWork.CommitAsync();
             }
             catch
@@ -69,12 +81,12 @@ namespace CertificateService.Application.UseCases.Certificates
                 await unitOfWork.RollbackAsync();
                 throw;
             }
-            await this.rabbitMQProducer.Publish("PostCertificateAdd", new
-            {
-                CertificateId = certificateId,
-                PostId = postId,
-                CertificateContents = certificate.CertificateContents
-            });
+            // await this.rabbitMQProducer.Publish("PostCertificateAdd", new
+            // {
+            //     CertificateId = certificateId,
+            //     PostId = postId,
+            //     CertificateContents = certificate.CertificateContents
+            // });
         }
         private async Task ProcessPostContentProjections(PostProjection postProjection, List<PostContentResponse> postContentResponses)
         {

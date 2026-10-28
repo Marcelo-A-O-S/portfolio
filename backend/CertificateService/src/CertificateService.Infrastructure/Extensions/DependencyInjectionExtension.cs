@@ -22,12 +22,14 @@ namespace CertificateService.Infrastructure.Extensions
             services.AddScoped<IGenerics<LanguageProjection>, Generics<LanguageProjection>>();
             services.AddScoped<IGenerics<PostContentProjection>, Generics<PostContentProjection>>();
             services.AddScoped<IGenerics<PostProjection>, Generics<PostProjection>>();
+            services.AddScoped<IGenerics<OutboxMessage>, Generics<OutboxMessage>>();
 
             services.AddScoped<ICertificateRepository, CertificateRepository>();
             services.AddScoped<ICertificateContentRepository, CertificateContentRepository>();
             services.AddScoped<ILanguageProjectionRepository, LanguageProjectionRepository>();
             services.AddScoped<IPostProjectionRepository, PostProjectionRepository>();
             services.AddScoped<IMediaProjectionRepository, MediaProjectionRepository>();
+            services.AddScoped<IOutboxMessageRepository, OutboxMessageRepository>();
 
             services.AddSingleton<IRabbitMQProducer, RabbitMQProducer>();
 

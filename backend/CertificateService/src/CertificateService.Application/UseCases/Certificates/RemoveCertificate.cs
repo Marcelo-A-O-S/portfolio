@@ -47,6 +47,10 @@ namespace CertificateService.Application.UseCases.Certificates
             }
             await DeleteMedias(mediasToDelete);
             await this.certificateCacheServices.RemoveCertificateCache(CacheKeys.CertificateExists(certificateId));
+            await this.rabbitMQProducer.Publish("CertificateDeleted",new
+            {
+                CertificateId = certificateId
+            });
         }
         private async Task<Certificate> GetCertificateById(Guid certificateId)
         {

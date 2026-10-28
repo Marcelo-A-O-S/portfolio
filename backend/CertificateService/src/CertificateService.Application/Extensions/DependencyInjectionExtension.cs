@@ -21,6 +21,7 @@ namespace CertificateService.Application.Extensions
             services.AddScoped<ILanguageProjectionServices, LanguageProjectionServices>();
             services.AddScoped<IMediaProjectionServices, MediaProjectionServices>();
             services.AddScoped<IPostProjectionServices, PostProjectionServices>();
+            services.AddScoped<IOutboxMessageServices, OutboxMessageServices>();
 
             services.AddScoped<ICertificateCacheServices, CertificateCacheServices>();
             services.AddScoped<IPostCacheServices, PostCacheServices>();
