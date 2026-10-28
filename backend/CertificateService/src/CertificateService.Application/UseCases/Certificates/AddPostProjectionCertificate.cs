@@ -1,3 +1,4 @@
+using System.Text.Json;
 using CertificateService.Application.DTOs.Responses;
 using CertificateService.Application.Exceptions;
 using CertificateService.Application.Interfaces;
@@ -63,7 +64,7 @@ namespace CertificateService.Application.UseCases.Certificates
                 await this.certificateServices.Update(certificate);
                 var outboxMessage = new OutboxMessage(
                     "PostCertificateAdd",
-                    System.Text.Json.JsonSerializer.Serialize(new
+                    JsonSerializer.Serialize(new
                     {
                         CertificateId = certificateId,
                         PostId = postId,

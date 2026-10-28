@@ -5,6 +5,7 @@ using CertificateService.Domain.Interfaces;
 using CertificateService.Application.Exceptions;
 using System.Runtime.ConstrainedExecution;
 using CertificateService.Domain.Entities;
+using System.Text.Json;
 namespace CertificateService.Application.UseCases.Certificates
 {
     public class RemovePostProjectionCertificate : IRemovePostProjectionCertificate
@@ -33,7 +34,7 @@ namespace CertificateService.Application.UseCases.Certificates
                 await this.postProjectionServices.DeleteById(postProjection.Id);
                 var outboxMessage = new OutboxMessage(
                     "PostCertificateRemoved",
-                    System.Text.Json.JsonSerializer.Serialize(new
+                    JsonSerializer.Serialize(new
                     {
                         PostId = postProjection.PostId,
                         CertificateId = postProjection.CertificateId

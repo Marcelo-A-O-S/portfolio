@@ -20,6 +20,7 @@ namespace PostService.Application.UseCases.Projects
         private readonly ICategoryServices categoryServices;
         private readonly IToolsServices toolsServices;
         private readonly IMediaProjectionServices mediaProjectionServices;
+        private readonly IOutboxMessageServices outboxMessageServices;
         private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly IUnitOfWork unitOfWork;
         public UpdateProject(
@@ -28,6 +29,7 @@ namespace PostService.Application.UseCases.Projects
             ICategoryServices _categoryServices,
             IToolsServices _toolsServices,
             IMediaProjectionServices _mediaProjectionServices,
+            IOutboxMessageServices _outboxMessageServices,
             IRabbitMQProducer _rabbitMQProducer,
             IUnitOfWork _unitOfWork
         )
@@ -37,6 +39,7 @@ namespace PostService.Application.UseCases.Projects
             this.categoryServices = _categoryServices;
             this.toolsServices = _toolsServices;
             this.mediaProjectionServices = _mediaProjectionServices;
+            this.outboxMessageServices = _outboxMessageServices;
             this.rabbitMQProducer = _rabbitMQProducer;
             this.unitOfWork = _unitOfWork;
         }
@@ -61,6 +64,16 @@ namespace PostService.Application.UseCases.Projects
                 await ProcessTumbnail(post, request.Media, mediasToCommit, mediasToDelete);
                 await this.postServices.Update(post);
                 await DeleteMedias(mediasToDelete);
+                await PublishMedias(Id, mediasToCommit, mediasToDelete);
+                var outboxMessage = new OutboxMessage(
+                    "PostUpdated",
+                    JsonSerializer.Serialize(new
+                    {
+                        PostId = post.Id,
+                        PostContents = post.PostContents
+                    })
+                );
+                await this.outboxMessageServices.Save(outboxMessage);
                 await this.unitOfWork.CommitAsync();
             }
             catch
@@ -68,7 +81,6 @@ namespace PostService.Application.UseCases.Projects
                 await unitOfWork.RollbackAsync();
                 throw;
             }
-            await PublishMedias(Id, mediasToCommit, mediasToDelete);
         }
         private static void ValidateRequest(PostRequest request)
         {
@@ -251,20 +263,28 @@ namespace PostService.Application.UseCases.Projects
         {
             foreach (var media in mediasToDelete)
             {
-                await this.rabbitMQProducer.Publish("PostMediaDeleted", new
-                {
-                    MediaId = media.MediaId,
-                    OwnerType = "Post"
-                });
+                var outboxMessage = new OutboxMessage(
+                    "PostMediaDeleted",
+                    JsonSerializer.Serialize(new
+                    {
+                        MediaId = media.MediaId,
+                        OwnerType = "Post"
+                    })
+                );
+                await this.outboxMessageServices.Save(outboxMessage);
             }
             foreach (var media in mediasToCommit)
             {
-                await this.rabbitMQProducer.Publish("PostMediaAttached", new
-                {
-                    MediaId = media.MediaId,
-                    OwnerId = postId,
-                    OwnerType = "Post"
-                });
+                var outboxMessage = new OutboxMessage(
+                    "PostMediaAttached",
+                    JsonSerializer.Serialize(new
+                    {
+                        MediaId = media.MediaId,
+                        OwnerId = postId,
+                        OwnerType = "Post"
+                    })
+                );
+                await this.outboxMessageServices.Save(outboxMessage);
             }
         }
         private async Task DeleteMedias(List<MediaProjection> mediasToDelete)

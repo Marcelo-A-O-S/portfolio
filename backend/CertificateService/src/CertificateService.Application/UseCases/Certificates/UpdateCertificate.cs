@@ -1,4 +1,5 @@
 using System.Runtime.ConstrainedExecution;
+using System.Text.Json;
 using CertificateService.Application.Caching.Interfaces;
 using CertificateService.Application.DTOs.Requests;
 using CertificateService.Application.Exceptions;
@@ -65,7 +66,7 @@ namespace CertificateService.Application.UseCases.Certificates
                 await PublishMedias(certificate.Id, mediasToCommit, mediasToDelete);
                 var outboxMessage = new OutboxMessage(
                     "CertificateUpdated",
-                    System.Text.Json.JsonSerializer.Serialize(new
+                    JsonSerializer.Serialize(new
                     {
                         CertificateId = certificateId,
                         CertificateContents = certificate.CertificateContents
@@ -172,7 +173,7 @@ namespace CertificateService.Application.UseCases.Certificates
             {
                 var outboxMessage = new OutboxMessage(
                     "CertificateMediaDeleted",
-                    System.Text.Json.JsonSerializer.Serialize(new
+                    JsonSerializer.Serialize(new
                     {
                         MediaId = media.MediaId,
                         OwnerType = "Certificate"
@@ -184,7 +185,7 @@ namespace CertificateService.Application.UseCases.Certificates
             {
                 var outboxMessage = new OutboxMessage(
                     "CertificateMediaAttached",
-                    System.Text.Json.JsonSerializer.Serialize(new
+                    JsonSerializer.Serialize(new
                     {
                         MediaId = media.MediaId,
                         OwnerId = certificateId,

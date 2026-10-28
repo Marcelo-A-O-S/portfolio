@@ -24,6 +24,7 @@ namespace PostService.Infrastructure.Context
         public DbSet<Language> Languages { get; set; }
         public DbSet<CertificateProjection> CertificateProjections { get; set; }
         public DbSet<CertificateContentProjection> CertificateContentProjections { get; set; }
+        public DbSet<OutboxMessage> OutboxMessages { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Post>()

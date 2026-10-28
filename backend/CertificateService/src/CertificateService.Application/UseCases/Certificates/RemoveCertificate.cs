@@ -1,3 +1,4 @@
+using System.Text.Json;
 using CertificateService.Application.Caching.Interfaces;
 using CertificateService.Application.Constants;
 using CertificateService.Application.Exceptions;
@@ -12,12 +13,14 @@ namespace CertificateService.Application.UseCases.Certificates
         private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly ICertificateServices certificateServices;
         private readonly ICertificateCacheServices certificateCacheServices;
+        private readonly IOutboxMessageServices outboxMessageServices;
         private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly IUnitOfWork unitOfWork;
         public RemoveCertificate(
             IMediaProjectionServices _mediaProjectionServices,
             ICertificateServices _certificateServices,
             ICertificateCacheServices _certificateCacheServices,
+            IOutboxMessageServices _outboxMessageServices,
             IRabbitMQProducer _rabbitMQProducer,
             IUnitOfWork _unitOfWork
         )
@@ -25,6 +28,7 @@ namespace CertificateService.Application.UseCases.Certificates
             this.mediaProjectionServices = _mediaProjectionServices;
             this.certificateServices = _certificateServices;
             this.certificateCacheServices = _certificateCacheServices;
+            this.outboxMessageServices = _outboxMessageServices;
             this.rabbitMQProducer = _rabbitMQProducer;
             this.unitOfWork = _unitOfWork;
         }
@@ -32,12 +36,20 @@ namespace CertificateService.Application.UseCases.Certificates
         {
             var certificate = await GetCertificateById(certificateId);
             var mediasToDelete = new List<MediaProjection>();
-            if(certificate.MediaProjection != null)
+            if (certificate.MediaProjection != null)
                 await ProcessImage(certificate, mediasToDelete);
             await this.unitOfWork.BeginAsync();
             try
             {
                 await this.certificateServices.DeleteById(certificate.Id);
+                var outboxMessage = new OutboxMessage(
+                    "CertificateDeleted",
+                    JsonSerializer.Serialize(new
+                    {
+                        CertificateId = certificateId
+                    })
+                );
+                await this.outboxMessageServices.Save(outboxMessage);
                 await this.unitOfWork.CommitAsync();
             }
             catch
@@ -47,15 +59,11 @@ namespace CertificateService.Application.UseCases.Certificates
             }
             await DeleteMedias(mediasToDelete);
             await this.certificateCacheServices.RemoveCertificateCache(CacheKeys.CertificateExists(certificateId));
-            await this.rabbitMQProducer.Publish("CertificateDeleted",new
-            {
-                CertificateId = certificateId
-            });
         }
         private async Task<Certificate> GetCertificateById(Guid certificateId)
         {
-            var certificate =  await this.certificateServices.GetById(certificateId);
-            if(certificate == null)
+            var certificate = await this.certificateServices.GetById(certificateId);
+            if (certificate == null)
                 throw new NotFoundException("Certificado não encontrado.");
             return certificate;
         }
@@ -63,16 +71,20 @@ namespace CertificateService.Application.UseCases.Certificates
         {
             var media = await this.mediaProjectionServices.GetByUrl(certificate.MediaProjection.Url);
             mediasToDelete.Add(media);
-        } 
+        }
         private async Task DeleteMedias(List<MediaProjection> mediasToDelete)
         {
             foreach (var media in mediasToDelete)
             {
-                await this.rabbitMQProducer.Publish("CertificateMediaDeleted", new
-                {
-                    MediaId = media.MediaId,
-                    OwnerType = "Certificate"
-                });
+                var outboxMessage = new OutboxMessage(
+                    "CertificateMediaDeleted",
+                    JsonSerializer.Serialize(new
+                    {
+                        MediaId = media.MediaId,
+                        OwnerType = "Certificate"
+                    })
+                );
+                await this.outboxMessageServices.Save(outboxMessage);
             }
         }
     }

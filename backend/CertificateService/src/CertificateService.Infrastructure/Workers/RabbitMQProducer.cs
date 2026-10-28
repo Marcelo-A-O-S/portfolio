@@ -30,7 +30,11 @@ namespace CertificateService.Infrastructure.Workers
         {
             string exchangeName = $"{eventName}.Exchange";
             string routingKey = $"{eventName}.Routing";
-            await using var channel = await connection.CreateChannelAsync();
+            var channelOptions = new CreateChannelOptions(
+                publisherConfirmationsEnabled: true,
+                publisherConfirmationTrackingEnabled: true
+            );
+            await using var channel = await connection.CreateChannelAsync(channelOptions);
             await channel.ExchangeDeclareAsync(
                 exchange: exchangeName,
                 type: ExchangeType.Direct,
@@ -44,7 +48,7 @@ namespace CertificateService.Infrastructure.Workers
             await channel.BasicPublishAsync(
                 exchange: exchangeName,
                 routingKey: routingKey,
-                mandatory: false,
+                mandatory: true,
                 basicProperties: properties,
                 body: body);
         }

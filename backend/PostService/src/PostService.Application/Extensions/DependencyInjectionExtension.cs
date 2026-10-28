@@ -48,6 +48,7 @@ namespace PostService.Application.Extensions
             services.AddScoped<IContributorServices, ContributorServices>();
             services.AddScoped<ICertificateProjectionServices, CertificateProjectionServices>();
             services.AddScoped<ICertificateContentProjectionServices, CertificateContentProjectionServices>();
+            services.AddScoped<IOutboxMessageServices, OutboxMessageServices>();
 
             services.AddScoped<IUserCacheServices, UserCacheServices>();
             services.AddScoped<IPostCacheServices, PostCacheServices>();
