@@ -9,6 +9,7 @@ using CertificateService.Application.UseCases.Certificates.Interfaces;
 using CertificateService.Application.Validations;
 using CertificateService.Domain.Entities;
 using CertificateService.Domain.Interfaces;
+using System.Text.Json;
 namespace CertificateService.Application.UseCases.Certificates
 {
     public class AddCertificate : IAddCertificate
@@ -19,6 +20,7 @@ namespace CertificateService.Application.UseCases.Certificates
         private readonly ILanguageProjectionServices languageProjectionServices;
         private readonly ILanguageServicesClient languageServicesClient;
         private readonly ICertificateCacheServices certificateCacheServices;
+        private readonly IOutboxMessageServices outboxMessageServices;
         private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly IUnitOfWork unitOfWork;
         public AddCertificate(
@@ -28,6 +30,7 @@ namespace CertificateService.Application.UseCases.Certificates
             ILanguageProjectionServices _languageProjectionServices,
             ILanguageServicesClient _languageServicesClient,
             ICertificateCacheServices _certificateCacheServices,
+            IOutboxMessageServices _outboxMessageServices,
             IRabbitMQProducer _rabbitMQProducer,
             IUnitOfWork _unitOfWork
         )
@@ -38,6 +41,7 @@ namespace CertificateService.Application.UseCases.Certificates
             this.languageProjectionServices = _languageProjectionServices;
             this.languageServicesClient = _languageServicesClient;
             this.certificateCacheServices = _certificateCacheServices;
+            this.outboxMessageServices = _outboxMessageServices;
             this.rabbitMQProducer = _rabbitMQProducer;
             this.unitOfWork = _unitOfWork;
         }
@@ -61,6 +65,7 @@ namespace CertificateService.Application.UseCases.Certificates
                     await ProcessImage(certificate, request.Media, mediasToCommit);
                 await ProcessCertificateContents(certificate, request.CertificateContents);
                 await this.certificateServices.Save(certificate);
+                await PublishMedias(certificate.Id, mediasToCommit);
                 await this.unitOfWork.CommitAsync();
             }
             catch
@@ -68,7 +73,7 @@ namespace CertificateService.Application.UseCases.Certificates
                 await unitOfWork.RollbackAsync();
                 throw;
             }
-            await PublishMedias(certificate.Id, mediasToCommit);
+            
             await this.certificateCacheServices.AddCertificateCache(CacheKeys.CertificateExists(certificate.Id), certificate.Id);
         }
         private static void ValidateRequest(CertificateRequest certificateRequest)
@@ -131,12 +136,16 @@ namespace CertificateService.Application.UseCases.Certificates
         {
             foreach (var media in mediasToCommit)
             {
-                await this.rabbitMQProducer.Publish("CertificateMediaAttached", new
-                {
-                    MediaId = media.MediaId,
-                    OwnerId = certificateId,
-                    OwnerType = "Certificate"
-                });
+                var outboxMessage = new OutboxMessage(
+                    "CertificateMediaAttached",
+                    JsonSerializer.Serialize(new
+                    {
+                        MediaId = media.MediaId,
+                        OwnerId = certificateId,
+                        OwnerType = "Certificate"
+                    })
+                );
+                await this.outboxMessageServices.Save(outboxMessage);
             }
         }
     }

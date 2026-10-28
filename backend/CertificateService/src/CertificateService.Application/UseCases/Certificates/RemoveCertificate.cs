@@ -42,6 +42,7 @@ namespace CertificateService.Application.UseCases.Certificates
             try
             {
                 await this.certificateServices.DeleteById(certificate.Id);
+                await DeleteMedias(mediasToDelete);
                 var outboxMessage = new OutboxMessage(
                     "CertificateDeleted",
                     JsonSerializer.Serialize(new
@@ -57,7 +58,7 @@ namespace CertificateService.Application.UseCases.Certificates
                 await unitOfWork.RollbackAsync();
                 throw;
             }
-            await DeleteMedias(mediasToDelete);
+            
             await this.certificateCacheServices.RemoveCertificateCache(CacheKeys.CertificateExists(certificateId));
         }
         private async Task<Certificate> GetCertificateById(Guid certificateId)
