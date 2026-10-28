@@ -11,6 +11,7 @@ namespace CertificateService.Infrastructure.Extensions
         {
             services.AddHostedService<CleanupMediaJob>();
             services.AddHostedService<OutboxProcessor>();
+            services.AddHostedService<OutboxCleanupJob>();
             services.AddHostedService<CertificateConsumer>();
             services.AddHostedService<LanguageConsumer>();
             return services;
