@@ -17,7 +17,7 @@ namespace CertificateService.Application.UseCases.Certificates
         private readonly ICertificateCacheServices certificateCacheServices;
         private readonly ILanguageProjectionServices languageProjectionServices;
         private readonly ILanguageServicesClient languageServicesClient;
-        private readonly IRabbitMQProducer rabbitMQProducer;
+        private readonly IOutboxMessageServices outboxMessageServices;
         private readonly IUnitOfWork unitOfWork;
         public UpdateCertificate(
             IMediaProjectionServices _mediaProjectionServices,
@@ -26,7 +26,7 @@ namespace CertificateService.Application.UseCases.Certificates
             ICertificateCacheServices _certificateCacheServices,
             ILanguageProjectionServices _languageProjectionServices,
             ILanguageServicesClient _languageServicesClient,
-            IRabbitMQProducer _rabbitMQProducer,
+            IOutboxMessageServices _outboxMessageServices,
             IUnitOfWork _unitOfWork
         )
         {
@@ -36,7 +36,7 @@ namespace CertificateService.Application.UseCases.Certificates
             this.certificateCacheServices = _certificateCacheServices;
             this.languageProjectionServices = _languageProjectionServices;
             this.languageServicesClient = _languageServicesClient;
-            this.rabbitMQProducer = _rabbitMQProducer;
+            this.outboxMessageServices = _outboxMessageServices;
             this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid certificateId, CertificateRequest request)
@@ -57,11 +57,21 @@ namespace CertificateService.Application.UseCases.Certificates
                     request.VerificationUrl,
                     request.WorkloadHours
                 );
-                if(request.Media != null)
+                if (request.Media != null)
                     await ProcessImage(certificate, request.Media, mediasToCommit, mediasToDelete);
                 await ProcessCertificateContents(certificate, request.CertificateContents);
                 await this.certificateServices.Update(certificate);
                 await DeleteMedias(mediasToDelete);
+                await PublishMedias(certificate.Id, mediasToCommit, mediasToDelete);
+                var outboxMessage = new OutboxMessage(
+                    "CertificateUpdated",
+                    System.Text.Json.JsonSerializer.Serialize(new
+                    {
+                        CertificateId = certificateId,
+                        CertificateContents = certificate.CertificateContents
+                    })
+                );
+                await this.outboxMessageServices.Save(outboxMessage);
                 await this.unitOfWork.CommitAsync();
             }
             catch
@@ -69,12 +79,6 @@ namespace CertificateService.Application.UseCases.Certificates
                 await unitOfWork.RollbackAsync();
                 throw;
             }
-            await PublishMedias(certificate.Id, mediasToCommit, mediasToDelete);
-            await this.rabbitMQProducer.Publish("CertificateUpdated", new
-            {
-                CertificateId = certificateId,
-                CertificateContents = certificate.CertificateContents
-            });
         }
         private static void ValidateRequest(CertificateRequest certificateRequest)
         {
@@ -141,10 +145,10 @@ namespace CertificateService.Application.UseCases.Certificates
             foreach (var item in certificateContentRequests)
             {
                 var languageProjection = await this.languageProjectionServices.GetByLanguageId(item.LanguageId);
-                if(languageProjection == null)
+                if (languageProjection == null)
                 {
                     var languageResponse = await this.languageServicesClient.GetLanguageAsync(item.LanguageId);
-                    if(languageResponse == null)
+                    if (languageResponse == null)
                         throw new NotFoundException("Idioma não encontrado");
                     languageProjection = new LanguageProjection(languageResponse.Id, languageResponse.Code, languageResponse.Name);
                     languageProjection.GenerateId();
@@ -166,20 +170,28 @@ namespace CertificateService.Application.UseCases.Certificates
         {
             foreach (var media in mediasToDelete)
             {
-                await this.rabbitMQProducer.Publish("CertificateMediaDeleted", new
-                {
-                    MediaId = media.MediaId,
-                    OwnerType = "Certificate"
-                });
+                var outboxMessage = new OutboxMessage(
+                    "CertificateMediaDeleted",
+                    System.Text.Json.JsonSerializer.Serialize(new
+                    {
+                        MediaId = media.MediaId,
+                        OwnerType = "Certificate"
+                    })
+                );
+                await this.outboxMessageServices.Save(outboxMessage);
             }
             foreach (var media in mediasToCommit)
             {
-                await this.rabbitMQProducer.Publish("CertificateMediaAttached", new
-                {
-                    MediaId = media.MediaId,
-                    OwnerId = certificateId,
-                    OwnerType = "Certificate"
-                });
+                var outboxMessage = new OutboxMessage(
+                    "CertificateMediaAttached",
+                    System.Text.Json.JsonSerializer.Serialize(new
+                    {
+                        MediaId = media.MediaId,
+                        OwnerId = certificateId,
+                        OwnerType = "Certificate"
+                    })
+                );
+                await this.outboxMessageServices.Save(outboxMessage);
             }
         }
         private async Task DeleteMedias(List<MediaProjection> mediasToDelete)

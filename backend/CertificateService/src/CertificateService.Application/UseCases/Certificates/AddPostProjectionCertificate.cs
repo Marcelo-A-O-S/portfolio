@@ -17,7 +17,6 @@ namespace CertificateService.Application.UseCases.Certificates
         private readonly IPostServicesClient postServicesClient;
         private readonly IOutboxMessageServices outboxMessageServices;
         private readonly IValidationServices validationServices;
-        private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly IUnitOfWork unitOfWork;
         public AddPostProjectionCertificate(
             ICertificateServices _certificateServices,
@@ -27,7 +26,6 @@ namespace CertificateService.Application.UseCases.Certificates
             IPostServicesClient _postServicesClient,
             IOutboxMessageServices _outboxMessageServices,
             IValidationServices _validationServices,
-            IRabbitMQProducer _rabbitMQProducer,
             IUnitOfWork _unitOfWork
         )
         {
@@ -38,7 +36,6 @@ namespace CertificateService.Application.UseCases.Certificates
             this.postServicesClient = _postServicesClient;
             this.outboxMessageServices = _outboxMessageServices;
             this.validationServices = _validationServices;
-            this.rabbitMQProducer = _rabbitMQProducer;
             this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid certificateId, Guid postId)
@@ -81,12 +78,6 @@ namespace CertificateService.Application.UseCases.Certificates
                 await unitOfWork.RollbackAsync();
                 throw;
             }
-            // await this.rabbitMQProducer.Publish("PostCertificateAdd", new
-            // {
-            //     CertificateId = certificateId,
-            //     PostId = postId,
-            //     CertificateContents = certificate.CertificateContents
-            // });
         }
         private async Task ProcessPostContentProjections(PostProjection postProjection, List<PostContentResponse> postContentResponses)
         {

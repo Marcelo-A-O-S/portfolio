@@ -4,24 +4,22 @@ using CertificateService.Application.Validators.Interfaces;
 using CertificateService.Domain.Interfaces;
 using CertificateService.Application.Exceptions;
 using System.Runtime.ConstrainedExecution;
+using CertificateService.Domain.Entities;
 namespace CertificateService.Application.UseCases.Certificates
 {
     public class RemovePostProjectionCertificate : IRemovePostProjectionCertificate
     {
         private readonly IPostProjectionServices postProjectionServices;
-        private readonly IValidationServices validationServices;
-        private readonly IRabbitMQProducer rabbitMQProducer;
+        private readonly IOutboxMessageServices outboxMessageServices;
         private readonly IUnitOfWork unitOfWork;
         public RemovePostProjectionCertificate(
             IPostProjectionServices _postProjectionServices,
-            IValidationServices _validationServices,
-            IRabbitMQProducer _rabbitMQProducer,
+            IOutboxMessageServices _outboxMessageServices,
             IUnitOfWork _unitOfWork
         )
         {
             this.postProjectionServices = _postProjectionServices;
-            this.validationServices = _validationServices;
-            this.rabbitMQProducer = _rabbitMQProducer;
+            this.outboxMessageServices = _outboxMessageServices;
             this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid certificateId, Guid postProjectionId)
@@ -33,6 +31,15 @@ namespace CertificateService.Application.UseCases.Certificates
             try
             {
                 await this.postProjectionServices.DeleteById(postProjection.Id);
+                var outboxMessage = new OutboxMessage(
+                    "PostCertificateRemoved",
+                    System.Text.Json.JsonSerializer.Serialize(new
+                    {
+                        PostId = postProjection.PostId,
+                        CertificateId = postProjection.CertificateId
+                    })
+                );
+                await this.outboxMessageServices.Save(outboxMessage);
                 await this.unitOfWork.CommitAsync();
             }
             catch
@@ -40,11 +47,6 @@ namespace CertificateService.Application.UseCases.Certificates
                 await this.unitOfWork.RollbackAsync();
                 throw;
             }
-            await this.rabbitMQProducer.Publish("PostCertificateRemoved", new
-            {
-                PostId = postProjection.PostId,
-                CertificateId = postProjection.CertificateId
-            });
         }
     }
 }

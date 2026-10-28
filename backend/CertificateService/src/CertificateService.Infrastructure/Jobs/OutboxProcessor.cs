@@ -59,7 +59,6 @@ namespace CertificateService.Infrastructure.Jobs
                 }
                 await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
             }
-            throw new NotImplementedException();
         }
     }
 }
