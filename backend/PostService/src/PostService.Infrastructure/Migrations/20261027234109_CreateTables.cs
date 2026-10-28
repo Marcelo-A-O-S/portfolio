@@ -42,6 +42,18 @@ namespace PostService.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CertificateProjections",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CertificateId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CertificateProjections", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Languages",
                 columns: table => new
                 {
@@ -116,6 +128,33 @@ namespace PostService.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CertificateContentProjections",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CertificateContentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CertificateProjectionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    LanguageId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CertificateContentProjections", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CertificateContentProjections_CertificateProjections_Certif~",
+                        column: x => x.CertificateProjectionId,
+                        principalTable: "CertificateProjections",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CertificateContentProjections_Languages_LanguageId",
+                        column: x => x.LanguageId,
+                        principalTable: "Languages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CategoryPost",
                 columns: table => new
                 {
@@ -147,6 +186,24 @@ namespace PostService.Infrastructure.Migrations
                         name: "FK_CategoryTool_Categories_CategoriesId",
                         column: x => x.CategoriesId,
                         principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CertificateProjectionPost",
+                columns: table => new
+                {
+                    CertificateProjectionsId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PostsId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CertificateProjectionPost", x => new { x.CertificateProjectionsId, x.PostsId });
+                    table.ForeignKey(
+                        name: "FK_CertificateProjectionPost_CertificateProjections_Certificat~",
+                        column: x => x.CertificateProjectionsId,
+                        principalTable: "CertificateProjections",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -399,6 +456,21 @@ namespace PostService.Infrastructure.Migrations
                 column: "ToolsId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CertificateContentProjections_CertificateProjectionId",
+                table: "CertificateContentProjections",
+                column: "CertificateProjectionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CertificateContentProjections_LanguageId",
+                table: "CertificateContentProjections",
+                column: "LanguageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CertificateProjectionPost_PostsId",
+                table: "CertificateProjectionPost",
+                column: "PostsId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Contributors_PostId",
                 table: "Contributors",
                 column: "PostId");
@@ -527,6 +599,14 @@ namespace PostService.Infrastructure.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
+                name: "FK_CertificateProjectionPost_Posts_PostsId",
+                table: "CertificateProjectionPost",
+                column: "PostsId",
+                principalTable: "Posts",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_Contributors_Posts_PostId",
                 table: "Contributors",
                 column: "PostId",
@@ -600,6 +680,12 @@ namespace PostService.Infrastructure.Migrations
                 name: "CategoryTool");
 
             migrationBuilder.DropTable(
+                name: "CertificateContentProjections");
+
+            migrationBuilder.DropTable(
+                name: "CertificateProjectionPost");
+
+            migrationBuilder.DropTable(
                 name: "Contributors");
 
             migrationBuilder.DropTable(
@@ -613,6 +699,9 @@ namespace PostService.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "CertificateProjections");
 
             migrationBuilder.DropTable(
                 name: "Links");

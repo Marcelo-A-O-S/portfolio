@@ -26,7 +26,12 @@ namespace PostService.Infrastructure.Context
         public DbSet<CertificateContentProjection> CertificateContentProjections { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Post>().Property(p => p.Status).HasConversion<string>();
+            modelBuilder.Entity<Post>()
+                .HasMany(p => p.CertificateProjections)
+                .WithMany(cp => cp.Posts);
+            modelBuilder.Entity<Post>()
+                .Property(p => p.Status)
+                .HasConversion<string>();
             modelBuilder.Entity<Tool>().Property(p => p.Status).HasConversion<string>();
             modelBuilder.Entity<PostContent>().HasIndex(pc => pc.Slug);
             modelBuilder.Entity<ToolContent>().HasIndex(tc => tc.Slug);

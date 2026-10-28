@@ -5,5 +5,7 @@ namespace PostService.Application.Interfaces
     public interface ICertificateProjectionServices : IServices<CertificateProjection>
     {
         Task<CertificateProjection> FindWithContentBy(Expression<Func<CertificateProjection,bool>> predicate);
+        Task<CertificateProjection> FindWithPostBy(Expression<Func<CertificateProjection,bool>> predicate);
+        Task<bool> CheckAssociationWithPost(Guid certificateId, Guid postId);
     }
 }

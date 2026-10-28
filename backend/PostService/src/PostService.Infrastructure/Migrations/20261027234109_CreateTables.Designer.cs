@@ -12,7 +12,7 @@ using PostService.Infrastructure.Context;
 namespace PostService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20260821004636_CreateTables")]
+    [Migration("20261027234109_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -53,6 +53,21 @@ namespace PostService.Infrastructure.Migrations
                     b.HasIndex("ToolsId");
 
                     b.ToTable("CategoryTool");
+                });
+
+            modelBuilder.Entity("CertificateProjectionPost", b =>
+                {
+                    b.Property<Guid>("CertificateProjectionsId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PostsId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("CertificateProjectionsId", "PostsId");
+
+                    b.HasIndex("PostsId");
+
+                    b.ToTable("CertificateProjectionPost");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.Author", b =>
@@ -140,6 +155,48 @@ namespace PostService.Infrastructure.Migrations
                     b.HasIndex("Slug");
 
                     b.ToTable("CategoriesContents");
+                });
+
+            modelBuilder.Entity("PostService.Domain.Entities.CertificateContentProjection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CertificateContentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CertificateProjectionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("LanguageId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CertificateProjectionId");
+
+                    b.HasIndex("LanguageId");
+
+                    b.ToTable("CertificateContentProjections");
+                });
+
+            modelBuilder.Entity("PostService.Domain.Entities.CertificateProjection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CertificateId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CertificateProjections");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.Contributor", b =>
@@ -560,6 +617,21 @@ namespace PostService.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("CertificateProjectionPost", b =>
+                {
+                    b.HasOne("PostService.Domain.Entities.CertificateProjection", null)
+                        .WithMany()
+                        .HasForeignKey("CertificateProjectionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PostService.Domain.Entities.Post", null)
+                        .WithMany()
+                        .HasForeignKey("PostsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("PostService.Domain.Entities.CategoryContent", b =>
                 {
                     b.HasOne("PostService.Domain.Entities.Category", "Category")
@@ -575,6 +647,25 @@ namespace PostService.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+
+                    b.Navigation("Language");
+                });
+
+            modelBuilder.Entity("PostService.Domain.Entities.CertificateContentProjection", b =>
+                {
+                    b.HasOne("PostService.Domain.Entities.CertificateProjection", "CertificateProjection")
+                        .WithMany("CertificateContents")
+                        .HasForeignKey("CertificateProjectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PostService.Domain.Entities.Language", "Language")
+                        .WithMany()
+                        .HasForeignKey("LanguageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CertificateProjection");
 
                     b.Navigation("Language");
                 });
@@ -737,6 +828,11 @@ namespace PostService.Infrastructure.Migrations
             modelBuilder.Entity("PostService.Domain.Entities.Category", b =>
                 {
                     b.Navigation("CategoryContents");
+                });
+
+            modelBuilder.Entity("PostService.Domain.Entities.CertificateProjection", b =>
+                {
+                    b.Navigation("CertificateContents");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.Link", b =>

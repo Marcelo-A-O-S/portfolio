@@ -14,6 +14,12 @@ namespace PostService.Application.Services
         {
             this.certificateProjectionRepository = _certificateProjectionRepository;
         }
+
+        public async Task<bool> CheckAssociationWithPost(Guid certificateId, Guid postId)
+        {
+            return await this.certificateProjectionRepository.CheckAssociationWithPost(certificateId, postId);
+        }
+
         public async Task Delete(CertificateProjection entity)
         {
             await this.certificateProjectionRepository.Delete(entity);
@@ -37,6 +43,11 @@ namespace PostService.Application.Services
         public async Task<CertificateProjection> FindWithContentBy(Expression<Func<CertificateProjection, bool>> predicate)
         {
             return await this.certificateProjectionRepository.FindWithContentBy(predicate);
+        }
+
+        public async Task<CertificateProjection> FindWithPostBy(Expression<Func<CertificateProjection, bool>> predicate)
+        {
+            return await this.certificateProjectionRepository.FindWithPostBy(predicate);
         }
 
         public async Task<CertificateProjection> GetById(Guid Id)
