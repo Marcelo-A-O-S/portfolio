@@ -25,5 +25,6 @@ namespace PostService.Infrastructure.Workers
             };
             await channel.BasicPublishAsync(exchange: exchangeName, routingKey: routingKey, mandatory: false, basicProperties: properties, body: body);
         }
+        
     }
 }

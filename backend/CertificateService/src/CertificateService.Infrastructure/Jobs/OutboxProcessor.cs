@@ -34,7 +34,7 @@ namespace CertificateService.Infrastructure.Jobs
                     {
                         try
                         {
-                            await rabbitMQProducer.Publish(
+                            await rabbitMQProducer.PublishRaw(
                                 message.EventType,
                                 message.Payload);
                             message.MarkAsProcessed();

@@ -26,5 +26,27 @@ namespace CertificateService.Infrastructure.Workers
             };
             await channel.BasicPublishAsync(exchange: exchangeName, routingKey: routingKey, mandatory: false, basicProperties: properties, body: body);
         }
+        public async Task PublishRaw(string eventName, string payload)
+        {
+            string exchangeName = $"{eventName}.Exchange";
+            string routingKey = $"{eventName}.Routing";
+            await using var channel = await connection.CreateChannelAsync();
+            await channel.ExchangeDeclareAsync(
+                exchange: exchangeName,
+                type: ExchangeType.Direct,
+                durable: true);
+            var body = Encoding.UTF8.GetBytes(payload);
+            var properties = new BasicProperties
+            {
+                Persistent = true,
+                ContentType = "application/json"
+            };
+            await channel.BasicPublishAsync(
+                exchange: exchangeName,
+                routingKey: routingKey,
+                mandatory: false,
+                basicProperties: properties,
+                body: body);
+        }
     }
 }

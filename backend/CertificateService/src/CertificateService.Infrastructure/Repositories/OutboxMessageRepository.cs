@@ -12,6 +12,15 @@ namespace CertificateService.Infrastructure.Repositories
             this.context = _context;
         }
 
+        public async Task DeleteProcessedBefore(DateTime date)
+        {
+            await context.OutboxMessages
+                .Where(message =>
+                    message.ProcessedAt != null &&
+                    message.ProcessedAt < date)
+                .ExecuteDeleteAsync();
+        }
+
         public async Task<List<OutboxMessage>> GetPendingMessages()
         {
             return await this.context.OutboxMessages

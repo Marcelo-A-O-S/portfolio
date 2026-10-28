@@ -24,6 +24,11 @@ namespace CertificateService.Application.Services
             await this.outboxMessageRepository.DeleteById(Id);
         }
 
+        public async Task DeleteProcessedBefore(DateTime date)
+        {
+            await this.outboxMessageRepository.DeleteProcessedBefore(date);
+        }
+
         public async Task<bool> Exists(Guid Id)
         {
             return await this.outboxMessageRepository.Exists(Id);
