@@ -21,7 +21,6 @@ namespace CertificateService.Application.UseCases.Certificates
         private readonly ILanguageServicesClient languageServicesClient;
         private readonly ICertificateCacheServices certificateCacheServices;
         private readonly IOutboxMessageServices outboxMessageServices;
-        private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly IUnitOfWork unitOfWork;
         public AddCertificate(
             IMediaProjectionServices _mediaProjectionServices,
@@ -31,7 +30,6 @@ namespace CertificateService.Application.UseCases.Certificates
             ILanguageServicesClient _languageServicesClient,
             ICertificateCacheServices _certificateCacheServices,
             IOutboxMessageServices _outboxMessageServices,
-            IRabbitMQProducer _rabbitMQProducer,
             IUnitOfWork _unitOfWork
         )
         {
@@ -42,7 +40,6 @@ namespace CertificateService.Application.UseCases.Certificates
             this.languageServicesClient = _languageServicesClient;
             this.certificateCacheServices = _certificateCacheServices;
             this.outboxMessageServices = _outboxMessageServices;
-            this.rabbitMQProducer = _rabbitMQProducer;
             this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(CertificateRequest request)

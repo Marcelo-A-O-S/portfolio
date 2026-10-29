@@ -14,14 +14,12 @@ namespace CertificateService.Application.UseCases.Certificates
         private readonly ICertificateServices certificateServices;
         private readonly ICertificateCacheServices certificateCacheServices;
         private readonly IOutboxMessageServices outboxMessageServices;
-        private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly IUnitOfWork unitOfWork;
         public RemoveCertificate(
             IMediaProjectionServices _mediaProjectionServices,
             ICertificateServices _certificateServices,
             ICertificateCacheServices _certificateCacheServices,
             IOutboxMessageServices _outboxMessageServices,
-            IRabbitMQProducer _rabbitMQProducer,
             IUnitOfWork _unitOfWork
         )
         {
@@ -29,7 +27,6 @@ namespace CertificateService.Application.UseCases.Certificates
             this.certificateServices = _certificateServices;
             this.certificateCacheServices = _certificateCacheServices;
             this.outboxMessageServices = _outboxMessageServices;
-            this.rabbitMQProducer = _rabbitMQProducer;
             this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid certificateId)

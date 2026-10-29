@@ -17,11 +17,14 @@ namespace CommentService.Infrastructure.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IGenerics<Comment>, Generics<Comment>>();
             services.AddScoped<IGenerics<Like>, Generics<Like>>();
+            services.AddScoped<IGenerics<UserProjection>, Generics<UserProjection>>();
+            services.AddScoped<IGenerics<OutboxMessage>, Generics<OutboxMessage>>();
 
             services.AddScoped<ICommentRepository, CommentRepository>();
             services.AddScoped<ILikeRepository, LikeRepository>();
             services.AddScoped<ICommentProjectionRepository, CommentProjectionRepository>();
             services.AddScoped<IUserProjectionRepository, UserProjectionRepository>();
+            services.AddScoped<IOutboxMessageRepository, OutboxMessageRepository>();
 
             services.AddSingleton<IRabbitMQProducer, RabbitMQProducer>();
 

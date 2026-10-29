@@ -10,6 +10,7 @@ namespace CommentService.Infrastructure.Context
         public DbSet<UserProjection> UserProjections { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Like> Likes { get; set; }
+        public DbSet<OutboxMessage> OutboxMessages { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Comment>().HasOne(c => c.ParentComment)

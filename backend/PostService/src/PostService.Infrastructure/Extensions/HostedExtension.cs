@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using PostService.Infrastructure.Jobs;
 using PostService.Infrastructure.Messaging.Consumers;
 namespace PostService.Infrastructure.Extensions
 {
@@ -8,6 +9,8 @@ namespace PostService.Infrastructure.Extensions
             this IServiceCollection services
         )
         {
+            services.AddHostedService<OutboxProcessor>();
+            services.AddHostedService<OutboxCleanupJob>();
             services.AddHostedService<PostConsumer>();
             services.AddHostedService<ToolConsumer>();
             services.AddHostedService<UserConsumer>();

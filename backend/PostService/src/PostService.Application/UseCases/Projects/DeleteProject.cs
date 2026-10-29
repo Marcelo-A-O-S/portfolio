@@ -11,20 +11,17 @@ namespace PostService.Application.UseCases.Projects
         private readonly IPostServices postServices;
         private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly IOutboxMessageServices outboxMessageServices;
-        private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly IUnitOfWork unitOfWork;
         public DeleteProject(
             IPostServices _postServices,
             IMediaProjectionServices _mediaProjectionServices,
             IOutboxMessageServices _outboxMessageServices,
-            IRabbitMQProducer _rabbitMQProducer,
             IUnitOfWork _unitOfWork
         )
         {
             this.postServices = _postServices;
             this.mediaProjectionServices = _mediaProjectionServices;
             this.outboxMessageServices = _outboxMessageServices;
-            this.rabbitMQProducer = _rabbitMQProducer;
             this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid Id)
@@ -77,7 +74,8 @@ namespace PostService.Application.UseCases.Projects
         private async Task ProcessTumbnail(Post post, List<MediaProjection> mediasToDelete)
         {
             var media = await this.mediaProjectionServices.GetByUrl(post.MediaProjection.Url);
-            mediasToDelete.Add(media);
+            if (media != null)
+                mediasToDelete.Add(media);
         }
         private async Task DeleteMedias(List<MediaProjection> mediasToDelete)
         {

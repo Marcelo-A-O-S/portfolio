@@ -1,4 +1,6 @@
+using System.Text.Json;
 using CommentService.Application.Caching.Comment;
+using CommentService.Application.Constants;
 using CommentService.Application.DTOs.Request;
 using CommentService.Application.Exceptions;
 using CommentService.Application.Interfaces;
@@ -16,6 +18,7 @@ namespace CommentService.Application.UseCases.Comments
         private readonly ICommentValidationService commentValidationService;
         private readonly IUserServicesClient userServicesClient;
         private readonly IUserProjectionServices userProjectionServices;
+        private readonly IOutboxMessageServices outboxMessageServices;
         private readonly IUnitOfWork unitOfWork;
         public AddReply(
             ICommentCacheServices _commentCacheServices,
@@ -24,6 +27,7 @@ namespace CommentService.Application.UseCases.Comments
             ICommentValidationService _commentValidationService,
             IUserServicesClient _userServicesClient,
             IUserProjectionServices _userProjectionServices,
+            IOutboxMessageServices _outboxMessageServices,
             IUnitOfWork _unitOfWork
         )
         {
@@ -33,6 +37,7 @@ namespace CommentService.Application.UseCases.Comments
             this.commentValidationService = _commentValidationService;
             this.userServicesClient = _userServicesClient;
             this.userProjectionServices = _userProjectionServices;
+            this.outboxMessageServices = _outboxMessageServices;
             this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid authenticatedUserId, string providerId, Guid commentId, CommentRequest commentRequest)
@@ -48,6 +53,7 @@ namespace CommentService.Application.UseCases.Comments
             var user = await this.userServicesClient.GetUserAsync(authenticatedUserId, providerId);
             var userProjection = await this.userProjectionServices
                 .FindBy(up => up.UserId == authenticatedUserId && up.ProviderId == providerId);
+            var type = reply.Type.ToString();
             await this.unitOfWork.BeginAsync();
             try
             {
@@ -58,24 +64,25 @@ namespace CommentService.Application.UseCases.Comments
                 }
                 reply.SetUserProjectionId(userProjection.Id);
                 await this.commentServices.Save(reply);
+                var outboxMessage = new OutboxMessage(
+                    $"{type}ReplyCreated",
+                    JsonSerializer.Serialize(new
+                    {
+                        CommentId = comment.Id,
+                        TargetId = comment.TargetId,
+                        Type = comment.Type,
+                        UserId = comment.UserProjection.UserId
+                    })
+                );
+                await this.outboxMessageServices.Save(outboxMessage);
                 await this.unitOfWork.CommitAsync();
+                await this.commentCacheServices.AddCommentCache(CacheKeys.CommentTypeExists(type, reply.Id), reply.Id);
             }
             catch
             {
                 await unitOfWork.RollbackAsync();
                 throw;
             }
-            
-            var type = reply.Type.ToString();
-            await this.commentCacheServices.AddCommentCache($"comment:{type}:exists:{reply.Id}", reply.Id);
-            await this.rabbitMQProducer.Publish($"{type}ReplyCreated",
-            new
-            {
-                CommentId = comment.Id,
-                TargetId = comment.TargetId,
-                Type = comment.Type,
-                UserId = reply.UserProjection.UserId
-            });
         }
         private static void ValidateRequest(CommentRequest request)
         {

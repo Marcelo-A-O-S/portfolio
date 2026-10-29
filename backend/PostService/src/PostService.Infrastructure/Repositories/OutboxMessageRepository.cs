@@ -8,6 +8,7 @@ namespace PostService.Infrastructure.Repositories
     public class OutboxMessageRepository : Generics<OutboxMessage>, IOutboxMessageRepository
     {
         private readonly DBContext context;
+        private const int MaxAttempts = 10;
         public OutboxMessageRepository(DBContext _context) : base(_context)
         {
             this.context = _context;
@@ -23,7 +24,7 @@ namespace PostService.Infrastructure.Repositories
         public async Task<List<OutboxMessage>> GetPendingMessages()
         {
             return await this.context.OutboxMessages
-                .Where(message => message.ProcessedAt == null)
+                .Where(message => message.ProcessedAt == null && message.Attempts < MaxAttempts)
                 .OrderBy(message => message.CreatedAt)
                 .Take(50)
                 .ToListAsync();

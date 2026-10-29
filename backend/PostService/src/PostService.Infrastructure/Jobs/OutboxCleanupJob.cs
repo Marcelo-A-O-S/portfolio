@@ -19,11 +19,18 @@ namespace PostService.Infrastructure.Jobs
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                using var scope = scopeFactory.CreateScope();
+                try
+                {
+                    using var scope = scopeFactory.CreateScope();
                     var outboxServices = scope.ServiceProvider
                         .GetRequiredService<IOutboxMessageServices>();
-                var cutoffDate = DateTime.UtcNow.AddDays(-7);
-                await outboxServices.DeleteProcessedBefore(cutoffDate);
+                    var cutoffDate = DateTime.UtcNow.AddDays(-7);
+                    await outboxServices.DeleteProcessedBefore(cutoffDate);
+                }
+                catch(Exception exception)
+                {
+                    logger.LogError(exception, "Erro ao limpar a Outbox.");
+                }
                 await Task.Delay(TimeSpan.FromHours(6), stoppingToken);
             }
         }

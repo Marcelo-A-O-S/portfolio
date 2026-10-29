@@ -14,5 +14,7 @@ namespace CommentService.Application.Constants
             => $"comment:exists:{commentId}";
         public static string ReplyExists(Guid replyId)
             => $"comment:reply:exists:{replyId}";
+        public static string CommentTypeExists(string type, Guid commentId)
+            => $"comment:{type}:exists:{commentId}";
     }
 }

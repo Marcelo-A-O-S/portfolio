@@ -5,7 +5,6 @@ using PostService.Application.UseCases.Categories.Interfaces;
 using PostService.Application.Validations;
 using PostService.Domain.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
-
 namespace PostService.Application.UseCases.Categories
 {
     public class UpdateCategory : IUpdateCategory
