@@ -3,7 +3,6 @@ using CertificateService.Domain.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
 namespace CertificateService.Infrastructure.Jobs
 {
     public class OutboxProcessor : BackgroundService
@@ -17,7 +16,6 @@ namespace CertificateService.Infrastructure.Jobs
             this.scopeFactory = _scopeFactory;
             this.logger = _logger;
         }
-
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)

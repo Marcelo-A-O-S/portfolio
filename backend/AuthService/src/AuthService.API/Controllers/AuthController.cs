@@ -10,16 +10,16 @@ namespace AuthService.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly ILogin login;
-        private readonly IJwtBearerServices jwtBearerServices;
-        private readonly IRefreshTokenServices refreshTokenServices;
+        private readonly IRefreshToken refreshToken;
+        private readonly ILogout logout;
         public AuthController(
-            IJwtBearerServices _jwtBearerServices,
-            IRefreshTokenServices _refreshTokenServices,
-            ILogin _login)
+            ILogin _login,
+            IRefreshToken _refreshToken,
+            ILogout _logout)
         {
-            this.jwtBearerServices = _jwtBearerServices;
-            this.refreshTokenServices = _refreshTokenServices;
             this.login = _login;
+            this.refreshToken = _refreshToken;
+            this.logout = _logout;
         }
         [HttpPost("login")]
         [EnableRateLimiting("login")]
@@ -38,14 +38,7 @@ namespace AuthService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var authResponse = await this.jwtBearerServices.RefreshAsync(
-                    refreshRequest.RefreshTokenId, 
-                    refreshRequest.UserId, 
-                    refreshRequest.ProviderId,
-                    refreshRequest.RefreshToken, 
-                    refreshRequest.DeviceId, 
-                    refreshRequest.DeviceName
-                );
+                var authResponse = await this.refreshToken.ExecuteAsync(refreshRequest);
                 return Ok(authResponse);
             }
             var erros = ModelState.Values.Select(x => x.Errors);
@@ -56,8 +49,7 @@ namespace AuthService.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var refreshToken = await this.refreshTokenServices.FindBy(rt => rt.DeviceId == logoutRequest.DeviceId && rt.UserId == logoutRequest.UserId);
-                await this.refreshTokenServices.Delete(refreshToken);
+                await this.logout.ExecuteAsync(logoutRequest);
                 return Ok();
             }
             var erros = ModelState.Values.Select(x => x.Errors);

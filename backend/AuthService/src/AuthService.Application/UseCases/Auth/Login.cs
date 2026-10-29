@@ -13,38 +13,52 @@ namespace AuthService.Application.UseCases.Auth
         private readonly IUserServices userServices;
         private readonly ISocialAccountServices socialAccountServices;
         private readonly IJwtBearerServices jwtBearerServices;
+        private readonly IUnitOfWork unitOfWork;
         public Login(
             IUserServices _userServices,
             ISocialAccountServices _socialAccountServices,
             IProviderFactory _providerFactory,
-            IJwtBearerServices _jwtBearerServices
+            IJwtBearerServices _jwtBearerServices,
+            IUnitOfWork _unitOfWork
         )
         {
             this.userServices = _userServices;
             this.socialAccountServices = _socialAccountServices;
             this.providerFactory = _providerFactory;
             this.jwtBearerServices = _jwtBearerServices;
+            this.unitOfWork = _unitOfWork;
         }
         public async Task<AuthResponse> ExecuteASync(LoginRequest loginRequest)
         {
             ValidateRequest(loginRequest);
             var provider = providerFactory.Get(loginRequest.Provider);
             var providerData = await provider.Validate(loginRequest.ProviderToken);
-            var user = await GetOrCreateUser(providerData);
-            await SaveUser(user);
-            var socialAccount = await GetOrCreateSocial(user, loginRequest, providerData);
-            await SaveSocial(socialAccount);
-            var accessData = await this.jwtBearerServices.GenerateAccessToken(user, socialAccount.ProviderId);
-            var data = await this.jwtBearerServices.GenerateRefreshToken(user.Id, loginRequest.DeviceId, loginRequest.DeviceName);
-            return new AuthResponse
+            await this.unitOfWork.BeginAsync();
+            try
             {
-                UserId = user.Id,
-                AccessToken = accessData.token,
-                RefreshToken = data.plainToken,
-                ExpireIn = accessData.expireIn,
-                Role = user.Role.ToString(),
-                RefreshTokenId = data.entity.Id
-            };
+                var user = await GetOrCreateUser(providerData);
+                await SaveUser(user);
+                var socialAccount = await GetOrCreateSocial(user, loginRequest, providerData);
+                await SaveSocial(socialAccount);
+                var accessData = await this.jwtBearerServices.GenerateAccessToken(user, socialAccount.ProviderId);
+                var data = await this.jwtBearerServices.GenerateRefreshToken(user.Id, loginRequest.DeviceId, loginRequest.DeviceName);
+                await this.unitOfWork.CommitAsync();
+                return new AuthResponse
+                {
+                    UserId = user.Id,
+                    AccessToken = accessData.token,
+                    RefreshToken = data.plainToken,
+                    ExpireIn = accessData.expireIn,
+                    Role = user.Role.ToString(),
+                    RefreshTokenId = data.entity.Id
+                };
+            }
+            catch
+            {
+                await this.unitOfWork.RollbackAsync();
+                throw;
+            }
+            
         }
         private static void ValidateRequest(LoginRequest loginRequest)
         {
@@ -72,7 +86,10 @@ namespace AuthService.Application.UseCases.Auth
         private async Task SaveUser(User user)
         {
             if (user.Id == Guid.Empty)
+            {
+                user.GenerateId();
                 await userServices.Save(user);
+            }    
         }
         private async Task<SocialAccount> GetOrCreateSocial(User user, LoginRequest loginRequest, ProviderUserData providerUserData)
         {

@@ -25,9 +25,18 @@ namespace AuthService.Infrastructure.Workers
                     string exchangeName = $"{eventName}.Exchange";
                     string queueName = $"{eventName}.Queue";
                     string routingKey = $"{eventName}.Routing";
+                    string deadLetterExchangeName = $"{eventName}.DeadLetter.Exchange";
+                    string deadLetterQueueName = $"{eventName}.DeadLetter.Queue";
                     var channel = await this.connection.CreateChannelAsync();
                     await channel.ExchangeDeclareAsync(exchange: exchangeName, type: ExchangeType.Direct, durable: true, autoDelete: false);
-                    var queue = await channel.QueueDeclareAsync(queue: queueName, durable: true, exclusive: false, autoDelete: false);
+                    await channel.ExchangeDeclareAsync(exchange: deadLetterExchangeName, type: ExchangeType.Fanout, durable: true, autoDelete: false);
+                    await channel.QueueDeclareAsync(queue: deadLetterQueueName, durable: true, exclusive: false, autoDelete: false);
+                    await channel.QueueBindAsync(queue: deadLetterQueueName, exchange: deadLetterExchangeName, routingKey: "");
+                    var queueArgs = new Dictionary<string, object?>
+                    {
+                        { "x-dead-letter-exchange", deadLetterExchangeName }
+                    };
+                    var queue = await channel.QueueDeclareAsync(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: queueArgs);
                     await channel.QueueBindAsync(queue: queueName, exchange: exchangeName, routingKey: routingKey);
                     await channel.BasicQosAsync( prefetchSize: 0, prefetchCount: 10, global: false);
                     var consumer = new AsyncEventingBasicConsumer(channel);

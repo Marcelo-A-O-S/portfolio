@@ -9,6 +9,8 @@ namespace AuthService.Infrastructure.Extensions
             this IServiceCollection services
         )
         {
+            services.AddHostedService<OutboxProcessor>();
+            services.AddHostedService<OutboxCleanupJob>();
             services.AddHostedService<RefreshTokenCleanupJob>();
             services.AddHostedService<UserConsumer>();
             return services;

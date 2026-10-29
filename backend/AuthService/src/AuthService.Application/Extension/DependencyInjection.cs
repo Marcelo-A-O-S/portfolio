@@ -7,7 +7,6 @@ using AuthService.Application.UseCases.InternalUser.Interfaces;
 using AuthService.Application.UseCases.Users;
 using AuthService.Application.UseCases.Users.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-
 namespace AuthService.Application.Extension
 {
     public static class DependencyInjection
@@ -20,12 +19,15 @@ namespace AuthService.Application.Extension
             services.AddScoped<ISocialAccountServices, SocialAccountServices>();
             services.AddScoped<IRefreshTokenServices,RefreshTokenServices>();
             services.AddScoped<IJwtBearerServices, JwtBearerServices>();
+            services.AddScoped<IOutboxMessageServices, OutboxMessageServices>();
 
             services.AddScoped<IDeleteUser, DeleteUser>();
             services.AddScoped<IBanUser, BanUser>();
             services.AddScoped<IModifyRoleUser, ModifyRoleUser>();
             services.AddScoped<ICreateToken, CreateToken>();
             services.AddScoped<ILogin, Login>();
+            services.AddScoped<IRefreshToken, RefreshToken>();
+            services.AddScoped<ILogout, Logout>();
             services.AddScoped<IGetByIdUser, GetByIdUser>();
             services.AddScoped<IExistsByIdUser, ExistsByIdUser>();
             services.AddScoped<IExistsProviderId, ExistsProviderId>();

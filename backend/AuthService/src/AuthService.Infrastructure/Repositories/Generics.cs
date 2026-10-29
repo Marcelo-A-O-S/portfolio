@@ -2,7 +2,6 @@ using System.Linq.Expressions;
 using AuthService.Domain.Interfaces;
 using AuthService.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
-
 namespace AuthService.Infrastructure.Repositories
 {
     public class Generics<T> : IGenerics<T> where T : class
@@ -15,7 +14,6 @@ namespace AuthService.Infrastructure.Repositories
         public async Task Delete(T entity)
         {
             this.context.Set<T>().Remove(entity);
-            await this.context.SaveChangesAsync();
         }
 
         public async Task<bool> Exists(Guid Id)
@@ -52,13 +50,11 @@ namespace AuthService.Infrastructure.Repositories
         public async Task Save(T entity)
         {
             await this.context.Set<T>().AddAsync(entity);
-            await this.context.SaveChangesAsync();
         }
 
         public async Task Update(T entity)
         {
             this.context.Set<T>().Update(entity);
-            await this.context.SaveChangesAsync();
         }
     }
 }

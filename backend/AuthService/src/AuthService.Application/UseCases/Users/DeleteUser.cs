@@ -3,27 +3,46 @@ using AuthService.Application.Interfaces;
 using AuthService.Application.UseCases.Users.Interfaces;
 using AuthService.Domain.Entities;
 using AuthService.Domain.Interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
-
+using System.Text.Json;
 namespace AuthService.Application.UseCases.Users
 {
     public class DeleteUser : IDeleteUser
     {
         private readonly IUserServices userServices;
-        private readonly IRabbitMQProducer rabbitMQProducer;
+        private readonly IOutboxMessageServices outboxMessageServices;
+        private readonly IUnitOfWork unitOfWork;
         public DeleteUser(
             IUserServices _userServices,
-            IRabbitMQProducer _rabbitMQProducer
+            IOutboxMessageServices _outboxMessageServices,
+            IUnitOfWork _unitOfWork
         )
         {
             this.userServices = _userServices;
-            this.rabbitMQProducer = _rabbitMQProducer;
+            this.outboxMessageServices = _outboxMessageServices;
+            this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid Id)
         {
-            var user = await GetUserByIdAsync(Id);
-            await this.userServices.Delete(user);
-            await this.rabbitMQProducer.Publish("UserDeleted", new { UserId = Id });
+            await this.unitOfWork.BeginAsync();
+            try
+            {
+                var user = await GetUserByIdAsync(Id);
+                await this.userServices.Delete(user);
+                var outboxMessage = new OutboxMessage(
+                    "UserDeleted",
+                    JsonSerializer.Serialize(new
+                    {
+                        UserId = Id
+                    })
+                );
+                await this.outboxMessageServices.Save(outboxMessage);
+                await this.unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await this.unitOfWork.RollbackAsync();
+                throw;
+            }
         }
         private async Task<User> GetUserByIdAsync(Guid Id)
         {

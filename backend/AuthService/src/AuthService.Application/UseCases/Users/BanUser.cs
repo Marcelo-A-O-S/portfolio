@@ -1,3 +1,4 @@
+using System.Text.Json;
 using AuthService.Application.Exceptions;
 using AuthService.Application.Interfaces;
 using AuthService.Application.UseCases.Users.Interfaces;
@@ -9,21 +10,44 @@ namespace AuthService.Application.UseCases.Users
     public class BanUser : IBanUser
     {
         private readonly IUserServices userServices;
+        private readonly IOutboxMessageServices outboxMessageServices;
+        private readonly IUnitOfWork unitOfWork;
         private readonly IRabbitMQProducer rabbitMQProducer;
         public BanUser(
             IUserServices _userServices,
+            IOutboxMessageServices _outboxMessageServices,
+            IUnitOfWork _unitOfWork,
             IRabbitMQProducer _rabbitMQProducer
         )
         {
             this.userServices = _userServices;
+            this.outboxMessageServices = _outboxMessageServices;
+            this.unitOfWork = _unitOfWork;
             this.rabbitMQProducer = _rabbitMQProducer;
         }
         public async Task ExecuteAsync(Guid Id)
         {
-            var user = await GetUserByIdAsync(Id);
-            user.Ban();
-            await this.userServices.Update(user);
-            await this.rabbitMQProducer.Publish("user-ban", new { UserId = Id });
+            await this.unitOfWork.BeginAsync();
+            try
+            {
+                var user = await GetUserByIdAsync(Id);
+                user.Ban();
+                await this.userServices.Update(user);
+                var outboxMessage = new OutboxMessage(
+                    "UserBaned",
+                    JsonSerializer.Serialize(new
+                    {
+                        UserId = Id
+                    })
+                );
+                await this.outboxMessageServices.Save(outboxMessage);
+                await this.unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await this.unitOfWork.RollbackAsync();
+                throw;
+            }
         }
         private async Task<User> GetUserByIdAsync(Guid Id)
         {

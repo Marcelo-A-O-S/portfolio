@@ -26,6 +26,10 @@ namespace AuthService.Domain.Entities
             this.CreatedAt = DateTime.UtcNow;
             this.Status = UserStatus.ACTIVE;
         }
+        public void GenerateId()
+        {
+            this.Id = Guid.NewGuid();
+        }
         public void Update(string email, string name, Role role, DateTime dateTime, string? description, string? profileUrl)
         {
             this.Email = email;
