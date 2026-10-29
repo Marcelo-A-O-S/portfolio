@@ -5,6 +5,8 @@ using CommentService.Domain.Entities;
 using CommentService.Application.Validators.Interfaces;
 using CommentService.Application.Caching.Comment;
 using CommentService.Domain.Enums;
+using System.Text.Json;
+using CommentService.Application.Constants;
 namespace CommentService.Application.UseCases.Comments
 {
     public class RemoveReply : IRemoveReply
@@ -14,6 +16,7 @@ namespace CommentService.Application.UseCases.Comments
         private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly ICommentValidationService commentValidationService;
         private readonly IUserProjectionServices userProjectionServices;
+        private readonly IOutboxMessageServices outboxMessageServices;
         private readonly IUnitOfWork unitOfWork;
         public RemoveReply(
             ICommentServices _commentServices,
@@ -21,6 +24,7 @@ namespace CommentService.Application.UseCases.Comments
             IRabbitMQProducer _rabbitMQProducer,
             ICommentValidationService _commentValidationService,
             IUserProjectionServices _userProjectionServices,
+            IOutboxMessageServices _outboxMessageServices,
             IUnitOfWork _unitOfWork
         )
         {
@@ -29,6 +33,7 @@ namespace CommentService.Application.UseCases.Comments
             this.rabbitMQProducer = _rabbitMQProducer;
             this.commentValidationService = _commentValidationService;
             this.userProjectionServices = _userProjectionServices;
+            this.outboxMessageServices = _outboxMessageServices;
             this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid authenticatedUserId, string role, Guid commentId, Guid replyId)
@@ -44,6 +49,7 @@ namespace CommentService.Application.UseCases.Comments
             if(reply.ParentCommentId != commentId)
                 throw new ValidationException("Essa resposta não pertence ao comentário informado.");
             await this.unitOfWork.BeginAsync();
+            var type = reply.Type.ToString();
             try
             {
                 switch (userRole)
@@ -59,6 +65,18 @@ namespace CommentService.Application.UseCases.Comments
                         break;
                 }
                 await this.commentServices.Update(reply);
+                type = reply.Type.ToString();
+                var outboxMessage = new OutboxMessage(
+                    $"{type}ReplyDeleted",
+                    JsonSerializer.Serialize(new
+                    {
+                        CommentId = reply.Id,
+                        TargetId = reply.TargetId,
+                        Type = reply.Type,
+                        UserId = reply.UserProjection.UserId
+                    })
+                );
+                await this.outboxMessageServices.Save(outboxMessage);
                 await this.unitOfWork.CommitAsync();
             }
             catch
@@ -66,15 +84,7 @@ namespace CommentService.Application.UseCases.Comments
                 await unitOfWork.RollbackAsync();
                 throw;
             }
-            var type = reply.Type.ToString();
-            await this.rabbitMQProducer.Publish($"{type}ReplyDeleted",
-            new
-            {
-                CommentId = reply.Id,
-                TargetId = reply.TargetId,
-                Type = reply.Type,
-                UserId = reply.UserProjection.UserId
-            });
+            await this.commentCacheServices.RemoveCommentCache(CacheKeys.CommentTypeExists(type, reply.Id));
         }
         private async Task<Comment> GetReply(Guid replyId)
         {

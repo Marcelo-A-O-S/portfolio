@@ -131,7 +131,7 @@ namespace CommentService.API.Controllers
             return Ok(new { message = "Comentário deletado com sucesso!" });
         }
         [HttpDelete("Hard/{Id}")]
-        [Authorize(Roles = "Administrador,Moderator,Client", AuthenticationSchemes = "UserJwt")]
+        [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
         public async Task<IActionResult> HardDeleteComment([FromRoute] Guid Id)
         {
             var providerId = User.FindFirst("ProviderId")?.Value;

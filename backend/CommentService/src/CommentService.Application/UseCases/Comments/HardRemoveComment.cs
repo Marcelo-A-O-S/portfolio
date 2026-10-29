@@ -70,13 +70,13 @@ namespace CommentService.Application.UseCases.Comments
                 );
                 await this.outboxMessageServices.Save(outboxMessage);
                 await this.unitOfWork.CommitAsync();
-                await this.commentCacheServices.RemoveCommentCache(CacheKeys.CommentTypeExists(type, comment.Id));
             }
             catch
             {
                 await unitOfWork.RollbackAsync();
                 throw;
             }
+            await this.commentCacheServices.RemoveCommentCache(CacheKeys.CommentTypeExists(type, comment.Id));
         }
     }
 }

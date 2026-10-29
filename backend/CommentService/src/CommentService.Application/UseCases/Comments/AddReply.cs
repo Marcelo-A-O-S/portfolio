@@ -76,13 +76,13 @@ namespace CommentService.Application.UseCases.Comments
                 );
                 await this.outboxMessageServices.Save(outboxMessage);
                 await this.unitOfWork.CommitAsync();
-                await this.commentCacheServices.AddCommentCache(CacheKeys.CommentTypeExists(type, reply.Id), reply.Id);
             }
             catch
             {
                 await unitOfWork.RollbackAsync();
                 throw;
             }
+            await this.commentCacheServices.AddCommentCache(CacheKeys.CommentTypeExists(type, reply.Id), reply.Id);
         }
         private static void ValidateRequest(CommentRequest request)
         {

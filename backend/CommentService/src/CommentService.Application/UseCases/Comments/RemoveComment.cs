@@ -1,4 +1,6 @@
+using System.Text.Json;
 using CommentService.Application.Caching.Comment;
+using CommentService.Application.Constants;
 using CommentService.Application.Exceptions;
 using CommentService.Application.Interfaces;
 using CommentService.Application.UseCases.Comments.Interfaces;
@@ -11,41 +13,36 @@ namespace CommentService.Application.UseCases.Comments
     {
         private readonly ICommentServices commentServices;
         private readonly ICommentCacheServices commentCacheServices;
-        private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly ICommentValidationService commentValidationService;
-        private readonly IUserProjectionServices userProjectionServices;
-        private readonly ILikeServices likeServices;
+        private readonly IOutboxMessageServices outboxMessageServices;
         private readonly IUnitOfWork unitOfWork;
         public RemoveComment(
             ICommentServices _commentServices,
             ICommentCacheServices _commentCacheServices,
-            IRabbitMQProducer _rabbitMQProducer,
             ICommentValidationService _commentValidationService,
-            IUserProjectionServices _userProjectionServices,
-            ILikeServices _likeServices,
+            IOutboxMessageServices _outboxMessageServices,
             IUnitOfWork _unitOfWork
         )
         {
             this.commentServices = _commentServices;
             this.commentCacheServices = _commentCacheServices;
-            this.rabbitMQProducer = _rabbitMQProducer;
             this.commentValidationService = _commentValidationService;
-            this.userProjectionServices = _userProjectionServices;
-            this.likeServices = _likeServices;
+            this.outboxMessageServices = _outboxMessageServices;
             this.unitOfWork = _unitOfWork;
         }
 
         public async Task ExecuteAsync(Guid authenticatedUserId, string role, Guid commentId)
         {
             await this.commentValidationService.ValidateUserExists(authenticatedUserId);
-            if(!Enum.TryParse<UserRole>(role,true, out var userRole))
+            if (!Enum.TryParse<UserRole>(role, true, out var userRole))
                 throw new ValidationException("Usuário inválido.");
             var comment = await GetComment(commentId);
-            if(userRole == UserRole.Client && comment.UserProjection.UserId != authenticatedUserId)
+            if (userRole == UserRole.Client && comment.UserProjection.UserId != authenticatedUserId)
             {
-                throw new ValidationException("Você não pode remover este comentário."); 
+                throw new ValidationException("Você não pode remover este comentário.");
             }
             await this.unitOfWork.BeginAsync();
+            var type = comment.Type.ToString();
             try
             {
                 switch (userRole)
@@ -63,6 +60,18 @@ namespace CommentService.Application.UseCases.Comments
                         throw new ValidationException("Usuário inválido");
                 }
                 await this.commentServices.Update(comment);
+                type = comment.Type.ToString();
+                var outboxMessage = new OutboxMessage(
+                    $"{type}CommentDeleted",
+                    JsonSerializer.Serialize(new
+                    {
+                        CommentId = comment.Id,
+                        TargetId = comment.TargetId,
+                        Type = comment.Type,
+                        UserId = comment.UserProjection.UserId
+                    })
+                );
+                await this.outboxMessageServices.Save(outboxMessage);
                 await this.unitOfWork.CommitAsync();
             }
             catch
@@ -70,23 +79,14 @@ namespace CommentService.Application.UseCases.Comments
                 await unitOfWork.RollbackAsync();
                 throw;
             }
-            var type = comment.Type.ToString();
-            await this.commentCacheServices.AddCommentCache($"comment:{type}:exists:{comment.Id}", comment.Id);
-            await this.rabbitMQProducer.Publish($"{type}CommentDeleted",
-            new
-            {
-                CommentId = comment.Id,
-                TargetId = comment.TargetId,
-                Type = comment.Type,
-                UserId = comment.UserProjection.UserId
-            });
+            await this.commentCacheServices.RemoveCommentCache(CacheKeys.CommentTypeExists(type, comment.Id));
         }
         private async Task<Comment> GetComment(Guid commentId)
         {
             var comment = await commentServices.GetFullDataById(commentId);
-            if(comment == null)
+            if (comment == null)
                 throw new NotFoundException("Comentário não encontrado");
             return comment;
-        } 
+        }
     }
 }
