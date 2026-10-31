@@ -9,9 +9,7 @@ namespace CertificateService.Domain.Entities
         public DateTime? ProcessedAt { get; private set; }
         public string? Error { get; private set; }
         public int Attempts { get; private set; }
-
         protected OutboxMessage() { }
-
         public OutboxMessage(string eventType, string payload)
         {
             Id = Guid.NewGuid();

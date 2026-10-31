@@ -74,7 +74,12 @@ namespace CertificateService.Application.UseCases.Certificates
                         CertificateContents = certificate.CertificateContents.Select(cc => new
                         {
                             Id = cc.Id,
-                            Language = cc.LanguageProjection,
+                            Language = new
+                            {
+                                Id = cc.LanguageProjection.LanguageId,
+                                Name = cc.LanguageProjection.Name,
+                                Code = cc.LanguageProjection.Code
+                            },
                             Title = cc.Title
                         })
                     })
