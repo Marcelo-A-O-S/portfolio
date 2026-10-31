@@ -117,7 +117,7 @@ namespace AuthService.Application.Services
                 throw new Exception("Refresh token reutilizado.");
             }
             var newRefresh = await this.GenerateRefreshToken(userId, deviceId, deviceName);
-            var newAccessToken = await this.GenerateAccessToken(token.User, providerId);
+            var newAccessToken = await this.GenerateAccessToken(user, providerId);
             return new AuthResponse
             {
                 UserId = userId,

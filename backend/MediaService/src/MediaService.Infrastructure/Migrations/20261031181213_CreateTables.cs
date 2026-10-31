@@ -30,6 +30,23 @@ namespace MediaService.Infrastructure.Migrations
                     table.PrimaryKey("PK_Medias", x => x.Id);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "OutboxMessages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    EventType = table.Column<string>(type: "text", nullable: false),
+                    Payload = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ProcessedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Error = table.Column<string>(type: "text", nullable: true),
+                    Attempts = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OutboxMessages", x => x.Id);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Medias_Path",
                 table: "Medias",
@@ -42,6 +59,9 @@ namespace MediaService.Infrastructure.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Medias");
+
+            migrationBuilder.DropTable(
+                name: "OutboxMessages");
         }
     }
 }

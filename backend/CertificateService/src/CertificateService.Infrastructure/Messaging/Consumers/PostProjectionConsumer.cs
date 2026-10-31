@@ -31,7 +31,6 @@ namespace CertificateService.Infrastructure.Messaging.Consumers
                 this.connection = await this.factory.CreateConnectionAsync();
                 this.consumer = new RabbitMQConsumer(this.connection);
                 this.consumer.RegisterHandler("PostUpdated", async message => { await this.postProjectionHandler.HandlePostProjectionUpdated(message);});
-                this.consumer.RegisterHandler("PostRemoved", async message => { await this.postProjectionHandler.HandlePostProjectionRemoved(message);});
                 this.consumer.RegisterHandler("PostDeleted", async message => { await this.postProjectionHandler.HandlePostProjectionDeleted(message);});
                 await consumer.Start();
                 this.logger.LogInformation("Consumer dos Projetos do serviço de Postagens do RabbitMQ iniciado e aguardando mensagens...");

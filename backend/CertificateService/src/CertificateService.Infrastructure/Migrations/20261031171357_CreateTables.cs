@@ -25,18 +25,35 @@ namespace CertificateService.Infrastructure.Migrations
                     table.PrimaryKey("PK_LanguageProjections", x => x.Id);
                 });
 
-            // migrationBuilder.CreateTable(
-            //     name: "MediaProjections",
-            //     columns: table => new
-            //     {
-            //         Id = table.Column<Guid>(type: "uuid", nullable: false),
-            //         MediaId = table.Column<Guid>(type: "uuid", nullable: false),
-            //         Url = table.Column<string>(type: "text", nullable: false)
-            //     },
-            //     constraints: table =>
-            //     {
-            //         table.PrimaryKey("PK_MediaProjections", x => x.Id);
-            //     });
+            migrationBuilder.CreateTable(
+                name: "MediaProjections",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    MediaId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Url = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MediaProjections", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OutboxMessages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    EventType = table.Column<string>(type: "text", nullable: false),
+                    Payload = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ProcessedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Error = table.Column<string>(type: "text", nullable: true),
+                    Attempts = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OutboxMessages", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "Certificates",
@@ -65,6 +82,27 @@ namespace CertificateService.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PostProjections",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    MediaProjectionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    LikeCount = table.Column<int>(type: "integer", nullable: false),
+                    CommentCount = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostProjections", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PostProjections_MediaProjections_MediaProjectionId",
+                        column: x => x.MediaProjectionId,
+                        principalTable: "MediaProjections",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CertificateContents",
                 columns: table => new
                 {
@@ -88,33 +126,29 @@ namespace CertificateService.Infrastructure.Migrations
                         column: x => x.LanguageProjectionId,
                         principalTable: "LanguageProjections",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PostProjections",
+                name: "CertificatePostProjection",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CertificateId = table.Column<Guid>(type: "uuid", nullable: false),
-                    MediaProjectionId = table.Column<Guid>(type: "uuid", nullable: false),
-                    LikeCount = table.Column<int>(type: "integer", nullable: false),
-                    CommentCount = table.Column<int>(type: "integer", nullable: false)
+                    CertificatesId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PostProjectionsId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PostProjections", x => x.Id);
+                    table.PrimaryKey("PK_CertificatePostProjection", x => new { x.CertificatesId, x.PostProjectionsId });
                     table.ForeignKey(
-                        name: "FK_PostProjections_Certificates_CertificateId",
-                        column: x => x.CertificateId,
+                        name: "FK_CertificatePostProjection_Certificates_CertificatesId",
+                        column: x => x.CertificatesId,
                         principalTable: "Certificates",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PostProjections_MediaProjections_MediaProjectionId",
-                        column: x => x.MediaProjectionId,
-                        principalTable: "MediaProjections",
+                        name: "FK_CertificatePostProjection_PostProjections_PostProjectionsId",
+                        column: x => x.PostProjectionsId,
+                        principalTable: "PostProjections",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -125,10 +159,10 @@ namespace CertificateService.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     PostContentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PostProjectionId = table.Column<Guid>(type: "uuid", nullable: false),
                     LanguageProjectionId = table.Column<Guid>(type: "uuid", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
-                    PostProjectionId = table.Column<Guid>(type: "uuid", nullable: true)
+                    Description = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -138,12 +172,13 @@ namespace CertificateService.Infrastructure.Migrations
                         column: x => x.LanguageProjectionId,
                         principalTable: "LanguageProjections",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_PostContentProjections_PostProjections_PostProjectionId",
                         column: x => x.PostProjectionId,
                         principalTable: "PostProjections",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -157,6 +192,11 @@ namespace CertificateService.Infrastructure.Migrations
                 column: "LanguageProjectionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CertificatePostProjection_PostProjectionsId",
+                table: "CertificatePostProjection",
+                column: "PostProjectionsId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Certificates_MediaProjectionId",
                 table: "Certificates",
                 column: "MediaProjectionId");
@@ -167,11 +207,11 @@ namespace CertificateService.Infrastructure.Migrations
                 column: "Code",
                 unique: true);
 
-            // migrationBuilder.CreateIndex(
-            //     name: "IX_MediaProjections_Url_MediaId",
-            //     table: "MediaProjections",
-            //     columns: new[] { "Url", "MediaId" },
-            //     unique: true);
+            migrationBuilder.CreateIndex(
+                name: "IX_MediaProjections_Url_MediaId",
+                table: "MediaProjections",
+                columns: new[] { "Url", "MediaId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_PostContentProjections_LanguageProjectionId",
@@ -179,19 +219,26 @@ namespace CertificateService.Infrastructure.Migrations
                 column: "LanguageProjectionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PostContentProjections_PostContentId",
+                table: "PostContentProjections",
+                column: "PostContentId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PostContentProjections_PostProjectionId",
                 table: "PostContentProjections",
                 column: "PostProjectionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PostProjections_CertificateId",
-                table: "PostProjections",
-                column: "CertificateId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_PostProjections_MediaProjectionId",
                 table: "PostProjections",
                 column: "MediaProjectionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PostProjections_PostId",
+                table: "PostProjections",
+                column: "PostId",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -201,16 +248,22 @@ namespace CertificateService.Infrastructure.Migrations
                 name: "CertificateContents");
 
             migrationBuilder.DropTable(
+                name: "CertificatePostProjection");
+
+            migrationBuilder.DropTable(
+                name: "OutboxMessages");
+
+            migrationBuilder.DropTable(
                 name: "PostContentProjections");
+
+            migrationBuilder.DropTable(
+                name: "Certificates");
 
             migrationBuilder.DropTable(
                 name: "LanguageProjections");
 
             migrationBuilder.DropTable(
                 name: "PostProjections");
-
-            migrationBuilder.DropTable(
-                name: "Certificates");
 
             migrationBuilder.DropTable(
                 name: "MediaProjections");

@@ -45,17 +45,6 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
                 throw;
             }
         }
-
-        public async Task HandlePostProjectionRemoved(string message)
-        {
-            // var payload = JsonSerializer.Deserialize<PostRemovedEvent>(message);
-            // if (payload == null)
-            //     return;
-            // using var scope = this.scopeFactory.CreateScope();
-            // var postProjectionServices = scope.ServiceProvider.GetRequiredService<IPostProjectionServices>();
-            // var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-        }
-
         public async Task HandlePostProjectionUpdated(string message)
         {
             var payload = JsonSerializer.Deserialize<PostUpdatedEvent>(message);
