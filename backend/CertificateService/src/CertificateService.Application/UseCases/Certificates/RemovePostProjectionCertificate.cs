@@ -25,7 +25,7 @@ namespace CertificateService.Application.UseCases.Certificates
         }
         public async Task ExecuteAsync(Guid certificateId, Guid postProjectionId)
         {
-            var postProjection = await this.postProjectionServices.FindBy(pp => pp.Id == postProjectionId && pp.CertificateId == certificateId);
+            var postProjection = await this.postProjectionServices.FindBy(pp => pp.Id == postProjectionId && pp.Certificates.Any(c => c.Id == certificateId));
             if(postProjection == null)
                 throw new NotFoundException("Relacionamento entre certificado e projeto não encontrado!");
             await this.unitOfWork.BeginAsync();
@@ -37,7 +37,7 @@ namespace CertificateService.Application.UseCases.Certificates
                     JsonSerializer.Serialize(new
                     {
                         PostId = postProjection.PostId,
-                        CertificateId = postProjection.CertificateId
+                        CertificateId = certificateId
                     })
                 );
                 await this.outboxMessageServices.Save(outboxMessage);

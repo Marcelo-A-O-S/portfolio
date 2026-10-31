@@ -17,7 +17,12 @@ namespace CertificateService.Infrastructure.Context
         public DbSet<OutboxMessage> OutboxMessages { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Certificate>().Property(c => c.Status).HasConversion<string>();
+            modelBuilder.Entity<Certificate>()
+                .HasMany(c => c.PostProjections)
+                .WithMany(pc => pc.Certificates);
+            modelBuilder.Entity<Certificate>()
+                .Property(c => c.Status)
+                .HasConversion<string>();
             modelBuilder.Entity<Certificate>().Property(c => c.CertificateType).HasConversion<string>();
             modelBuilder.Entity<MediaProjection>().HasIndex(mp => new { mp.Url, mp.MediaId }).IsUnique();
             modelBuilder.Entity<LanguageProjection>().HasIndex(lp => new { lp.Code }).IsUnique();

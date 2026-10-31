@@ -48,13 +48,13 @@ namespace CertificateService.Application.UseCases.Certificates
             await this.unitOfWork.BeginAsync();
             try
             {
-                var postProjection = await this.postProjectionServices.FindBy(pp => pp.PostId == postId && pp.CertificateId == certificateId);
+                var postProjection = await this.postProjectionServices.FindBy(pp => pp.PostId == postId && pp.Certificates.Any(c => c.Id == certificateId));
                 if (postProjection == null)
                 {
                     var postResponse = await this.postServicesClient.GetPostAsync(postId);
                     if (postResponse == null)
                         throw new NotFoundException("Publicação não encontrada.");
-                    postProjection = new PostProjection(postId, certificateId, postResponse.LikeCount, postResponse.CommentCount);
+                    postProjection = new PostProjection(postId, postResponse.LikeCount, postResponse.CommentCount);
                     postProjection.GenerateId();
                     await ProcessPostContentProjections(postProjection, postResponse.PostContents);
                     await ProcessMediaProjection(postProjection, postResponse.Media);
