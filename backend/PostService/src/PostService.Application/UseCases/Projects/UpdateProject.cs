@@ -185,6 +185,7 @@ namespace PostService.Application.UseCases.Projects
                 {
                     var postContent = new PostContent(post.Id, item.LanguageId, item.Title, item.Description, item.Content, item.Slug);
                     await ProcessPostContentImages(postContent, item, mediasToCommit, mediasToDelete);
+                    post.AddPostContent(postContent);
                 }
             }
         }

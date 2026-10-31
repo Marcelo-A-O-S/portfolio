@@ -69,7 +69,12 @@ namespace CertificateService.Application.UseCases.Certificates
                     JsonSerializer.Serialize(new
                     {
                         CertificateId = certificateId,
-                        CertificateContents = certificate.CertificateContents
+                        CertificateContents = certificate.CertificateContents.Select(cc => new
+                        {
+                            Id = cc.Id,
+                            Language = cc.LanguageProjection,
+                            Title = cc.Title
+                        })
                     })
                 );
                 await this.outboxMessageServices.Save(outboxMessage);

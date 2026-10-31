@@ -19,8 +19,11 @@ namespace CertificateService.Infrastructure.Repositories
         {
             return await this.context.Certificates
                 .Include(c => c.MediaProjection)
+                .Include(c => c.CertificateContents)
+                    .ThenInclude(cc => cc.LanguageProjection)
                 .Include(c => c.PostProjections)
                     .ThenInclude(pp => pp.PostContents)
+                        .ThenInclude(pcp => pcp.LanguageProjection)
                 .Where(predicate)
                 .FirstOrDefaultAsync();
         }
