@@ -48,7 +48,7 @@ namespace CertificateService.Application.UseCases.Certificates
             await this.unitOfWork.BeginAsync();
             try
             {
-                var postProjection = await this.postProjectionServices.FindBy(pp => pp.PostId == postId && pp.Certificates.Any(c => c.Id == certificateId));
+                var postProjection = await this.postProjectionServices.FindBy(pp => pp.PostId == postId);
                 if (postProjection == null)
                 {
                     var postResponse = await this.postServicesClient.GetPostAsync(postId);
@@ -60,7 +60,10 @@ namespace CertificateService.Application.UseCases.Certificates
                     await ProcessMediaProjection(postProjection, postResponse.Media);
                     await this.postProjectionServices.Save(postProjection);
                 }
-                certificate.AddPostProjection(postProjection);
+                if(!certificate.PostProjections.Any(pp => pp.Id == postProjection.Id))
+                {
+                    certificate.AddPostProjection(postProjection);
+                }
                 await this.certificateServices.Update(certificate);
                 var outboxMessage = new OutboxMessage(
                     "PostCertificateAdd",
@@ -92,7 +95,7 @@ namespace CertificateService.Application.UseCases.Certificates
                     languageProjection.GenerateId();
                     await this.languageProjectionServices.Save(languageProjection);
                 }
-                var postContentProjection = new PostContentProjection(item.Id, languageProjection.Id, item.Title, item.Description);
+                var postContentProjection = new PostContentProjection(postProjection.Id, item.Id, languageProjection.Id, item.Title, item.Description);
                 postProjection.AddPostContentProjection(postContentProjection);
             }
         }

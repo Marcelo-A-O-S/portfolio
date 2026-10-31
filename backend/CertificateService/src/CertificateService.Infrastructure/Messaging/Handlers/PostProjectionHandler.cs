@@ -102,15 +102,13 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
             var incomingContentIds = payload.PostContents
                 .Select(item => new
                 {
-                    PostContentId = item.Id!.Value,
-                    LanguageProjectionId = item.Language!.Id
+                    PostContentId = item.Id!.Value
                 })
                 .ToHashSet();
             var removedContents = postProjection.PostContents
                 .Where(pcp => !incomingContentIds.Contains(new
                 {
-                    pcp.PostContentId,
-                    pcp.LanguageProjectionId
+                    pcp.PostContentId
                 }))
                 .ToList();
             await unitOfWork.BeginAsync();
