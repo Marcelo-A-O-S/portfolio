@@ -13,6 +13,7 @@ namespace MediaService.Infrastructure.Extensions
             services.AddHostedService<PostConsumer>();
             services.AddHostedService<CertficateConsumer>();
             services.AddHostedService<CleanupMediaJob>();
+            services.AddHostedService<OutboxProcessor>();
             return services;
         }
     }

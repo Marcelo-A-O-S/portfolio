@@ -30,6 +30,7 @@ namespace CommentService.Infrastructure.Messaging.Consumers
             }catch(Exception ex)
             {
                 this.logger.LogError($"Erro ao conectar ao RabbitMQ: {ex.Message}");
+                throw;
             }
         }
         public override async Task StopAsync(CancellationToken cancellationToken)

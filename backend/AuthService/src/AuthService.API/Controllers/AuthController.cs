@@ -1,6 +1,7 @@
 using AuthService.Application.DTOs.Request;
 using AuthService.Application.Interfaces;
 using AuthService.Application.UseCases.Auth.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 namespace AuthService.API.Controllers
@@ -34,6 +35,7 @@ namespace AuthService.API.Controllers
             return BadRequest(erros);
         }
         [HttpPost("refreshToken")]
+        [Authorize(AuthenticationSchemes="UserJwt", Roles = "Administrador,Moderator,Client")]
         public async Task<IActionResult> RefreshToken(RefreshRequest refreshRequest)
         {
             if (ModelState.IsValid)
@@ -45,6 +47,7 @@ namespace AuthService.API.Controllers
             return BadRequest(erros);
         }
         [HttpPost("logout")]
+        [Authorize(AuthenticationSchemes="UserJwt", Roles = "Administrador,Moderator,Client")]
         public async Task<IActionResult> Logout(LogoutRequest logoutRequest)
         {
             if (ModelState.IsValid)

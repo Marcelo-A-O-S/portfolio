@@ -8,6 +8,7 @@ namespace MediaService.Infrastructure.Context
         {
         }
         public DbSet<Media> Medias { get; set; }
+        public DbSet<OutboxMessage> OutboxMessages { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Media>().HasIndex(mf => mf.Path).IsUnique();

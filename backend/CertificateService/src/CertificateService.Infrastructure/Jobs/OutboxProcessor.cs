@@ -23,6 +23,8 @@ namespace CertificateService.Infrastructure.Jobs
                 try
                 {
                     using var scope = scopeFactory.CreateScope();
+                    var unitOfwork = scope.ServiceProvider
+                        .GetRequiredService<IUnitOfWork>();
                     var outboxServices = scope.ServiceProvider
                         .GetRequiredService<IOutboxMessageServices>();
                     var rabbitMQProducer = scope.ServiceProvider
@@ -30,6 +32,7 @@ namespace CertificateService.Infrastructure.Jobs
                     var messages = await outboxServices.GetPendingMessages();
                     foreach (var message in messages)
                     {
+                        await unitOfwork.BeginAsync();
                         try
                         {
                             await rabbitMQProducer.PublishRaw(
@@ -37,11 +40,13 @@ namespace CertificateService.Infrastructure.Jobs
                                 message.Payload);
                             message.MarkAsProcessed();
                             await outboxServices.Update(message);
+                            await unitOfwork.CommitAsync();
                         }
                         catch (Exception exception)
                         {
                             message.RegisterFailure(exception.Message);
                             await outboxServices.Update(message);
+                            await unitOfwork.CommitAsync();
                             logger.LogError(
                                 exception,
                                 "Falha ao publicar a mensagem Outbox {MessageId}",

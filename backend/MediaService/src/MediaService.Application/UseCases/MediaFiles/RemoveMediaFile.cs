@@ -3,7 +3,6 @@ using MediaService.Application.Interfaces;
 using MediaService.Application.UseCases.MediaFiles.Interfaces;
 using MediaService.Domain.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
-
 namespace MediaService.Application.UseCases.MediaFiles
 {
     public class RemoveMediaFile : IRemoveMediaFile
