@@ -61,6 +61,7 @@ namespace CommentService.Infrastructure.Workers
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
+                throw new Exception($"Error: {ex.Message}");
             }
         }
     }

@@ -40,6 +40,7 @@ namespace PostService.Infrastructure.Context
             modelBuilder.Entity<Language>().HasIndex(lg => lg.Code);
             modelBuilder.Entity<LikeProjection>().HasIndex(lp => new { lp.TargetId, lp.UserId }).IsUnique();
             modelBuilder.Entity<MediaProjection>().HasIndex(mp => new { mp.Url, mp.MediaId }).IsUnique();
+            modelBuilder.Entity<CertificateProjection>().HasIndex(cp => new { cp.CertificateId}).IsUnique();
         }
     }
 }
