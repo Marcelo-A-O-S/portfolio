@@ -128,12 +128,11 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
                 }))
                 .ToList();
             await unitOfWork.BeginAsync();
-
             try
             {
                 if (postProjection.MediaProjection.MediaId != payload.Media.MediaId)
                 {
-                    var oldMediaProjection = await mediaProjectionServices.FindBy(mp => mp.MediaId == payload.Media.MediaId);
+                    var oldMediaProjection = await mediaProjectionServices.FindBy(mp => mp.MediaId == postProjection.MediaProjection.MediaId);
                     var newMediaProjection = new MediaProjection(
                             payload.Media.MediaId,
                             payload.Media.Url
