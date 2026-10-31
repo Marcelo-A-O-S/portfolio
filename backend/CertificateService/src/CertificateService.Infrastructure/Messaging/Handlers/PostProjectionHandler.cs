@@ -1,10 +1,10 @@
 using System.Text.Json;
+using CertificateService.Application.Interfaces;
+using CertificateService.Domain.Entities;
 using CertificateService.Infrastructure.Messaging.Events;
 using CertificateService.Infrastructure.Messaging.Handlers.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using CertificateService.Application.Interfaces;
-using CertificateService.Domain.Entities;
 namespace CertificateService.Infrastructure.Messaging.Handlers
 {
     public class PostProjectionHandler : IPostProjectionHandler
@@ -22,18 +22,20 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
         public async Task HandlePostProjectionDeleted(string message)
         {
             var payload = JsonSerializer.Deserialize<PostDeletedEvent>(message);
-            if(payload == null)
+            if (payload == null)
                 return;
             using var scope = this.scopeFactory.CreateScope();
             var postProjectionServices = scope.ServiceProvider.GetRequiredService<IPostProjectionServices>();
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             var postProjection = await postProjectionServices.FindBy(pp => pp.PostId == payload.PostId);
-            if(postProjection == null){
+            if (postProjection == null)
+            {
                 this.logger.LogWarning("Evento recebido para projeção de publicação inexistente. PostProjectionId: {PostId}", payload.PostId);
                 return;
             }
             await unitOfWork.BeginAsync();
-            try{
+            try
+            {
                 await postProjectionServices.Delete(postProjection);
                 await unitOfWork.CommitAsync();
             }
@@ -47,7 +49,7 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
         public async Task HandlePostProjectionRemoved(string message)
         {
             var payload = JsonSerializer.Deserialize<PostRemovedEvent>(message);
-            if(payload == null)
+            if (payload == null)
                 return;
             using var scope = this.scopeFactory.CreateScope();
             var postProjectionServices = scope.ServiceProvider.GetRequiredService<IPostProjectionServices>();
@@ -57,18 +59,21 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
         public async Task HandlePostProjectionUpdated(string message)
         {
             var payload = JsonSerializer.Deserialize<PostUpdatedEvent>(message);
-            if(payload == null)
+            if (payload == null)
                 return;
             using var scope = this.scopeFactory.CreateScope();
             var postProjectionServices = scope.ServiceProvider.GetRequiredService<IPostProjectionServices>();
             var postContentProjectionServices = scope.ServiceProvider.GetRequiredService<IPostContentProjectionServices>();
             var languageProjectionServices = scope.ServiceProvider.GetRequiredService<ILanguageProjectionServices>();
+            var mediaProjectionServices = scope.ServiceProvider.GetRequiredService<IMediaProjectionServices>();
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             var postProjection = await postProjectionServices.FindWithContentBy(pp => pp.PostId == payload.PostId);
-            if(postProjection == null){
+            if (postProjection == null)
+            {
                 this.logger.LogWarning("Evento recebido para projeção de publicação inexistente. PostId: {PostId}", payload.PostId);
                 return;
             }
+
             foreach (var item in payload.PostContents)
             {
                 if (item.Language?.Id is not Guid languageId)
@@ -85,7 +90,7 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
                     return;
                 }
                 var postContentProjection = postProjection.PostContents.FirstOrDefault(pc => pc.PostContentId == postContentId);
-                if(postContentProjection != null)
+                if (postContentProjection != null)
                 {
                     postContentProjection.Update(item.Title, item.Description);
                     continue;
@@ -109,6 +114,7 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
                 );
                 postProjection.AddPostContentProjection(newProjection);
             }
+
             var incomingContentIds = payload.PostContents
                 .Select(item => new
                 {
@@ -122,9 +128,25 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
                 }))
                 .ToList();
             await unitOfWork.BeginAsync();
+
             try
             {
-                foreach(var content in removedContents)
+                if (postProjection.MediaProjection.MediaId != payload.Media.MediaId)
+                {
+                    var oldMediaProjection = await mediaProjectionServices.FindBy(mp => mp.MediaId == payload.Media.MediaId);
+                    var newMediaProjection = new MediaProjection(
+                            payload.Media.MediaId,
+                            payload.Media.Url
+                        );
+                    newMediaProjection.GenerateId();
+                    postProjection.SetThumbnail(newMediaProjection.Id);
+                    await mediaProjectionServices.Save(newMediaProjection);
+                    if (oldMediaProjection != null)
+                    {
+                        await mediaProjectionServices.Delete(oldMediaProjection);
+                    }
+                }
+                foreach (var content in removedContents)
                 {
                     postProjection.RemovePostContentProjection(content);
                     await postContentProjectionServices.Delete(content);
