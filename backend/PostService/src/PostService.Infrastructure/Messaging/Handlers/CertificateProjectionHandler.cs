@@ -54,18 +54,18 @@ namespace PostService.Infrastructure.Messaging.Handlers
                     if (dataContent.Id is not Guid certificateContentId)
                     {
                         this.logger.LogWarning("Evento de certificado sem identificador de conteudo válido. CertificateId: {CertificateId}", payload.CertificateId);
-                        return;
+                        throw new InvalidDataException("Evento de certificado sem identificador de conteudo válido.");
                     }
                     if (dataContent.Language?.Id is not Guid languageId)
                     {
                         this.logger.LogWarning("Evento de certificado sem Language.Id válido. CertificateId: {CertificateId}", payload.CertificateId);
-                        return;
+                        throw new InvalidDataException("Evento de certificado sem Language.Id válido.");
                     }
                     var language = await languageServices.GetById(languageId);
                     if (language == null)
                     {
                         this.logger.LogWarning("Idioma {LanguageId} não encontrado localmente para o certificado {CertificateId}", languageId, payload.CertificateId);
-                        return;
+                        throw new InvalidDataException($"Idioma {languageId} não encontrado localmente para o certificado {payload.CertificateId}");
                     }
                     var certificateContentProjection = new CertificateContentProjection(
                         certificateProjection.Id,
@@ -186,19 +186,12 @@ namespace PostService.Infrastructure.Messaging.Handlers
                     logger.LogWarning(
                         "Evento de certificado sem identificador de idioma válido. CertificateId: {CertificateId}",
                         payload.CertificateId);
-
-                    return;
+                    throw new InvalidDataException("Evento de certificado sem identificador de idioma válido.");
                 }
                 if (item.Id is not Guid certificateContentId)
                 {
                     this.logger.LogWarning("Evento de certificado sem identificador de conteudo válido. CertificateId: {CertificateId}", payload.CertificateId);
-                    return;
-                }
-                var certificateContentProjection = certificateProjection.CertificateContents.FirstOrDefault(ccp => ccp.LanguageId == languageId && ccp.CertificateContentId == certificateContentId);
-                if (certificateContentProjection != null)
-                {
-                    certificateContentProjection.Update(item.Title);
-                    continue;
+                    throw new InvalidDataException("Evento de certificado sem identificador de conteudo válido.");
                 }
                 var language = await languageServices.GetById(languageId);
                 if (language == null)
@@ -208,6 +201,12 @@ namespace PostService.Infrastructure.Messaging.Handlers
                         languageId,
                         payload.CertificateId);
 
+                    throw new InvalidDataException($"Idioma {languageId} não encontrado para o certificado {payload.CertificateId}");
+                }
+                var certificateContentProjection = certificateProjection.CertificateContents.FirstOrDefault(ccp => ccp.LanguageId == languageId && ccp.CertificateContentId == certificateContentId);
+                if (certificateContentProjection != null)
+                {
+                    certificateContentProjection.Update(item.Title);
                     continue;
                 }
                 var newProjection = new CertificateContentProjection(

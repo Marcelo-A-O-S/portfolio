@@ -48,12 +48,12 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
 
         public async Task HandlePostProjectionRemoved(string message)
         {
-            var payload = JsonSerializer.Deserialize<PostRemovedEvent>(message);
-            if (payload == null)
-                return;
-            using var scope = this.scopeFactory.CreateScope();
-            var postProjectionServices = scope.ServiceProvider.GetRequiredService<IPostProjectionServices>();
-            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+            // var payload = JsonSerializer.Deserialize<PostRemovedEvent>(message);
+            // if (payload == null)
+            //     return;
+            // using var scope = this.scopeFactory.CreateScope();
+            // var postProjectionServices = scope.ServiceProvider.GetRequiredService<IPostProjectionServices>();
+            // var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
         }
 
         public async Task HandlePostProjectionUpdated(string message)
@@ -80,23 +80,21 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
                     logger.LogWarning(
                         "Evento de projeção de publicação sem identificador de idioma válido. PostId: {PostId}",
                         payload.PostId);
-
-                    return;
+                    throw new InvalidDataException("Evento de projeção de publicação sem identificador de idioma válido.");
                 }
                 if (item.Id is not Guid postContentId)
                 {
                     this.logger.LogWarning("Evento de projeção de publicação sem identificador de conteudo válido. PostId: {CertificateId}", payload.PostId);
-                    return;
+                    throw new InvalidDataException("Evento de projeção de publicação sem identificador de conteudo válido.");
                 }
                 var languageProjection = await languageProjectionServices.FindBy(lp => lp.LanguageId == languageId);
                 if (languageProjection == null)
                 {
                     logger.LogWarning(
-                        "Idioma {LanguageId} não encontrado para o certificado {CertificateId}",
+                        "Idioma {LanguageId} não encontrado para a projeção da publicação {PostId}",
                         languageId,
                         payload.PostId);
-
-                    continue;
+                    throw new InvalidDataException($"Idioma {languageId} não encontrado para a projeção da publicação {payload.PostId}");
                 }
                 var postContentProjection = postProjection.PostContents.FirstOrDefault(pc => pc.PostContentId == postContentId);
                 if (postContentProjection != null)
