@@ -121,7 +121,7 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
                     postProjection.RemovePostContentProjection(content);
                     await postContentProjectionServices.Delete(content);
                 }
-                postProjectionServices.Update(postProjection);
+                await postProjectionServices.Update(postProjection);
                 await unitOfWork.CommitAsync();
             }
             catch
