@@ -17,6 +17,7 @@ namespace MediaService.Application.Extensions
         )
         {
             services.AddScoped<IMediaServices, MediaServices>();
+            services.AddScoped<IOutboxMessageServices, OutboxMessageServices>();
 
             services.AddScoped<IToolCacheServices, ToolCacheServices>();
             services.AddScoped<IPostCacheServices, PostCacheServices>();
