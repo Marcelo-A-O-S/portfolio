@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using CertificateService.Domain.Entities;
 using CertificateService.Domain.Enums;
 using CertificateService.Domain.Interfaces;
@@ -12,6 +13,16 @@ namespace CertificateService.Infrastructure.Repositories
         public CertificateRepository(DBContext _context) : base(_context)
         {
             this.context = _context;
+        }
+
+        public async Task<Certificate> GetAllBy(Expression<Func<Certificate, bool>> predicate)
+        {
+            return await this.context.Certificates
+                .Include(c => c.MediaProjection)
+                .Include(c => c.PostProjections)
+                    .ThenInclude(pp => pp.PostContents)
+                .Where(predicate)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<PaginatedResult<CertificateView>> GetByPagination(int page, string? search, int itemsPage = 10)

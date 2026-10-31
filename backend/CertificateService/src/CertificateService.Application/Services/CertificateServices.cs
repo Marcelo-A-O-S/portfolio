@@ -32,6 +32,11 @@ namespace CertificateService.Application.Services
             return await this.certificateRepository.FindBy(predicate);
         }
 
+        public async Task<Certificate> GetAllBy(Expression<Func<Certificate, bool>> predicate)
+        {
+            return await this.certificateRepository.GetAllBy(predicate);
+        }
+
         public async Task<Certificate> GetById(Guid Id)
         {
             return await this.certificateRepository.GetById(Id);

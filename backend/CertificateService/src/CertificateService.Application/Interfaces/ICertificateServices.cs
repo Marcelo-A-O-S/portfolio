@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using CertificateService.Domain.Entities;
 using CertificateService.Domain.Queries;
 namespace CertificateService.Application.Interfaces
@@ -6,5 +7,6 @@ namespace CertificateService.Application.Interfaces
     {
         Task<PaginatedResult<CertificateView>> GetByPagination(int page, string? search, int itemsPage = 10);
         Task<Certificate> GetCertificateById(Guid certificateId);
+        Task<Certificate> GetAllBy(Expression<Func<Certificate,bool>> predicate);
     }
 }

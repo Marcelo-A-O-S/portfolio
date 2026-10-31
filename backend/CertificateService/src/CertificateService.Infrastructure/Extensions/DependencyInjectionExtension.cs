@@ -35,6 +35,7 @@ namespace CertificateService.Infrastructure.Extensions
             services.AddSingleton<IRabbitMQProducer, RabbitMQProducer>();
 
             services.AddSingleton<ILanguageProjectionHandler, LanguageProjectionHandler>();
+            services.AddSingleton<IPostProjectionHandler, PostProjectionHandler>();
             return services;
         }
     }

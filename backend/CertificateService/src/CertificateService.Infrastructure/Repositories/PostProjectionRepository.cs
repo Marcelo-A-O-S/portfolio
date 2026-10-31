@@ -24,6 +24,7 @@ namespace CertificateService.Infrastructure.Repositories
         public async Task<PostProjection> GetAllBy(Expression<Func<PostProjection, bool>> predicate)
         {
             return await this.context.PostProjections
+                .Include(pp => pp.Certificates)
                 .Include(pp => pp.MediaProjection)
                 .Include(pp => pp.PostContents)
                     .ThenInclude(pcp => pcp.LanguageProjection)

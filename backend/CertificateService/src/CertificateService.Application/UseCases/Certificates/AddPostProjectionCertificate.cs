@@ -42,7 +42,7 @@ namespace CertificateService.Application.UseCases.Certificates
         public async Task ExecuteAsync(Guid certificateId, Guid postId)
         {
             await this.validationServices.ValidateCertificateExists(certificateId);
-            var certificate = await this.certificateServices.GetById(certificateId);
+            var certificate = await this.certificateServices.GetAllBy(c => c.Id == certificateId);
             if (certificate == null)
                 throw new NotFoundException("Certificado não encontrado.");
             await this.unitOfWork.BeginAsync();

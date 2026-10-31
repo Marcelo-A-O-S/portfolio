@@ -88,12 +88,6 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
                     this.logger.LogWarning("Evento de projeção de publicação sem identificador de conteudo válido. PostId: {CertificateId}", payload.PostId);
                     return;
                 }
-                var postContentProjection = postProjection.PostContents.FirstOrDefault(pc => pc.PostContentId == postContentId);
-                if (postContentProjection != null)
-                {
-                    postContentProjection.Update(item.Title, item.Description);
-                    continue;
-                }
                 var languageProjection = await languageProjectionServices.FindBy(lp => lp.LanguageId == languageId);
                 if (languageProjection == null)
                 {
@@ -102,6 +96,12 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
                         languageId,
                         payload.PostId);
 
+                    continue;
+                }
+                var postContentProjection = postProjection.PostContents.FirstOrDefault(pc => pc.PostContentId == postContentId);
+                if (postContentProjection != null)
+                {
+                    postContentProjection.Update(languageProjection.Id, item.Title, item.Description);
                     continue;
                 }
                 var newProjection = new PostContentProjection(
@@ -113,7 +113,6 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
                 );
                 postProjection.AddPostContentProjection(newProjection);
             }
-
             var incomingContentIds = payload.PostContents
                 .Select(item => new
                 {
