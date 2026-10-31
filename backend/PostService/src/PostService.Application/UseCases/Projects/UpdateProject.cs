@@ -70,7 +70,23 @@ namespace PostService.Application.UseCases.Projects
                     JsonSerializer.Serialize(new
                     {
                         PostId = post.Id,
-                        PostContents = post.PostContents
+                        Media = new
+                        {
+                            MediaId = post.MediaProjection.MediaId,
+                            Url = post.MediaProjection.Url
+                        },
+                        PostContents = post.PostContents.Select(pc => new
+                        {
+                            Id = pc.Id,
+                            Title = pc.Title,
+                            Description = pc.Description,
+                            Language = new
+                            {
+                                Id = pc.Language.Id,
+                                Code = pc.Language.Code,
+                                Name = pc.Language.Name
+                            }
+                        })
                     })
                 );
                 await this.outboxMessageServices.Save(outboxMessage);

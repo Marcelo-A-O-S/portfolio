@@ -39,6 +39,11 @@ namespace CertificateService.Application.Services
             return await this.postProjectionRepository.FindWithContentBy(predicate);
         }
 
+        public async Task<PostProjection> GetAllBy(Expression<Func<PostProjection, bool>> predicate)
+        {
+            return await this.postProjectionRepository.GetAllBy(predicate);
+        }
+
         public async Task<PostProjection> GetById(Guid Id)
         {
             return await this.postProjectionRepository.GetById(Id);

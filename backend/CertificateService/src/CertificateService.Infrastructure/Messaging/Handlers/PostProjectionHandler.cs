@@ -67,13 +67,12 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
             var languageProjectionServices = scope.ServiceProvider.GetRequiredService<ILanguageProjectionServices>();
             var mediaProjectionServices = scope.ServiceProvider.GetRequiredService<IMediaProjectionServices>();
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-            var postProjection = await postProjectionServices.FindWithContentBy(pp => pp.PostId == payload.PostId);
+            var postProjection = await postProjectionServices.GetAllBy(pp => pp.PostId == payload.PostId);
             if (postProjection == null)
             {
                 this.logger.LogWarning("Evento recebido para projeção de publicação inexistente. PostId: {PostId}", payload.PostId);
                 return;
             }
-
             foreach (var item in payload.PostContents)
             {
                 if (item.Language?.Id is not Guid languageId)

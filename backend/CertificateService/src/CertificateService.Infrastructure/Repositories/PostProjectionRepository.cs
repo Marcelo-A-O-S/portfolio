@@ -20,5 +20,15 @@ namespace CertificateService.Infrastructure.Repositories
                 .Where(predicate)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<PostProjection> GetAllBy(Expression<Func<PostProjection, bool>> predicate)
+        {
+            return await this.context.PostProjections
+                .Include(pp => pp.MediaProjection)
+                .Include(pp => pp.PostContents)
+                    .ThenInclude(pcp => pcp.LanguageProjection)
+                .Where(predicate)
+                .FirstOrDefaultAsync();
+        }
     }
 }
