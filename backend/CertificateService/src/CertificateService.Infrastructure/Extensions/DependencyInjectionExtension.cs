@@ -28,6 +28,7 @@ namespace CertificateService.Infrastructure.Extensions
             services.AddScoped<ICertificateContentRepository, CertificateContentRepository>();
             services.AddScoped<ILanguageProjectionRepository, LanguageProjectionRepository>();
             services.AddScoped<IPostProjectionRepository, PostProjectionRepository>();
+            services.AddScoped<IPostContentProjectionRepository, PostContentProjectionRepository>();
             services.AddScoped<IMediaProjectionRepository, MediaProjectionRepository>();
             services.AddScoped<IOutboxMessageRepository, OutboxMessageRepository>();
 

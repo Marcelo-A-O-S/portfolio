@@ -149,6 +149,7 @@ namespace PostService.Infrastructure.Repositories
             return await context.Posts
                 .AsSplitQuery()
                 .Include(p => p.PostContents)
+                    .ThenInclude(pc => pc.Language)
                 .Include(p => p.Categories)
                 .Include(p => p.Tools)
                 .FirstOrDefaultAsync(t => t.Id == Id);

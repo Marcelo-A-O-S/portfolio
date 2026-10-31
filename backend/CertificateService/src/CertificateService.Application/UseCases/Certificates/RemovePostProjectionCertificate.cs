@@ -31,7 +31,12 @@ namespace CertificateService.Application.UseCases.Certificates
             await this.unitOfWork.BeginAsync();
             try
             {
-                await this.postProjectionServices.DeleteById(postProjection.Id);
+                var certificate = postProjection.Certificates.FirstOrDefault(c => c.Id == certificateId);
+                if(certificate != null)
+                {
+                    postProjection.RemoveCertificate(certificate);
+                }
+                await this.postProjectionServices.Update(postProjection);
                 var outboxMessage = new OutboxMessage(
                     "PostCertificateRemoved",
                     JsonSerializer.Serialize(new

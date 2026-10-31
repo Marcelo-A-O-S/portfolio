@@ -38,6 +38,12 @@ namespace CertificateService.Domain.Entities
                 throw new ValidationException("Lista de conteudos não inicializada.");
             this.PostContents.Remove(postContentProjection);
         }
+        public void RemoveCertificate(Certificate certificate)
+        {
+            if(this.Certificates == null)
+                throw new ValidationException("Lista de certificados não carregada.");
+            this.Certificates.Remove(certificate);
+        }
         public void SetThumbnail(Guid mediaProjectionId)
         {
             this.MediaProjectionId = mediaProjectionId;

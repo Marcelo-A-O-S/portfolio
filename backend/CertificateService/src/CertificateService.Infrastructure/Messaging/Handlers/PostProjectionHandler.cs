@@ -21,7 +21,7 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
         }
         public async Task HandlePostProjectionDeleted(string message)
         {
-            var payload = JsonSerializer.Deserialize<PostRemoveEvent>(message);
+            var payload = JsonSerializer.Deserialize<PostDeletedEvent>(message);
             if(payload == null)
                 return;
             using var scope = this.scopeFactory.CreateScope();
@@ -42,6 +42,16 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
                 await unitOfWork.RollbackAsync();
                 throw;
             }
+        }
+
+        public async Task HandlePostProjectionRemoved(string message)
+        {
+            var payload = JsonSerializer.Deserialize<PostRemovedEvent>(message);
+            if(payload == null)
+                return;
+            using var scope = this.scopeFactory.CreateScope();
+            var postProjectionServices = scope.ServiceProvider.GetRequiredService<IPostProjectionServices>();
+            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
         }
 
         public async Task HandlePostProjectionUpdated(string message)
@@ -88,7 +98,7 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
                         languageId,
                         payload.PostId);
 
-                    return;
+                    continue;
                 }
                 var newProjection = new PostContentProjection(
                     postProjection.Id,

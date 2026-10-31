@@ -49,7 +49,7 @@ namespace CertificateService.Infrastructure.Messaging.Consumers
         }
         private async Task RemovePostCache(string message)
         {
-            var payload = JsonSerializer.Deserialize<PostRemoveEvent>(message);
+            var payload = JsonSerializer.Deserialize<PostRemovedEvent>(message);
             if(payload == null)
                 return;
             using var scope = this.scopeFactory.CreateScope();

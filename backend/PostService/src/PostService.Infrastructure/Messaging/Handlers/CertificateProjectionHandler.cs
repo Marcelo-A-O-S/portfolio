@@ -208,7 +208,7 @@ namespace PostService.Infrastructure.Messaging.Handlers
                         languageId,
                         payload.CertificateId);
 
-                    return;
+                    continue;
                 }
                 var newProjection = new CertificateContentProjection(
                     certificateProjection.Id,
