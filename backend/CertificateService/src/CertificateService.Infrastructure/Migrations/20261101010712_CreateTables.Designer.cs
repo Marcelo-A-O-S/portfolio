@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CertificateService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20261031171357_CreateTables")]
+    [Migration("20261101010712_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -63,7 +63,7 @@ namespace CertificateService.Infrastructure.Migrations
                     b.Property<DateTime>("IssuerDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("MediaProjectionId")
+                    b.Property<Guid>("MediaProjectionId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Status")
@@ -274,7 +274,9 @@ namespace CertificateService.Infrastructure.Migrations
                 {
                     b.HasOne("CertificateService.Domain.Entities.MediaProjection", "MediaProjection")
                         .WithMany()
-                        .HasForeignKey("MediaProjectionId");
+                        .HasForeignKey("MediaProjectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("MediaProjection");
                 });

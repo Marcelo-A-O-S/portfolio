@@ -115,25 +115,22 @@ namespace CertificateService.Application.UseCases.Certificates
                 var errors = string.Join(", ", validationError.Select(e => e.ErrorMessage));
                 throw new ValidationException($"Erro ao validar dados: {errors}");
             }
-            if (certificate.MediaProjectionId == mediaRequest.Id)
+            if (certificate.MediaProjection.MediaId == mediaRequest.MediaId)
                 return;
             if (!mediasToDelete.Any(m => m.MediaId == certificate.MediaProjection.MediaId))
             {
                 mediasToDelete.Add(certificate.MediaProjection);
             }
-            var mediaContent = await this.mediaProjectionServices.GetByUrl(mediaRequest.Url);
+            var oldMediaContent = certificate.MediaProjection;
+            var mediaContent = await this.mediaProjectionServices.FindBy(mp => mp.MediaId == mediaRequest.MediaId);
             if (mediaContent != null)
             {
-                if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
-                {
-                    mediasToCommit.Add(mediaContent);
-                }
-                certificate.AddMedia(mediaContent.Id);
-                return;
+                throw new ValidationException("O conteudo de midia já existe.");
             }
             mediaContent = new MediaProjection(mediaRequest.MediaId, mediaRequest.Url);
             mediaContent.GenerateId();
             await this.mediaProjectionServices.Save(mediaContent);
+            await this.mediaProjectionServices.Delete(oldMediaContent);
             if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
             {
                 mediasToCommit.Add(mediaContent);

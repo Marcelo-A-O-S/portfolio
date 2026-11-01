@@ -56,8 +56,8 @@ namespace CertificateService.Application.UseCases.Certificates
                         throw new NotFoundException("Publicação não encontrada.");
                     postProjection = new PostProjection(postId, postResponse.LikeCount, postResponse.CommentCount);
                     postProjection.GenerateId();
-                    await ProcessPostContentProjections(postProjection, postResponse.PostContents);
                     await ProcessMediaProjection(postProjection, postResponse.Media);
+                    await ProcessPostContentProjections(postProjection, postResponse.PostContents);
                     await this.postProjectionServices.Save(postProjection);
                 }
                 if(!certificate.PostProjections.Any(pp => pp.Id == postProjection.Id))
@@ -111,11 +111,10 @@ namespace CertificateService.Application.UseCases.Certificates
         }
         private async Task ProcessMediaProjection(PostProjection postProjection, MediaResponse mediaResponse)
         {
-            var mediaContent = await this.mediaProjectionServices.GetByUrl(mediaResponse.Url);
+            var mediaContent = await this.mediaProjectionServices.FindBy(mc => mc.MediaId == mediaResponse.MediaId);
             if (mediaContent != null)
             {
-                postProjection.SetThumbnail(mediaContent.Id);
-                return;
+                throw new ValidationException("O conteudo de midia já existe.");
             }
             mediaContent = new MediaProjection(mediaResponse.MediaId, mediaResponse.Url);
             mediaContent.GenerateId();

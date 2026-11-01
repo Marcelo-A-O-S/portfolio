@@ -6,8 +6,8 @@ namespace CertificateService.Domain.Entities
     public class Certificate
     {
         public Guid Id { get; private set; }
-        public Guid? MediaProjectionId { get; private set; }
-        public MediaProjection? MediaProjection { get; private set; }
+        public Guid MediaProjectionId { get; private set; }
+        public MediaProjection MediaProjection { get; private set; }
         public ICollection<PostProjection> PostProjections  { get; private set;}
         public ICollection<CertificateContent> CertificateContents { get; private set; }
         public string? CredentialId { get; private set; }

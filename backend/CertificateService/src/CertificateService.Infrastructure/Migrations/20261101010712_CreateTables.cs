@@ -60,7 +60,7 @@ namespace CertificateService.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    MediaProjectionId = table.Column<Guid>(type: "uuid", nullable: true),
+                    MediaProjectionId = table.Column<Guid>(type: "uuid", nullable: false),
                     CredentialId = table.Column<string>(type: "text", nullable: true),
                     VerificationUrl = table.Column<string>(type: "text", nullable: true),
                     Institution = table.Column<string>(type: "text", nullable: false),
@@ -78,7 +78,8 @@ namespace CertificateService.Infrastructure.Migrations
                         name: "FK_Certificates_MediaProjections_MediaProjectionId",
                         column: x => x.MediaProjectionId,
                         principalTable: "MediaProjections",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
