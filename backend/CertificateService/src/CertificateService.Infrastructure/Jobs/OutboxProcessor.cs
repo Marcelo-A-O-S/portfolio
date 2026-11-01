@@ -33,6 +33,7 @@ namespace CertificateService.Infrastructure.Jobs
                     foreach (var message in messages)
                     {
                         await unitOfwork.BeginAsync();
+                        message.MarkAsProcessing();
                         try
                         {
                             await rabbitMQProducer.PublishRaw(
