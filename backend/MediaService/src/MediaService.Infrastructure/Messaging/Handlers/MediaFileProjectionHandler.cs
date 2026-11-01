@@ -47,6 +47,7 @@ namespace MediaService.Infrastructure.Messaging.Handlers
             catch(Exception ex)
             {
                 logger.LogError(ex,"Erro ao processar evento de commit da mídia {MediaId}", payload.MediaId);
+                throw;
             }
         }
 

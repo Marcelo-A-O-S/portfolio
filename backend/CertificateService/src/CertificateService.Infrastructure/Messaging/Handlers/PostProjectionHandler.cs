@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using CertificateService.Application.Interfaces;
 using CertificateService.Domain.Entities;
@@ -118,6 +119,11 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
                 if (postProjection.MediaProjection.MediaId != payload.Media.MediaId)
                 {
                     var oldMediaProjection = await mediaProjectionServices.FindBy(mp => mp.MediaId == postProjection.MediaProjection.MediaId);
+                    var mediaContent = await mediaProjectionServices.FindBy(mp => mp.MediaId == payload.Media.MediaId);
+                    if(mediaContent != null)
+                    {
+                        throw new ValidationException("O conteudo de midia já existe.");
+                    }
                     var newMediaProjection = new MediaProjection(
                             payload.Media.MediaId,
                             payload.Media.Url
