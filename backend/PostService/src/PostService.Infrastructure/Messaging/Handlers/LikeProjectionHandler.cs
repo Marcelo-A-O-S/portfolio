@@ -54,6 +54,7 @@ namespace PostService.Infrastructure.Messaging.Handlers
         {
             using var scope = this.scopeFactory.CreateScope();
             var postServices = scope.ServiceProvider.GetRequiredService<IPostServices>();
+            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             var likeProjectionServices = scope.ServiceProvider.GetRequiredService<ILikeProjectionServices>();
             var post = await postServices.GetById(payload.TargetId);
             if (post == null)
@@ -61,16 +62,28 @@ namespace PostService.Infrastructure.Messaging.Handlers
                 this.logger.LogWarning("Evento recebido para post inexistente. PostId: {PostId}", payload.TargetId);
                 return;
             }
-            var likeProjection = new LikeProjection(payload.TargetId, payload.UserId);
-            this.logger.LogInformation("Adicionando a curtida na postagem... PostId: {PostId}", payload.TargetId);
-            await likeProjectionServices.Save(likeProjection);
-            await postServices.IncrementLikeCount(post.Id);
-            this.logger.LogInformation("Curtida adicionada a postagem com sucesso. PostId: {PostId}", payload.TargetId);
+            await unitOfWork.BeginAsync();
+            try
+            {
+                var likeProjection = new LikeProjection(payload.TargetId, payload.UserId);
+                await likeProjectionServices.Save(likeProjection);
+                await unitOfWork.CommitAsync();
+                await postServices.IncrementLikeCount(post.Id);
+                this.logger.LogInformation("Curtida adicionada a postagem com sucesso. PostId: {PostId}", payload.TargetId);
+            }
+            catch
+            {
+                this.logger.LogWarning("Erro ao adicionar curtida publicação. PostId: {PostId}", payload.TargetId);
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
+            
         }
         private async Task RemovePostLikeCount(LikedEvent payload)
         {
             using var scope = this.scopeFactory.CreateScope();
             var postServices = scope.ServiceProvider.GetRequiredService<IPostServices>();
+            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             var likeProjectionServices = scope.ServiceProvider.GetRequiredService<ILikeProjectionServices>();
             var post = await postServices.GetById(payload.TargetId);
             if (post == null)
@@ -85,13 +98,25 @@ namespace PostService.Infrastructure.Messaging.Handlers
                 return;
             }
             this.logger.LogInformation("Removendo a curtida da postagem... PostId: {PostId}", payload.TargetId);
-            await likeProjectionServices.Delete(likeProjection);
-            await postServices.DecrementLikeCount(post.Id);
-            this.logger.LogInformation("Curtida removida da postagem com sucesso. PostId: {PostId}", payload.TargetId);
+            await unitOfWork.BeginAsync();
+            try
+            {
+                await likeProjectionServices.Delete(likeProjection);
+                await unitOfWork.CommitAsync();
+                await postServices.DecrementLikeCount(post.Id);
+                this.logger.LogInformation("Curtida removida da postagem com sucesso. PostId: {PostId}", payload.TargetId);
+            }
+            catch
+            {
+                this.logger.LogWarning("Erro ao remover curtida da publicação. PostId: {PostId}", payload.TargetId);
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
         }
         private async Task AddToolLikeCount(LikedEvent payload)
         {
             using var scope = this.scopeFactory.CreateScope();
+            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             var likeProjectionServices = scope.ServiceProvider.GetRequiredService<ILikeProjectionServices>();
             var toolsServices = scope.ServiceProvider.GetRequiredService<IToolsServices>();
             var tool = await toolsServices.GetById(payload.TargetId);
@@ -100,15 +125,28 @@ namespace PostService.Infrastructure.Messaging.Handlers
                 logger.LogWarning("Evento recebido para ferramenta inexistente. ToolId: {ToolId}", payload.TargetId);
                 return;
             }
-            var likeProjection = new LikeProjection(payload.TargetId, payload.UserId);
-            this.logger.LogInformation("Adicionando a curtida a ferramenta... ToolId: {ToolId}", payload.TargetId);
-            await likeProjectionServices.Save(likeProjection);
-            await toolsServices.IncrementLikeCount(tool.Id);
-            this.logger.LogInformation("Curtida adicionada a ferramenta com sucesso. ToolId: {ToolId}", payload.TargetId);
+            await unitOfWork.BeginAsync();
+            try
+            {
+                var likeProjection = new LikeProjection(payload.TargetId, payload.UserId);
+                this.logger.LogInformation("Adicionando a curtida a ferramenta... ToolId: {ToolId}", payload.TargetId);
+                await likeProjectionServices.Save(likeProjection);
+                await unitOfWork.CommitAsync();
+                await toolsServices.IncrementLikeCount(tool.Id);
+                this.logger.LogInformation("Curtida adicionada a ferramenta com sucesso. ToolId: {ToolId}", payload.TargetId);
+            }
+            catch
+            {
+                this.logger.LogWarning("Erro ao adicionar curtida para a ferramenta. ToolId: {ToolId}", payload.TargetId);
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
+            
         }
         private async Task RemoveToolLikeCount(LikedEvent payload)
         {
             using var scope = this.scopeFactory.CreateScope();
+            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             var likeProjectionServices = scope.ServiceProvider.GetRequiredService<ILikeProjectionServices>();
             var toolsServices = scope.ServiceProvider.GetRequiredService<IToolsServices>();
             var tool = await toolsServices.GetById(payload.TargetId);
@@ -123,10 +161,21 @@ namespace PostService.Infrastructure.Messaging.Handlers
                 this.logger.LogWarning("Evento recebido para Like inexistente. ToolId: {ToolId}", payload.TargetId);
                 return;
             }
-            this.logger.LogInformation("Removendo a curtida da ferramenta... ToolId: {ToolId}", payload.TargetId);
-            await likeProjectionServices.Delete(likeProjection);
-            await toolsServices.DecrementLikeCount(tool.Id);
-            this.logger.LogInformation("Curtida removida da ferramenta com sucesso. ToolId: {ToolId}", payload.TargetId);
+            await unitOfWork.BeginAsync();
+            try
+            {
+                this.logger.LogInformation("Removendo a curtida da ferramenta... ToolId: {ToolId}", payload.TargetId);
+                await likeProjectionServices.Delete(likeProjection);
+                await unitOfWork.CommitAsync();
+                await toolsServices.DecrementLikeCount(tool.Id);
+                this.logger.LogInformation("Curtida removida da ferramenta com sucesso. ToolId: {ToolId}", payload.TargetId);
+            }
+            catch
+            {
+                this.logger.LogWarning("Erro ao remover curtida da ferramenta. ToolId: {ToolId}", payload.TargetId);
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
         }
     }
 }
