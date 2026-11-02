@@ -33,6 +33,7 @@ namespace CommentService.Infrastructure.Jobs
                     foreach (var message in messages)
                     {
                         await unitOfwork.BeginAsync();
+                        message.MarkAsProcessing();
                         try
                         {
                             await rabbitMQProducer.PublishRaw(
@@ -59,7 +60,6 @@ namespace CommentService.Infrastructure.Jobs
                     logger.LogError(
                         exception,
                         "Erro ao processar a Outbox.");
-                    throw;
                 }
                 await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
             }

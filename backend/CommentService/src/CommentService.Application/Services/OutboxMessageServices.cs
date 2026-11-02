@@ -23,6 +23,16 @@ namespace CommentService.Application.Services
             await this.outboxMessageRepository.DeleteById(Id);
         }
 
+        public async Task DeleteFailedMessages()
+        {
+            await this.outboxMessageRepository.DeleteFailedMessages();
+        }
+
+        public async Task DeleteFailedMessagesBefore(DateTime date)
+        {
+            await this.outboxMessageRepository.DeleteFailedMessagesBefore(date);
+        }
+
         public async Task DeleteProcessedBefore(DateTime date)
         {
             await this.outboxMessageRepository.DeleteProcessedBefore(date);
@@ -41,6 +51,11 @@ namespace CommentService.Application.Services
         public async Task<OutboxMessage> GetById(Guid Id)
         {
             return await this.outboxMessageRepository.GetById(Id);
+        }
+
+        public async Task<List<OutboxMessage>> GetFailedMessages()
+        {
+            return await this.outboxMessageRepository.GetFailedMessages();
         }
 
         public async Task<List<OutboxMessage>> GetPendingMessages()
