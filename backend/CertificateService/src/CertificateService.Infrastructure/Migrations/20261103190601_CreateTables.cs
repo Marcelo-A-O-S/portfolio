@@ -47,8 +47,10 @@ namespace CertificateService.Infrastructure.Migrations
                     Payload = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ProcessedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ProcessingStartedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Error = table.Column<string>(type: "text", nullable: true),
-                    Attempts = table.Column<int>(type: "integer", nullable: false)
+                    Attempts = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

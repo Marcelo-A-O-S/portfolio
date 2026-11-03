@@ -58,7 +58,10 @@ namespace AuthService.Application.Services
         {
             return await this.outboxMessageRepository.GetPendingMessages();
         }
-
+        public async Task<List<OutboxMessage>> GetProcessingMessagesByTimeLimit(DateTime date)
+        {
+            return await this.outboxMessageRepository.GetProcessingMessagesByTimeLimit(date);
+        }
         public async Task<List<OutboxMessage>> List()
         {
             return await this.outboxMessageRepository.List();

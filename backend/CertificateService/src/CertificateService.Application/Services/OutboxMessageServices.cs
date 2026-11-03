@@ -2,7 +2,6 @@ using System.Linq.Expressions;
 using CertificateService.Application.Interfaces;
 using CertificateService.Domain.Entities;
 using CertificateService.Domain.Interfaces;
-
 namespace CertificateService.Application.Services
 {
     public class OutboxMessageServices : IOutboxMessageServices
@@ -62,6 +61,10 @@ namespace CertificateService.Application.Services
         public async Task<List<OutboxMessage>> GetPendingMessages()
         {
             return await this.outboxMessageRepository.GetPendingMessages();
+        }
+        public async Task<List<OutboxMessage>> GetProcessingMessagesByTimeLimit(DateTime date)
+        {
+            return await this.outboxMessageRepository.GetProcessingMessagesByTimeLimit(date);
         }
 
         public async Task<List<OutboxMessage>> List()

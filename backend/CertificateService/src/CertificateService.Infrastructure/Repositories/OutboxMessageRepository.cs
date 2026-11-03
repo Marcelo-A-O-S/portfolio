@@ -5,10 +5,9 @@ using CertificateService.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 namespace CertificateService.Infrastructure.Repositories
 {
-    public class OutboxMessageRepository : Generics<OutboxMessage>, IOutboxMessageRepository
+    public class OutboxMessageRepository : Generics<OutboxMessage>, IOutboxMessageRepository 
     {
         private readonly DBContext context;
-        private const int MaxAttempts = 10;
         public OutboxMessageRepository(DBContext _context) : base(_context)
         {
             this.context = _context;
@@ -50,6 +49,17 @@ namespace CertificateService.Infrastructure.Repositories
                     message.Status == OutboxStatus.Failed &&
                     message.CreatedAt < date)
                 .ExecuteDeleteAsync();
+        }
+        public async Task<List<OutboxMessage>> GetProcessingMessagesByTimeLimit(DateTime date)
+        {
+           return await context.OutboxMessages
+                .Where(message =>
+                    message.Status == OutboxStatus.Processing &&
+                    message.ProcessingStartedAt != null &&
+                    message.ProcessingStartedAt < date)
+                .OrderBy(message => message.ProcessingStartedAt)
+                .Take(50)
+                .ToListAsync();
         }
     }
 }

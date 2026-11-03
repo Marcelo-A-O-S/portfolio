@@ -9,5 +9,6 @@ namespace CertificateService.Application.Interfaces
         Task<List<OutboxMessage>> GetFailedMessages();
         Task DeleteFailedMessages();
         Task DeleteFailedMessagesBefore(DateTime date);
+        Task<List<OutboxMessage>> GetProcessingMessagesByTimeLimit(DateTime date);
     }
 }

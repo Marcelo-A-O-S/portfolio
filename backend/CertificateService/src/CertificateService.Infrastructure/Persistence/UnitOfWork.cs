@@ -1,6 +1,9 @@
+using CertificateService.Application.Exceptions;
 using CertificateService.Application.Interfaces;
 using CertificateService.Infrastructure.Context;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Npgsql;
 
 namespace CertificateService.Infrastructure.Persistence
 {
@@ -19,15 +22,46 @@ namespace CertificateService.Infrastructure.Persistence
 
         public async Task CommitAsync()
         {
-            await this.context.SaveChangesAsync();
-            if(this.transaction != null)
-                await this.transaction.CommitAsync();
+            try
+            {
+                await this.context.SaveChangesAsync();
+                if(this.transaction != null)
+                    await this.transaction.CommitAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is PostgresException postgresEx
+                    && postgresEx.SqlState == PostgresErrorCodes.UniqueViolation)
+                {
+                    throw new DuplicateException();
+                }
+                throw;
+            }finally
+            {
+                if (transaction != null)
+                {
+                    await transaction.DisposeAsync();
+                    transaction = null;
+                }
+            }
         }
-
+        public async Task ReloadAsync<T>(T entity) where T : class
+        {
+            await context.Entry(entity).ReloadAsync();
+        }
         public async Task RollbackAsync()
         {
-            if(transaction != null)
-                await this.transaction.RollbackAsync();
+            if (transaction == null)
+                return;
+            try
+            {
+                await transaction.RollbackAsync();
+            }
+            finally
+            {
+                await transaction.DisposeAsync();
+                transaction = null;
+            }
         }
     }
 }

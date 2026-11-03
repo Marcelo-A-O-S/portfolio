@@ -1,6 +1,9 @@
+using AuthService.Application.Exceptions;
 using AuthService.Application.Interfaces;
 using AuthService.Infrastructure.Context;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Npgsql;
 namespace AuthService.Infrastructure.Persistence
 {
     public class UnitOfWork : IUnitOfWork
@@ -18,14 +21,46 @@ namespace AuthService.Infrastructure.Persistence
 
         public async Task CommitAsync()
         {
-            await this.context.SaveChangesAsync();
-            if(this.transaction != null)
-                await this.transaction.CommitAsync();
+            try
+            {
+                await this.context.SaveChangesAsync();
+                if(this.transaction != null)
+                    await this.transaction.CommitAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is PostgresException postgresEx
+                    && postgresEx.SqlState == PostgresErrorCodes.UniqueViolation)
+                {
+                    throw new DuplicateException();
+                }
+                throw;
+            }finally
+            {
+                if (transaction != null)
+                {
+                    await transaction.DisposeAsync();
+                    transaction = null;
+                }
+            }
+        }
+        public async Task ReloadAsync<T>(T entity) where T : class
+        {
+            await context.Entry(entity).ReloadAsync();
         }
         public async Task RollbackAsync()
         {
-            if(transaction != null)
-                await this.transaction.RollbackAsync();
+            if (transaction == null)
+                return;
+            try
+            {
+                await transaction.RollbackAsync();
+            }
+            finally
+            {
+                await transaction.DisposeAsync();
+                transaction = null;
+            }
         }
     }
 }

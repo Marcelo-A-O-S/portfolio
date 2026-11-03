@@ -1,9 +1,9 @@
 using AuthService.Application.Interfaces;
+using AuthService.Domain.Entities;
 using AuthService.Domain.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
 namespace AuthService.Infrastructure.Jobs
 {
     public class OutboxProcessor : BackgroundService
@@ -24,7 +24,7 @@ namespace AuthService.Infrastructure.Jobs
                 try
                 {
                     using var scope = scopeFactory.CreateScope();
-                    var unitOfwork = scope.ServiceProvider
+                    var unitOfWork = scope.ServiceProvider
                         .GetRequiredService<IUnitOfWork>();
                     var outboxServices = scope.ServiceProvider
                         .GetRequiredService<IOutboxMessageServices>();
@@ -33,25 +33,38 @@ namespace AuthService.Infrastructure.Jobs
                     var messages = await outboxServices.GetPendingMessages();
                     foreach (var message in messages)
                     {
-                        await unitOfwork.BeginAsync();
-                        message.MarkAsProcessing();
                         try
                         {
-                            await rabbitMQProducer.PublishRaw(
-                                message.EventType,
-                                message.Payload);
-                            message.MarkAsProcessed();
-                            await outboxServices.Update(message);
-                            await unitOfwork.CommitAsync();
+                            await ChangeMessageStatus(unitOfWork, outboxServices, message, message => message.MarkAsProcessing());
+                            try
+                            {
+                                await rabbitMQProducer.PublishRaw(
+                                    message.EventType,
+                                    message.Payload);
+                            }
+                            catch(Exception publishException)
+                            {
+                                try
+                                {
+                                    await ChangeMessageStatus(unitOfWork, outboxServices, message, message => message.RegisterFailure(publishException.Message));
+                                }catch(Exception persistenceException)
+                                {
+                                    logger.LogError(
+                                        persistenceException,
+                                        "Não foi possível registrar a falha da mensagem {MessageId}", message.Id);
+                                }
+                                logger.LogError(
+                                    publishException,
+                                    "Falha ao publicar a mensagem {MessageId}", message.Id);
+                                continue;
+                            }
+                            await ChangeMessageStatus(unitOfWork, outboxServices, message, message => message.MarkAsProcessed());
                         }
                         catch (Exception exception)
                         {
-                            message.RegisterFailure(exception.Message);
-                            await outboxServices.Update(message);
-                            await unitOfwork.CommitAsync();
                             logger.LogError(
                                 exception,
-                                "Falha ao publicar a mensagem Outbox {MessageId}",
+                                "Erro ao processar a mensagem Outbox {MessageId}",
                                 message.Id);
                         }
                     }
@@ -64,6 +77,30 @@ namespace AuthService.Infrastructure.Jobs
                 }
                 await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
             }
+        }
+        private async Task ChangeMessageStatus(
+            IUnitOfWork unitOfWork,
+            IOutboxMessageServices outboxServices,
+            OutboxMessage message,
+            Action<OutboxMessage> changeStatus
+        )
+        {
+            if (message is null)
+                throw new InvalidOperationException(
+                    $"Mensagem Outbox não encontrada.");
+            await unitOfWork.BeginAsync();
+            try
+            {
+                changeStatus(message);
+                await outboxServices.Update(message);
+                await unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                await unitOfWork.ReloadAsync(message);
+                throw;
+            } 
         }
     }
 }
