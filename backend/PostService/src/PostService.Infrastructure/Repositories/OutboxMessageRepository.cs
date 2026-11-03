@@ -52,5 +52,16 @@ namespace PostService.Infrastructure.Repositories
                     message.CreatedAt < date)
                 .ExecuteDeleteAsync();
         }
+        public async Task<List<OutboxMessage>> GetProcessingMessagesByTimeLimit(DateTime date)
+        {
+           return await context.OutboxMessages
+                .Where(message =>
+                    message.Status == OutboxStatus.Processing &&
+                    message.ProcessingStartedAt != null &&
+                    message.ProcessingStartedAt < date)
+                .OrderBy(message => message.ProcessingStartedAt)
+                .Take(50)
+                .ToListAsync();
+        }
     }
 }

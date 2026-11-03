@@ -35,13 +35,34 @@ namespace PostService.Infrastructure.Persistence
                     throw new DuplicateException();
                 }
                 throw;
+            }finally
+            {
+                if (transaction != null)
+                {
+                    await transaction.DisposeAsync();
+                    transaction = null;
+                }
             }
+        }
+
+        public async Task ReloadAsync<T>(T entity) where T : class
+        {
+            await context.Entry(entity).ReloadAsync();
         }
 
         public async Task RollbackAsync()
         {
-            if(transaction != null)
-                await this.transaction.RollbackAsync();
+            if (transaction == null)
+                return;
+            try
+            {
+                await transaction.RollbackAsync();
+            }
+            finally
+            {
+                await transaction.DisposeAsync();
+                transaction = null;
+            }
         }
     }
 }

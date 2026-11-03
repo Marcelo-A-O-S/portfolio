@@ -11,6 +11,7 @@ namespace PostService.Infrastructure.Extensions
         {
             services.AddHostedService<OutboxProcessor>();
             services.AddHostedService<OutboxCleanupJob>();
+            services.AddHostedService<OutboxRecovery>();
             services.AddHostedService<PostConsumer>();
             services.AddHostedService<ToolConsumer>();
             services.AddHostedService<UserConsumer>();
