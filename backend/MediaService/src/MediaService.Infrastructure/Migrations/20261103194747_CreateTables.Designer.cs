@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MediaService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20261031181213_CreateTables")]
+    [Migration("20261103194747_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -92,6 +92,12 @@ namespace MediaService.Infrastructure.Migrations
 
                     b.Property<DateTime?>("ProcessedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ProcessingStartedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 

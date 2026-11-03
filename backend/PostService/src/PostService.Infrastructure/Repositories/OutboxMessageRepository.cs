@@ -9,7 +9,6 @@ namespace PostService.Infrastructure.Repositories
     public class OutboxMessageRepository : Generics<OutboxMessage>, IOutboxMessageRepository
     {
         private readonly DBContext context;
-        private const int MaxAttempts = 10;
         public OutboxMessageRepository(DBContext _context) : base(_context)
         {
             this.context = _context;

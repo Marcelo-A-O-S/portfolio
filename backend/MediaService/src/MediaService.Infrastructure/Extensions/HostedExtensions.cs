@@ -9,11 +9,14 @@ namespace MediaService.Infrastructure.Extensions
             this IServiceCollection services
         )
         {
+            services.AddHostedService<CleanupMediaJob>();
+            services.AddHostedService<OutboxProcessor>();
+            services.AddHostedService<OutboxRecovery>();
+            services.AddHostedService<OutboxCleanupJob>();
             services.AddHostedService<ToolConsumer>();
             services.AddHostedService<PostConsumer>();
             services.AddHostedService<CertficateConsumer>();
-            services.AddHostedService<CleanupMediaJob>();
-            services.AddHostedService<OutboxProcessor>();
+            
             return services;
         }
     }

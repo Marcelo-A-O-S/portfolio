@@ -61,5 +61,12 @@ namespace MediaService.Domain.Entities
                 ? OutboxStatus.Failed
                 : OutboxStatus.Pending;
         }
+        public void RecoverProcessing()
+        {
+            if (Status != OutboxStatus.Processing)
+                throw new InvalidOperationException();
+            Status = OutboxStatus.Pending;
+            ProcessingStartedAt = null;
+        }
     }
 }

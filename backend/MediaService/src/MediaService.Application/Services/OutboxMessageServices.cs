@@ -23,6 +23,16 @@ namespace MediaService.Application.Services
             await this.outboxMessageRepository.DeleteById(Id);
         }
 
+        public async Task DeleteFailedMessages()
+        {
+            await this.outboxMessageRepository.DeleteFailedMessages();
+        }
+
+        public async Task DeleteFailedMessagesBefore(DateTime date)
+        {
+            await this.outboxMessageRepository.DeleteFailedMessagesBefore(date);
+        }
+
         public async Task DeleteProcessedBefore(DateTime date)
         {
             await this.outboxMessageRepository.DeleteProcessedBefore(date);
@@ -43,9 +53,19 @@ namespace MediaService.Application.Services
             return await this.outboxMessageRepository.GetById(Id);
         }
 
+        public async Task<List<OutboxMessage>> GetFailedMessages()
+        {
+            return await this.outboxMessageRepository.GetFailedMessages();
+        }
+
         public async Task<List<OutboxMessage>> GetPendingMessages()
         {
             return await this.outboxMessageRepository.GetPendingMessages();
+        }
+
+        public async Task<List<OutboxMessage>> GetProcessingMessagesByTimeLimit(DateTime date)
+        {
+            return await this.outboxMessageRepository.GetProcessingMessagesByTimeLimit(date);
         }
 
         public async Task<List<OutboxMessage>> List()

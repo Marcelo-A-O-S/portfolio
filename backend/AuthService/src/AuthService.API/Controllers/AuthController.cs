@@ -35,7 +35,6 @@ namespace AuthService.API.Controllers
             return BadRequest(erros);
         }
         [HttpPost("refreshToken")]
-        [Authorize(AuthenticationSchemes="UserJwt", Roles = "Administrador,Moderator,Client")]
         public async Task<IActionResult> RefreshToken(RefreshRequest refreshRequest)
         {
             if (ModelState.IsValid)
