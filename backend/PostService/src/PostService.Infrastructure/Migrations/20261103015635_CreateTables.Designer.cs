@@ -12,7 +12,7 @@ using PostService.Infrastructure.Context;
 namespace PostService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20261031181344_CreateTables")]
+    [Migration("20261103015635_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -432,6 +432,12 @@ namespace PostService.Infrastructure.Migrations
 
                     b.Property<DateTime?>("ProcessedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ProcessingStartedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 

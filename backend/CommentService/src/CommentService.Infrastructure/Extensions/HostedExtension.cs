@@ -11,6 +11,7 @@ namespace CommentService.Infrastructure.Extensions
         {
             services.AddHostedService<OutboxProcessor>();
             services.AddHostedService<OutboxCleanupJob>();
+            services.AddHostedService<OutboxRecovery>();
             services.AddHostedService<CommentConsumer>();
             services.AddHostedService<PostConsumer>();
             services.AddHostedService<UserConsumer>();

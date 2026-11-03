@@ -75,6 +75,7 @@ Integrations/
 Jobs/
  OutboxCleanupJob.cs
  OutboxProcessor.cs
+ OutboxRecovery.cs
 Messaging/
  Consumers/
   CommentConsumer.cs

@@ -44,12 +44,10 @@ namespace PostService.Infrastructure.Persistence
                 }
             }
         }
-
         public async Task ReloadAsync<T>(T entity) where T : class
         {
             await context.Entry(entity).ReloadAsync();
         }
-
         public async Task RollbackAsync()
         {
             if (transaction == null)

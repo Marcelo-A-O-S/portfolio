@@ -44,7 +44,6 @@ namespace PostService.Infrastructure.Jobs
                                 "Não foi possivel recuperar mensagem em processamento. {MessageId}", message.Id);
                             await unitOfWork.RollbackAsync();
                             await unitOfWork.ReloadAsync(message);
-                            throw;
                         }
                     }
                 }
