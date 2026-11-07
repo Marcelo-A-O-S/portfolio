@@ -1,5 +1,6 @@
 using CommentService.Infrastructure.Messaging.Handlers.Interfaces;
 using CommentService.Infrastructure.Workers;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
@@ -10,17 +11,20 @@ namespace CommentService.Infrastructure.Messaging.Consumers
         private readonly IUserEventHandler userEventHandler;
         private readonly IConnectionFactory factory;
         private readonly ILogger<UserConsumer> logger;
+        private readonly IConfiguration configuration;
         private IConnection? connection;
         private RabbitMQConsumer? consumer;
         public UserConsumer(
             IConnectionFactory _factory,
             ILogger<UserConsumer> _logger,
-            IUserEventHandler _userEventHandler
+            IUserEventHandler _userEventHandler,
+            IConfiguration _configuration
         )
         {
             this.factory = _factory;
             this.logger = _logger;
             this.userEventHandler = _userEventHandler;
+            this.configuration = _configuration;
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -28,7 +32,8 @@ namespace CommentService.Infrastructure.Messaging.Consumers
             {
                 this.logger.LogInformation("Iniciando conexão com o RabbitMQ...");
                 this.connection = await this.factory.CreateConnectionAsync();
-                this.consumer = new RabbitMQConsumer(this.connection);
+                var serviceName = this.configuration["ServiceName"] ?? throw new InvalidOperationException("Configuração 'ServiceName' não encontrada.");
+                this.consumer = new RabbitMQConsumer(this.connection, serviceName);
                 this.consumer.RegisterHandler("UserDeleted", async message => { await this.userEventHandler.RemoveCache(message);});
                 await consumer.Start();
                 this.logger.LogInformation("Consumer dos Usuários do serviço dos Comentários do RabbitMQ iniciado e aguardando mensagens...");

@@ -1,5 +1,6 @@
 using MediaService.Infrastructure.Messaging.Handlers.Interfaces;
 using MediaService.Infrastructure.Workers;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
@@ -10,12 +11,14 @@ namespace MediaService.Infrastructure.Messaging.Consumers
         private readonly IMediaFileProjectionHandler mediaFileProjectionHandler;
         private readonly IConnectionFactory factory;
         private readonly ILogger<CertficateConsumer> logger;
+        private readonly IConfiguration configuration;
         private IConnection? connection;
         private RabbitMQConsumer? consumer;
         public CertficateConsumer(
             IConnectionFactory _factory,
             ILogger<CertficateConsumer> _logger,
-            IMediaFileProjectionHandler _mediaFileProjectionHandler
+            IMediaFileProjectionHandler _mediaFileProjectionHandler,
+            IConfiguration _configuration
         )
         {
             this.factory = _factory;
@@ -28,7 +31,8 @@ namespace MediaService.Infrastructure.Messaging.Consumers
             {
                 this.logger.LogInformation("Iniciando conexão com o RabbitMQ...");
                 this.connection = await this.factory.CreateConnectionAsync();
-                this.consumer = new RabbitMQConsumer(this.connection);
+                var serviceName = this.configuration["ServiceName"] ?? throw new InvalidOperationException("Configuração 'ServiceName' não encontrada.");
+                this.consumer = new RabbitMQConsumer(this.connection, serviceName);
                 this.consumer.RegisterHandler("CertificateMediaAttached", async message => { await this.mediaFileProjectionHandler.HandleMediaCommit(message); });
                 this.consumer.RegisterHandler("CertificateMediaDeleted", async message => { await this.mediaFileProjectionHandler.HandleMediaDelete(message);});
                 await consumer.Start();

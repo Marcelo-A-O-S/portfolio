@@ -6,11 +6,14 @@ namespace MediaService.Infrastructure.Workers
     public class RabbitMQConsumer
     {
         private readonly IConnection connection;
+        private readonly string serviceName;
         private readonly Dictionary<string, Func<string, Task>> handlers = new();
         public RabbitMQConsumer(
-            IConnection _connection)
+            IConnection _connection,
+            string _serviceName)
         {
             this.connection = _connection;
+            this.serviceName = _serviceName;
         }
         public void RegisterHandler(string eventName, Func<string, Task> _handler)
         {
@@ -23,11 +26,20 @@ namespace MediaService.Infrastructure.Workers
                 foreach (var eventName in this.handlers.Keys)
                 {
                     string exchangeName = $"{eventName}.Exchange";
-                    string queueName = $"{eventName}.Queue";
+                    string queueName = $"{this.serviceName}.{eventName}.Queue";
                     string routingKey = $"{eventName}.Routing";
+                    string deadLetterExchangeName = $"{this.serviceName}.{eventName}.DeadLetter.Exchange";
+                    string deadLetterQueueName = $"{this.serviceName}.{eventName}.DeadLetter.Queue";
                     var channel = await this.connection.CreateChannelAsync();
                     await channel.ExchangeDeclareAsync(exchange: exchangeName, type: ExchangeType.Direct, durable: true, autoDelete: false);
-                    var queue = await channel.QueueDeclareAsync(queue: queueName, durable: true, exclusive: false, autoDelete: false);
+                    await channel.ExchangeDeclareAsync(exchange: deadLetterExchangeName, type: ExchangeType.Fanout, durable: true, autoDelete: false);
+                    await channel.QueueDeclareAsync(queue: deadLetterQueueName, durable: true, exclusive: false, autoDelete: false);
+                    await channel.QueueBindAsync(queue: deadLetterQueueName, exchange: deadLetterExchangeName, routingKey: "");
+                    var queueArgs = new Dictionary<string, object?>
+                    {
+                        { "x-dead-letter-exchange", deadLetterExchangeName }
+                    };
+                    var queue = await channel.QueueDeclareAsync(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: queueArgs);
                     await channel.QueueBindAsync(queue: queueName, exchange: exchangeName, routingKey: routingKey);
                     await channel.BasicQosAsync( prefetchSize: 0, prefetchCount: 10, global: false);
                     var consumer = new AsyncEventingBasicConsumer(channel);
