@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using PostService.Infrastructure.Workers;
 using RabbitMQ.Client;
 using PostService.Infrastructure.Messaging.Handlers.Interfaces;
+using Microsoft.Extensions.Configuration;
 
 namespace PostService.Infrastructure.Messaging.Consumers
 {
@@ -12,19 +13,22 @@ namespace PostService.Infrastructure.Messaging.Consumers
         private readonly ICommentProjectionHandler commentProjectionHandler;
         private readonly IConnectionFactory factory;
         private readonly ILogger<ToolConsumer> logger;
+        private readonly IConfiguration configuration;
         private IConnection? connection;
         private RabbitMQConsumer? consumer;
         public ToolConsumer(
             IConnectionFactory _factory,
             ILogger<ToolConsumer> _logger,
             ILikeProjectionHandler _likeProjectionHandler,
-            ICommentProjectionHandler _commentProjectionHandler
+            ICommentProjectionHandler _commentProjectionHandler,
+            IConfiguration _configuration
         )
         {
             this.factory = _factory;
             this.logger = _logger;
             this.likeProjectionHandler = _likeProjectionHandler;
             this.commentProjectionHandler = _commentProjectionHandler;
+            this.configuration = _configuration;
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -32,7 +36,8 @@ namespace PostService.Infrastructure.Messaging.Consumers
             {
                 this.logger.LogInformation("Iniciando conexão com o RabbitMQ...");
                 this.connection = await this.factory.CreateConnectionAsync();
-                this.consumer = new RabbitMQConsumer(this.connection);
+                var serviceName = this.configuration["ServiceName"] ?? throw new InvalidOperationException("Configuração 'ServiceName' não encontrada.");
+                this.consumer = new RabbitMQConsumer(this.connection, serviceName);
                 this.consumer.RegisterHandler("ToolLiked", async message => { await this.likeProjectionHandler.HandleLikeAdded(message); });
                 this.consumer.RegisterHandler("ToolUnliked", async message => { await this.likeProjectionHandler.HandleLikeRemoved(message); });
                 this.consumer.RegisterHandler("ToolCommentCreated", async message => { await this.commentProjectionHandler.HandleCommentAdded(message); });

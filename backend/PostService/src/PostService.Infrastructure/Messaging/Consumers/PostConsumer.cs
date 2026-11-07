@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using PostService.Infrastructure.Messaging.Handlers.Interfaces;
@@ -12,6 +13,7 @@ namespace PostService.Infrastructure.Messaging.Consumers
         private readonly ICertificateProjectionHandler certificateProjectionHandler;
         private readonly IConnectionFactory factory;
         private readonly ILogger<PostConsumer> logger;
+        private readonly IConfiguration configuration;
         private IConnection? connection;
         private RabbitMQConsumer? consumer;
         public PostConsumer(
@@ -19,7 +21,8 @@ namespace PostService.Infrastructure.Messaging.Consumers
             ILogger<PostConsumer> _logger,
             ILikeProjectionHandler _likeProjectionHandler,
             ICommentProjectionHandler _commentProjectionHandler,
-            ICertificateProjectionHandler _certificateProjectionHandler
+            ICertificateProjectionHandler _certificateProjectionHandler,
+            IConfiguration _configuration
         )
         {
             this.factory = _factory;
@@ -27,6 +30,7 @@ namespace PostService.Infrastructure.Messaging.Consumers
             this.likeProjectionHandler = _likeProjectionHandler;
             this.commentProjectionHandler = _commentProjectionHandler;
             this.certificateProjectionHandler = _certificateProjectionHandler;
+            this.configuration = _configuration;
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -34,7 +38,8 @@ namespace PostService.Infrastructure.Messaging.Consumers
             {
                 this.logger.LogInformation("Iniciando conexão com o RabbitMQ...");
                 this.connection = await this.factory.CreateConnectionAsync();
-                this.consumer = new RabbitMQConsumer(this.connection);
+                var serviceName = this.configuration["ServiceName"] ?? throw new InvalidOperationException("Configuração 'ServiceName' não encontrada.");
+                this.consumer = new RabbitMQConsumer(this.connection, serviceName);
                 this.consumer.RegisterHandler("PostLiked", async message => { await this.likeProjectionHandler.HandleLikeAdded(message); });
                 this.consumer.RegisterHandler("PostUnliked", async message => { await this.likeProjectionHandler.HandleLikeRemoved(message); });
                 this.consumer.RegisterHandler("PostCommentCreated", async message => { await this.commentProjectionHandler.HandleCommentAdded(message); });

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using PostService.Infrastructure.Workers;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
+using Microsoft.Extensions.Configuration;
 
 namespace PostService.Infrastructure.Messaging.Consumers
 {
@@ -11,17 +12,20 @@ namespace PostService.Infrastructure.Messaging.Consumers
         private readonly IConnectionFactory factory;
         private readonly IServiceScopeFactory scopeFactory;
         private readonly ILogger<LanguageConsumer> logger;
+        private readonly IConfiguration configuration;
         private IConnection? connection;
         private RabbitMQConsumer? consumer;
         public LanguageConsumer(
             IConnectionFactory _factory,
             IServiceScopeFactory _scopeFactory,
-            ILogger<LanguageConsumer> _logger
+            ILogger<LanguageConsumer> _logger,
+            IConfiguration _configuration
         )
         {
             this.factory = _factory;
             this.scopeFactory = _scopeFactory;
             this.logger = _logger;
+            this.configuration = _configuration;
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -29,7 +33,8 @@ namespace PostService.Infrastructure.Messaging.Consumers
             {
                 this.logger.LogInformation("Iniciando conexão com o RabbitMQ...");
                 this.connection = await this.factory.CreateConnectionAsync();
-                this.consumer = new RabbitMQConsumer(this.connection);
+                var serviceName = this.configuration["ServiceName"] ?? throw new InvalidOperationException("Configuração 'ServiceName' não encontrada.");
+                this.consumer = new RabbitMQConsumer(this.connection, serviceName);
                 await consumer.Start();
                 this.logger.LogInformation("Consumer de idiomas do serviço de Certificações do RabbitMQ iniciado e aguardando mensagens...");
             }
