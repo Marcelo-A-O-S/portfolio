@@ -17,7 +17,12 @@ namespace CommentService.Infrastructure.Extensions
             }
             services.AddDbContext<DBContext>(options =>
             {
-                options.UseNpgsql(connectionString);
+                options.UseNpgsql(
+                    connectionString,
+                    npqsql => npqsql.MigrationsHistoryTable(
+                        "__EFMigrationsHistory",
+                        "comment_service"
+                    ));
             });
             return services;
         }

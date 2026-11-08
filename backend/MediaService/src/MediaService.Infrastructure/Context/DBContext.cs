@@ -9,8 +9,10 @@ namespace MediaService.Infrastructure.Context
         }
         public DbSet<Media> Medias { get; set; }
         public DbSet<OutboxMessage> OutboxMessages { get; set; }
+        public DbSet<MediaOwner> MediaOwners { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasDefaultSchema("media_service");
             modelBuilder.Entity<Media>().HasIndex(mf => mf.Path).IsUnique();
             modelBuilder.Entity<Media>().Property(mf => mf.Status).HasConversion<string>();
         }

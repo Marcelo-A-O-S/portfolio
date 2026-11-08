@@ -17,7 +17,12 @@ namespace PostService.Infrastructure.Extensions
             }
             services.AddDbContext<DBContext>(options =>
             {
-                options.UseNpgsql(connectionString);
+                options.UseNpgsql(
+                    connectionString,
+                    npqsql => npqsql.MigrationsHistoryTable(
+                        "__EFMigrationsHistory",
+                        "post_service"
+                    ));
             });
             return services;
         }

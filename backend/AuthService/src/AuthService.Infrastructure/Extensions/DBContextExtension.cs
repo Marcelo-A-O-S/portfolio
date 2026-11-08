@@ -18,7 +18,12 @@ namespace AuthService.Infrastructure.Extensions
             }
             services.AddDbContext<DBContext>(options =>
             {
-                options.UseNpgsql(connectionString);
+                options.UseNpgsql(
+                    connectionString,
+                    npqsql => npqsql.MigrationsHistoryTable(
+                        "__EFMigrationsHistory",
+                        "auth_service"
+                    ));
             });
             return services;
         }

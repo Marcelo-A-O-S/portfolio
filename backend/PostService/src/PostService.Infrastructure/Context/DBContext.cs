@@ -27,6 +27,7 @@ namespace PostService.Infrastructure.Context
         public DbSet<OutboxMessage> OutboxMessages { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasDefaultSchema("post_service");
             modelBuilder.Entity<Post>()
                 .HasMany(p => p.CertificateProjections)
                 .WithMany(cp => cp.Posts);

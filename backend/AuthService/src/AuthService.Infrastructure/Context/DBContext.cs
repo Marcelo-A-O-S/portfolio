@@ -13,6 +13,7 @@ namespace AuthService.Infrastructure.Context
         public DbSet<OutboxMessage> OutboxMessages { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasDefaultSchema("auth_service");
             modelBuilder.Entity<User>().Property(p=> p.Role).HasConversion<string>();
             modelBuilder.Entity<User>().Property(p=> p.Status).HasConversion<string>();
             modelBuilder.Entity<User>().HasIndex(p => p.Email).IsUnique();

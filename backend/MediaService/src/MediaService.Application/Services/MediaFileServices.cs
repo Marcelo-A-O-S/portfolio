@@ -25,11 +25,11 @@ namespace MediaService.Application.Services
         {
             await this.repository.DeleteById(Id);
         }
-        public async Task DeleteImageAsync(Media mediaFile)
+        public async Task DeleteImageAsync(Media media)
         {
             var pathImage = Path.Combine(
                 this.environment.WebRootPath,
-                mediaFile.Path
+                media.Path
             );
             try
             {
@@ -37,7 +37,7 @@ namespace MediaService.Application.Services
                 {
                     File.Delete(pathImage);
                 }
-                await this.Delete(mediaFile);
+                await this.Delete(media);
             }
             catch (Exception ex)
             {

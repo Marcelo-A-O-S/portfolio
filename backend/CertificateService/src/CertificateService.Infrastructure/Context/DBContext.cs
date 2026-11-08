@@ -17,6 +17,7 @@ namespace CertificateService.Infrastructure.Context
         public DbSet<OutboxMessage> OutboxMessages { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasDefaultSchema("certificate_service");
             modelBuilder.Entity<Certificate>()
                 .HasMany(c => c.PostProjections)
                 .WithMany(pc => pc.Certificates);

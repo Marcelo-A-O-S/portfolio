@@ -12,6 +12,7 @@ namespace MediaService.Domain.Entities
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
         public Status Status { get; private set; }
+        public ICollection<MediaOwner> MediaOwners { get; private set; }
         public Media(
             Guid? ownerId,
             string ownerType,
@@ -26,6 +27,7 @@ namespace MediaService.Domain.Entities
             this.Size = size;
             this.CreatedAt = DateTime.UtcNow;
             this.Status = Status.Pending;
+            this.MediaOwners = new List<MediaOwner>();
         }
         public void AssignOwner(Guid ownerId)
         {

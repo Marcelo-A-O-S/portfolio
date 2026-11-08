@@ -17,7 +17,12 @@ namespace CertificateService.Infrastructure.Extensions
             }
             services.AddDbContext<DBContext>(options =>
             {
-                options.UseNpgsql(connectionString);
+                options.UseNpgsql(
+                    connectionString,
+                    npqsql => npqsql.MigrationsHistoryTable(
+                        "__EFMigrationsHistory",
+                        "certificate_service"
+                    ));
             });
             return services;
         }
