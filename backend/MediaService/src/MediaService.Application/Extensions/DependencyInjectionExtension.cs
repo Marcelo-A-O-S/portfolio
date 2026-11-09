@@ -7,6 +7,7 @@ using MediaService.Application.UseCases.MediaFiles;
 using MediaService.Application.UseCases.MediaFiles.Interfaces;
 using MediaService.Application.Validators;
 using MediaService.Application.Validators.Interfaces;
+using MediaService.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 namespace MediaService.Application.Extensions
 {
@@ -17,6 +18,8 @@ namespace MediaService.Application.Extensions
         )
         {
             services.AddScoped<IMediaServices, MediaServices>();
+            services.AddScoped<IMediaOwnerServices, MediaOwnerServices>();
+            services.AddScoped<IMediaStorage, MediaStorage>();
             services.AddScoped<IOutboxMessageServices, OutboxMessageServices>();
 
             services.AddScoped<IToolCacheServices, ToolCacheServices>();
