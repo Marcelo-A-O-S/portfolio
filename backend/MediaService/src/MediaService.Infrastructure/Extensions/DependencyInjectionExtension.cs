@@ -17,6 +17,7 @@ namespace MediaService.Infrastructure.Extensions
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IGenerics<Media>, Generics<Media>>();
+            services.AddScoped<IGenerics<MediaOwner>, Generics<MediaOwner>>();
             services.AddScoped<IGenerics<OutboxMessage>, Generics<OutboxMessage>>();
             services.AddScoped<IMediaRepository, MediaRepository>();
             services.AddSingleton<IRabbitMQProducer, RabbitMQProducer>();

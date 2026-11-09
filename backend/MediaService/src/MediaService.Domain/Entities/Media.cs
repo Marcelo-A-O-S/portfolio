@@ -4,8 +4,6 @@ namespace MediaService.Domain.Entities
     public class Media
     {
         public Guid Id { get; private set;}
-        public Guid? OwnerId { get; private set; }
-        public string OwnerType { get; private set; }
         public string Path { get; private set; }
         public string MimeType { get; private set; }
         public long Size {get; private set; }
@@ -14,14 +12,10 @@ namespace MediaService.Domain.Entities
         public Status Status { get; private set; }
         public ICollection<MediaOwner> MediaOwners { get; private set; }
         public Media(
-            Guid? ownerId,
-            string ownerType,
             string path, 
             string mimeType, 
             long size)
         {
-            this.OwnerId = ownerId;
-            this.OwnerType = ownerType;
             this.Path = path;
             this.MimeType = mimeType;
             this.Size = size;
@@ -29,9 +23,12 @@ namespace MediaService.Domain.Entities
             this.Status = Status.Pending;
             this.MediaOwners = new List<MediaOwner>();
         }
+        public void GenerateId()
+        {
+            this.Id = Guid.NewGuid();
+        }
         public void AssignOwner(Guid ownerId)
         {
-            this.OwnerId = ownerId;
             this.UpdatedAt = DateTime.UtcNow;
         }
         public void Commit()

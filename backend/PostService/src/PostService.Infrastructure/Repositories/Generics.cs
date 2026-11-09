@@ -51,19 +51,7 @@ namespace PostService.Infrastructure.Repositories
         }
         public async Task Save(T entity)
         {
-            try
-            {
-                await this.context.AddAsync(entity);
-            }
-            catch (DbUpdateException ex)
-            {
-                if (ex.InnerException is PostgresException postgresEx
-                    && postgresEx.SqlState == PostgresErrorCodes.UniqueViolation)
-                {
-                    throw new DuplicateException();
-                }
-                throw;
-            }
+            await this.context.AddAsync(entity);
         }
         public async Task Update(T entity)
         {

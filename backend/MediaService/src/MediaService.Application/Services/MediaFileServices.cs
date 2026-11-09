@@ -1,10 +1,10 @@
+using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using MediaService.Application.Interfaces;
 using MediaService.Domain.Entities;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Hosting;
 using MediaService.Domain.Interfaces;
-using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 namespace MediaService.Application.Services
 {
     public class MediaServices : IMediaServices
@@ -85,7 +85,11 @@ namespace MediaService.Application.Services
             await this.repository.Save(entity);
         }
 
-        public async Task<Media> SaveImageAsync(Guid? ownerId, string ownerType, IFormFile file, string folder)
+        public async Task<Media> SaveImageAsync(
+            Guid? ownerId,
+            string ownerType,
+            IFormFile file,
+            string folder)
         {
             if (file == null)
                 throw new ValidationException("Arquivo não informado.");
@@ -100,14 +104,12 @@ namespace MediaService.Application.Services
                 Directory.CreateDirectory(uploadsFolder);
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
             var filePath = Path.Combine(uploadsFolder, fileName);
-            var relativePath = Path.Combine("archives",folder,fileName).Replace("\\", "/");
+            var relativePath = Path.Combine("archives", folder, fileName).Replace("\\", "/");
             try
             {
                 using var stream = new FileStream(filePath, FileMode.Create);
                 await file.CopyToAsync(stream);
                 var media = new Media(
-                    ownerId,
-                    ownerType,
                     relativePath,
                     file.ContentType,
                     file.Length
@@ -115,7 +117,8 @@ namespace MediaService.Application.Services
                 media.MarkAsUploaded();
                 await this.repository.Save(media);
                 return media;
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 if (File.Exists(filePath))
                     File.Delete(filePath);
