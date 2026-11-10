@@ -36,7 +36,8 @@ namespace MediaService.Application.UseCases.MediaFiles
             {
                 if (removeOwner != null)
                 {
-                    await this.mediaOwnerServices.Delete(removeOwner);
+                    media.RemoveOwner(removeOwner);
+                    await mediaOwnerServices.Delete(removeOwner);
                 }
                 if(media.MediaOwners.Count == 0)
                 {

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using MediaService.Domain.Enums;
 namespace MediaService.Domain.Entities
 {
@@ -48,6 +49,18 @@ namespace MediaService.Domain.Entities
         {
             this.Path = path;
             this.UpdatedAt = DateTime.UtcNow;
+        }
+        public void AddOwner(MediaOwner mediaOwner)
+        {
+            if(this.MediaOwners == null)
+                throw new ValidationException("A lista não foi inicializada.");
+            this.MediaOwners.Add(mediaOwner);
+        }
+        public void RemoveOwner(MediaOwner mediaOwner)
+        {
+            if(this.MediaOwners == null)
+                throw new ValidationException("A lista não foi inicializada.");
+            this.MediaOwners.Remove(mediaOwner);
         }
     }
 }

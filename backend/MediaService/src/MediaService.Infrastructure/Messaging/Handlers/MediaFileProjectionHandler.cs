@@ -93,6 +93,7 @@ namespace MediaService.Infrastructure.Messaging.Handlers
             {
                 if (removeOwner != null)
                 {
+                    media.RemoveOwner(removeOwner);
                     await mediaOwnerServices.Delete(removeOwner);
                 }
                 if(media.MediaOwners.Count == 0)
