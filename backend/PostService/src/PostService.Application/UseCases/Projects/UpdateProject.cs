@@ -285,6 +285,7 @@ namespace PostService.Application.UseCases.Projects
                     JsonSerializer.Serialize(new
                     {
                         MediaId = media.MediaId,
+                        OwnerId = postId,
                         OwnerType = "Post"
                     })
                 );

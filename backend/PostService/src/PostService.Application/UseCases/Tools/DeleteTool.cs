@@ -3,24 +3,25 @@ using PostService.Application.Interfaces;
 using PostService.Application.UseCases.Tools.Interfaces;
 using PostService.Domain.Entities;
 using PostService.Domain.Interfaces;
+using System.Text.Json;
 namespace PostService.Application.UseCases.Tools
 {
     public class DeleteTool : IDeleteTool
     {
         private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly IToolsServices toolsServices;
-        private readonly IRabbitMQProducer rabbitMQProducer;
+        private readonly IOutboxMessageServices outboxMessageServices;
         private readonly IUnitOfWork unitOfWork;
         public DeleteTool(
             IMediaProjectionServices _mediaProjectionServices,
             IToolsServices _toolsServices,
-            IRabbitMQProducer _rabbitMQProducer,
+            IOutboxMessageServices _outboxMessageServices,
             IUnitOfWork _unitOfWork
         )
         {
             this.mediaProjectionServices = _mediaProjectionServices;
             this.toolsServices = _toolsServices;
-            this.rabbitMQProducer = _rabbitMQProducer;
+            this.outboxMessageServices = _outboxMessageServices;
             this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid Id)
@@ -33,6 +34,7 @@ namespace PostService.Application.UseCases.Tools
             try
             {
                 await this.toolsServices.DeleteById(tool.Id);
+                await DeleteMedias(Id,mediasToDelete);
                 await this.unitOfWork.CommitAsync();
             }
             catch
@@ -40,7 +42,6 @@ namespace PostService.Application.UseCases.Tools
                 await unitOfWork.RollbackAsync();
                 throw;
             }
-            await DeleteMedias(mediasToDelete);
         }
         private async Task<Tool> GetTool(Guid Id)
         {
@@ -66,15 +67,20 @@ namespace PostService.Application.UseCases.Tools
             var media = await this.mediaProjectionServices.GetByUrl(tool.MediaProjection.Url);
             mediasToDelete.Add(media);
         }
-        private async Task DeleteMedias(List<MediaProjection> mediasToDelete)
+        private async Task DeleteMedias(Guid toolId, List<MediaProjection> mediasToDelete)
         {
             foreach (var media in mediasToDelete)
             {
-                await this.rabbitMQProducer.Publish("ToolMediaDeleted", new
-                {
-                    MediaId = media.MediaId,
-                    OwnerType = "Tool"
-                });
+                var outboxMessage = new OutboxMessage(
+                    "ToolMediaDeleted",
+                    JsonSerializer.Serialize(new
+                    {
+                        MediaId = media.MediaId,
+                        OwnerId = toolId,
+                        OwnerType = "Tool"
+                    })
+                );
+                await this.outboxMessageServices.Save(outboxMessage);
             }
         }
     }

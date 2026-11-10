@@ -1,3 +1,4 @@
+using System.Text.Json;
 using PostService.Application.DTOs.Request;
 using PostService.Application.Exceptions;
 using PostService.Application.Interfaces;
@@ -12,17 +13,17 @@ namespace PostService.Application.UseCases.Tools
     public class UpdateTool : IUpdateTool
     {
         private readonly IValidationServices validationServices;
-        private readonly IRabbitMQProducer rabbitMQProducer;
         private readonly IToolsServices toolsServices;
         private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly ICategoryServices categoryServices;
+        private readonly IOutboxMessageServices outboxMessageServices;
         private readonly IUnitOfWork unitOfWork;
         public UpdateTool(
             IValidationServices _validationServices,
             IToolsServices _toolsServices,
             IMediaProjectionServices _mediaProjectionServices,
             ICategoryServices _categoryServices,
-            IRabbitMQProducer _rabbitMQProducer,
+            IOutboxMessageServices _outboxMessageServices,
             IUnitOfWork _unitOfWork
         )
         {
@@ -30,7 +31,7 @@ namespace PostService.Application.UseCases.Tools
             this.toolsServices = _toolsServices;
             this.mediaProjectionServices = _mediaProjectionServices;
             this.categoryServices = _categoryServices;
-            this.rabbitMQProducer = _rabbitMQProducer;
+            this.outboxMessageServices = _outboxMessageServices;
             this.unitOfWork = _unitOfWork;
         }
         public async Task ExecuteAsync(Guid authenticatedUserId, string role, Guid Id, ToolRequest request)
@@ -53,6 +54,7 @@ namespace PostService.Application.UseCases.Tools
                 await ProcessTumbnail(tool, request.Media, mediasToCommit, mediasToDelete);
                 await this.toolsServices.Update(tool);
                 await DeleteMedias(mediasToDelete);
+                await PublishMedias(tool.Id, mediasToCommit, mediasToDelete);
                 await this.unitOfWork.CommitAsync();
             }
             catch
@@ -60,7 +62,6 @@ namespace PostService.Application.UseCases.Tools
                 await unitOfWork.RollbackAsync();
                 throw;
             }
-            await PublishMedias(tool.Id, mediasToCommit, mediasToDelete);
         }
         private static void ValidateRequest(ToolRequest toolRequest)
         {
@@ -230,20 +231,29 @@ namespace PostService.Application.UseCases.Tools
         {
             foreach (var media in mediasToDelete)
             {
-                await this.rabbitMQProducer.Publish("ToolMediaDeleted", new
-                {
-                    MediaId = media.MediaId,
-                    OwnerType = "Tool"
-                });
+                var outboxMessage = new OutboxMessage(
+                    "ToolMediaDeleted",
+                    JsonSerializer.Serialize(new
+                    {
+                        MediaId = media.MediaId,
+                        OwnerId = toolId,
+                        OwnerType = "Tool"
+                    })
+                );
+                await this.outboxMessageServices.Save(outboxMessage);
             }
             foreach (var media in mediasToCommit)
             {
-                await this.rabbitMQProducer.Publish("ToolMediaAttached", new
-                {
-                    MediaId = media.MediaId,
-                    OwnerId = toolId,
-                    OwnerType = "Tool"
-                });
+                var outboxMessage = new OutboxMessage(
+                    "ToolMediaAttached",
+                    JsonSerializer.Serialize(new
+                    {
+                        MediaId = media.MediaId,
+                        OwnerId = toolId,
+                        OwnerType = "Tool"
+                    })
+                );
+                await this.outboxMessageServices.Save(outboxMessage);
             }
         }
         private async Task DeleteMedias(List<MediaProjection> mediasToDelete)

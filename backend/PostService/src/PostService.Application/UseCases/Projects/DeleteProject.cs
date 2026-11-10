@@ -42,7 +42,7 @@ namespace PostService.Application.UseCases.Projects
                         })
                     );
                 await this.outboxMessageServices.Save(outboxMessage);
-                await DeleteMedias(mediasToDelete);
+                await DeleteMedias(Id, mediasToDelete);
                 await this.unitOfWork.CommitAsync();
             }
             catch
@@ -77,7 +77,7 @@ namespace PostService.Application.UseCases.Projects
             if (media != null)
                 mediasToDelete.Add(media);
         }
-        private async Task DeleteMedias(List<MediaProjection> mediasToDelete)
+        private async Task DeleteMedias(Guid postId, List<MediaProjection> mediasToDelete)
         {
             foreach (var media in mediasToDelete)
             {
@@ -86,6 +86,7 @@ namespace PostService.Application.UseCases.Projects
                         JsonSerializer.Serialize(new
                         {
                             MediaId = media.MediaId,
+                            OwnerId = postId,
                             OwnerType = "Post"
                         })
                     );
