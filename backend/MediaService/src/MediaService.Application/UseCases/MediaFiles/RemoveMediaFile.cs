@@ -64,6 +64,7 @@ namespace MediaService.Application.UseCases.MediaFiles
                 m.Id == request.MediaId && 
                 m.MediaOwners.Any(mo => 
                 mo.MediaId == request.MediaId && 
+                mo.OwnerId == request.OwnerId &&
                 mo.OwnerType == request.OwnerType));
             if(media == null)
                 throw new NotFoundException("Midia não encontrada");

@@ -87,8 +87,9 @@ namespace MediaService.Infrastructure.Messaging.Handlers
             }
             await unitOfWork.BeginAsync();
             var removeOwner = media.MediaOwners
-                .Where(m => m.MediaId == payload.MediaId 
-                && m.OwnerType == payload.OwnerType)
+                .Where(m => m.MediaId == payload.MediaId && 
+                m.OwnerId == payload.OwnerId &&
+                m.OwnerType == payload.OwnerType)
                 .FirstOrDefault();
             var isMediaDeleted = false;
             try

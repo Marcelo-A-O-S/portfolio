@@ -38,6 +38,7 @@ namespace MediaService.Infrastructure.Jobs
                         {
                             foreach (var mediaOwner in media.MediaOwners)
                             {
+                                media.RemoveOwner(mediaOwner);
                                 await mediaOwnerServices.Delete(mediaOwner);
                             }
                             if(media.MediaOwners.Count == 0)
@@ -47,7 +48,7 @@ namespace MediaService.Infrastructure.Jobs
                             }
                             await unitOfWork.CommitAsync();
                             if(isMediaDeleted)
-                                await mediaFileServices.DeleteImageAsync(media);
+                                await mediaStorage.DeleteAsync(media.Path);
                         }
                         catch (Exception ex)
                         {
