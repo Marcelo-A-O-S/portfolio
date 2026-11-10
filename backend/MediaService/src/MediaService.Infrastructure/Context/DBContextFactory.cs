@@ -15,7 +15,12 @@ namespace MediaService.Infrastructure.Context
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
             var optionsBuilder = new DbContextOptionsBuilder<DBContext>();
-            optionsBuilder.UseNpgsql(connectionString);
+            optionsBuilder.UseNpgsql(
+                connectionString,
+                npgsql => npgsql.MigrationsHistoryTable(
+                    "__EFMigrationsHistory",
+                    "media_service"
+                ));
             return new DBContext(optionsBuilder.Options);
         }
     }

@@ -15,7 +15,12 @@ namespace PostService.Infrastructure.Context
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
             var optionsBuilder = new DbContextOptionsBuilder<DBContext>();
-            optionsBuilder.UseNpgsql(connectionString);
+            optionsBuilder.UseNpgsql(
+                connectionString,
+                npqsql => npqsql.MigrationsHistoryTable(
+                    "__EFMigrationsHistory",
+                    "post_service"
+                ));
             return new DBContext(optionsBuilder.Options);
         }
     }

@@ -11,8 +11,12 @@ namespace AuthService.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.EnsureSchema(
+                name: "auth_service");
+
             migrationBuilder.CreateTable(
                 name: "OutboxMessages",
+                schema: "auth_service",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -32,6 +36,7 @@ namespace AuthService.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Users",
+                schema: "auth_service",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -50,6 +55,7 @@ namespace AuthService.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "RefreshTokens",
+                schema: "auth_service",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -67,6 +73,7 @@ namespace AuthService.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_RefreshTokens_Users_UserId",
                         column: x => x.UserId,
+                        principalSchema: "auth_service",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -74,6 +81,7 @@ namespace AuthService.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "SocialAccounts",
+                schema: "auth_service",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -90,6 +98,7 @@ namespace AuthService.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_SocialAccounts_Users_UserId",
                         column: x => x.UserId,
+                        principalSchema: "auth_service",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -97,22 +106,26 @@ namespace AuthService.Infrastructure.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_RefreshTokens_UserId",
+                schema: "auth_service",
                 table: "RefreshTokens",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SocialAccounts_ProviderId",
+                schema: "auth_service",
                 table: "SocialAccounts",
                 column: "ProviderId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_SocialAccounts_UserId",
+                schema: "auth_service",
                 table: "SocialAccounts",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
+                schema: "auth_service",
                 table: "Users",
                 column: "Email",
                 unique: true);
@@ -122,16 +135,20 @@ namespace AuthService.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "OutboxMessages");
+                name: "OutboxMessages",
+                schema: "auth_service");
 
             migrationBuilder.DropTable(
-                name: "RefreshTokens");
+                name: "RefreshTokens",
+                schema: "auth_service");
 
             migrationBuilder.DropTable(
-                name: "SocialAccounts");
+                name: "SocialAccounts",
+                schema: "auth_service");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Users",
+                schema: "auth_service");
         }
     }
 }

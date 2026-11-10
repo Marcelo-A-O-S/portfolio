@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CertificateService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20261103190601_CreateTables")]
+    [Migration("20261110005314_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -20,6 +20,7 @@ namespace CertificateService.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("certificate_service")
                 .HasAnnotation("ProductVersion", "8.0.21")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -37,7 +38,7 @@ namespace CertificateService.Infrastructure.Migrations
 
                     b.HasIndex("PostProjectionsId");
 
-                    b.ToTable("CertificatePostProjection");
+                    b.ToTable("CertificatePostProjection", "certificate_service");
                 });
 
             modelBuilder.Entity("CertificateService.Domain.Entities.Certificate", b =>
@@ -83,7 +84,7 @@ namespace CertificateService.Infrastructure.Migrations
 
                     b.HasIndex("MediaProjectionId");
 
-                    b.ToTable("Certificates");
+                    b.ToTable("Certificates", "certificate_service");
                 });
 
             modelBuilder.Entity("CertificateService.Domain.Entities.CertificateContent", b =>
@@ -112,7 +113,7 @@ namespace CertificateService.Infrastructure.Migrations
 
                     b.HasIndex("LanguageProjectionId");
 
-                    b.ToTable("CertificateContents");
+                    b.ToTable("CertificateContents", "certificate_service");
                 });
 
             modelBuilder.Entity("CertificateService.Domain.Entities.LanguageProjection", b =>
@@ -137,7 +138,7 @@ namespace CertificateService.Infrastructure.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("LanguageProjections");
+                    b.ToTable("LanguageProjections", "certificate_service");
                 });
 
             modelBuilder.Entity("CertificateService.Domain.Entities.MediaProjection", b =>
@@ -158,7 +159,7 @@ namespace CertificateService.Infrastructure.Migrations
                     b.HasIndex("Url", "MediaId")
                         .IsUnique();
 
-                    b.ToTable("MediaProjections");
+                    b.ToTable("MediaProjections", "certificate_service");
                 });
 
             modelBuilder.Entity("CertificateService.Domain.Entities.OutboxMessage", b =>
@@ -195,7 +196,7 @@ namespace CertificateService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OutboxMessages");
+                    b.ToTable("OutboxMessages", "certificate_service");
                 });
 
             modelBuilder.Entity("CertificateService.Domain.Entities.PostContentProjection", b =>
@@ -230,7 +231,7 @@ namespace CertificateService.Infrastructure.Migrations
 
                     b.HasIndex("PostProjectionId");
 
-                    b.ToTable("PostContentProjections");
+                    b.ToTable("PostContentProjections", "certificate_service");
                 });
 
             modelBuilder.Entity("CertificateService.Domain.Entities.PostProjection", b =>
@@ -258,7 +259,7 @@ namespace CertificateService.Infrastructure.Migrations
                     b.HasIndex("PostId")
                         .IsUnique();
 
-                    b.ToTable("PostProjections");
+                    b.ToTable("PostProjections", "certificate_service");
                 });
 
             modelBuilder.Entity("CertificatePostProjection", b =>

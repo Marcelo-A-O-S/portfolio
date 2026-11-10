@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MediaService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20261103194747_CreateTables")]
+    [Migration("20261110005524_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -20,6 +20,7 @@ namespace MediaService.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("media_service")
                 .HasAnnotation("ProductVersion", "8.0.21")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -35,13 +36,6 @@ namespace MediaService.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("MimeType")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("OwnerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("OwnerType")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -64,7 +58,30 @@ namespace MediaService.Infrastructure.Migrations
                     b.HasIndex("Path")
                         .IsUnique();
 
-                    b.ToTable("Medias");
+                    b.ToTable("Medias", "media_service");
+                });
+
+            modelBuilder.Entity("MediaService.Domain.Entities.MediaOwner", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MediaId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("OwnerType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MediaId");
+
+                    b.ToTable("MediaOwners", "media_service");
                 });
 
             modelBuilder.Entity("MediaService.Domain.Entities.OutboxMessage", b =>
@@ -101,7 +118,23 @@ namespace MediaService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OutboxMessages");
+                    b.ToTable("OutboxMessages", "media_service");
+                });
+
+            modelBuilder.Entity("MediaService.Domain.Entities.MediaOwner", b =>
+                {
+                    b.HasOne("MediaService.Domain.Entities.Media", "Media")
+                        .WithMany("MediaOwners")
+                        .HasForeignKey("MediaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Media");
+                });
+
+            modelBuilder.Entity("MediaService.Domain.Entities.Media", b =>
+                {
+                    b.Navigation("MediaOwners");
                 });
 #pragma warning restore 612, 618
         }

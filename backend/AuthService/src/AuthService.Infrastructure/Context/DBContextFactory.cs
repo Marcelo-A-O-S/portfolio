@@ -16,7 +16,12 @@ namespace AuthService.Infrastructure.Context
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
             var optionsBuilder = new DbContextOptionsBuilder<DBContext>();
-            optionsBuilder.UseNpgsql(connectionString);
+            optionsBuilder.UseNpgsql(
+                connectionString,
+                npqsql => npqsql.MigrationsHistoryTable(
+                    "__EFMigrationsHistory",
+                    "auth_service"
+                ));
             return new DBContext(optionsBuilder.Options);
         }
     }

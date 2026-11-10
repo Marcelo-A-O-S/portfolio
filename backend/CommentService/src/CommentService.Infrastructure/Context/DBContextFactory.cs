@@ -14,7 +14,12 @@ namespace CommentService.Infrastructure.Context
                 .Build();
             var connectionString = configuration.GetConnectionString("DefaultConnection");
             var optionsBuilder = new DbContextOptionsBuilder<DBContext>();
-            optionsBuilder.UseNpgsql(connectionString);
+            optionsBuilder.UseNpgsql(
+                connectionString,
+                npqsql => npqsql.MigrationsHistoryTable(
+                    "__EFMigrationsHistory",
+                    "comment_service"
+                ));
             return new DBContext(optionsBuilder.Options);
         }
     }

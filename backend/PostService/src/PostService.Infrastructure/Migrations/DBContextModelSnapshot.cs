@@ -17,6 +17,7 @@ namespace PostService.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("post_service")
                 .HasAnnotation("ProductVersion", "8.0.21")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -34,7 +35,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasIndex("PostsId");
 
-                    b.ToTable("CategoryPost");
+                    b.ToTable("CategoryPost", "post_service");
                 });
 
             modelBuilder.Entity("CategoryTool", b =>
@@ -49,7 +50,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasIndex("ToolsId");
 
-                    b.ToTable("CategoryTool");
+                    b.ToTable("CategoryTool", "post_service");
                 });
 
             modelBuilder.Entity("CertificateProjectionPost", b =>
@@ -64,7 +65,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasIndex("PostsId");
 
-                    b.ToTable("CertificateProjectionPost");
+                    b.ToTable("CertificateProjectionPost", "post_service");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.Author", b =>
@@ -100,7 +101,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Authors");
+                    b.ToTable("Authors", "post_service");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.Category", b =>
@@ -114,7 +115,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", "post_service");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.CategoryContent", b =>
@@ -151,7 +152,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasIndex("Slug");
 
-                    b.ToTable("CategoriesContents");
+                    b.ToTable("CategoriesContents", "post_service");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.CertificateContentProjection", b =>
@@ -179,7 +180,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.ToTable("CertificateContentProjections");
+                    b.ToTable("CertificateContentProjections", "post_service");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.CertificateProjection", b =>
@@ -196,7 +197,7 @@ namespace PostService.Infrastructure.Migrations
                     b.HasIndex("CertificateId")
                         .IsUnique();
 
-                    b.ToTable("CertificateProjections");
+                    b.ToTable("CertificateProjections", "post_service");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.Contributor", b =>
@@ -228,7 +229,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("Contributors");
+                    b.ToTable("Contributors", "post_service");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.Language", b =>
@@ -255,7 +256,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasIndex("Code");
 
-                    b.ToTable("Languages");
+                    b.ToTable("Languages", "post_service");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.LikeProjection", b =>
@@ -275,7 +276,7 @@ namespace PostService.Infrastructure.Migrations
                     b.HasIndex("TargetId", "UserId")
                         .IsUnique();
 
-                    b.ToTable("LikeProjections");
+                    b.ToTable("LikeProjections", "post_service");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.Link", b =>
@@ -311,7 +312,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasIndex("ToolId");
 
-                    b.ToTable("Links");
+                    b.ToTable("Links", "post_service");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.LinkDescription", b =>
@@ -336,7 +337,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasIndex("LinkId");
 
-                    b.ToTable("LinkDescriptions");
+                    b.ToTable("LinkDescriptions", "post_service");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.LinkType", b =>
@@ -370,7 +371,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("LinkTypes");
+                    b.ToTable("LinkTypes", "post_service");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.MediaProjection", b =>
@@ -401,7 +402,7 @@ namespace PostService.Infrastructure.Migrations
                     b.HasIndex("Url", "MediaId")
                         .IsUnique();
 
-                    b.ToTable("MediaProjections");
+                    b.ToTable("MediaProjections", "post_service");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.OutboxMessage", b =>
@@ -438,7 +439,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OutboxMessages");
+                    b.ToTable("OutboxMessages", "post_service");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.Post", b =>
@@ -475,7 +476,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasIndex("MediaProjectionId");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Posts", "post_service");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.PostContent", b =>
@@ -520,7 +521,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasIndex("Slug");
 
-                    b.ToTable("PostContents");
+                    b.ToTable("PostContents", "post_service");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.Tool", b =>
@@ -557,7 +558,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasIndex("MediaProjectionId");
 
-                    b.ToTable("Tools");
+                    b.ToTable("Tools", "post_service");
                 });
 
             modelBuilder.Entity("PostService.Domain.Entities.ToolContent", b =>
@@ -606,7 +607,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasIndex("ToolId");
 
-                    b.ToTable("ToolContents");
+                    b.ToTable("ToolContents", "post_service");
                 });
 
             modelBuilder.Entity("PostTool", b =>
@@ -621,7 +622,7 @@ namespace PostService.Infrastructure.Migrations
 
                     b.HasIndex("ToolsId");
 
-                    b.ToTable("PostTool");
+                    b.ToTable("PostTool", "post_service");
                 });
 
             modelBuilder.Entity("CategoryPost", b =>

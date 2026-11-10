@@ -11,8 +11,12 @@ namespace CommentService.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.EnsureSchema(
+                name: "comment_service");
+
             migrationBuilder.CreateTable(
                 name: "Likes",
+                schema: "comment_service",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -28,6 +32,7 @@ namespace CommentService.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "OutboxMessages",
+                schema: "comment_service",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -47,6 +52,7 @@ namespace CommentService.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserProjections",
+                schema: "comment_service",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -64,6 +70,7 @@ namespace CommentService.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Comments",
+                schema: "comment_service",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -84,12 +91,14 @@ namespace CommentService.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_Comments_Comments_ParentCommentId",
                         column: x => x.ParentCommentId,
+                        principalSchema: "comment_service",
                         principalTable: "Comments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Comments_UserProjections_UserProjectionId",
                         column: x => x.UserProjectionId,
+                        principalSchema: "comment_service",
                         principalTable: "UserProjections",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -97,21 +106,25 @@ namespace CommentService.Infrastructure.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_ParentCommentId",
+                schema: "comment_service",
                 table: "Comments",
                 column: "ParentCommentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_Type_TargetId",
+                schema: "comment_service",
                 table: "Comments",
                 columns: new[] { "Type", "TargetId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_UserProjectionId",
+                schema: "comment_service",
                 table: "Comments",
                 column: "UserProjectionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Likes_UserId_Type_TargetId",
+                schema: "comment_service",
                 table: "Likes",
                 columns: new[] { "UserId", "Type", "TargetId" },
                 unique: true);
@@ -121,16 +134,20 @@ namespace CommentService.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Comments");
+                name: "Comments",
+                schema: "comment_service");
 
             migrationBuilder.DropTable(
-                name: "Likes");
+                name: "Likes",
+                schema: "comment_service");
 
             migrationBuilder.DropTable(
-                name: "OutboxMessages");
+                name: "OutboxMessages",
+                schema: "comment_service");
 
             migrationBuilder.DropTable(
-                name: "UserProjections");
+                name: "UserProjections",
+                schema: "comment_service");
         }
     }
 }

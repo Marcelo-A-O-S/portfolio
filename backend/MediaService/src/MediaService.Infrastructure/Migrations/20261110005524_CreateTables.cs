@@ -11,13 +11,15 @@ namespace MediaService.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.EnsureSchema(
+                name: "media_service");
+
             migrationBuilder.CreateTable(
                 name: "Medias",
+                schema: "media_service",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    OwnerId = table.Column<Guid>(type: "uuid", nullable: true),
-                    OwnerType = table.Column<string>(type: "text", nullable: false),
                     Path = table.Column<string>(type: "text", nullable: false),
                     MimeType = table.Column<string>(type: "text", nullable: false),
                     Size = table.Column<long>(type: "bigint", nullable: false),
@@ -32,6 +34,7 @@ namespace MediaService.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "OutboxMessages",
+                schema: "media_service",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -49,8 +52,37 @@ namespace MediaService.Infrastructure.Migrations
                     table.PrimaryKey("PK_OutboxMessages", x => x.Id);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "MediaOwners",
+                schema: "media_service",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    MediaId = table.Column<Guid>(type: "uuid", nullable: false),
+                    OwnerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    OwnerType = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MediaOwners", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MediaOwners_Medias_MediaId",
+                        column: x => x.MediaId,
+                        principalSchema: "media_service",
+                        principalTable: "Medias",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MediaOwners_MediaId",
+                schema: "media_service",
+                table: "MediaOwners",
+                column: "MediaId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Medias_Path",
+                schema: "media_service",
                 table: "Medias",
                 column: "Path",
                 unique: true);
@@ -60,10 +92,16 @@ namespace MediaService.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Medias");
+                name: "MediaOwners",
+                schema: "media_service");
 
             migrationBuilder.DropTable(
-                name: "OutboxMessages");
+                name: "OutboxMessages",
+                schema: "media_service");
+
+            migrationBuilder.DropTable(
+                name: "Medias",
+                schema: "media_service");
         }
     }
 }

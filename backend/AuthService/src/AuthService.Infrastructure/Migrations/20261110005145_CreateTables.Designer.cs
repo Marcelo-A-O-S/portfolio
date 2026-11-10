@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AuthService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20261103192420_CreateTables")]
+    [Migration("20261110005145_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -20,6 +20,7 @@ namespace AuthService.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("auth_service")
                 .HasAnnotation("ProductVersion", "8.0.21")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -59,7 +60,7 @@ namespace AuthService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OutboxMessages");
+                    b.ToTable("OutboxMessages", "auth_service");
                 });
 
             modelBuilder.Entity("AuthService.Domain.Entities.RefreshToken", b =>
@@ -96,7 +97,7 @@ namespace AuthService.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshTokens", "auth_service");
                 });
 
             modelBuilder.Entity("AuthService.Domain.Entities.SocialAccount", b =>
@@ -133,7 +134,7 @@ namespace AuthService.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SocialAccounts");
+                    b.ToTable("SocialAccounts", "auth_service");
                 });
 
             modelBuilder.Entity("AuthService.Domain.Entities.User", b =>
@@ -172,7 +173,7 @@ namespace AuthService.Infrastructure.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", "auth_service");
                 });
 
             modelBuilder.Entity("AuthService.Domain.Entities.RefreshToken", b =>

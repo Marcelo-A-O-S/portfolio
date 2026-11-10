@@ -17,6 +17,7 @@ namespace CommentService.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("comment_service")
                 .HasAnnotation("ProductVersion", "8.0.21")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -70,7 +71,7 @@ namespace CommentService.Infrastructure.Migrations
 
                     b.HasIndex("Type", "TargetId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", "comment_service");
                 });
 
             modelBuilder.Entity("CommentService.Domain.Entities.Like", b =>
@@ -97,7 +98,7 @@ namespace CommentService.Infrastructure.Migrations
                     b.HasIndex("UserId", "Type", "TargetId")
                         .IsUnique();
 
-                    b.ToTable("Likes");
+                    b.ToTable("Likes", "comment_service");
                 });
 
             modelBuilder.Entity("CommentService.Domain.Entities.OutboxMessage", b =>
@@ -134,7 +135,7 @@ namespace CommentService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OutboxMessages");
+                    b.ToTable("OutboxMessages", "comment_service");
                 });
 
             modelBuilder.Entity("CommentService.Domain.Entities.UserProjection", b =>
@@ -167,7 +168,7 @@ namespace CommentService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserProjections");
+                    b.ToTable("UserProjections", "comment_service");
                 });
 
             modelBuilder.Entity("CommentService.Domain.Entities.Comment", b =>
