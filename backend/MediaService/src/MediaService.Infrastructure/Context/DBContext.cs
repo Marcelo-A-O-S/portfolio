@@ -14,6 +14,14 @@ namespace MediaService.Infrastructure.Context
         {
             modelBuilder.HasDefaultSchema("media_service");
             modelBuilder.Entity<Media>().HasIndex(mf => mf.Path).IsUnique();
+            modelBuilder.Entity<MediaOwner>()
+                .HasIndex(mo => new
+                {
+                    mo.MediaId,
+                    mo.OwnerId,
+                    mo.OwnerType
+                })
+                .IsUnique();
             modelBuilder.Entity<Media>().Property(mf => mf.Status).HasConversion<string>();
         }
     }

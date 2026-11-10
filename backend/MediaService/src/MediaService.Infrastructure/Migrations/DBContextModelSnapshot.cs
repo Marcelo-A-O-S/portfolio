@@ -76,7 +76,8 @@ namespace MediaService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MediaId");
+                    b.HasIndex("MediaId", "OwnerId", "OwnerType")
+                        .IsUnique();
 
                     b.ToTable("MediaOwners", "media_service");
                 });

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MediaService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20261110005524_CreateTables")]
+    [Migration("20261110011543_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -79,7 +79,8 @@ namespace MediaService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MediaId");
+                    b.HasIndex("MediaId", "OwnerId", "OwnerType")
+                        .IsUnique();
 
                     b.ToTable("MediaOwners", "media_service");
                 });

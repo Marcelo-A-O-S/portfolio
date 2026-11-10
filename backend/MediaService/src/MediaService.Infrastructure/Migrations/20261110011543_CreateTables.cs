@@ -75,10 +75,11 @@ namespace MediaService.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_MediaOwners_MediaId",
+                name: "IX_MediaOwners_MediaId_OwnerId_OwnerType",
                 schema: "media_service",
                 table: "MediaOwners",
-                column: "MediaId");
+                columns: new[] { "MediaId", "OwnerId", "OwnerType" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Medias_Path",
