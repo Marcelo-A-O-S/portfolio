@@ -24,6 +24,7 @@ namespace MediaService.Infrastructure.Messaging.Consumers
             this.factory = _factory;
             this.logger = _logger;
             this.mediaFileProjectionHandler = _mediaFileProjectionHandler;
+            this.configuration = _configuration;
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
