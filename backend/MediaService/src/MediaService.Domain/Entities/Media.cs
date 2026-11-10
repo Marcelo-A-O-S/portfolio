@@ -27,10 +27,6 @@ namespace MediaService.Domain.Entities
         {
             this.Id = Guid.NewGuid();
         }
-        public void AssignOwner(Guid ownerId)
-        {
-            this.UpdatedAt = DateTime.UtcNow;
-        }
         public void Commit()
         {
             if (this.Status == Status.Committed)
