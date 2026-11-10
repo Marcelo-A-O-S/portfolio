@@ -39,7 +39,7 @@ namespace CertificateService.Application.UseCases.Certificates
             try
             {
                 await this.certificateServices.DeleteById(certificate.Id);
-                await DeleteMedias(mediasToDelete);
+                await DeleteMedias(certificateId, mediasToDelete);
                 var outboxMessage = new OutboxMessage(
                     "CertificateDeleted",
                     JsonSerializer.Serialize(new
@@ -70,7 +70,7 @@ namespace CertificateService.Application.UseCases.Certificates
             var media = await this.mediaProjectionServices.GetByUrl(certificate.MediaProjection.Url);
             mediasToDelete.Add(media);
         }
-        private async Task DeleteMedias(List<MediaProjection> mediasToDelete)
+        private async Task DeleteMedias(Guid certificateId, List<MediaProjection> mediasToDelete)
         {
             foreach (var media in mediasToDelete)
             {
@@ -79,6 +79,7 @@ namespace CertificateService.Application.UseCases.Certificates
                     JsonSerializer.Serialize(new
                     {
                         MediaId = media.MediaId,
+                        OwnerId = certificateId,
                         OwnerType = "Certificate"
                     })
                 );

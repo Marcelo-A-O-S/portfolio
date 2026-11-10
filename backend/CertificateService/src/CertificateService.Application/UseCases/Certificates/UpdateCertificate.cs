@@ -183,6 +183,7 @@ namespace CertificateService.Application.UseCases.Certificates
                     JsonSerializer.Serialize(new
                     {
                         MediaId = media.MediaId,
+                        OwnerId = certificateId,
                         OwnerType = "Certificate"
                     })
                 );

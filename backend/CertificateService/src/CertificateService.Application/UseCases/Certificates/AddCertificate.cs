@@ -16,7 +16,6 @@ namespace CertificateService.Application.UseCases.Certificates
     {
         private readonly IMediaProjectionServices mediaProjectionServices;
         private readonly ICertificateServices certificateServices;
-        private readonly ICertificateContentServices certificateContentServices;
         private readonly ILanguageProjectionServices languageProjectionServices;
         private readonly ILanguageServicesClient languageServicesClient;
         private readonly ICertificateCacheServices certificateCacheServices;
@@ -25,7 +24,6 @@ namespace CertificateService.Application.UseCases.Certificates
         public AddCertificate(
             IMediaProjectionServices _mediaProjectionServices,
             ICertificateServices _certificateServices,
-            ICertificateContentServices _certificateContentServices,
             ILanguageProjectionServices _languageProjectionServices,
             ILanguageServicesClient _languageServicesClient,
             ICertificateCacheServices _certificateCacheServices,
@@ -35,7 +33,6 @@ namespace CertificateService.Application.UseCases.Certificates
         {
             this.mediaProjectionServices = _mediaProjectionServices;
             this.certificateServices = _certificateServices;
-            this.certificateContentServices = _certificateContentServices;
             this.languageProjectionServices = _languageProjectionServices;
             this.languageServicesClient = _languageServicesClient;
             this.certificateCacheServices = _certificateCacheServices;
