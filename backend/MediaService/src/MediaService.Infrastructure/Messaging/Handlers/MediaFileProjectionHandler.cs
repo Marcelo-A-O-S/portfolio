@@ -113,6 +113,7 @@ namespace MediaService.Infrastructure.Messaging.Handlers
             catch(Exception ex)
             {
                 this.logger.LogWarning(ex,"Erro ao processar a remoção da imagem do banco");
+                await unitOfWork.RollbackAsync();
                 throw;
             }
             
