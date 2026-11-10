@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using MediaService.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 namespace MediaService.Application.Interfaces
@@ -8,5 +9,6 @@ namespace MediaService.Application.Interfaces
         Task DeleteImageAsync(Media mediaFile);
         Task<Media> GetByPath(string path);
         Task<List<Media>> ListExpiredUncommittedMediaAsync();
+        Task<Media> GetMediaBy(Expression<Func<Media,bool>> predicate);
     }
 }

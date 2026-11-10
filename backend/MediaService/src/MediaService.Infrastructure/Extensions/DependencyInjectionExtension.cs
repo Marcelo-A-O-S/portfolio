@@ -20,6 +20,7 @@ namespace MediaService.Infrastructure.Extensions
             services.AddScoped<IGenerics<MediaOwner>, Generics<MediaOwner>>();
             services.AddScoped<IGenerics<OutboxMessage>, Generics<OutboxMessage>>();
             services.AddScoped<IMediaRepository, MediaRepository>();
+            services.AddScoped<IMediaOwnerRepository, MediaOwnerRepository>();
             services.AddSingleton<IRabbitMQProducer, RabbitMQProducer>();
             services.AddSingleton<IMediaFileProjectionHandler, MediaFileProjectionHandler>();
             return services;

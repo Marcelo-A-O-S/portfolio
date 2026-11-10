@@ -65,6 +65,11 @@ namespace MediaService.Application.Services
             return await this.repository.GetByPath(path);
         }
 
+        public async Task<Media> GetMediaBy(Expression<Func<Media, bool>> predicate)
+        {
+            return await this.repository.GetMediaBy(predicate);
+        }
+
         public async Task<List<Media>> List()
         {
             return await this.repository.List();

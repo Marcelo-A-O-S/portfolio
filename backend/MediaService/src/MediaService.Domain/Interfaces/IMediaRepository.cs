@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using MediaService.Domain.Entities;
 namespace MediaService.Domain.Interfaces
 {
@@ -5,5 +6,6 @@ namespace MediaService.Domain.Interfaces
     {
         Task<Media> GetByPath(string path);
         Task<List<Media>> ListExpiredUncommittedMediaAsync();
+        Task<Media> GetMediaBy(Expression<Func<Media,bool>> predicate);
     }
 }
