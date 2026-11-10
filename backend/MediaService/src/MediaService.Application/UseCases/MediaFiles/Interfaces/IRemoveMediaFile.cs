@@ -1,7 +1,8 @@
+using MediaService.Application.DTOs.Requests;
 namespace MediaService.Application.UseCases.MediaFiles.Interfaces
 {
     public interface IRemoveMediaFile
     {
-        Task ExecuteAsync(Guid mediaFileId);
+        Task ExecuteAsync(MediaDeleteRequest request);
     }
 }
