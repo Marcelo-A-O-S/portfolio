@@ -25,17 +25,35 @@ namespace MediaService.Infrastructure.Jobs
                     this.logger.LogInformation("Iniciando limpeza de imagens não utilizadas...");
                     using var scope = this.serviceProvider.CreateScope();
                     var mediaFileServices = scope.ServiceProvider.GetRequiredService<IMediaServices>();
+                    var mediaOwnerServices = scope.ServiceProvider.GetRequiredService<IMediaOwnerServices>();
+                    var mediaStorage = scope.ServiceProvider.GetRequiredService<IMediaStorage>();
+                    var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
                     var medias = await mediaFileServices.ListExpiredUncommittedMediaAsync();
                     this.logger.LogInformation("Foram encontradas {Count} mídias expiradas.", medias.Count);
                     foreach (var media in medias)
                     {
+                        await unitOfWork.BeginAsync();
+                        var isMediaDeleted = false;
                         try
                         {
-                            await mediaFileServices.DeleteImageAsync(media);
+                            foreach (var mediaOwner in media.MediaOwners)
+                            {
+                                await mediaOwnerServices.Delete(mediaOwner);
+                            }
+                            if(media.MediaOwners.Count == 0)
+                            {
+                                await mediaFileServices.Delete(media);
+                                isMediaDeleted = true;
+                            }
+                            await unitOfWork.CommitAsync();
+                            if(isMediaDeleted)
+                                await mediaFileServices.DeleteImageAsync(media);
                         }
                         catch (Exception ex)
                         {
                             this.logger.LogError(ex, "Erro ao remover mídia {MediaId}", media.Id);
+                            await unitOfWork.RollbackAsync();
+                            throw;
                         }
                     }
                     this.logger.LogInformation("Limpeza de imagens não utilizadas realizada com sucesso!");

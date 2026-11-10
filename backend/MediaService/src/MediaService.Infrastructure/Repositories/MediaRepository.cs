@@ -18,7 +18,7 @@ namespace MediaService.Infrastructure.Repositories
             var limitDate = DateTime.UtcNow.AddDays(-3);
             var mediasNoCommit = await this.context.Medias
                 .Include(mf => mf.MediaOwners)
-                .Where(mf => mf.Status == Status.Uploaded && !mf.MediaOwners.Any() && mf.CreatedAt <= limitDate)
+                .Where(mf => mf.Status == Status.Uploaded && mf.CreatedAt <= limitDate)
                 .ToListAsync();
             return mediasNoCommit;
         }
