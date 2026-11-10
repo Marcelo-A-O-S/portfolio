@@ -29,9 +29,11 @@ namespace MediaService.Application.UseCases.MediaFiles
             var media = await GetMediaFile(request);
             await this.unitOfWork.BeginAsync();
             var removeOwner = media.MediaOwners
-                .Where(m => m.MediaId == request.MediaId 
-                && m.OwnerType == request.OwnerType)
+                .Where(m => m.MediaId == request.MediaId && 
+                m.OwnerId == request.OwnerId &&
+                m.OwnerType == request.OwnerType)
                 .FirstOrDefault();
+            var isMediaDeleted = false;
             try
             {
                 if (removeOwner != null)
@@ -41,10 +43,14 @@ namespace MediaService.Application.UseCases.MediaFiles
                 }
                 if(media.MediaOwners.Count == 0)
                 {
-                    await this.mediaStorage.DeleteAsync(media.Path);
                     await this.mediaFileServices.Delete(media);
+                    isMediaDeleted = true;
                 }
                 await this.unitOfWork.CommitAsync();
+                if (isMediaDeleted)
+                {
+                    await this.mediaStorage.DeleteAsync(media.Path);
+                }
             }
             catch
             {

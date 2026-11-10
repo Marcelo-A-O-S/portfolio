@@ -78,6 +78,7 @@ namespace MediaService.Infrastructure.Messaging.Handlers
                 m.Id == payload.MediaId && 
                 m.MediaOwners.Any(mo => 
                 mo.MediaId == payload.MediaId && 
+                mo.OwnerId == payload.OwnerId &&
                 mo.OwnerType == payload.OwnerType));
             if(media == null)
             {
@@ -89,6 +90,7 @@ namespace MediaService.Infrastructure.Messaging.Handlers
                 .Where(m => m.MediaId == payload.MediaId 
                 && m.OwnerType == payload.OwnerType)
                 .FirstOrDefault();
+            var isMediaDeleted = false;
             try
             {
                 if (removeOwner != null)
@@ -98,10 +100,14 @@ namespace MediaService.Infrastructure.Messaging.Handlers
                 }
                 if(media.MediaOwners.Count == 0)
                 {
-                    await mediaStorage.DeleteAsync(media.Path);
                     await mediaFileServices.Delete(media);
+                    isMediaDeleted = true;
                 }
                 await unitOfWork.CommitAsync();
+                if (isMediaDeleted)
+                {
+                    await mediaStorage.DeleteAsync(media.Path);
+                }
                 this.logger.LogInformation("Midia deletada com sucesso");
             }   
             catch(Exception ex)
