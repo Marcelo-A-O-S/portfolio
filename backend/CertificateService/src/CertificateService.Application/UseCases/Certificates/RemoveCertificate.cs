@@ -68,7 +68,8 @@ namespace CertificateService.Application.UseCases.Certificates
         private async Task ProcessImage(Certificate certificate, List<MediaProjection> mediasToDelete)
         {
             var mediaProjection = await this.mediaProjectionServices.FindBy(m => m.MediaId == certificate.MediaProjection.MediaId);
-            mediasToDelete.Add(mediaProjection);
+            if (mediaProjection != null)
+                mediasToDelete.Add(mediaProjection);
         }
         private async Task DeleteMedias(Guid certificateId, List<MediaProjection> mediasToDelete)
         {

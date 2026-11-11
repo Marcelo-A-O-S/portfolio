@@ -31,9 +31,9 @@ namespace MediaService.Api.Controllers
             var erros = ModelState.Values.Select(e => e.Errors);
             return BadRequest(erros);
         }
-        [HttpDelete("{Id}")]
+        [HttpDelete]
         [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
-        public async Task<IActionResult> DeleteMedia(MediaDeleteRequest request)
+        public async Task<IActionResult> DeleteMedia([FromBody] MediaDeleteRequest request)
         {
             await this.removeMediaFile.ExecuteAsync(request);
             return Ok();
