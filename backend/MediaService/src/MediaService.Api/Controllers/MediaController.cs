@@ -1,5 +1,6 @@
 using MediaService.Application.DTOs.Requests;
 using MediaService.Application.UseCases.MediaFiles.Interfaces;
+using MediaService.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace MediaService.Api.Controllers
@@ -32,9 +33,9 @@ namespace MediaService.Api.Controllers
         }
         [HttpDelete("{Id}")]
         [Authorize(Roles = "Administrador", AuthenticationSchemes = "UserJwt")]
-        public async Task<IActionResult> DeleteMedia(Guid Id)
+        public async Task<IActionResult> DeleteMedia(MediaDeleteRequest request)
         {
-            await this.removeMediaFile.ExecuteAsync(Id);
+            await this.removeMediaFile.ExecuteAsync(request);
             return Ok();
         }
     }

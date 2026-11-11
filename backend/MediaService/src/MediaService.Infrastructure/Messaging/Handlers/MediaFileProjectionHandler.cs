@@ -37,6 +37,7 @@ namespace MediaService.Infrastructure.Messaging.Handlers
                 m.Id == payload.MediaId && 
                 m.MediaOwners.Any(mo => 
                 mo.OwnerId == payload.OwnerId && 
+                mo.MediaId == payload.MediaId &&
                 mo.OwnerType == payload.OwnerType));
             if(media == null)
             {
