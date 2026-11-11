@@ -118,19 +118,18 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
             {
                 if (postProjection.MediaProjection.MediaId != payload.Media.MediaId)
                 {
-                    var oldMediaProjection = await mediaProjectionServices.FindBy(mp => mp.MediaId == postProjection.MediaProjection.MediaId);
+                    var oldMediaProjection = postProjection.MediaProjection;
                     var mediaContent = await mediaProjectionServices.FindBy(mp => mp.MediaId == payload.Media.MediaId);
-                    if(mediaContent != null)
-                    {
-                        throw new ValidationException("O conteudo de midia já existe.");
-                    }
-                    var newMediaProjection = new MediaProjection(
+                    if(mediaContent == null)
+                    {   
+                        mediaContent = new MediaProjection(
                             payload.Media.MediaId,
                             payload.Media.Url
                         );
-                    newMediaProjection.GenerateId();
-                    postProjection.SetThumbnail(newMediaProjection.Id);
-                    await mediaProjectionServices.Save(newMediaProjection);
+                        mediaContent.GenerateId();
+                    }
+                    postProjection.SetThumbnail(mediaContent.Id);
+                    await mediaProjectionServices.Save(mediaContent);
                     if (oldMediaProjection != null)
                     {
                         await mediaProjectionServices.Delete(oldMediaProjection);
