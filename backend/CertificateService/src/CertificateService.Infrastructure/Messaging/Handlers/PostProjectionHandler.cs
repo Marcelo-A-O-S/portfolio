@@ -127,12 +127,14 @@ namespace CertificateService.Infrastructure.Messaging.Handlers
                             payload.Media.Url
                         );
                         mediaContent.GenerateId();
+                        await mediaProjectionServices.Save(mediaContent);
                     }
                     postProjection.SetThumbnail(mediaContent.Id);
-                    await mediaProjectionServices.Save(mediaContent);
                     if (oldMediaProjection != null)
                     {
-                        await mediaProjectionServices.Delete(oldMediaProjection);
+                        var exists = await postProjectionServices.FindBy(pp => pp.MediaProjectionId == oldMediaProjection.Id);
+                        if(exists == null)
+                            await mediaProjectionServices.Delete(oldMediaProjection);
                     }
                 }
                 foreach (var content in removedContents)
