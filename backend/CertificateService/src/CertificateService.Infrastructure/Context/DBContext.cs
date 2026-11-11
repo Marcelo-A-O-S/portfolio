@@ -24,16 +24,30 @@ namespace CertificateService.Infrastructure.Context
             modelBuilder.Entity<Certificate>()
                 .Property(c => c.Status)
                 .HasConversion<string>();
+            modelBuilder.Entity<Certificate>()
+                .HasOne(c => c.MediaProjection)
+                .WithMany()
+                .HasForeignKey(c => c.MediaProjectionId)
+                .OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Certificate>().Property(c => c.CertificateType).HasConversion<string>();
             modelBuilder.Entity<MediaProjection>().HasIndex(mp => new { mp.Url, mp.MediaId }).IsUnique();
             modelBuilder.Entity<LanguageProjection>().HasIndex(lp => new { lp.Code }).IsUnique();
             modelBuilder.Entity<PostProjection>().HasIndex(pp => new { pp.PostId }).IsUnique();
-            modelBuilder.Entity<PostContentProjection>().HasIndex(pp => new { pp.PostContentId }).IsUnique();
-            modelBuilder.Entity<CertificateContent>().HasOne(cc => cc.LanguageProjection)
-                .WithMany().HasForeignKey(cc => cc.LanguageProjectionId)
+            modelBuilder.Entity<PostProjection>()
+                .HasOne(pp => pp.MediaProjection)
+                .WithMany()
+                .HasForeignKey(pp => pp.MediaProjectionId)
                 .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<PostContentProjection>().HasOne(cc => cc.LanguageProjection)
-                .WithMany().HasForeignKey(pc => pc.LanguageProjectionId)
+            modelBuilder.Entity<PostContentProjection>().HasIndex(pp => new { pp.PostContentId }).IsUnique();
+            modelBuilder.Entity<CertificateContent>()
+                .HasOne(cc => cc.LanguageProjection)
+                .WithMany()
+                .HasForeignKey(cc => cc.LanguageProjectionId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<PostContentProjection>()
+                .HasOne(cc => cc.LanguageProjection)
+                .WithMany()
+                .HasForeignKey(cc => cc.LanguageProjectionId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

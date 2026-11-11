@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CertificateService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20261110005314_CreateTables")]
+    [Migration("20261111200701_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -282,7 +282,7 @@ namespace CertificateService.Infrastructure.Migrations
                     b.HasOne("CertificateService.Domain.Entities.MediaProjection", "MediaProjection")
                         .WithMany()
                         .HasForeignKey("MediaProjectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("MediaProjection");
@@ -331,7 +331,7 @@ namespace CertificateService.Infrastructure.Migrations
                     b.HasOne("CertificateService.Domain.Entities.MediaProjection", "MediaProjection")
                         .WithMany()
                         .HasForeignKey("MediaProjectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("MediaProjection");

@@ -89,7 +89,7 @@ namespace CertificateService.Infrastructure.Migrations
                         principalSchema: "certificate_service",
                         principalTable: "MediaProjections",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -112,7 +112,7 @@ namespace CertificateService.Infrastructure.Migrations
                         principalSchema: "certificate_service",
                         principalTable: "MediaProjections",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
