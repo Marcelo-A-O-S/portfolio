@@ -208,16 +208,19 @@ namespace PostService.Application.UseCases.Tools
             {
                 mediasToDelete.Add(tool.MediaProjection);
             }
-            var oldMediaContent = tool.MediaProjection;
             var mediaContent = await this.mediaProjectionServices.FindBy(mp => mp.MediaId == mediaRequest.MediaId);
             if (mediaContent != null)
             {
-                throw new ValidationException("O conteudo de midia já existe.");
+                 if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
+                {
+                    mediasToCommit.Add(mediaContent);
+                }
+                tool.SetThumbnail(mediaContent.Id);
+                return;
             }
             mediaContent = new MediaProjection(mediaRequest.MediaId, mediaRequest.Url);
             mediaContent.GenerateId();
             await this.mediaProjectionServices.Save(mediaContent);
-            await this.mediaProjectionServices.Delete(oldMediaContent);
             if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
             {
                 mediasToCommit.Add(mediaContent);

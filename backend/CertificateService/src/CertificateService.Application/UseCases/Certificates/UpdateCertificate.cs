@@ -121,16 +121,19 @@ namespace CertificateService.Application.UseCases.Certificates
             {
                 mediasToDelete.Add(certificate.MediaProjection);
             }
-            var oldMediaContent = certificate.MediaProjection;
             var mediaContent = await this.mediaProjectionServices.FindBy(mp => mp.MediaId == mediaRequest.MediaId);
             if (mediaContent != null)
             {
-                throw new ValidationException("O conteudo de midia já existe.");
+                if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
+                {
+                    mediasToCommit.Add(mediaContent);
+                }
+                certificate.AddMedia(mediaContent.Id);
+                return;
             }
             mediaContent = new MediaProjection(mediaRequest.MediaId, mediaRequest.Url);
             mediaContent.GenerateId();
             await this.mediaProjectionServices.Save(mediaContent);
-            await this.mediaProjectionServices.Delete(oldMediaContent);
             if (!mediasToCommit.Any(m => m.MediaId == mediaContent.MediaId))
             {
                 mediasToCommit.Add(mediaContent);
