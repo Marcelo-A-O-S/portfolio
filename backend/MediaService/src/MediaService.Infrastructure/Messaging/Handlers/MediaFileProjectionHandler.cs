@@ -1,6 +1,7 @@
 using System.Text.Json;
 using MediaService.Application.Interfaces;
 using MediaService.Application.Validators.Interfaces;
+using MediaService.Domain.Entities;
 using MediaService.Infrastructure.Messaging.Events;
 using MediaService.Infrastructure.Messaging.Handlers.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +23,7 @@ namespace MediaService.Infrastructure.Messaging.Handlers
         public async Task HandleMediaCommit(string message)
         {
             var payload = JsonSerializer.Deserialize<MediaCommitEvent>(message);
-            if(payload == null)
+            if (payload == null)
             {
                 this.logger.LogError("Erro ao deserializar payload de evento de commit de midia.");
                 return;
@@ -30,16 +31,17 @@ namespace MediaService.Infrastructure.Messaging.Handlers
             using var scope = this.scopeFactory.CreateScope();
             var mediaFileServices = scope.ServiceProvider.GetRequiredService<IMediaServices>();
             var mediaOwnnerServices = scope.ServiceProvider.GetRequiredService<IMediaOwnerServices>();
+
             var mediaValidationServices = scope.ServiceProvider.GetRequiredService<IMediaValidationServices>();
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             var media = await mediaFileServices
-                .GetMediaBy(m => 
-                m.Id == payload.MediaId && 
-                m.MediaOwners.Any(mo => 
-                mo.OwnerId == payload.OwnerId && 
+                .GetMediaBy(m =>
+                m.Id == payload.MediaId &&
+                m.MediaOwners.Any(mo =>
+                mo.OwnerId == payload.OwnerId &&
                 mo.MediaId == payload.MediaId &&
                 mo.OwnerType == payload.OwnerType));
-            if(media == null)
+            if (media == null)
             {
                 this.logger.LogWarning("Midia não encontrada.");
                 return;
@@ -53,9 +55,9 @@ namespace MediaService.Infrastructure.Messaging.Handlers
                 await unitOfWork.CommitAsync();
                 this.logger.LogInformation("Midia commitada com sucesso");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                logger.LogWarning(ex,"Erro ao processar evento de commit da mídia {MediaId}", payload.MediaId);
+                logger.LogWarning(ex, "Erro ao processar evento de commit da mídia {MediaId}", payload.MediaId);
                 await unitOfWork.RollbackAsync();
                 throw;
             }
@@ -64,7 +66,7 @@ namespace MediaService.Infrastructure.Messaging.Handlers
         public async Task HandleMediaDelete(string message)
         {
             var payload = JsonSerializer.Deserialize<MediaDeleteEvent>(message);
-            if(payload == null)
+            if (payload == null)
             {
                 this.logger.LogWarning("Erro ao deserializar payload de evento de deleção de midia.");
                 return;
@@ -72,23 +74,24 @@ namespace MediaService.Infrastructure.Messaging.Handlers
             using var scope = this.scopeFactory.CreateScope();
             var mediaFileServices = scope.ServiceProvider.GetRequiredService<IMediaServices>();
             var mediaOwnerServices = scope.ServiceProvider.GetRequiredService<IMediaOwnerServices>();
+            var mediaDeleteServices = scope.ServiceProvider.GetRequiredService<IMediaDeletionServices>();
             var mediaStorage = scope.ServiceProvider.GetRequiredService<IMediaStorage>();
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             var media = await mediaFileServices
-                .GetMediaBy(m => 
-                m.Id == payload.MediaId && 
-                m.MediaOwners.Any(mo => 
-                mo.MediaId == payload.MediaId && 
+                .GetMediaBy(m =>
+                m.Id == payload.MediaId &&
+                m.MediaOwners.Any(mo =>
+                mo.MediaId == payload.MediaId &&
                 mo.OwnerId == payload.OwnerId &&
                 mo.OwnerType == payload.OwnerType));
-            if(media == null)
+            if (media == null)
             {
                 this.logger.LogWarning("Mídia não encontrada. MediaId: {MediaId}", payload.MediaId);
                 return;
             }
             await unitOfWork.BeginAsync();
             var removeOwner = media.MediaOwners
-                .Where(m => m.MediaId == payload.MediaId && 
+                .Where(m => m.MediaId == payload.MediaId &&
                 m.OwnerId == payload.OwnerId &&
                 m.OwnerType == payload.OwnerType)
                 .FirstOrDefault();
@@ -100,25 +103,42 @@ namespace MediaService.Infrastructure.Messaging.Handlers
                     media.RemoveOwner(removeOwner);
                     await mediaOwnerServices.Delete(removeOwner);
                 }
-                if(media.MediaOwners.Count == 0)
+                if (media.MediaOwners.Count == 0)
                 {
+                    var mediaDeletion = new MediaDeletion(
+                        media.Path
+                    );
                     await mediaFileServices.Delete(media);
+                    await mediaDeleteServices.Save(mediaDeletion);
                     isMediaDeleted = true;
                 }
                 await unitOfWork.CommitAsync();
                 if (isMediaDeleted)
                 {
-                    await mediaStorage.DeleteAsync(media.Path);
+                    await unitOfWork.BeginAsync();
+                    var mediaDeletion = await mediaDeleteServices.FindBy(md => md.Path == media.Path);
+                    try
+                    {
+                        await mediaStorage.DeleteAsync(media.Path);
+                        mediaDeletion.Processed();
+                        await mediaDeleteServices.Update(mediaDeletion);
+                        this.logger.LogInformation("Midia deletada com sucesso");
+                    }
+                    catch (Exception ex)
+                    {
+                        mediaDeletion.Failure();
+                        await mediaDeleteServices.Update(mediaDeletion);
+                    }
                 }
-                this.logger.LogInformation("Midia deletada com sucesso");
-            }   
-            catch(Exception ex)
+
+            }
+            catch (Exception ex)
             {
-                this.logger.LogWarning(ex,"Erro ao processar a remoção da imagem do banco");
+                this.logger.LogWarning(ex, "Erro ao processar a remoção da imagem do banco");
                 await unitOfWork.RollbackAsync();
                 throw;
             }
-            
+
         }
     }
 }

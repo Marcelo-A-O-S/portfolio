@@ -18,9 +18,11 @@ namespace MediaService.Infrastructure.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IGenerics<Media>, Generics<Media>>();
             services.AddScoped<IGenerics<MediaOwner>, Generics<MediaOwner>>();
+            services.AddScoped<IGenerics<MediaDeletion>, Generics<MediaDeletion>>();
             services.AddScoped<IGenerics<OutboxMessage>, Generics<OutboxMessage>>();
             services.AddScoped<IMediaRepository, MediaRepository>();
             services.AddScoped<IMediaOwnerRepository, MediaOwnerRepository>();
+            services.AddScoped<IMediaDeletionRepository, MediaDeletionRepository>();
             services.AddScoped<IOutboxMessageRepository, OutboxMessageRepository>();
             services.AddSingleton<IRabbitMQProducer, RabbitMQProducer>();
             services.AddSingleton<IMediaFileProjectionHandler, MediaFileProjectionHandler>();

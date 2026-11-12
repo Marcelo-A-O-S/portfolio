@@ -19,6 +19,7 @@ namespace MediaService.Application.Extensions
         {
             services.AddScoped<IMediaServices, MediaServices>();
             services.AddScoped<IMediaOwnerServices, MediaOwnerServices>();
+            services.AddScoped<IMediaDeletionServices, MediaDeletionServices>();
             services.AddScoped<IOutboxMessageServices, OutboxMessageServices>();
             services.AddScoped<IMediaStorage, MediaStorage>();
             
