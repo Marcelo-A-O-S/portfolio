@@ -10,6 +10,7 @@ namespace MediaService.Infrastructure.Context
         public DbSet<Media> Medias { get; set; }
         public DbSet<OutboxMessage> OutboxMessages { get; set; }
         public DbSet<MediaOwner> MediaOwners { get; set; }
+        public DbSet<MediaDeletion> MediaDeletions { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("media_service");
