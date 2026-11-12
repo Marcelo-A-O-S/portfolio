@@ -1,4 +1,3 @@
-using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace MediaService.Domain.Entities
 {
     public class MediaDeletion
@@ -19,6 +18,7 @@ namespace MediaService.Domain.Entities
         public void Processed()
         {
             this.ProcessedAt = DateTime.UtcNow;
+            this.Attempts = 0;
         }
         public void Failure()
         {
