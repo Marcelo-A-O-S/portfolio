@@ -122,12 +122,14 @@ namespace MediaService.Infrastructure.Messaging.Handlers
                         await mediaStorage.DeleteAsync(media.Path);
                         mediaDeletion.Processed();
                         await mediaDeleteServices.Update(mediaDeletion);
+                        await unitOfWork.CommitAsync();
                         this.logger.LogInformation("Midia deletada com sucesso");
                     }
                     catch (Exception ex)
                     {
                         mediaDeletion.Failure();
                         await mediaDeleteServices.Update(mediaDeletion);
+                        await unitOfWork.CommitAsync();
                     }
                 }
 
