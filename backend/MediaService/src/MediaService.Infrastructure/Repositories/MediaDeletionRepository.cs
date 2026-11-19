@@ -16,7 +16,6 @@ namespace MediaService.Infrastructure.Repositories
             return await this.context.MediaDeletions
                 .Where(md => md.ProcessedAt == null)
                 .OrderBy(md => md.CreatedAt)
-                .Take(50)
                 .ToListAsync();
         }
     }

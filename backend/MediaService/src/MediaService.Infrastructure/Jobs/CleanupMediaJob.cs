@@ -1,4 +1,5 @@
 using MediaService.Application.Interfaces;
+using MediaService.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -26,6 +27,7 @@ namespace MediaService.Infrastructure.Jobs
                     using var scope = this.serviceProvider.CreateScope();
                     var mediaFileServices = scope.ServiceProvider.GetRequiredService<IMediaServices>();
                     var mediaOwnerServices = scope.ServiceProvider.GetRequiredService<IMediaOwnerServices>();
+                    var mediaDeletionServices = scope.ServiceProvider.GetRequiredService<IMediaDeletionServices>();
                     var mediaStorage = scope.ServiceProvider.GetRequiredService<IMediaStorage>();
                     var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
                     var medias = await mediaFileServices.ListExpiredUncommittedMediaAsync();
@@ -43,12 +45,31 @@ namespace MediaService.Infrastructure.Jobs
                             }
                             if(media.MediaOwners.Count == 0)
                             {
+                                var mediaDeletion = new MediaDeletion(
+                                    media.Path
+                                );
                                 await mediaFileServices.Delete(media);
+                                await mediaDeletionServices.Save(mediaDeletion);
                                 isMediaDeleted = true;
                             }
                             await unitOfWork.CommitAsync();
-                            if(isMediaDeleted)
-                                await mediaStorage.DeleteAsync(media.Path);
+                            if (isMediaDeleted)
+                            {
+                                await unitOfWork.BeginAsync();
+                                var mediaDeletion = await mediaDeletionServices.FindBy(md => md.Path == media.Path);
+                                try
+                                {
+                                    await mediaStorage.DeleteAsync(media.Path);
+                                    mediaDeletion.Processed();
+                                    await mediaDeletionServices.Update(mediaDeletion);
+                                    await unitOfWork.CommitAsync();
+                                }catch(Exception ex)
+                                {
+                                    mediaDeletion.Failure();
+                                    await mediaDeletionServices.Update(mediaDeletion);
+                                    await unitOfWork.CommitAsync();
+                                }
+                            }
                         }
                         catch (Exception ex)
                         {
