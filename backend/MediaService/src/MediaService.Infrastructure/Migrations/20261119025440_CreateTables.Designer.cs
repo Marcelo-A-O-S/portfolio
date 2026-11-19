@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MediaService.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20261110011543_CreateTables")]
+    [Migration("20261119025440_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -59,6 +59,30 @@ namespace MediaService.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Medias", "media_service");
+                });
+
+            modelBuilder.Entity("MediaService.Domain.Entities.MediaDeletion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ProcessedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MediaDeletions", "media_service");
                 });
 
             modelBuilder.Entity("MediaService.Domain.Entities.MediaOwner", b =>

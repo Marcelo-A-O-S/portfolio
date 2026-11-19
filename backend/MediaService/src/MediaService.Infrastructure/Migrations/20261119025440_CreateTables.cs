@@ -15,6 +15,22 @@ namespace MediaService.Infrastructure.Migrations
                 name: "media_service");
 
             migrationBuilder.CreateTable(
+                name: "MediaDeletions",
+                schema: "media_service",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Path = table.Column<string>(type: "text", nullable: false),
+                    Attempts = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ProcessedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MediaDeletions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Medias",
                 schema: "media_service",
                 columns: table => new
@@ -92,6 +108,10 @@ namespace MediaService.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "MediaDeletions",
+                schema: "media_service");
+
             migrationBuilder.DropTable(
                 name: "MediaOwners",
                 schema: "media_service");
