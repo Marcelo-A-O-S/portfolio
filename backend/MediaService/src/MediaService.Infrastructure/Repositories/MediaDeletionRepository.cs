@@ -14,8 +14,9 @@ namespace MediaService.Infrastructure.Repositories
         public async Task<List<MediaDeletion>> GetMediasPending()
         {
             return await this.context.MediaDeletions
-                .Where(md => md.Attempts > 0 &&
-                md.Processed == null)
+                .Where(md => md.ProcessedAt == null)
+                .OrderBy(md => md.CreatedAt)
+                .Take(50)
                 .ToListAsync();
         }
     }

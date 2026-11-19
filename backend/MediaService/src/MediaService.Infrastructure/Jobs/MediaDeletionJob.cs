@@ -41,6 +41,12 @@ namespace MediaService.Infrastructure.Jobs
                         }
                         catch (Exception ex)
                         {
+                            this.logger.LogWarning(
+                                ex,
+                                "Falha ao excluir fisicamente a mídia {Path}. Tentativa {Attempts}.",
+                                media.Path,
+                                media.Attempts + 1
+                            );
                             await ChangeMediaDeletionStatus(
                                 mediaDeletionServices, 
                                 unitOfWork, 
