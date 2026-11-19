@@ -10,6 +10,7 @@ namespace MediaService.Infrastructure.Extensions
         )
         {
             services.AddHostedService<CleanupMediaJob>();
+            services.AddHostedService<MediaDeletionJob>();
             services.AddHostedService<OutboxProcessor>();
             services.AddHostedService<OutboxRecovery>();
             services.AddHostedService<OutboxCleanupJob>();

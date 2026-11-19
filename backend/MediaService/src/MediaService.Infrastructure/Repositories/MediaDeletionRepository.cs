@@ -11,7 +11,7 @@ namespace MediaService.Infrastructure.Repositories
         {
             this.context = _context;
         }
-        public async Task<List<MediaDeletion>> GetMediaPending()
+        public async Task<List<MediaDeletion>> GetMediasPending()
         {
             return await this.context.MediaDeletions
                 .Where(md => md.Attempts > 0 &&

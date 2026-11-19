@@ -3,7 +3,6 @@ using MediaService.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
 namespace MediaService.Infrastructure.Jobs
 {
     public class MediaDeletionJob : BackgroundService
@@ -28,7 +27,7 @@ namespace MediaService.Infrastructure.Jobs
                     var mediaDeletionServices = scope.ServiceProvider.GetRequiredService<IMediaDeletionServices>();
                     var mediaStorage = scope.ServiceProvider.GetRequiredService<IMediaStorage>();
                     var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-                    var medias = await mediaDeletionServices.GetMediaPending();
+                    var medias = await mediaDeletionServices.GetMediasPending();
                     foreach (var media in medias)
                     {
                         try

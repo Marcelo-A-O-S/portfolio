@@ -39,9 +39,9 @@ namespace MediaService.Application.Services
             return await this.mediaDeletionRepository.GetById(Id);
         }
 
-        public async Task<List<MediaDeletion>> GetMediaPending()
+        public async Task<List<MediaDeletion>> GetMediasPending()
         {
-            return await this.mediaDeletionRepository.GetMediaPending();
+            return await this.mediaDeletionRepository.GetMediasPending();
         }
 
         public async Task<List<MediaDeletion>> List()
