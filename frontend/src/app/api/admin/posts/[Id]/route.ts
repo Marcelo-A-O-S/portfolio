@@ -58,7 +58,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
             return NextResponse.json({
                 message: response.data.message
             }, {
-                status: response.data
+                status: response.status
             })
         }
         return NextResponse.json({ message: "Postagem atualizada com sucesso." })
@@ -84,7 +84,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
             return NextResponse.json({
                 message: response.data.message
             }, {
-                status: response.data
+                status: response.status
             })
         }
         return NextResponse.json({ message: "Postagem deletada com sucesso." })
