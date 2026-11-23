@@ -28,14 +28,12 @@ namespace MediaService.Infrastructure.Jobs
                     var mediaFileServices = scope.ServiceProvider.GetRequiredService<IMediaServices>();
                     var mediaOwnerServices = scope.ServiceProvider.GetRequiredService<IMediaOwnerServices>();
                     var mediaDeletionServices = scope.ServiceProvider.GetRequiredService<IMediaDeletionServices>();
-                    var mediaStorage = scope.ServiceProvider.GetRequiredService<IMediaStorage>();
                     var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
                     var medias = await mediaFileServices.ListExpiredUncommittedMediaAsync();
                     this.logger.LogInformation("Foram encontradas {Count} mídias expiradas.", medias.Count);
                     foreach (var media in medias)
                     {
                         await unitOfWork.BeginAsync();
-                        var isMediaDeleted = false;
                         try
                         {
                             foreach (var mediaOwner in media.MediaOwners)
@@ -50,7 +48,6 @@ namespace MediaService.Infrastructure.Jobs
                                 );
                                 await mediaFileServices.Delete(media);
                                 await mediaDeletionServices.Save(mediaDeletion);
-                                isMediaDeleted = true;
                             }
                             await unitOfWork.CommitAsync();
                         }

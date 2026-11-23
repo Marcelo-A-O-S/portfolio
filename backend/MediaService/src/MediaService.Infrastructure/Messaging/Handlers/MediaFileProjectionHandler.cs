@@ -75,7 +75,6 @@ namespace MediaService.Infrastructure.Messaging.Handlers
             var mediaFileServices = scope.ServiceProvider.GetRequiredService<IMediaServices>();
             var mediaOwnerServices = scope.ServiceProvider.GetRequiredService<IMediaOwnerServices>();
             var mediaDeleteServices = scope.ServiceProvider.GetRequiredService<IMediaDeletionServices>();
-            var mediaStorage = scope.ServiceProvider.GetRequiredService<IMediaStorage>();
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
             var media = await mediaFileServices
                 .GetMediaBy(m =>
@@ -95,7 +94,6 @@ namespace MediaService.Infrastructure.Messaging.Handlers
                 m.OwnerId == payload.OwnerId &&
                 m.OwnerType == payload.OwnerType)
                 .FirstOrDefault();
-            var isMediaDeleted = false;
             try
             {
                 if (removeOwner != null)
@@ -110,7 +108,6 @@ namespace MediaService.Infrastructure.Messaging.Handlers
                     );
                     await mediaFileServices.Delete(media);
                     await mediaDeleteServices.Save(mediaDeletion);
-                    isMediaDeleted = true;
                 }
                 await unitOfWork.CommitAsync();
             }
