@@ -33,11 +33,6 @@ namespace MediaService.Infrastructure.Jobs
                         try
                         {
                             await mediaStorage.DeleteAsync(media.Path);
-                            await ChangeMediaDeletionStatus(
-                                mediaDeletionServices, 
-                                unitOfWork, 
-                                media, 
-                                mediaDeletion => mediaDeletion.Processed());
                         }
                         catch (Exception ex)
                         {
@@ -52,7 +47,13 @@ namespace MediaService.Infrastructure.Jobs
                                 unitOfWork, 
                                 media, 
                                 mediaDeletion => mediaDeletion.Failure());
+                            continue;
                         }
+                        await ChangeMediaDeletionStatus(
+                                mediaDeletionServices, 
+                                unitOfWork, 
+                                media, 
+                                mediaDeletion => mediaDeletion.Processed());
                     }
                 }
                 catch (Exception exception)

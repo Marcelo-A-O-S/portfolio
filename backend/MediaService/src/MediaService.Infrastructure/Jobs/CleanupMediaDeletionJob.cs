@@ -44,7 +44,7 @@ namespace MediaService.Infrastructure.Jobs
                 {
                     this.logger.LogError(ex, "Erro ao limpar objetos de imagem.");
                 }
-                await Task.Delay(TimeSpan.FromSeconds(6), stoppingToken);
+                await Task.Delay(TimeSpan.FromMinutes(10), stoppingToken);
             }
         }
     }
