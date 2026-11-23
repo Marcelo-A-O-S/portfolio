@@ -22,7 +22,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             return NextResponse.json({
                 message: response.data.message
             }, {
-                status: response.data
+                status: response.status
             })
         }
         return NextResponse.json(response.data);

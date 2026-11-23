@@ -7,23 +7,29 @@ export function useCommentPermissions(comment: CommentSchema){
     const isOwner = user?.id === comment.user?.id;
     return {
         isDeleted:
+            !!user &&
             comment.commentStatus === "Deleted",
         canEdit:
+            !!user &&
             isOwner &&
             comment.commentStatus === "Active",
         canDelete:
+            !!user &&
             isOwner &&
             comment.commentStatus === "Active",
         canRestore:
+            !!user &&
             comment.commentStatus === "Deleted" &&
             (
                 user?.role === "Moderator" ||
                 user?.role === "Administrador"//"Administrador"
             ),
         canHardDelete:
+            !!user &&
             comment.commentStatus === "Deleted" &&
             user?.role === "Administrador",
         canLike:
+            !!user &&
             comment.commentStatus === "Active",
         canReply: true
     };

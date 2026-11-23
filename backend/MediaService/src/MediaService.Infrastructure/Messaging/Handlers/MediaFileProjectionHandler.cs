@@ -62,7 +62,6 @@ namespace MediaService.Infrastructure.Messaging.Handlers
                 throw;
             }
         }
-
         public async Task HandleMediaDelete(string message)
         {
             var payload = JsonSerializer.Deserialize<MediaDeleteEvent>(message);
