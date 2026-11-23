@@ -7,7 +7,6 @@ export function useCommentPermissions(comment: CommentSchema){
     const isOwner = user?.id === comment.user?.id;
     return {
         isDeleted:
-            !!user &&
             comment.commentStatus === "Deleted",
         canEdit:
             !!user &&
