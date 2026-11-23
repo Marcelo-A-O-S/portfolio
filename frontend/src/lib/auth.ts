@@ -1,7 +1,8 @@
+import "server-only";
 import type { AuthOptions } from "next-auth";
 import { LoginRequest } from "@/domain/dtos/LoginRequest";
 import { buildDeviceName } from "@/lib/build-device-name";
-import { loginOAuth, logout, refreshAsync } from "@/services/server/auth-services";
+import { accessLogin, loginOAuth, logout, refreshAccessToken, refreshAsync } from "@/services/server/auth-services";
 import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import LinkedIn from "next-auth/providers/linkedin";
@@ -72,106 +73,22 @@ export const authOptions: AuthOptions = {
     callbacks: {
         async jwt({ token, account, user }) {
             if (account && user) {
-                const cookieStore = await cookies();
-                let deviceId = cookieStore.get("DeviceId")?.value;
-                if (!deviceId) {
-                    deviceId = crypto.randomUUID();
-                }
-                const deviceName = await buildDeviceName();
-                const provider = account.provider.toLowerCase();
-                let providerToken : string | undefined = undefined;
-                switch(provider){
-                    case "github":
-                        providerToken = account.access_token
-                        break;
-                    case "linkedin":
-                        providerToken = account.access_token
-                        break;
-                    case "google":
-                        providerToken = account.id_token
-                        break;
-                }
-                const loginRequest: LoginRequest = {
-                    name: user.name,
-                    email: user.email,
-                    profileUrl: user.image,
-                    description: user.bio ?? "",
-                    provider: account.provider,
-                    providerId: account.providerAccountId,
-                    providerToken: providerToken,
-                    username: user.username,
-                    deviceId,
-                    deviceName
-                }
-                token.providerId = account.providerAccountId;
-                token.provider = account.provider;
-                token.username = user.username;
-                const data = await loginOAuth(loginRequest);
-                const expireDate = Date.now() + data.expireIn * 1000;
-                token.userId = data.userId;
-                token.accessToken = data.accessToken;
-                token.refreshTokenId = data.refreshTokenId;
-                token.expireIn = expireDate;
-                token.role = data.role;
-                try {
-                    cookieStore.set("DeviceId", deviceId, {
-                        httpOnly: true,
-                        sameSite: "lax",
-                        secure: true,
-                        path: "/",
-                        maxAge: 60 * 60 * 24 * 7
-                    });
-                    cookieStore.set("RefreshToken", data.refreshToken, {
-                        httpOnly: true,
-                        sameSite: "lax",
-                        secure: true,
-                        path: "/",
-                        maxAge: 60 * 60 * 24 * 7
-                    });
-                } catch {
-
-                }
+                await accessLogin(token, account, user);
             }
-            if (token.expireIn && token.userId && token.refreshTokenId && token.providerId) {
-                const buffer = 35 * 1000;
-                if (token.expireIn - buffer <= Date.now()) {
-                    const cookieStore = await cookies();
-                    const deviceId = cookieStore.get("DeviceId")?.value;
-                    const refreshToken = cookieStore.get("RefreshToken")?.value;
-                    if (deviceId && refreshToken) {
-                        const deviceName = await buildDeviceName();
-                        const response = await refreshAsync(token.refreshTokenId, token.userId, token.providerId, refreshToken, deviceId, deviceName)
-                        if (response.status == 200 || response.status == 201) {
-                            const data = await response.json();
-                            const expireDate = Date.now() + data.expireIn * 1000;
-                            token.userId = data.userId;
-                            token.accessToken = data.accessToken;
-                            token.refreshTokenId = data.refreshTokenId;
-                            token.expireIn = expireDate;
-                            token.role = data.role;
-                            try {
-                                cookieStore.set("RefreshToken", data.refreshToken, {
-                                    httpOnly: true,
-                                    sameSite: "lax",
-                                    secure: true,
-                                    path: "/",
-                                    maxAge: 60 * 60 * 24 * 7
-                                });
-                            } catch {
-
-                            }
-                            return token;
-                        }
-                        await logout(token.userId, deviceId);
-                    }
-                }
+            if(!token.expireIn){
+                return token;
             }
-            return token;
+            const refreshBuffer = 60 * 1000;
+            if (Date.now() < token.expireIn - refreshBuffer) {
+                return token;
+            }
+            return await refreshAccessToken(token);
         },
         async session({ session, token, user }) {
             session.user.username = token.username;
             session.user.id = token.userId;
             session.user.role = token.role;
+            session.error = token.error;
             return session;
         }
     }
