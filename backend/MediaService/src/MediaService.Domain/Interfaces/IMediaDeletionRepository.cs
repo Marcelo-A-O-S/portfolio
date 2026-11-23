@@ -4,5 +4,6 @@ namespace MediaService.Domain.Interfaces
     public interface IMediaDeletionRepository : IGenerics<MediaDeletion>
     {
         Task<List<MediaDeletion>> GetMediasPending();
+        Task<List<MediaDeletion>> GetMediasDeletionProcessed();
     }
 }

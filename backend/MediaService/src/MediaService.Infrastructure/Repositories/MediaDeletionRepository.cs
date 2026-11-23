@@ -11,6 +11,15 @@ namespace MediaService.Infrastructure.Repositories
         {
             this.context = _context;
         }
+
+        public async Task<List<MediaDeletion>> GetMediasDeletionProcessed()
+        {
+            return await this.context.MediaDeletions
+                .Where(md => md.ProcessedAt != null)
+                .OrderBy(md => md.CreatedAt)
+                .ToListAsync();
+        }
+
         public async Task<List<MediaDeletion>> GetMediasPending()
         {
             return await this.context.MediaDeletions
@@ -18,5 +27,6 @@ namespace MediaService.Infrastructure.Repositories
                 .OrderBy(md => md.CreatedAt)
                 .ToListAsync();
         }
+        
     }
 }

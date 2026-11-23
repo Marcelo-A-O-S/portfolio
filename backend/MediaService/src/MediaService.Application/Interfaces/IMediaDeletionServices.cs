@@ -5,5 +5,6 @@ namespace MediaService.Application.Interfaces
     public interface IMediaDeletionServices : IServices<MediaDeletion>
     {
         Task<List<MediaDeletion>> GetMediasPending();
+        Task<List<MediaDeletion>> GetMediasDeletionProcessed();
     }
 }
