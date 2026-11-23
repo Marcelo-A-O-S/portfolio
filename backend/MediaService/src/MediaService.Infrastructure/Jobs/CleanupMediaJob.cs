@@ -53,23 +53,6 @@ namespace MediaService.Infrastructure.Jobs
                                 isMediaDeleted = true;
                             }
                             await unitOfWork.CommitAsync();
-                            if (isMediaDeleted)
-                            {
-                                await unitOfWork.BeginAsync();
-                                var mediaDeletion = await mediaDeletionServices.FindBy(md => md.Path == media.Path);
-                                try
-                                {
-                                    await mediaStorage.DeleteAsync(media.Path);
-                                    mediaDeletion.Processed();
-                                    await mediaDeletionServices.Update(mediaDeletion);
-                                    await unitOfWork.CommitAsync();
-                                }catch(Exception ex)
-                                {
-                                    mediaDeletion.Failure();
-                                    await mediaDeletionServices.Update(mediaDeletion);
-                                    await unitOfWork.CommitAsync();
-                                }
-                            }
                         }
                         catch (Exception ex)
                         {

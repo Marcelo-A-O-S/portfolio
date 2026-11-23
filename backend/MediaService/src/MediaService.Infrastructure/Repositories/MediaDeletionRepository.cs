@@ -14,8 +14,10 @@ namespace MediaService.Infrastructure.Repositories
 
         public async Task<List<MediaDeletion>> GetMediasDeletionProcessed()
         {
+            var expirationDate = DateTime.UtcNow.AddDays(-1);
             return await this.context.MediaDeletions
-                .Where(md => md.ProcessedAt != null)
+                .Where(md => md.ProcessedAt != null &&
+                        md.ProcessedAt < expirationDate)
                 .OrderBy(md => md.CreatedAt)
                 .ToListAsync();
         }
