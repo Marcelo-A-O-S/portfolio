@@ -73,7 +73,7 @@ export const authOptions: AuthOptions = {
     callbacks: {
         async jwt({ token, account, user }) {
             if (account && user) {
-                await accessLogin(token, account, user);
+                token = await accessLogin(token, account, user);
             }
             if(!token.expireIn){
                 return token;
