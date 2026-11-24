@@ -12,6 +12,7 @@ import { FaXTwitter } from "react-icons/fa6";
 import { ToggleTheme } from "./toggle-theme";
 import { Session } from "next-auth";
 import NavUser from "./nav-user";
+import { useAuth } from "@/contexts/auth-context";
 type NavbarProps = {
     session: Session | null
 }
@@ -32,7 +33,8 @@ const links: LinkProps[] = [{
     linkName: "Certificates",
     pathName: "/certificates"
 }]
-export default function Navbar({session}:NavbarProps) {
+export default function Navbar({ session }: NavbarProps) {
+    const { openLoginModal } = useAuth();
     const { enableSounds, toggleSounds } = useMusic();
     const { playMenuClose, playMenuOpen, playLinkHover } = useSound();
     const imgPrevRef = useRef<HTMLImageElement | null>(null);
@@ -102,17 +104,18 @@ export default function Navbar({session}:NavbarProps) {
                         <Link href={"/"} className="relative text-lg font-semibold uppercase">Marcelo.Dev</Link>
                     </div>
                     <div className="relative flex gap-3 items-center justify-center">
-                        <div className="flex items-center justify-center cursor-pointer" onClick={() =>{
-                            if(enableSounds == null) return;
+                        <div className="flex items-center justify-center cursor-pointer" onClick={() => {
+                            if (enableSounds == null) return;
                             toggleSounds(!enableSounds);
                         }}>
-                            {enableSounds? <Volume2/> :<VolumeX/>}
+                            {enableSounds ? <Volume2 /> : <VolumeX />}
                         </div>
                         <div className="flex">
-                            <ToggleTheme/>
+                            <ToggleTheme />
                         </div>
                         <div className="flex items-center justify-center cursor-pointer">
-                            {session? <NavUser session={session} />  :<LoginForm/>}
+                            {session ? <NavUser session={session} />
+                                : <button onClick={openLoginModal} className="border-2 border-primary rounded-sm py-1 px-2 font-semibold cursor-pointer">Login</button>}
                         </div>
                         <div id="menu-toggle" className="flex items-center justify-center cursor-pointer" onClick={() => {
                             setIsOpen(!isOpen);
@@ -124,9 +127,9 @@ export default function Navbar({session}:NavbarProps) {
                             }
                         }}>
                             <p className="text-lg font-semibold">
-                                {isOpen? <X/> : <Menu/>}
+                                {isOpen ? <X /> : <Menu />}
                             </p>
-                            
+
                         </div>
                     </div>
                 </div>
