@@ -1,14 +1,12 @@
 import { LoginRequest } from "@/domain/dtos/LoginRequest";
+import { AuthTokenError } from "@/domain/types/AuthTokenError";
 import { buildDeviceName } from "@/lib/build-device-name";
 import { Account, User } from "next-auth";
 import { AdapterUser } from "next-auth/adapters";
 import { decode, getToken, JWT } from "next-auth/jwt";
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
-type AuthTokenError =
-    | "RefreshAccessTokenError"
-    | "RefreshTokenInvalid"
-    | "RefreshTokenMissing";
+
 const host = process.env.BACKEND_SERVER!;
 const hostNext = process.env.NEXT_BACKEND_API!;
 const authSecret = process.env.NEXTAUTH_SECRET!;
@@ -179,24 +177,17 @@ export const refreshAccessToken = async (token: JWT): Promise<JWT> => {
             deviceId,
             deviceName
         );
+        if (response.status === 401 || response.status === 403) {
+            return {
+                ...token,
+                error: "RefreshAccessTokenError" satisfies AuthTokenError
+            };
+        }
         if (!response.ok) {
-            switch(response.status){
-                case 401:
-                    return {
-                        ...token,
-                        error: "RefreshTokenInvalid" satisfies AuthTokenError
-                    }
-                case 500:
-                    return {
-                        ...token,
-                        error: "RefreshAccessTokenError" satisfies AuthTokenError
-                    }
-                default:
-                    return {
-                        ...token,
-                        error: "RefreshAccessTokenError" satisfies AuthTokenError
-                    }
-            }
+            return {
+                ...token,
+                error: "RefreshTemporarilyUnavailable" satisfies AuthTokenError
+            };
         }
         const data = await response.json();
         if (
@@ -228,7 +219,7 @@ export const refreshAccessToken = async (token: JWT): Promise<JWT> => {
         console.error("Falha ao renovar o token:", error);
         return {
             ...token,
-            error: "RefreshAccessTokenError" satisfies AuthTokenError
+            error: "RefreshTemporarilyUnavailable" satisfies AuthTokenError
         };
     }
 }

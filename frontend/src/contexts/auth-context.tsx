@@ -1,3 +1,4 @@
+import { AuthTokenError } from "@/domain/types/AuthTokenError";
 import { logout } from "@/services/client/auth-services";
 import { useSession } from "next-auth/react";
 import { createContext, ReactNode, useContext, useEffect, useRef, useState } from "react";
@@ -12,10 +13,9 @@ type AuthContextProps = {
 type AuthProviderProps = {
     children: ReactNode
 }
-const authErrors = [
-    "RefreshAccessTokenError",
-    "RefreshTokenInvalid",
-    "RefreshTokenMissing"
+const terminalErrors: AuthTokenError[] = [
+    "RefreshTokenMissing",
+    "RefreshAccessTokenError"
 ];
 export const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 export const useAuth = () => {
@@ -31,7 +31,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const logoutStarted = useRef(false);
     const isSigningOut =
         status === "authenticated" &&
-        !!session?.error;
+        !!session?.error &&
+        terminalErrors.includes(session.error as AuthTokenError);
     useEffect(() => {
         if (status !== "authenticated") {
             return;
@@ -40,7 +41,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             logoutStarted.current = false;
             return;
         }
-        if (!authErrors.includes(session.error)) {
+        if (!terminalErrors.includes(session.error as AuthTokenError)) {
             return;
         }
         if (logoutStarted.current) {
