@@ -177,16 +177,13 @@ export const refreshAccessToken = async (token: JWT): Promise<JWT> => {
             deviceId,
             deviceName
         );
-        if (response.status === 401 || response.status === 403) {
+        if (!response.ok) {
+            console.error(
+                `Falha na renovação do token: HTTP ${response.status}`
+            );
             return {
                 ...token,
                 error: "RefreshAccessTokenError" satisfies AuthTokenError
-            };
-        }
-        if (!response.ok) {
-            return {
-                ...token,
-                error: "RefreshTemporarilyUnavailable" satisfies AuthTokenError
             };
         }
         const data = await response.json();
@@ -200,7 +197,7 @@ export const refreshAccessToken = async (token: JWT): Promise<JWT> => {
             console.error("Resposta inválida do AuthService.");
             return {
                 ...token,
-                error: "RefreshTokenInvalid" satisfies AuthTokenError
+                error: "RefreshAccessTokenError" satisfies AuthTokenError
             };
         }
         cookieStore.set("RefreshToken", data.refreshToken, {
@@ -216,13 +213,14 @@ export const refreshAccessToken = async (token: JWT): Promise<JWT> => {
             accessToken: data.accessToken,
             refreshTokenId: data.refreshTokenId,
             expireIn: Date.now() + data.expireIn * 1000,
-            role: data.role
+            role: data.role,
+            error: undefined
         }
     } catch (error) {
         console.error("Falha ao renovar o token:", error);
         return {
             ...token,
-            error: "RefreshTemporarilyUnavailable" satisfies AuthTokenError
+            error: "RefreshAccessTokenError" satisfies AuthTokenError
         };
     }
 }
