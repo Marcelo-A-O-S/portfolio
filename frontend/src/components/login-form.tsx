@@ -8,7 +8,7 @@ type LoginFormProps = {
     defaultOpen?: boolean
 }
 export default function LoginForm({ defaultOpen = false }: LoginFormProps) {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, closeLoginModal } = useAuth();
     const dialogRef = useRef<HTMLDialogElement | null>(null)
     const [isOpen, setIsOpen] = useState(defaultOpen);
     useEffect(() => {
@@ -17,6 +17,7 @@ export default function LoginForm({ defaultOpen = false }: LoginFormProps) {
             dialogRef.current.showModal();
         } else {
             dialogRef.current.close();
+            closeLoginModal();
         }
     }, [isOpen])
     return (

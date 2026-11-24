@@ -1,3 +1,4 @@
+"use client";
 import LoginForm from "./login-form";
 import { useAuth } from "@/contexts/auth-context";
 export function LoginModal(){
