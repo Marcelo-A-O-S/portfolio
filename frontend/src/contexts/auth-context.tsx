@@ -14,6 +14,7 @@ type AuthProviderProps = {
     children: ReactNode
 }
 const terminalErrors: AuthTokenError[] = [
+    "RefreshTokenInvalid",
     "RefreshTokenMissing",
     "RefreshAccessTokenError"
 ];

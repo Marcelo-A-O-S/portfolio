@@ -197,8 +197,11 @@ export const refreshAccessToken = async (token: JWT): Promise<JWT> => {
             !data.expireIn ||
             !data.userId
         ) {
-            await logout(token.userId, deviceId);
-            throw new Error("Resposta inválida do AuthService.");
+            console.error("Resposta inválida do AuthService.");
+            return {
+                ...token,
+                error: "RefreshTokenInvalid" satisfies AuthTokenError
+            };
         }
         cookieStore.set("RefreshToken", data.refreshToken, {
             httpOnly: true,
