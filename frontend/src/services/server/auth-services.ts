@@ -47,6 +47,7 @@ export const refreshAsync = async (refreshTokenId: string, userId: string, provi
     return response;
 }
 export const logout = async (userId: string, deviceId: string) => {
+    const cookieStore = await cookies();
     try {
         return await fetch(`${host}/api/auth/logout`, {
             method: "POST",

@@ -14,6 +14,7 @@ type AuthProviderProps = {
 }
 const authErrors = [
     "RefreshAccessTokenError",
+    "RefreshTokenInvalid",
     "RefreshTokenMissing"
 ];
 export const AuthContext = createContext<AuthContextProps | undefined>(undefined);

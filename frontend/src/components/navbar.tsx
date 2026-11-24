@@ -33,7 +33,7 @@ const links: LinkProps[] = [{
     pathName: "/certificates"
 }]
 export default function Navbar({ session }: NavbarProps) {
-    const { openLoginModal } = useAuth();
+    const { openLoginModal, isAuthenticated  } = useAuth();
     const { enableSounds, toggleSounds } = useMusic();
     const { playMenuClose, playMenuOpen, playLinkHover } = useSound();
     const imgPrevRef = useRef<HTMLImageElement | null>(null);
@@ -113,7 +113,7 @@ export default function Navbar({ session }: NavbarProps) {
                             <ToggleTheme />
                         </div>
                         <div className="flex items-center justify-center cursor-pointer">
-                            {session ? <NavUser session={session} />
+                            {isAuthenticated && session ? <NavUser session={session} />
                                 : <button onClick={openLoginModal} className="border-2 border-primary rounded-sm py-1 px-2 font-semibold cursor-pointer">Login</button>}
                         </div>
                         <div id="menu-toggle" className="flex items-center justify-center cursor-pointer" onClick={() => {
