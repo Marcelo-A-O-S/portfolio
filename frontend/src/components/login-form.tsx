@@ -8,6 +8,7 @@ type LoginFormProps = {
     defaultOpen?: boolean
 }
 export default function LoginForm({ defaultOpen = false }: LoginFormProps) {
+    const { isAuthenticated } = useAuth();
     const dialogRef = useRef<HTMLDialogElement | null>(null)
     const [isOpen, setIsOpen] = useState(defaultOpen);
     useEffect(() => {
@@ -43,7 +44,9 @@ export default function LoginForm({ defaultOpen = false }: LoginFormProps) {
                     </div>
                 </div>
             </dialog>
-            <button onClick={() => setIsOpen(true)} className="border-2 border-primary rounded-sm py-1 px-2 font-semibold cursor-pointer">Login</button>
+            {isAuthenticated == false ? (
+                <button onClick={() => setIsOpen(true)} className="border-2 border-primary rounded-sm py-1 px-2 font-semibold cursor-pointer">Login</button>
+            ) : (<></>)}
         </>
     )
 }

@@ -6,6 +6,7 @@ import Footer from "./footer"
 import { SidebarProvider, SidebarTrigger } from "./ui/sidebar"
 import { AppSidebar } from "./app-sidebar"
 import SplashScreen from "./splash-screen"
+import { LoginModal } from "./login-modal"
 type ContainerProps = {
     children: ReactNode
 }
@@ -14,6 +15,7 @@ export default function Container({ children }: ContainerProps) {
     return (
         <>
             <Providers>
+                <LoginModal/>
                 <SidebarProvider defaultOpen={false}>
                 <Header />
                 <AppSidebar />
