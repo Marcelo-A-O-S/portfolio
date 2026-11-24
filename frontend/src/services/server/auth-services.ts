@@ -7,6 +7,7 @@ import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 type AuthTokenError =
     | "RefreshAccessTokenError"
+    | "RefreshTokenInvalid"
     | "RefreshTokenMissing";
 const host = process.env.BACKEND_SERVER!;
 const hostNext = process.env.NEXT_BACKEND_API!;
@@ -46,23 +47,21 @@ export const refreshAsync = async (refreshTokenId: string, userId: string, provi
     return response;
 }
 export const logout = async (userId: string, deviceId: string) => {
-    const response = await fetch(`${host}/api/auth/logout`, {
-        method: "POST",
-        headers: {
-            "Content-type": "application/json"
-        },
-        body: JSON.stringify({
-            userId,
-            deviceId
-        })
-    })
-    if(!response.ok){
-        return response;
+    try {
+        return await fetch(`${host}/api/auth/logout`, {
+            method: "POST",
+            headers: {
+                "Content-type": "application/json"
+            },
+            body: JSON.stringify({
+                userId,
+                deviceId
+            })
+        });
+    } finally {
+        cookieStore.delete("DeviceId");
+        cookieStore.delete("RefreshToken");
     }
-    const cookieStore = await cookies();
-    cookieStore.delete("DeviceId");
-    cookieStore.delete("RefreshToken");
-    return response;
 }
 export const validateUser = async (roles: string[]) => {
     const cookieStore = await cookies();
@@ -179,12 +178,24 @@ export const refreshAccessToken = async (token: JWT): Promise<JWT> => {
             deviceId,
             deviceName
         );
-
         if (!response.ok) {
-            return {
-                ...token,
-                error: "RefreshAccessTokenError" satisfies AuthTokenError
-            };
+            switch(response.status){
+                case 401:
+                    return {
+                        ...token,
+                        error: "RefreshTokenInvalid" satisfies AuthTokenError
+                    }
+                case 500:
+                    return {
+                        ...token,
+                        error: "RefreshAccessTokenError" satisfies AuthTokenError
+                    }
+                default:
+                    return {
+                        ...token,
+                        error: "RefreshAccessTokenError" satisfies AuthTokenError
+                    }
+            }
         }
         const data = await response.json();
         if (
