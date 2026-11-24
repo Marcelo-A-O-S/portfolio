@@ -12,17 +12,23 @@ export default function LoginForm({ defaultOpen = false }: LoginFormProps) {
     const dialogRef = useRef<HTMLDialogElement | null>(null)
     const [isOpen, setIsOpen] = useState(defaultOpen);
     useEffect(() => {
-        if (!dialogRef.current) return;
-        if (isOpen) {
-            dialogRef.current.showModal();
-        } else {
-            dialogRef.current.close();
-            closeLoginModal();
+        const dialog = dialogRef.current;
+        if (!dialog) return;
+        if (isOpen && !dialog.open) {
+            dialog.showModal();
+        } else if (!isOpen && dialog.open) {
+            dialog.close();
         }
     }, [isOpen])
     return (
         <>
-            <dialog ref={dialogRef} className="hidden open:flex fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2  items-center justify-center bg-transparent">
+            <dialog 
+            ref={dialogRef} 
+            onClose={()=>{
+                setIsOpen(false);
+                closeLoginModal();
+            }}
+            className="hidden open:flex fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2  items-center justify-center bg-transparent">
                 <div className="relative h-full w-full border-2 rounded-2xl
             border-primary dark:bg-black
             ">
