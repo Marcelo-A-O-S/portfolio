@@ -1,11 +1,15 @@
 "use client"
-import { Github, Instagram, Linkedin, LogOutIcon, StickyNote } from "lucide-react";
+import { Github, Linkedin } from "lucide-react";
 import { useEffect, useRef, useState } from "react"
 import { FaGoogle } from "react-icons/fa6";
-import { signIn} from "next-auth/react";
-export default function LoginForm() {
+import { signIn } from "next-auth/react";
+import { useAuth } from "@/contexts/auth-context";
+type LoginFormProps = {
+    defaultOpen?: boolean
+}
+export default function LoginForm({ defaultOpen = false }: LoginFormProps) {
     const dialogRef = useRef<HTMLDialogElement | null>(null)
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(defaultOpen);
     useEffect(() => {
         if (!dialogRef.current) return;
         if (isOpen) {

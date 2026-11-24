@@ -1,35 +1,70 @@
 import { logout } from "@/services/client/auth-services";
 import { useSession } from "next-auth/react";
-import { createContext, ReactNode, useEffect, useState } from "react";
+import { createContext, ReactNode, useContext, useEffect, useRef, useState } from "react";
 type AuthContextProps = {
-    loading: boolean
+    isLoading: boolean;
+    isAuthenticated: boolean;
+    isSigningOut: boolean;
+    isLoginModalOpen: boolean;
+    openLoginModal: () => void;
+    closeLoginModal: () => void;
 }
-export const AuthContext = createContext({});
 type AuthProviderProps = {
     children: ReactNode
 }
-export const AuthProvider = ({ children }: AuthProviderProps) => {
-    const { data: session } = useSession();
-    const [loading, setLoading] = useState(true);
-    const checkAuth = async () => {
-        try {
-            const response = await fetch("/api/auth/me", {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
-            if (!response.ok) {
-                await logout();
-            }
-        } catch (error) {
-            console.log("Verificação de autenticação retornou uma falha:", error);
-        } finally {
-            setLoading(false);
-        }
+const authErrors = [
+    "RefreshAccessTokenError",
+    "RefreshTokenMissing"
+];
+export const AuthContext = createContext<AuthContextProps | undefined>(undefined);
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error("useAuth deve ser utilizado dentro de AuthProvider");
     }
+    return context;
+}
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+    const { data: session, status } = useSession();
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const logoutStarted = useRef(false);
+    const isSigningOut =
+        status === "authenticated" &&
+        !!session?.error;
+    useEffect(() => {
+        if (status !== "authenticated") {
+            return;
+        }
+        if (!session?.error) {
+            logoutStarted.current = false;
+            return;
+        }
+        if (!authErrors.includes(session.error)) {
+            return;
+        }
+        if (logoutStarted.current) {
+            return;
+        }
+        logoutStarted.current = true;
+        void logout().catch((error) => {
+            console.error("Falha ao encerrar a sessão:", error);
+        });
+    }, [session?.error, status]);
+    const openLoginModal = () => setIsLoginModalOpen(true);
+    const closeLoginModal = () => setIsLoginModalOpen(false);
+    const value: AuthContextProps = {
+        isLoading: status === "loading" || isSigningOut,
+        isAuthenticated:
+            status === "authenticated" &&
+            !session?.error &&
+            !isSigningOut,
+        isSigningOut,
+        isLoginModalOpen,
+        openLoginModal,
+        closeLoginModal
+    };
     return (
-        <AuthContext.Provider value={{}}>
+        <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     )

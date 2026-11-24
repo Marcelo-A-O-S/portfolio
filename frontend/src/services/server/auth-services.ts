@@ -56,6 +56,9 @@ export const logout = async (userId: string, deviceId: string) => {
             deviceId
         })
     })
+    if(!response.ok){
+        return response;
+    }
     const cookieStore = await cookies();
     cookieStore.delete("DeviceId");
     cookieStore.delete("RefreshToken");
@@ -178,7 +181,6 @@ export const refreshAccessToken = async (token: JWT): Promise<JWT> => {
         );
 
         if (!response.ok) {
-            await logout(token.userId, deviceId);
             return {
                 ...token,
                 error: "RefreshAccessTokenError" satisfies AuthTokenError
